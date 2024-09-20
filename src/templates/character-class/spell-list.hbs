@@ -1,0 +1,20 @@
+
+{{!--
+--}}
+<div class="tab" data-group="main" data-tab="spellList">
+	{{#if document.system.hasSpells}}
+		{{#each spells}}
+		<div class="control control--spell-list spell-list" data-list-type="spells">
+			<h2>Level {{add @index 1}}</h2>
+			{{#if this.length}}
+				{{> (bxTemplatePartial 'document-list.hbs') documentlist=this nopopout=true }}
+			{{else}}
+			<p class="empty">{{localize "FACTIONS.templates.characterClass.empty.spellList.atLevel"}}</p>
+			{{/if}}
+		</div>
+		{{/each}}
+	{{else}}
+		<p class="empty">{{localize "FACTIONS.templates.characterClass.empty.spellList.all"}}</p>
+	{{/if}}
+
+</div>

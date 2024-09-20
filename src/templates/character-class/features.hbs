@@ -1,0 +1,12 @@
+{{!--
+
+--}}
+<section class="tab tab--character-class tab--character-class-{{tab.id}} {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+{{#if document.system.featureItems}}
+		<div class="control control--feature-list" data-list-type="features">
+			{{> (bxTemplatePartial 'document-list.hbs') documentlist=document.system.featureItems nopopout=true }}
+		</div>
+	{{else}}
+		<p class="empty">{{localize "FACTIONS.templates.characterClass.empty.features.edit"}}</p>
+	{{/if}}
+</section>

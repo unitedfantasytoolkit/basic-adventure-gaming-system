@@ -1,0 +1,34 @@
+:root {
+  --color: #f00;
+}
+
+@layer system {
+  .application--bags {
+    &,
+    .window-content {
+      overflow: visible !important;
+    }
+
+    &:not(.minimized) {
+      min-height: calc(var(--header-height) + 400px) !important;
+    }
+
+    .sheet-tabs {
+      border-width: 0 !important;
+      position: absolute;
+      right: -30px;
+      flex-direction: column !important;
+
+      label {
+        display: none;
+      }
+    }
+
+    .application {
+      &__header {
+        min-height: 100px;
+        background-image: var(--header-banner);
+      }
+    }
+  }
+}

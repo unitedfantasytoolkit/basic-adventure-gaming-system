@@ -1,0 +1,43 @@
+{
+  "BAGS": {
+    "CharacterClass": {
+      "Tabs": {
+        "Description": "Description",
+        "Information": "Class Details",
+        "XP": "XP Table",
+        "Resources": "Resources Per Level",
+        "SpellList": "Spell List",
+        "SpellSlots": "Spell Slots",
+        "Features": "Class Features"
+      }
+    }
+  },
+  "COMBAT": {
+    "UseGroupInitiative": "Use Group Initiative",
+    "UseGroupInitiativeHint": "Should the tracker group combatants? Note: groups are, by default, grouped by disposition, but an individual combatant's group can be changed.",
+    "RerollBehavior": "Per-Round Initiative",
+    "RerollBehaviorHint": "Should the tracker reroll initiative, keep rolled initiative between rounds, or reset initiative to an unrolled state?",
+    "RerollBehaviorOptions": {
+      "Reroll": "Reroll",
+      "Keep": "Keep",
+      "Reset": "reset"
+    }
+  },
+  "TYPES": {
+    "Actor": {
+      "character": "Character",
+      "monster": "Monster/NPC",
+      "vehicle": "Vehicle"
+    },
+    "Item": {
+      "weapon": "Weapon",
+      "armor": "Armor",
+      "item": "Item/Wealth",
+      "class": "Character Class",
+      "ability": "Ability",
+      "ammunition": "Ammunition",
+      "container": "Container",
+      "spell": "Spell"
+    }
+  }
+}
