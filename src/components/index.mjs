@@ -1,8 +1,8 @@
 /**
  * @file Orchestrate component initialization.
  */
-import "./item-tile.mjs"
-import "./character-info-meter.mjs"
-import "./xp-bar.mjs"
+import "./component.item-tile.mjs"
+import "./component.character-info-meter.mjs"
+import "./component.xp-bar.mjs"
 
 console.info("Loading components...")

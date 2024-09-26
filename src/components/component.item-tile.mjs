@@ -3,10 +3,10 @@
  * @file A custom element that represents an Ability Score and its modifier
  */
 
-import BaseElement from "../base-component.mjs";
-import { component } from "../decorators.mjs";
-import styles from "./ItemTile.css" with { type: "css" };
-import { html } from "../utils.mjs";
+import BaseElement from "./component.utils.base-component.mjs"
+import { component } from "./component.utils.decorators.mjs"
+import styles from "./component.item-tile.css" with { type: "css" }
+import html from "../utils/html.mjs"
 
 @component("uft-item-tile")
 class ItemTile extends BaseElement {

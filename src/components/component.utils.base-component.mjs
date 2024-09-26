@@ -1,4 +1,7 @@
-import { html } from "./utils"
+/**
+ * @file The base class for custom elements.
+ */
+import html from "../utils/html.mjs"
 
 /**
  * The base component class
@@ -15,18 +18,6 @@ export default class BaseComponent extends HTMLElement {
 
   /**
    * The HTML template to render for the component.
-   *
-   * **Note**: If you're using VSCode, install the `es6-string-html` extension
-   * to get syntax highlighting in these templates! Example:
-   *
-   * ```js
-   * return // html
-   * `
-   *   <div>Your Template</div>
-   * `
-   * ```
-   *
-   * @todo Is there a way to get templates from external files to help out with dev ergonomics here?
    */
   get template() {
     return html``

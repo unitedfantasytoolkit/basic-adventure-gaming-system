@@ -1,10 +1,10 @@
 /**
  * @file A custom element that represents a character class and its XP bar.
  */
-import BaseElement from "../base-component.mjs";
-// @ts-expect-error
-import styles from "./XPBar.css" with { type: "css" }
-import { component } from "../decorators.mjs";
+import BaseElement from "./component.utils.base-component.mjs"
+import { component } from "./component.utils.decorators.mjs"
+import html from "../utils/html.mjs"
+import styles from "./component.xp-bar.css" with { type: "css" }
 
 @component("uft-xp-bar")
 export default class XPBar extends BaseElement {
