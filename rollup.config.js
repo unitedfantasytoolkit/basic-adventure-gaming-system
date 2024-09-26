@@ -7,27 +7,28 @@
  */
 
 // === Build Tooling ===========================================================
-import { defineConfig } from "rollup";
+import { defineConfig } from "rollup"
 
 // === Node modules ============================================================
-import glob from "glob";
-import path from "path";
+import { glob } from "glob"
+import path from "path"
 
 // === Rollup plugins ==========================================================
 
 // --- Shared plugins ----------------------------------------------------------
-import { nodeResolve } from "@rollup/plugin-node-resolve";
-import { terser } from "rollup-plugin-terser";
-import eslint from "@rollup/plugin-eslint";
-import livereload from "rollup-plugin-livereload";
+import { nodeResolve } from "@rollup/plugin-node-resolve"
+import terser from "@rollup/plugin-terser"
+import babel from "@rollup/plugin-babel"
+import eslint from "@rollup/plugin-eslint"
+import livereload from "rollup-plugin-livereload"
 
 // --- System-specific plugins -------------------------------------------------
-import commonjs from "@rollup/plugin-commonjs";
-import sourcemaps from "rollup-plugin-sourcemaps";
-import copy from "rollup-plugin-copy-assets";
+import commonjs from "@rollup/plugin-commonjs"
+import sourcemaps from "rollup-plugin-sourcemaps"
+import copy from "rollup-plugin-copy-assets"
 
 // --- Component-specific plugins-----------------------------------------------
-import cssImports from "rollup-plugin-import-css";
+import cssImports from "rollup-plugin-import-css"
 
 // === Build helpers ===========================================================
 // --- Custom plugin: Extended Watcher -----------------------------------------
@@ -36,18 +37,18 @@ const watcher = (globs) => ({
     // eslint-disable-next-line no-restricted-syntax
     for (const item of globs) {
       glob.sync(path.resolve(item)).forEach((filename) => {
-        this.addWatchFile(filename);
-      });
+        this.addWatchFile(filename)
+      })
     }
   },
-});
+})
 
 // --- Helpful variables -------------------------------------------------------
 /**
  * Rollup injects an environment variable if watch mode is used.
  * See: https://rollupjs.org/guide/en/#-w--watch
  */
-const isWatchMode = !!process.env.ROLLUP_WATCH;
+const isWatchMode = !!process.env.ROLLUP_WATCH
 
 // === Rollup Config ===========================================================
 
@@ -71,6 +72,7 @@ export default defineConfig([
       sourcemaps(),
       nodeResolve({ browser: true }),
       commonjs(),
+      babel({ babelHelpers: "bundled" }),
       !isWatchMode && eslint(),
       !isWatchMode && terser(),
       copy({
@@ -82,7 +84,13 @@ export default defineConfig([
           "src/system.json",
         ],
       }),
-      isWatchMode && watcher(["src/**/*.hbs", "src/**/*.html"]),
+      isWatchMode &&
+        watcher([
+          "src/**/*.hbs",
+          "src/**/*.html",
+          "src/**/*.mjs",
+          "src/**/*.js",
+        ]),
       isWatchMode && livereload({ watch: "dist", port: 9999, delay: 1000 }),
     ],
   },
@@ -97,11 +105,14 @@ export default defineConfig([
     },
     plugins: [
       nodeResolve(),
+      cssImports({
+        modules: true,
+      }),
+      babel({ babelHelpers: "bundled" }),
       !isWatchMode && eslint(),
-      cssImports(),
       !isWatchMode && terser(),
-      isWatchMode && watcher(["src/**/*.hbs", "src/**/*.html"]),
-      isWatchMode && livereload({ watch: "dist", port: 9999, delay: 1000 }),
+      // isWatchMode && watcher(["src/**/*.hbs", "src/**/*.html"]),
+      // isWatchMode && livereload({ watch: "dist", port: 9999, delay: 1000 }),
     ],
   },
-]);
+])

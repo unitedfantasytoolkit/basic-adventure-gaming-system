@@ -1,4 +1,4 @@
-import { html } from "./utils";
+import { html } from "./utils"
 
 /**
  * The base component class
@@ -10,7 +10,7 @@ export default class BaseComponent extends HTMLElement {
    * @returns An array of `CSSStyleSheet`s to be attached to the Shadow DOM
    */
   static get styles() {
-    return [];
+    return []
   }
 
   /**
@@ -29,7 +29,7 @@ export default class BaseComponent extends HTMLElement {
    * @todo Is there a way to get templates from external files to help out with dev ergonomics here?
    */
   get template() {
-    return html``;
+    return html``
   }
 
   /**
@@ -49,46 +49,55 @@ export default class BaseComponent extends HTMLElement {
    *
    * A must when trying to use a component to update a Foundry document!
    */
-  static formAssociated = true;
+  static formAssociated = true
 
   // ---------------------------------------------------------------------
   // INFRASTRUCTURE STUFF BELOW -- PROBABLY DON'T CHANGE IT IN A COMPONENT
 
   constructor() {
-    super();
+    super()
     this.shadowRoot = this.attachShadow({
       mode: "open",
       delegatesFocus: true,
-    });
-    this.internals = this.attachInternals();
+    })
+    this.internals = this.attachInternals()
   }
 
   /**
    * The root of this component's shadow DOM.
    */
-  shadowRoot;
+  shadowRoot
 
   /**
    * The element's internals, containing useful tools for interacting with forms and validation
    */
-  internals;
+  internals
 
   /**
    * Fires when the component is mounted to the DOM, and whenever it sees changes.
    */
   async connectedCallback() {
-    await this.prepareData();
-    this.value = this.getAttribute("value")?.toString() || "";
-    this.shadowRoot.adoptedStyleSheets = this.constructor.styles;
-    this.shadowRoot.innerHTML = this.template;
-    this.events();
+    await this.prepareData()
+    this.value = this.getAttribute("value")?.toString() || ""
+    this.shadowRoot.adoptedStyleSheets = this.constructor.styles
+    this.shadowRoot.innerHTML = this.template
+    this.events()
+    this.dispatchEvent(
+      new CustomEvent("component:connected", { bubbles: false })
+    )
+  }
+
+  async disconnectedCallback() {
+    this.dispatchEvent(
+      new CustomEvent("component:disconnected", { bubbles: false })
+    )
   }
 
   /**
    * The component's value, from its attributes.
    */
   get value() {
-    return this.getAttribute("value") || "";
+    return this.getAttribute("value") || ""
   }
 
   /**
@@ -101,24 +110,24 @@ export default class BaseComponent extends HTMLElement {
     // @ts-expect-error - this.constructor is of type Function,
     //                     but refers to the inheritor's class,
     //                     which has static members like formAssociated
-    if (!this.constructor.formAssociated) return;
+    if (!this.constructor.formAssociated) return
 
-    this.setAttribute("value", newValue);
-    this.internals?.setFormValue(newValue);
-    this.dispatchEvent(new Event("change", { bubbles: true }));
+    this.setAttribute("value", newValue)
+    this.internals?.setFormValue(newValue)
+    this.dispatchEvent(new Event("change", { bubbles: true }))
   }
 
   get name() {
-    return this.getAttribute("name") || "";
+    return this.getAttribute("name") || ""
   }
 
   static localize(s) {
     // @ts-expect-error - game.i18n exists
-    return game.i18n.localize(s);
+    return game.i18n.localize(s)
   }
 
   static format(s) {
     // @ts-expect-error - game.i18n exists
-    return game.i18n.format(s, options);
+    return game.i18n.format(s, options)
   }
 }

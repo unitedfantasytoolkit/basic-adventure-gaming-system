@@ -1,0 +1,39 @@
+<article class="tab region-{{tab.id}} {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+  <header class="tab__header">
+    <h2>{{localize "BAGS.CharacterClass.Tabs.SpellSlots"}}</h2>
+  </header>
+
+  <div class="tab__content spell-slot-table scrollable">
+    <table class="spell-slots">
+      <thead>
+        <tr>
+          <th>{{localize "BAGS.CharacterClass.SpellSlots.Label"}}</th>
+          {{#each (repeat @root.item.system.maxLevel)}}
+          <th>{{add @index 1}}</th>
+          {{/each}}
+        </tr>
+      </thead>
+      <tbody>
+        {{#each item.system.spellSlots as |spellLevel spellLevelIndex|}}
+        <tr data-pool-id="{{spellLevelIndex}}">
+          <th>{{{ordinal (add spellLevelIndex 1)}}}</th>
+          {{#each (repeat @root.item.system.maxLevel)}}
+          <td>
+            <input type="text" data-dtype="Number"
+              name="system.spellSlots.{{spellLevelIndex}}.{{@index}}"
+              value="{{#if (lookup spellLevel.perLevel @index)}}{{lookup spellLevel @index}}{{/if}}"
+              placeholder="&ndash;" />
+          </td>
+          {{/each}}
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+	<footer class="tab-controls flexrow">
+		<button type="button" data-action="add-spell-level"><i class="fas fa-plus"></i>{{localize
+			"BAGS.CharacterClass.SpellSlots.Add"}}</button>
+		<button type="button" data-action="remove-spell-level"><i class="fas fa-minus"></i>{{localize
+			"BAGS.CharacterClass.SpellSlots.Remove"}}</button>
+	</footer>
+</article>

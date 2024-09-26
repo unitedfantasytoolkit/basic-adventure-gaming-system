@@ -1,0 +1,110 @@
+.application:not(.minimized) {
+  --outer-border-offset: 0.3571rem;
+  --inner-border-offset: -0.1429rem;
+  --border-width: 0.1429rem;
+  --window-content-padding: 0.5rem;
+  --window-content-header-padding: 1rem;
+  --header-height: calc(var(--corner-ornament-size) + 0);
+  --application-filler-gradient:
+    linear-gradient(
+      15deg,
+      #0d0e23 20%,
+      #3c5063 100%
+    );
+  --header-banner: var(--application-filler-gradient);
+
+  border: 6px double var(--border-color);
+
+  &,
+  & .window-content {
+    /* border: 2px solid var(--border-color); */
+  }
+
+  .window-header {
+    /* position: absolute; */
+
+    /* top: 0; */
+
+    /* left: 0; */
+
+    /* right: 0; */
+    padding: 0 0 var(--border-width);
+
+    /* line-height: 1em; */
+
+    /* background: none; */
+
+    /* z-index: 2; */
+    box-shadow: unset;
+    border: none;
+
+    /* .window-icon { */
+
+    /* display: none; */
+
+    /* } */
+    .window-title {
+      /* text-align: center; */
+
+      /* transform: translateY(-50%); */
+
+      /* padding: 0.25rem; */
+
+      /* border: 2px solid var(--border-color); */
+
+      /* width: min-content; */
+    }
+  }
+
+  .controls-dropdown {
+    top: 2rem;
+    z-index: 2;
+  }
+
+  .window-content {
+    padding: var(--window-content-padding);
+
+    &:has(.window-content__header) {
+      padding: 0;
+    }
+
+    &__header {
+      margin-bottom: 1rem;
+      position: relative;
+      padding: var(--window-content-header-padding);
+      background-image:
+        var(
+          --header-banner,
+          linear-gradient(15deg, #0d0e23 20%, #3c5063 100%)
+        );
+
+      &::after {
+        content: "";
+        height: 2px;
+        background-image:
+          linear-gradient(
+            90deg,
+            transparent 0%,
+            var(--border-color) 20%,
+            var(--border-color) 80%,
+            transparent 100%
+          );
+        position: absolute;
+        left: 2rem;
+        right: 2rem;
+        bottom: -1px;
+      }
+
+      :is(h1, h2, h3, h4, h5, h6) {
+        font-size: var(--font-h2-size);
+        border: none;
+        text-align: center;
+        margin: 0;
+      }
+    }
+  }
+}
+
+prose-mirror .editor-container {
+  overflow: scroll;
+}

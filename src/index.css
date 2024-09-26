@@ -1,34 +1,17 @@
-:root {
-  --color: #f00;
-}
+/* === Google Fonts ========================================================= */
+@import url("https://fonts.googleapis.com/css2?family=Gabriela&display=swap");
 
-@layer system {
-  .application--bags {
-    &,
-    .window-content {
-      overflow: visible !important;
-    }
+/* === Common Styles ======================================================== */
+@import url("./styles/variables.css");
+@import url("./styles/overrides.css");
+@import url("./styles/shared.css");
 
-    &:not(.minimized) {
-      min-height: calc(var(--header-height) + 400px) !important;
-    }
+/* === Sheet Styles ========================================================= */
 
-    .sheet-tabs {
-      border-width: 0 !important;
-      position: absolute;
-      right: -30px;
-      flex-direction: column !important;
+/* --- Actors: Character ---------------------------------------------------- */
+@import url("./actors/actor.character.sheet.css");
 
-      label {
-        display: none;
-      }
-    }
-
-    .application {
-      &__header {
-        min-height: 100px;
-        background-image: var(--header-banner);
-      }
-    }
-  }
-}
+/* --- Items: Character Class ----------------------------------------------- */
+@import url("./items/item.character-class.sheet.css");
+@import url("./items/item.character-class.details-editor.css");
+@import url("./items/item.character-class.xp-table-editor.css");

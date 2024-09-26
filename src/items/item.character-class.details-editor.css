@@ -1,0 +1,37 @@
+.application--class-details-editor {
+  .control {
+    &:is(.control--details, .control--requisite-grid) {
+      display: grid;
+      align-items: center;
+      gap: 0.5em;
+    }
+
+    &--requisite-grid {
+      grid-template-columns: max-content repeat(7, 1fr);
+
+      &:not(:has([name$="isAnd"])) {
+        grid-template-columns: max-content repeat(6, 1fr);
+      }
+
+      .requisite-grid {
+        &__heading {
+          text-align: right;
+          grid-column-start: 1;
+        }
+
+        &__stat-label {
+          text-align: center;
+
+          &:first-of-type {
+            grid-column-start: 2;
+          }
+        }
+      }
+
+      input {
+        text-align: center;
+        justify-self: center;
+      }
+    }
+  }
+}

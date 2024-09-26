@@ -18,7 +18,7 @@
       "url": ""
     }
   ],
-  "esmodules": ["bags.min.js"],
+  "esmodules": ["components.js", "bags.min.js"],
   "styles": ["bags.css"],
   "languages": [
     {

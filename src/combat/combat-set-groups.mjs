@@ -1,12 +1,12 @@
 // import OSE from "../config";
-import { allianceGroups } from "./combat-group";
+import { allianceGroups } from "./combat-group"
 
-const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
+const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api
 
 export default class BAGSCombatGroupSelector extends HandlebarsApplicationMixin(
-  ApplicationV2,
+  ApplicationV2
 ) {
-  _highlighted;
+  _highlighted
 
   // ===========================================================================
   // APPLICATION SETUP
@@ -35,13 +35,13 @@ export default class BAGSCombatGroupSelector extends HandlebarsApplicationMixin(
       width: 330,
       height: "auto",
     },
-  };
+  }
 
   static PARTS = {
     main: {
       template: `/systems/basic-adventure-gaming-system/dist/templates/apps/combat-set-groups.hbs`,
     },
-  };
+  }
 
   // ===========================================================================
   // RENDER SETUP
@@ -51,16 +51,16 @@ export default class BAGSCombatGroupSelector extends HandlebarsApplicationMixin(
     return {
       groups: allianceGroups,
       combatants: game.combat.combatants,
-    };
+    }
   }
 
   _onRender(context, options) {
-    super._onRender(context, options);
+    super._onRender(context, options)
     for (const li of this.element.querySelectorAll("[data-combatant-id]")) {
-      li.addEventListener("mouseover", this.#onCombatantHoverIn.bind(this));
-      li.addEventListener("mouseout", this.#onCombatantHoverOut.bind(this));
+      li.addEventListener("mouseover", this.#onCombatantHoverIn.bind(this))
+      li.addEventListener("mouseout", this.#onCombatantHoverOut.bind(this))
     }
-    this.element.addEventListener("change", this._updateObject);
+    this.element.addEventListener("change", this._updateObject)
   }
 
   // ===========================================================================
@@ -68,8 +68,8 @@ export default class BAGSCombatGroupSelector extends HandlebarsApplicationMixin(
   // ===========================================================================
 
   async _updateObject(event) {
-    const combatant = game.combat.combatants.get(event.target.name);
-    await combatant.setFlag(game.system.id, "group", event.target.value);
+    const combatant = game.combat.combatants.get(event.target.name)
+    await combatant.setFlag(game.system.id, "group", event.target.value)
   }
 
   // ===========================================================================
@@ -77,20 +77,20 @@ export default class BAGSCombatGroupSelector extends HandlebarsApplicationMixin(
   // ===========================================================================
 
   #onCombatantHoverIn(event) {
-    event.preventDefault();
-    if (!canvas.ready) return;
-    const li = event.currentTarget;
-    const combatant = game.combat.combatants.get(li.dataset.combatantId);
-    const token = combatant.token?.object;
+    event.preventDefault()
+    if (!canvas.ready) return
+    const li = event.currentTarget
+    const combatant = game.combat.combatants.get(li.dataset.combatantId)
+    const token = combatant.token?.object
     if (token?.isVisible) {
-      if (!token.controlled) token._onHoverIn(event, { hoverOutOthers: true });
-      this._highlighted = token;
+      if (!token.controlled) token._onHoverIn(event, { hoverOutOthers: true })
+      this._highlighted = token
     }
   }
 
   #onCombatantHoverOut(event) {
-    event.preventDefault();
-    if (this._highlighted) this._highlighted._onHoverOut(event);
-    this._highlighted = null;
+    event.preventDefault()
+    if (this._highlighted) this._highlighted._onHoverOut(event)
+    this._highlighted = null
   }
 }

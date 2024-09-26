@@ -1,0 +1,197 @@
+.application--character-class-sheet {
+  --application-height: 600px;
+
+  container-name: sheet;
+  container-type: inline-size;
+
+  &:not(.minimized) {
+    min-width: 620px;
+  }
+
+  .window-content {
+    padding: 0 !important;
+
+    /* article { */
+
+    /* gap: 1em; */
+
+    /* grid-template-columns: 2fr 1fr; */
+
+    /* display: grid; */
+
+    /* align-items: start; */
+
+    /* grid-template-areas: "flavor" "main" "aside" "advancement"; */
+
+    /* main { */
+
+    /* grid-area: main; */
+
+    /* } */
+
+    /* aside { */
+
+    /* grid-area: aside; */
+
+    /* } */
+
+    /* .flavor { */
+
+    /* grid-area: flavor; */
+
+    /* max-width: 60ch; */
+
+    /* font-style: italic; */
+
+    /* opacity: 0.8; */
+
+    /* text-align: center; */
+
+    /* margin: 0 auto; */
+
+    /* grid-span-columns: 1/2; */
+
+    /* } */
+
+    /* .advancement { */
+
+    /* grid-area: advancement; */
+
+    /* grid-span-columns: 1/2; */
+
+    /* } */
+
+    /* } */
+
+    /* @container sheet (min-width: 700px) { */
+
+    /* article { */
+
+    /* grid-template-areas: "flavor flavor" "main aside" "advancement advancement"; */
+
+    /* } */
+
+    /* } */
+
+    /* @container sheet (min-width: 1100px) { */
+
+    /* article { */
+
+    /* grid-template-areas: "flavor flavor main " "aside advancement advancement"; */
+
+    /* } */
+
+    /* } */
+
+    &__header {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+
+      .xp- [name="name"] {
+        font-size: var(--font-size-document-name);
+        height: unset;
+        border: none;
+        font-family: var(--font-family-document-name);
+        background: transparent;
+      }
+    }
+
+    article:has(table) {
+      overflow: scroll;
+    }
+
+    table {
+      margin: 0;
+    }
+  }
+
+  .empty {
+    text-align: center;
+    font-style: italic;
+    color: var(--color-text-dark-3);
+  }
+
+  .flavor {
+    max-width: 60ch;
+    font-style: italic;
+    opacity: 0.8;
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  table {
+    white-space: nowrap;
+    margin: 0;
+    border: none;
+    border-spacing: 0;
+
+    thead {
+      th {
+        padding: 3px;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+
+        &:first-child {
+          position: sticky;
+          left: 0;
+          z-index: 2;
+        }
+
+        &:first-of-type {
+          background-color: var(--color-text-dark-3);
+        }
+      }
+    }
+
+    td {
+      text-align: center;
+
+      input {
+        min-width: 1.75em;
+      }
+    }
+
+    tbody {
+      th {
+        background: var(--background);
+        position: sticky;
+        left: 0;
+        z-index: 1;
+      }
+    }
+  }
+
+  &-pools {
+    white-space: nowrap;
+
+    tbody {
+      :is(th, td) {
+        padding: 0.25em;
+      }
+
+      td input {
+        max-width: 3em;
+        text-align: center;
+      }
+    }
+  }
+
+  .xp-table {
+    .saves {
+      /* background-color: var(--color-text-light-1); */
+    }
+
+    caption {
+      caption-side: bottom;
+    }
+  }
+
+  .gear-table {
+    .content-link {
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+  }
+}

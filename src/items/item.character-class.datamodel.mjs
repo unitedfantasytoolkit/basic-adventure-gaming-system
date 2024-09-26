@@ -5,28 +5,30 @@ import {
   HIT_DIE_OPTIONS,
   SAVING_THROWS,
   WORST_POSSIBLE_SAVE,
-} from "../../config/constants.mjs";
-import mapToNumberField from "../../utils/map-to-number-field.mjs";
+} from "../config/constants.mjs"
+import filterFalsyKeyVals from "../utils/filter-falsy-key-vals.mjs"
+import mapToNumberField from "../utils/map-to-number-field.mjs"
 
 const {
   StringField,
   ArrayField,
   NumberField,
   BooleanField,
-  ObjectField,
   SchemaField,
   DocumentUUIDField,
   HTMLField,
   FilePathField,
-} = foundry.data.fields;
+} = foundry.data.fields
 
 export default class BAGSCharacterClassDataModel extends foundry.abstract
   .TypeDataModel {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       tabs: [{ navSelector: ".tabs", contentSelector: "form", initial: "xp" }],
-    });
+    })
   }
+
+  static LOCALIZATION_PREFIXES = ["BAGS.CharacterClass"]
 
   /**
    *
@@ -34,16 +36,16 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
   static defineSchema() {
     const prerequisiteFields = ABILITY_SCORES.entries().reduce(
       mapToNumberField,
-      {},
-    );
+      {}
+    )
     const halfPrimeRequisiteFields = ABILITY_SCORES.entries().reduce(
       mapToNumberField,
-      {},
-    );
+      {}
+    )
     const fullPrimeRequisiteFields = ABILITY_SCORES.entries().reduce(
       mapToNumberField,
-      {},
-    );
+      {}
+    )
     const savingThrowFields = SAVING_THROWS.reduce(
       (obj, key) => ({
         ...obj,
@@ -54,17 +56,21 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
           initial: WORST_POSSIBLE_SAVE,
         }),
       }),
-      {},
-    );
+      {}
+    )
     const savingThrowDefaults = SAVING_THROWS.reduce(
       (obj, key) => ({
         ...obj,
         [key]: WORST_POSSIBLE_SAVE,
       }),
-      {},
-    );
+      {}
+    )
 
     return {
+      flavorText: new HTMLField({
+        required: false,
+        blank: true,
+      }),
       description: new HTMLField({
         required: false,
         blank: true,
@@ -110,7 +116,13 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
 
       hitDieSize: new NumberField({
         min: HIT_DIE_OPTIONS[0],
-        choices: HIT_DIE_OPTIONS,
+        choices: HIT_DIE_OPTIONS.reduce(
+          (obj, key) => ({
+            ...obj,
+            [key]: `d${key}`,
+          }),
+          []
+        ),
         initial: DEFAULT_CHARACTER_HIT_DIE_SIZE,
         integer: true,
       }),
@@ -124,6 +136,22 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
 
       spellList: new ArrayField(new DocumentUUIDField({ type: "Item" })),
 
+      isAncestryClass: new BooleanField({
+        initial: false,
+      }),
+      ancestryClassConstraints: new ArrayField(
+        new SchemaField({
+          ancestry: new DocumentUUIDField({
+            type: "Item",
+          }),
+          level: new NumberField({
+            initial: 10,
+            min: 1,
+          }),
+        })
+      ),
+
+      // --- Advancement -------------------------------------------------------
       xp: new NumberField({
         min: 0,
         initial: 0,
@@ -151,8 +179,14 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
               saves: savingThrowDefaults,
             },
           ],
-        },
+        }
       ),
+
+      manuallySetLevel: new NumberField({
+        min: 1,
+        initial: 1,
+      }),
+
       // --- Leveled Resources -------------------------------------------------
       /**
        * Leveled resources are resources that
@@ -170,42 +204,24 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
               perLevel: new ArrayField(
                 // Third level: amount of this tier of resource at Index+1 level
                 // (Magic User of level 1 has "Spell Slots" > "1st" > 1)
-                new NumberField({ blank: true, nullable: true }),
+                new NumberField({ blank: true, nullable: true })
               ),
-            }),
+            })
           ),
-        }),
+        })
       ),
       // --- Spell slots -------------------------------------------------------
       spellSlots: new ArrayField(
-        new SchemaField({
-          // First level: the type of resource ("Spell Slots")
-          level: new NumberField({ blank: false, min: 1, initial: 1 }),
-          pool: new ArrayField(
-            new SchemaField({
-              // Second level: a "tier" of this resource type ("Spell Slots" > "1st")
-              label: new StringField({ blank: false }),
-              perLevel: new ArrayField(
-                // Third level: amount of this tier of resource at Index+1 level
-                // (Magic User of level 1 has "Spell Slots" > "1st" > 1)
-                new NumberField({ blank: true, nullable: true }),
-              ),
-            }),
-          ),
-        }),
+        new ArrayField(new NumberField({ blank: true, nullable: true }))
       ),
-    };
+    }
   }
 
   /**
    *  @returns {Promise[]} - An array of promises that make up the requested items
    */
   get featureItems() {
-    return this.features.map((i) => fromUuidSync(i)).filter((i) => !!i);
-  }
-
-  get maxLevel() {
-    return this.xp?.length || 0;
+    return this.features.map((i) => fromUuidSync(i)).filter((i) => !!i)
   }
 
   /**
@@ -214,68 +230,69 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
    * @returns {Promise[]} - An array of promises that make up the requested items
    */
   async getSpellItems() {
-    const items = await Promise.all(this.spellList.map((i) => fromUuid(i)));
-    const highestLevel = items.reduce((highest, i) => {
-      return i?.system?.lvl > highest ? i?.system?.lvl : highest;
-    }, 0);
-    if (!highestLevel) return [];
-    const list = new Array(highestLevel).fill(null).map(() => []);
+    const items = await Promise.all(this.spellList.map((i) => fromUuid(i)))
+    const highestLevel = items.reduce(
+      (highest, i) => (i?.system?.lvl > highest ? i?.system?.lvl : highest),
+      0
+    )
+    if (!highestLevel) return []
+    const list = new Array(highestLevel).fill(null).map(() => [])
     items.forEach((i) => {
-      if (!i) return; // If the item doesn't exist, bail
-      const idx = (i?.system?.lvl || 1) - 1;
+      if (!i) return // If the item doesn't exist, bail
+      const idx = (i?.system?.lvl || 1) - 1
       try {
-        list[idx].push(i);
+        list[idx].push(i)
       } catch (e) {
-        console.error(e);
-        console.info(list, idx, i);
+        console.error(e)
+        console.info(list, idx, i)
       }
-    });
+    })
 
-    return list;
-  }
-
-  static filterFalsyKeyVals(source) {
-    return Object.keys(source)
-      .filter((k) => !!source[k])
-      .reduce(
-        (obj, k) => ({
-          ...obj,
-          [k]: source[k],
-        }),
-        {},
-      );
+    return list
   }
 
   get hasPrerequisites() {
-    return !!Object.keys(this.prerequisitesFormatted).length;
+    return !!Object.keys(this.prerequisitesFormatted).length
   }
+
   get prerequisitesFormatted() {
-    return CharacterClassDataModel.filterFalsyKeyVals(this.prerequisites);
+    return filterFalsyKeyVals(this.prerequisites)
   }
+
   get prerequsiitesCount() {
-    return Object.keys(this.preequisitesFormatted).length;
+    return Object.keys(this.preequisitesFormatted).length
   }
 
   get halfRequisitesFormatted() {
-    return CharacterClassDataModel.filterFalsyKeyVals(
-      this.primerequisites.half,
-    );
+    const reqs = filterFalsyKeyVals(this.halfPrimeRequisites)
+    if (reqs.isAnd) delete reqs.isAnd
+    return reqs
   }
+
   get halfRequisitesCount() {
-    return Object.keys(this.halfRequisitesFormatted).length;
+    return Object.keys(this.halfRequisitesFormatted).length
   }
 
   get fullRequisitesFormatted() {
-    return CharacterClassDataModel.filterFalsyKeyVals(
-      this.primerequisites.full,
-    );
+    const reqs = filterFalsyKeyVals(this.fullPrimeRequisites)
+    if (reqs.isAnd) delete reqs.isAnd
+    return reqs
   }
+
   get fullRequisitesCount() {
-    return Object.keys(this.fullRequisitesFormatted).length;
+    return Object.keys(this.fullRequisitesFormatted).length
   }
 
   get hasSpells() {
     return !!this.spellList.map((i) => fromUuidSync(i)).filter((i) => !!i)
-      .length;
+      .length
+  }
+
+  get level() {
+    return this.manuallySetLevel
+  }
+
+  get maxLevel() {
+    return this.xpTable.length || 1
   }
 }

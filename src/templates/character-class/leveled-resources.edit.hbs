@@ -1,0 +1,68 @@
+<article class="tab region-{{tab.id}} {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+	<header class="tab__header">
+		<h2>{{localize "BAGS.CharacterClass.Tabs.Resources"}}</h2>
+	</header>
+	<div class="tab__content resource-table scrollable">
+		{{#each item.system.leveledResources as |resourceItem resourceIndex|}}
+		<div class="resource-category" data-category-id="{{@index}}">
+			<header>
+				<label>{{localize "BAGS.CharacterClass.ClassResources.Category.Label"}}</label>
+				<input type="text" data-dtype="String" name="system.leveledResources.{{resourceIndex}}.label"
+					value="{{resourceItem.label}}" />
+				<button type="button" class="delete-button delete-resource" data-action="remove-resource"><i class="fa fa-trash"></i>
+					{{localize "BAGS.CharacterClass.ClassResources.Category.Remove"}}</button>
+				<button type="button" class="add-resource-pool" data-action="add-resource-pool">
+				<i class="fa fa-file-plus"></i>
+				{{localize "BAGS.CharacterClass.ClassResources.Pool.Add" }}</button>
+			</header>
+			{{#if pool}}
+			<div class="resource-table">
+				<table class="resource-pools">
+					<thead>
+						<tr>
+							<th>{{localize "BAGS.CharacterClass.ClassResources.Pool.Label"}}</th>
+							{{#each (repeat @root.item.system.maxLevel)}}
+							<th>{{add @index 1}}</th>
+							{{/each}}
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						{{#each pool as |poolItem poolIndex|}}
+						<tr data-pool-id="{{poolIndex}}">
+							<th>
+								<input type="text" name="system.leveledResources.{{resourceIndex}}.pool.{{poolIndex}}.label"
+									value="{{poolItem.label}}" />
+							</th>
+							{{#each (repeat @root.item.system.maxLevel)}}
+							<td>
+								<input type="text" data-dtype="Number"
+									name="system.leveledResources.{{resourceIndex}}.pool.{{poolIndex}}.perLevel.{{@index}}"
+									value="{{#if (lookup poolItem.perLevel @index)}}{{lookup poolItem.perLevel @index}}{{/if}}"
+									placeholder="&ndash;" />
+							</td>
+							{{/each}}
+							<td class="controls">
+								<button type="button" class="delete-button delete-resource-pool" aria-label="{{localize "
+									BAGS.CharacterClass.ClassResources.Pool.Remove"}}" data-action="remove-resource-pool"><i
+										class="fas fa-trash"></i></button>
+							</td>
+						</tr>
+						{{/each}}
+					</tbody>
+				</table>
+			</div>
+			{{else}}
+			<p class="empty">{{localize "BAGS.CharacterClass.ClassResources.Pool.Empty"}}</p>
+			{{/if}}
+		</div>
+		{{else}}
+		<p class="empty">{{localize "BAGS.CharacterClass.ClassResources.Category.Empty"}}</p>
+		{{/each}}
+	</div>
+
+	<footer class="tab__footer">
+		<button type="button" class="add-resource" data-action="add-resource">{{localize
+			"BAGS.CharacterClass.ClassResources.Category.Add"}}</button>
+	</footer>
+</article>

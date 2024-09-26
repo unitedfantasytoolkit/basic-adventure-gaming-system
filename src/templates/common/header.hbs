@@ -1,0 +1,9 @@
+<header class="window-content__header">
+  <section>
+    {{#if document}}
+      {{formInput fields.name value=document.name}}
+    {{else}}
+      <h1>{{title}}</h1>
+    {{/if}}
+  </section>
+</header>

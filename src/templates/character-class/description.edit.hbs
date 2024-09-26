@@ -1,0 +1,14 @@
+{{!
+}}
+<section
+  class="tab region-{{tab.id}} {{tab.cssClass}}"
+  data-tab="{{tab.id}}"
+  data-group="{{tab.group}}"
+>
+  <header class="tab__header">
+    <h2>{{localize "BAGS.CharacterClass.Tabs.Description"}}</h2>
+  </header>
+  <prose-mirror name="system.description" value="{{item.system.description}}"></prose-mirror>
+    <h3>{{localize "BAGS.CharacterClass.Tabs.Description"}}</h3>
+  <prose-mirror name="system.flavorText" value="{{item.system.flavorText}}"></prose-mirror>
+</section>

@@ -4,21 +4,18 @@
  * Responsible for setting up hooks and system-wide config/globals.
  */
 
-// ============================================================================
-// LIBRARIES
-// ============================================================================
-// import './lib/pug';
+// === Libraries ===============================================================
 
-// ============================================================================
-// HOOKS
-// ============================================================================
-import "./hooks/devModeReady";
-import "./hooks/settings";
-import "./hooks/init.mjs";
-import "./hooks/init.combat.mjs";
-import "./hooks/updateGameTime";
+// === Hooks ===================================================================
+import "./hooks/devModeReady.mjs"
+import "./hooks/init.settings.mjs"
+import "./hooks/init.handlebars.mjs"
+import "./hooks/init.actors.mjs"
+import "./hooks/init.items.mjs"
+import "./hooks/init.combat.mjs"
+import "./hooks/updateGameTime.mjs"
 
-console.info(`======================================
-BASIC ADVENTURE GAMING SYSTEM
-Ready!
-======================================`);
+
+Hooks.once("ready", async () => {
+  const devsheet = (await fromUuid("Actor.A81XqzmshDo9D55H")).sheet.render(true)
+})

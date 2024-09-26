@@ -1,0 +1,91 @@
+.application--xp-table-editor {
+  --application-height: 620px;
+
+  article {
+    max-width: calc(100% - var(--window-content-padding));
+  }
+
+  table {
+    max-width: 100%;
+
+    td {
+      &:has(input):not(.xp-field--xp) {
+        max-width: calc(3ch + 1rem);
+        text-align: center;
+      }
+    }
+  }
+
+  .spell-slot-table {
+    tr th {
+      &:first-of-type {
+        text-wrap: nowrap;
+      }
+
+      & + th {
+        text-align: center;
+      }
+    }
+
+    input {
+      text-align: center;
+    }
+  }
+
+  .resource {
+    &-table {
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+
+      table {
+        overflow: initial;
+
+        tr {
+          :is(th, td) {
+            &:is(:first-of-type, :last-of-type) {
+              position: sticky;
+            }
+
+            &:is(first-of-type) {
+              left: 0;
+            }
+
+            &:is(last-of-type) {
+              right: 0;
+            }
+          }
+        }
+      }
+    }
+
+    &-category {
+      text-align: center;
+
+      header {
+        display: flex;
+        gap: 1em;
+        flex-direction: row;
+        align-items: center;
+        padding: 0 0.25em;
+
+        input {
+          text-align: left;
+        }
+
+        button {
+          flex: 0 1 min-content;
+          text-wrap: nowrap;
+          text-align: center;
+        }
+      }
+    }
+
+    .delete-pool {
+      font-size: 0.8em;
+      padding: 0.5em;
+      line-height: 1em;
+    }
+  }
+}

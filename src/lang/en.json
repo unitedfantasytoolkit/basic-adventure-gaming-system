@@ -1,14 +1,185 @@
 {
   "BAGS": {
+    "Ordinal": {
+      "one": "st",
+      "two": "nd",
+      "few": "rd",
+      "other": "th"
+    },
+    "AbilityScores": {
+      "Strength": {
+        "Short": "Str",
+        "Long": "Strength"
+      },
+      "Intelligence": {
+        "Short": "Int",
+        "Long": "Intelligence"
+      },
+      "Wisdom": {
+        "Short": "Wis",
+        "Long": "Wisdom"
+      },
+      "Dexterity": {
+        "Short": "Dex",
+        "Long": "Dexterity"
+      },
+      "Constitution": {
+        "Short": "Con",
+        "Long": "Constitution"
+      },
+      "Charisma": {
+        "Short": "Cha",
+        "Long": "Charisma"
+      },
+      "str": {
+        "Short": "Str",
+        "Long": "Strength"
+      },
+      "int": {
+        "Short": "Int",
+        "Long": "Intelligence"
+      },
+      "wis": {
+        "Short": "Wis",
+        "Long": "Wisdom"
+      },
+      "dex": {
+        "Short": "Dex",
+        "Long": "Dexterity"
+      },
+      "con": {
+        "Short": "Con",
+        "Long": "Constitution"
+      },
+      "cha": {
+        "Short": "Cha",
+        "Long": "Charisma"
+      }
+    },
+    "SavingThrows": {
+      "Death": {
+        "Short": "Death",
+        "Long": "Death/Poison",
+        "Initial": "D"
+      },
+      "Wands": {
+        "Short": "Wands",
+        "Long": "Wands",
+        "Initial": "W"
+      },
+      "Paralysis": {
+        "Short": "Paralysis",
+        "Long": "Paralysis/Petrification",
+        "Initial": "P"
+      },
+      "Breath": {
+        "Short": "Breath",
+        "Long": "Breath Weapons",
+        "Initial": "B"
+      },
+      "Spell": {
+        "Short": "Spells",
+        "Long": "Spells/Rods/Staves",
+        "Initial": "S"
+      }
+    },
     "CharacterClass": {
       "Tabs": {
+        "Summary": "Summary",
+        "Advancement": "Advancement",
+        "Effects": "Effects",
         "Description": "Description",
-        "Information": "Class Details",
-        "XP": "XP Table",
-        "Resources": "Resources Per Level",
+        "Restrictions": "Restrictions",
+        "Information": "Details",
+        "XP": "Experience",
+        "Resources": "Resources",
         "SpellList": "Spell List",
         "SpellSlots": "Spell Slots",
-        "Features": "Class Features"
+        "Features": "Features"
+      },
+      "XPTable": {
+        "EditorTitle": "Advancement Table Editor",
+        "ActionLabel": "Edit Advancement Table",
+        "Level": "Level",
+        "XP": "Exp.",
+        "HD": "Hit Dice",
+        "THAC0": "THAC0",
+        "ConMod": "Con. Mod?",
+        "Saves": "Saving Throws",
+        "Add": "Add Level",
+        "Remove": "Remove Level",
+        "Empty": "This class has no levels.",
+        "NoMoreConMod": "Modifiers from CON no longer apply"
+      },
+      "Information": {
+        "EditorTitle": "Class Details Editor",
+        "ActionLabel": "Edit Class Details",
+        "HitDieSize": "Hit Die Size",
+        "GearTable": "Gear Table",
+        "GearTableEmpty": "Unassigned",
+        "Weapons": "Weapons",
+        "Armor": "Armor",
+        "Languages": "Languages",
+        "Prerequisites": "Prerequisites",
+        "PrimeRequisites": "Prime Requsiites",
+        "PrimeRequisitesEmpty": "None",
+        "PrimeRequisitesInclusive": "and",
+        "PrimeRequisitesExclusive": "or",
+        "HalfPrimeRequisites": "Half Prime Requisites",
+        "FullPrimeRequisites": "Full Prime Requisites",
+        "PrimeRequisiteInclusivity": "Inclusive",
+        "Restrictions": "Restrictions",
+        "AdditionalRestrictions": "Additional Restrictions"
+      },
+      "ClassResources": {
+        "Category": {
+          "Label": "Category",
+          "Add": "Add Resource Category",
+          "Remove": "Remove Resource Category",
+          "Empty": "No resource categories have been created."
+        },
+        "Pool": {
+          "Label": "Resource",
+          "Add": "Add Resource",
+          "Remove": "Remove Resource",
+          "Empty": "No resources exist for this category."
+        }
+      },
+      "SpellSlots": {
+        "Label": "Spell Levels",
+        "Add": "Add Spell Level",
+        "Remove": "Remove Spell Level"
+      },
+      "FIELDS": {
+        "hitDieSize": {
+          "hint": "",
+          "label": "Hit Die Size"
+        },
+        "weapons": {
+          "hint": "",
+          "label": "Weapons"
+        },
+        "armor": {
+          "hint": "",
+          "label": "Armor"
+        },
+        "languages": {
+          "hint": "Native languages for this class.",
+          "label": "Languages"
+        },
+        "gearTable": {
+          "hint": "The Roll Table to roll on when determining starting equipment for this class.",
+          "label": "Gear Table"
+        },
+        "isAncestryClass": {
+          "hint": "This class represents an ancestry, rather than a class",
+          "label": "Ancestry Class"
+        },
+        "xp": {
+          "hint": "",
+          "label": "XP",
+          "long": "Experience"
+        }
       }
     }
   },

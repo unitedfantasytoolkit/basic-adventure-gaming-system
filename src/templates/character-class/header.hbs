@@ -1,3 +1,24 @@
-<header>
-  Header
+<header class="window-content__header">
+  <img src="{{item.img}}" alt="" data-edit="img" />
+  <section>
+    {{formInput fields.name value=item.name}}
+    <ul class="window-content__tags">
+      <li>
+        <i class="fa fa-dice-d{{item.system.hitDieSize}}" aria-label="Hit Dice"></i>
+        <span>d{{item.system.hitDieSize}}</span>
+      </li>
+      <li>
+        <i class="fa fa-sword" aria-label="Weapons"></i>
+        <span>{{item.system.weapons}}</span>
+      </li>
+      <li>
+        <i class="fa fa-shield" aria-label="Armor"></i>
+        <span>{{item.system.armor}}</span>
+      </li>
+      <li>
+        <i class="fa fa-message" aria-label="Languages"></i>
+        <span>{{item.system.languages}}</span>
+      </li>
+    </ul>
+  </section>
 </header>

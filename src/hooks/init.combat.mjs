@@ -16,10 +16,10 @@ import {
 } from "../config/overrides.mjs";
 
 Hooks.once("init", () => {
-  const usesGroupInitiative = game.settings.get(
+  const { usesGroupInitiative } = game.settings.get(
     SYSTEM_NAME,
     CLASS_OVERRIDE_COMBAT.CONFIG_SETTING,
-  ).usesGroupInitiative;
+  );
 
   CONFIG.ui.combat = CLASS_OVERRIDE_SIDEBAR_COMBAT_TRACKER;
 

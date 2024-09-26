@@ -1,0 +1,27 @@
+@layer variables {
+  body {
+    /* === Foundry Overrides ================================================ */
+    --font-h1: "Gabriela", serif !important;
+    --font-h2: "Gabriela", serif !important;
+    --font-h3: "Gabriela", serif !important;
+    --font-h1-size: var(--font-size-32) !important;
+    --font-h2-size: var(--font-size-24) !important;
+    --font-h3-size: var(--font-size-20) !important;
+
+    /* === Document Names ======================================================
+     * These variables should be used to style the name of a Document on
+     * its sheet, when *viewing* the sheet.
+     */
+    --font-size-document-name: var(--font-h2-size);
+    --font-family-document-name: var(--font-h1);
+    --font-weight-document-name: 400;
+    --font-style-document-name: normal;
+
+    /* === Miscellaneous ==================================================== */
+    --color: #f00;
+  }
+
+  .application {
+    --border-color: #b78846 !important;
+  }
+}

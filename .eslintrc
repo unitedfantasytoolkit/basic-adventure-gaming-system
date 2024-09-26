@@ -64,8 +64,10 @@
 		"ecmascript-compat/compat": "off", // Disabled because core uses async
 		"unicorn/no-array-reduce": "off", // Disabled because Array#reduce is helpful
 		"no-secrets/no-secrets": "off", // Disabled because of string entropy
+		"no-underscore-dangle": "off"
 	},
 	"parserOptions": {
+		"ecmaVersion": "latest",
 		"sourceType": "module",
 		"project": "./tsconfig.json",
 	},
@@ -75,6 +77,7 @@
 		"CONFIG": "readonly",
 		"CONST": "readonly",
 		"Hooks": "readonly",
+		"Handlebars": "readonly",
 		"Item": "readonly",
 		"Items": "readonly",
 		"ItemDirectory": "readonly",

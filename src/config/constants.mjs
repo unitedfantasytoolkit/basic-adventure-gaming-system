@@ -13,13 +13,7 @@ export const SYSTEM_ASSET_PATH = `systems/${SYSTEM_NAME}/assets`;
 import abilityScoreModifiers from "./ability-scores.mjs";
 
 export const ABILITY_SCORES = abilityScoreModifiers;
-export const SAVING_THROWS = [
-  "death",
-  "wands",
-  "paralysis",
-  "breath",
-  "spells",
-];
+export const SAVING_THROWS = ["death", "wands", "paralysis", "breath", "spell"];
 export const WORST_POSSIBLE_SAVE = 19;
 
 // --- Move Speed and Encumbrance ----------------------------------------------

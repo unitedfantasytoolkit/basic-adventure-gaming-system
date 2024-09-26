@@ -1,4 +1,4 @@
-const { NumberField } = foundry.data.fields;
+const { NumberField } = foundry.data.fields
 
 const mapToNumberField = (obj, [key, { label, hint }]) => ({
   ...obj,
@@ -10,6 +10,6 @@ const mapToNumberField = (obj, [key, { label, hint }]) => ({
     label,
     hint,
   }),
-});
+})
 
-export default mapToNumberField;
+export default mapToNumberField
