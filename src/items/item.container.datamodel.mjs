@@ -1,0 +1,10 @@
+/**
+ * @file The data model for ammunition -- items that are used to fuel another item's uses.
+ */
+
+import PhysicalItemDataMixin from "./item-physical-data-model.mjs"
+import { actionsFactory } from "../common/action.fields.mjs"
+
+export default class BAGSItemContainerDataModel extends PhysicalItemDataMixin({
+  actions: actionsFactory(),
+}) {}

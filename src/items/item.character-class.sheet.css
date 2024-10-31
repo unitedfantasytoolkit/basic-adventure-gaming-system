@@ -11,90 +11,23 @@
   .window-content {
     padding: 0 !important;
 
-    /* article { */
+    /* &__header { */
 
-    /* gap: 1em; */
+    /* .xp- [name="name"] { */
 
-    /* grid-template-columns: 2fr 1fr; */
+    /* font-size: var(--font-size-document-name); */
 
-    /* display: grid; */
+    /* height: unset; */
 
-    /* align-items: start; */
+    /* border: none; */
 
-    /* grid-template-areas: "flavor" "main" "aside" "advancement"; */
+    /* font-family: var(--font-family-document-name); */
 
-    /* main { */
-
-    /* grid-area: main; */
-
-    /* } */
-
-    /* aside { */
-
-    /* grid-area: aside; */
-
-    /* } */
-
-    /* .flavor { */
-
-    /* grid-area: flavor; */
-
-    /* max-width: 60ch; */
-
-    /* font-style: italic; */
-
-    /* opacity: 0.8; */
-
-    /* text-align: center; */
-
-    /* margin: 0 auto; */
-
-    /* grid-span-columns: 1/2; */
-
-    /* } */
-
-    /* .advancement { */
-
-    /* grid-area: advancement; */
-
-    /* grid-span-columns: 1/2; */
+    /* background: transparent; */
 
     /* } */
 
     /* } */
-
-    /* @container sheet (min-width: 700px) { */
-
-    /* article { */
-
-    /* grid-template-areas: "flavor flavor" "main aside" "advancement advancement"; */
-
-    /* } */
-
-    /* } */
-
-    /* @container sheet (min-width: 1100px) { */
-
-    /* article { */
-
-    /* grid-template-areas: "flavor flavor main " "aside advancement advancement"; */
-
-    /* } */
-
-    /* } */
-
-    &__header {
-      display: grid;
-      grid-template-columns: 64px 1fr;
-
-      .xp- [name="name"] {
-        font-size: var(--font-size-document-name);
-        height: unset;
-        border: none;
-        font-family: var(--font-family-document-name);
-        background: transparent;
-      }
-    }
 
     article:has(table) {
       overflow: scroll;

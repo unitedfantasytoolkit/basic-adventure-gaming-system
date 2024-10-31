@@ -140,6 +140,7 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
     switch (partId) {
       case "header":
         context.title = this.title
+        context.hideIcon = true
         break
       case "xp-table":
         context.tab = context.tabs[partId]
@@ -149,6 +150,8 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
         break
       case "spell-slots":
         context.tab = context.tabs[partId]
+        break
+      default:
         break
     }
     return context

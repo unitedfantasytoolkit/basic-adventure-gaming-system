@@ -57,6 +57,19 @@ const buildSchema = () => ({
   }),
 })
 
+const cumulativeModifiers = (...modifiers) => {
+  let total
+  try {
+    total = modifiers.reduce(total, mod => total + mod, 0)
+    if (Number.isNaN(total)) throw new TypeError("Modifiers should be numeric")
+    if (!total) return 0
+    if (total > 0) return total
+  } catch {
+    total = 0
+  }
+  return total
+}
+
 export default class BAGSCharacterDataModel extends BaseActorDataMixin(
   buildSchema()
 ) {
@@ -113,5 +126,77 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
         },
       }
     }, {})
+  }
+
+  get savingThrows() {
+    return this.parent.itemTypes.class[0].system.currentLevelDetails.saves
+  }
+
+  // === Attack Bonuses
+
+  get thac0() {
+    return this.parent.itemTypes.class[0].system.currentLevelDetails.thac0
+  }
+
+  get baseAttackBonus() {
+    return this.parent.itemTypes.class[0].system.currentLevelDetails.attackBonus
+  }
+
+  /**
+   * @todo account for class basic attack bonus, if the system uses ascending AC
+   */
+  get meleeAttackMod() {
+    return cumulativeModifiers(
+      this.abilityScores?.str?.meleeAttack,
+      this.modifiers.melee.attack
+    )
+  }
+
+  get meleeDamageMod() {
+    return cumulativeModifiers(
+      this.abilityScores?.str?.meleeDamage,
+      this.modifiers.melee.damage
+    )
+  }
+
+  get combatModStrings() {
+    const toNiceString = (val) => {
+      let total = val
+      try {
+        if (!total) return "—"
+        if (total > 0) return `+${total}`
+      } catch {
+        total = "—"
+      }
+      return total
+    }
+
+    return {
+      melee: {
+        attack: toNiceString(this.meleeAttackMod),
+        damage: toNiceString(this.meleeDamageMod),
+      },
+      missile: {
+        attack: toNiceString(this.missileAttackMod),
+        damage: toNiceString(this.missileDamageMod),
+      },
+    }
+  }
+
+  /**
+   * @todo account for class basic attack bonus, if the system uses ascending AC
+   */
+  get missileAttackMod() {
+    return cumulativeModifiers(
+      this.abilityScores?.dex?.missileAttack,
+      this.modifiers.missile.attack
+    )
+  }
+
+  get missileDamageMod() {
+    return cumulativeModifiers(
+      this.abilityScores?.dex?.missileDamage,
+      this.modifiers.missile.damage
+    )
   }
 }

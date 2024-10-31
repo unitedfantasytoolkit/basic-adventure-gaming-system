@@ -1,0 +1,74 @@
+{{!-- --}}
+<section
+  class="tab tab--{{tab.id}} {{tab.cssClass}}"
+  data-tab="{{tab.id}}"
+  data-group="{{tab.group}}"
+>
+  <header>
+    <h2>Actions</h2>
+    <button
+      data-tooltip="Add new action"
+      aria-label="Add new action"
+      data-action="addAction"
+    >
+      <i class="fa fa-plus"></i>
+    </button>
+  </header>
+  <main>
+    <ul>
+      {{#each actions}}{{log this}}
+      <li data-action-id="{{id}}">
+        <header>
+          <img
+            src="{{img}}"
+            alt=""
+          />
+          <div>
+            <h3>{{name}}</h3>
+            <ul>
+              {{#if flags.usesAttempt}}
+              <li>
+                {{#if attempt.isLikeAttack}}
+                <i class="fa fa-dice-d20"></i>
+                <span>Missile</span>
+                {{else}}
+                <i class="fa fa-dice-d6"></i>
+                <span
+                  >{{attempt.formula}}{{attempt.target.operator}}{{attempt.target.value}}
+                </span>
+                {{/if}}
+              </li>
+              {{/if}}
+              {{#each effects}}
+                <li>
+                {{#if (eq type "attack")}}
+                  <i class="fa fa-swords"></i>
+                  <span>{{formula}}</span>
+                {{else if (eq type "healing")}}
+                  <i class="fa fa-heart-circle-plus"></i>
+                  <span>{{formula}}</span>
+                {{else if (eq type "macro")}}
+                  <i class="fa fa-code"></i>
+                {{else if (eq type "condition")}}
+                  <span>(todo: display for when something applies a
+                  condition)</span>
+                {{else if (eq type "other")}}
+                  <i class="sparkles"></i>
+                  <span>{{note}}</span>
+
+                {{/if}}
+                </li>
+              {{/each}}
+            </ul>
+          </div>
+          <button data-action="editAction"><i class="fa fa-pencil"></i></button>
+          <button data-action="deleteAction"><i class="fa fa-trash"></i></button>
+        </header>
+        <main>
+          <div>{{{description}}}</div>
+        </main>
+      </li>
+      {{/each}}
+    </ul>
+  </main>
+</section>

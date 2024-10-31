@@ -4,12 +4,10 @@
   "title": "Basic Adventure Game System (BAGS)",
   "description": "",
   "version": "0.0.1",
-  "minimumCoreVersion": "12",
-  "compatibleCoreVersion": "12",
   "compatibility": {
     "minimum": "12",
     "verified": "12",
-    "maximum": "12"
+    "maximum": "13"
   },
   "authors": [
     {
@@ -18,7 +16,7 @@
       "url": ""
     }
   ],
-  "esmodules": ["components.js", "bags.min.js"],
+  "esmodules": ["components.js", "bags.js"],
   "styles": ["bags.css"],
   "languages": [
     {

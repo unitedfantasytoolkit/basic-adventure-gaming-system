@@ -1,0 +1,23 @@
+/**
+ * @file Overwrite the default Foundry tabbed sidebar with some additions of our own.
+ */
+
+import PartySidebar from "../party/sidebar.mjs"
+
+export default class Sidebar extends foundry.applications.sidebar.Sidebar {
+  // static get PARTS() {
+  //   return {
+  //     ...this.PARTS,
+  // class
+  // }
+
+  get TABS() {
+    return {
+      ...this.TABS,
+      party: {
+        tooltip: PartySidebar.tooltip,
+        icon: PartySidebar.icon,
+      },
+    }
+  }
+}

@@ -1,0 +1,79 @@
+
+<section class="{{cssClass}}" id="{{cssId}}" data-tab="{{tabName}}" data-group="primary">
+  {{#if user.isGM}}
+  <header class="party-header">
+    <div class="header-actions action-buttons flexrow">
+      <button type="button" class="add-xp"><i class="fas fa-trophy-star"></i>{{localize "BAGS.Party.XP"}}</button>
+      <button type="button" class="distribute-treasure"><i class="fas fa-treasure-chest"></i>{{localize "BAGS.Party.Treasure"}}</button>
+    </div>
+  </header>
+  {{/if}}
+  {{#if party.length}}
+  <ul class="party-list">
+    {{#each party}}
+      <li class="party-list__item" data-entry-id="{{id}}">
+        <img src="{{img}}" class="thumbnail" alt="" />
+
+        <section>
+          <header class="party-list__item__header">
+            <h4 class="entry-name document-name">{{name}}</h4>
+            
+            <div class="party-meter party-meter--hp" aria-label="{{localize "OSE.Health"}}" aria-label="{{localize "OSE.Health"}}" title="{{localize "OSE.Health"}}">
+              <i class="fas fa-heart"></i>
+              <meter value="{{system.hp.value}}" min="0" max="{{system.hp.max}}" >{{system.hp.value}}/{{system.hp.max}}</meter>
+            </div>
+
+            <div class="party-meter party-meter--encumbrance" aria-label="{{localize "OSE.Encumbrance"}}" title="{{localize "OSE.Encumbrance"}}">
+              <i class="fas fa-sack"></i>
+              <meter value="{{system.encumbrance.value}}" min="0" max="{{system.encumbrance.max}}"></meter>
+            </div>
+          </header>
+
+          <main class="party-list__item__main">
+            <div class="party-list__item__main__block party-list__item__main__block--saves">
+              {{!-- 
+              {{> (partial 'chip.hbs') bemMod="save" value=system.saves.death.value icon="fa-skull" title="OSE.saves.death.long"}}
+              {{> (partial 'chip.hbs') bemMod="save" value=system.saves.wand.value icon="fa-magic" title="OSE.saves.wand.long"}}
+              {{> (partial 'chip.hbs') bemMod="save" value=system.saves.paralysis.value icon="fa-block-brick" title="OSE.saves.paralysis.long"}}
+              {{> (partial 'chip.hbs') bemMod="save" value=system.saves.breath.value icon="fa-dragon" title="OSE.saves.breath.long"}}
+              {{> (partial 'chip.hbs') bemMod="save" value=system.saves.spell.value icon="fa-book-sparkles" title="OSE.saves.spell.long"}}
+              --}}
+            </div>
+
+            <div class="party-list__item__main__block party-list__item__main__block--combat">
+              {{!-- 
+              {{#if system.usesAscendingAC}}
+                {{> (partial 'chip.hbs') bemMod="attack" value=(signed system.thac0.bba) icon="fa-crosshairs" title="OSE.AB"}}
+              {{else}}
+                {{> (partial 'chip.hbs') bemMod="attack" value=system.thac0.value icon="fa-crosshairs" title="OSE.Thac0"}}
+              {{/if}}
+
+              {{> (partial 'chip.hbs') bemMod="attack" value=(signed system.meleeMod) title="OSE.MeleeBonus" icon="fa-sword"}}
+              {{> (partial 'chip.hbs') bemMod="attack" value=(signed system.rangedMod) title="OSE.MissileBonus" icon="fa-bow-arrow"}}
+
+              {{#if system.usesAscendingAC}}
+                {{> (partial 'chip.hbs') bemMod="defense" value=system.aac.value icon="fa-shield-alt" title="OSE.ArmorClass"}}
+              {{else}}
+                {{> (partial 'chip.hbs') bemMod="defense" value=system.ac.value icon="fa-shield-alt" title="OSE.ArmorClass"}}
+              {{/if}}
+
+              {{> (partial 'chip.hbs') bemMod="save" value=(signed system.scores.wis.mod) icon="fa-sparkle" title="OSE.saves.magic.long"}}
+              --}}
+            </div>
+
+            <div class="party-list__item__main__block party-list__item__main__block--movement">
+            {{!--
+              {{> (partial 'chip.hbs') bemMod="movement" title="OSE.movement.encounter.long" value=system.movement.encounter icon="fa-person-walking"}}
+              {{> (partial 'chip.hbs') bemMod="movement" title="OSE.movement.exploration.long" value=system.movement.base icon="fa-person-walking-with-cane"}}
+              {{> (partial 'chip.hbs') bemMod="movement" title="OSE.movement.overland.long" value=system.movement.overland icon="fa-person-hiking"}}
+              --}}
+            </div>
+          </main>
+        </section>
+      </li>
+    {{/each}}
+  </ul>
+  {{else}}
+    <p class="empty">{{localize "BAGS.Party.Empty"}}</p>
+  {{/if}}
+</section>

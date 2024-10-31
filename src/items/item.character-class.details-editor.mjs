@@ -41,7 +41,7 @@ export default class BAGSCharacterClassDetailsEditor extends HandlebarsApplicati
       submitOnChange: true,
     },
     position: {
-      width: 700,
+      width: 500,
       height: "auto",
     },
   }
@@ -77,6 +77,7 @@ export default class BAGSCharacterClassDetailsEditor extends HandlebarsApplicati
     switch (partId) {
       case "header":
         context.title = this.title
+        context.hideIcon = true
         break
       case "description":
         context.tab = context.tabs.description
@@ -98,11 +99,13 @@ export default class BAGSCharacterClassDetailsEditor extends HandlebarsApplicati
 
   /** @override */
   get title() {
-    const { constructor: cls, id, name, type } = this.document
-    const prefix = cls.hasTypeData
-      ? CONFIG[cls.documentName].typeLabels[type]
-      : cls.metadata.label
-    return `${game.i18n.localize("BAGS.CharacterClass.Information.EditorTitle")}: ${name ?? id}`
+    // const { constructor: cls, id, name, type } = this.document
+    // const prefix = cls.hasTypeData
+    //   ? CONFIG[cls.documentName].typeLabels[type]
+    //   : cls.metadata.label
+    // return `${prefix} ${game.i18n.localize("BAGS.CharacterClass.Information.EditorTitle")}: ${name ?? id}`
+    console.info("???")
+    return `Class Details: ${this.document.name}`
   }
 
   // === Render setup ==========================================================

@@ -1,0 +1,35 @@
+<section
+  class="tab standard-form bags-app-tab bags-app-tab--{{tab.id}} {{tab.cssClass}}"
+  data-tab="{{tab.id}}"
+  data-group="{{tab.group}}"
+>
+
+{{formGroup fields.name value=action.name localize=true}}
+
+
+{{formGroup fields.flags.fields.usesAttempt value=action.flags.usesAttempt localize=true}}
+
+<fieldset {{#unless action.flags.usesAttempt}}disabled{{/unless}}>
+<legend>{{localize "BAGS.Actions.Editor.Attempt.Heading"}}</legend>
+{{formGroup fields.attempt.fields.isLikeAttack value=action.attempt.isLikeAttack label="Test" localize=true}}
+
+{{#if action.attempt.isLikeAttack}}
+{{formGroup fields.attempt.fields.attackType value=action.attempt.attackType
+localize=true}}
+{{else}}
+<fieldset>
+<legend>Roll</fieldset>
+{{formGroup fields.attempt.fields.roll.fields.formula value=action.attempt.roll.formula localize=true}}
+{{formGroup fields.attempt.fields.roll.fields.operator value=action.attempt.roll.operator localize=true}}
+{{formGroup fields.attempt.fields.roll.fields.target value=action.attempt.roll.target localize=true}}
+</fieldset>
+{{/if}}
+
+{{formGroup fields.attempt.fields.successText value=action.attempt.successText
+localize=true}}
+{{formGroup fields.attempt.fields.failText value=action.attempt.failText
+localize=true}}
+</fieldset>
+
+</section>
+

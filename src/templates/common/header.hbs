@@ -1,9 +1,57 @@
 <header class="window-content__header">
+  {{#if document.system.banner}}
+  <img
+    src="{{document.system.banner}}"
+    alt=""
+    class="window-content__banner"
+    data-edit="system.banner"
+    data-action="editImage"
+  />
+  {{/if}}
   <section>
-    {{#if document}}
-      {{formInput fields.name value=document.name}}
-    {{else}}
+    {{#unless hideIcon}}
+    <img
+      src="{{item.img}}"
+      alt=""
+      data-edit="img"
+      class="window-content__document-image"
+      data-action="editImage"
+    />
+    {{/unless}}
+    <article>
       <h1>{{title}}</h1>
-    {{/if}}
+      {{#if document}} {{formInput fields.name value=document.name}}
+      <ul class="window-content__tags">
+        <li>
+          <i
+            class="fa fa-dice-d{{item.system.hitDieSize}}"
+            aria-label="Hit Dice"
+          ></i>
+          <span>d{{item.system.hitDieSize}}</span>
+        </li>
+        <li>
+          <i
+            class="fa fa-sword"
+            aria-label="Weapons"
+          ></i>
+          <span>{{item.system.weapons}}</span>
+        </li>
+        <li>
+          <i
+            class="fa fa-shield"
+            aria-label="Armor"
+          ></i>
+          <span>{{item.system.armor}}</span>
+        </li>
+        <li>
+          <i
+            class="fa fa-message"
+            aria-label="Languages"
+          ></i>
+          <span>{{item.system.languages}}</span>
+        </li>
+      </ul>
+      {{else}} {{/if}}
+    </article>
   </section>
 </header>

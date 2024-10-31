@@ -1,31 +1,11 @@
+@import url("./shared.header.css");
+@import url("./shared.tab-navigation.css");
+
 .application--bags:not(.minimized) {
-  .window-header {
-    position: absolute;
-    top: 0.5rem;
-    left: 0;
-    right: 0.5rem;
-    padding: 0 0 var(--border-width);
-    line-height: 1em;
-    background: none;
-    z-index: 2;
-    box-shadow: unset;
-    border: none;
-
-    .window-icon {
-      display: none;
+  &.animate {
+    &--error {
+      animation: shake 1s cubic-bezier(0.45, 0, 0.55, 1) 0s 1 normal none;
     }
-
-    .window-title {
-      text-align: center;
-      transform: translateY(-50%);
-      padding: 0.25rem;
-      border: 2px solid var(--border-color);
-      width: min-content;
-    }
-
-    /* button { */
-
-    /* } */
   }
 
   :is(h1, h2, h3, h4, h5, h6) {
@@ -54,6 +34,18 @@
           margin-bottom: 0;
         }
       }
+    }
+  }
+
+  header:has(button) {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+
+    :is(h1, h2, h3, h4, h5, h6) {
+      text-align: left;
+      flex: 1;
+      margin: 0;
     }
   }
 
@@ -102,18 +94,6 @@
         padding: 0.25em;
       }
     }
-  }
-}
-
-.application__tab-navigation {
-  transition:
-    transform 333ms ease-in-out,
-    opacity 125ms ease-in;
-  transform: translateX(-50%) translateY(calc(100% + 15px)) scaleY(1);
-
-  :is(.minimizing, .minimized) & {
-    transform: translateX(-50%) translateY(-100%) scaleY(0);
-    opacity: 0;
   }
 }
 
@@ -194,35 +174,10 @@
     &,
     .window-content {
       overflow: visible !important;
-      z-index: 0;
-      position: relative;
     }
 
     &:not(.minimized) {
       min-height: calc(var(--header-height) + 400px) !important;
-    }
-
-    .sheet-tabs {
-      position: absolute;
-      bottom: calc(var(--outer-border-offset) * -2 + var(--border-width) + 1px);
-      left: 50%;
-      width: max-content;
-      gap: 0.75em !important;
-      transform: translateX(-50%) translateY(100%);
-      padding: 1px var(--outer-border-offset) var(--outer-border-offset);
-      border: 2px solid var(--border-color);
-      border-bottom-left-radius: 6px;
-      border-bottom-right-radius: 6px;
-      border-top: none;
-      background: var(--background);
-
-      a {
-        flex: 0 0 max-content;
-        border: 1px solid var(--border-color);
-        background: var(--application-filler-gradient);
-        border-radius: 3px;
-        padding: 0.25em;
-      }
     }
 
     &.application {
@@ -288,93 +243,6 @@
           }
         }
       }
-    }
-  }
-}
-
-.application--corner-adornments {
-  --corner-ornament-z-index: 1;
-  --corner-ornament-size: 1rem;
-  --window-content-padding: calc(var(--corner-ornament-size) * 1.25);
-  --window-content-header-padding:
-    calc(var(--outer-border-offset) - 1px)
-    calc(
-      var(--corner-ornament-size) + var(--outer-border-offset) +
-      var(--border-width)
-    )
-    0;
-
-  /* --header-height: calc(var(--corner-ornament-size) + 0); */
-
-  &::before,
-  &::after {
-    top: var(--outer-border-offset);
-  }
-
-  &::before {
-    left: var(--outer-border-offset);
-  }
-
-  &::after {
-    right: var(--outer-border-offset);
-  }
-
-  .window-header {
-    padding:
-      calc(var(--outer-border-offset) - 1px)
-      calc(
-        var(--corner-ornament-size) + var(--outer-border-offset) +
-        var(--border-width)
-      )
-      0;
-  }
-
-  .window-content {
-    &::before,
-    &::after {
-      bottom: var(--inner-border-offset);
-    }
-
-    &::before {
-      left: var(--inner-border-offset);
-    }
-
-    &::after {
-      right: var(--inner-border-offset);
-    }
-
-    &__header {
-      padding: var(--corner-ornament-size) var(--corner-ornament-size) 1rem;
-    }
-  }
-
-  &,
-  .window-content {
-    &::before,
-    &::after {
-      content: "•";
-      position: absolute;
-      width: var(--corner-ornament-size);
-      height: var(--corner-ornament-size);
-      font-size: var(--corner-ornament-size);
-      color: var(--border-color);
-      border: 2px solid var(--border-color);
-
-      /* line-height: 0.857142857144rem; */
-      line-height: 0.93rem;
-      text-align: center;
-      z-index: var(--corner-ornament-z-index);
-      font-family: monospace;
-    }
-  }
-
-  &:has(.window-header [data-action="close"]) {
-    .window-header {
-      padding-right: calc(var(--outer-border-offset) - var(--border-width));
-    }
-
-    &::after {
-      content: "";
     }
   }
 }

@@ -25,18 +25,24 @@ export default class CharacterInfoMeter extends BaseElement {
   }
 
   get #progress() {
-    return (this.#value / this.#max) * 100 || 0;
+    const pct = (this.#value / this.#max) * 100 || 0;
+    if (pct < 0) return 0
+    if (pct > 100) return 100;
+    return pct;
   }
 
   /**
    *
    */
   get template() {
+    const meterClasses = ["meter"];
+    if (this.#progress === 0) meterClasses.push("meter--empty");
+    if (this.#progress === 100) meterClasses.push("meter--full");
     return html`
       <slot name="icon"></slot>
-      <div class="meter" style="--meter-fill-pct: ${this.#progress}%"></div>
-      <slot></slot>
-      <span class="value">${this.#value}/${this.#max}</span>
+      <div class="${meterClasses.join(" ")}" style="--meter-fill-pct: ${this.#progress}%">
+        <span class="value">${this.#value}/${this.#max}</span>
+      </div>
     `;
   }
 }

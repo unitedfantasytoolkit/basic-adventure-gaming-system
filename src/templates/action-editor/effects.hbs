@@ -1,0 +1,149 @@
+<article
+  class="tab standard-form bags-app-tab bags-app-tab--{{tab.id}} {{tab.cssClass}}"
+  data-tab="{{tab.id}}"
+  data-group="{{tab.group}}"
+>
+  <header class="action-header">
+    <h2>Effects</h2>
+    <button data-action="addEffect" aria-label="Add Effect"><i class="fa
+      fa-plus"></i></button>
+  </header>
+  {{formGroup fields.flags.fields.usesEffect
+    value=action.flags.usesEffect
+    localize=true
+  }}
+
+  {{#each action.effects}}
+    <fieldset {{#unless ../action.flags.usesEffect}}disabled{{/unless}}>
+      {{formGroup ../fields.effects.element.fields.type
+        name=(concat "effects." @index ".type")
+        value=type
+        localize=true
+      }}
+
+      {{formGroup ../fields.effects.element.fields.flags.fields.isMagical
+        name=(concat "effects." @index ".flags.isMagical")
+        value=flags.isMagical
+        localize=true
+      }}
+
+      {{#if (eq type "macro")}}
+        <fieldset>
+          <legend>Macro settings</legend>
+
+        {{formGroup ../fields.effects.element.fields.macro.fields.fromDocument
+          value=macro.fromDocument
+          name=(concat "effects." @index ".macro.fromDocument")
+          localize=true
+        }}
+
+        {{#unless macro.fromDocument}}
+          {{formInput ../fields.effects.element.fields.macro.fields.fromEditor
+            value=macro.fromEditor
+            name=(concat "effects." @index ".macro.fromEditor")
+            localize=true
+          }}
+        {{/unless}}
+        </fieldset>
+      {{/if}}
+
+        <fieldset>
+          <legend>{{localize "BAGS.Actions.Effects.Resistance.Heading"}}</legend>
+
+          {{formGroup ../fields.effects.element.fields.flags.fields.canBeResisted
+            value=flags.canBeResisted
+            name=(concat "effects." @index ".flags.canBeResisted")
+            localize=true
+          }}
+
+          {{#if flags.canBeResisted}}
+            {{formGroup ../fields.effects.element.fields.resistance.fields.type
+              value=resistance.type
+              name=(concat "effects." @index ".resistance.type")
+              localize=true
+            }}
+            {{#if (eq resistance.type "savingThrow") }}
+              {{formGroup
+                ../fields.effects.element.fields.resistance.fields.savingThrow
+                value=resistance.savingThrow
+                name=(concat "effects." @index ".resistance.savingThrow")
+                localize=true
+              }}
+            {{else}}
+              {{formGroup
+                ../fields.effects.element.fields.resistance.fields.formula
+                value=resistance.formula
+                name=(concat "effects." @index ".resistance.formula")
+                localize=true
+              }}
+              {{formGroup
+                ../fields.effects.element.fields.resistance.fields.operator
+                value=resistance.operator
+                name=(concat "effects." @index ".resistance.operator")
+                localize=true
+              }}
+            {{/if}}
+
+
+            {{#if (eq resistance.type "abilityScore") }}
+              {{formGroup
+                ../fields.effects.element.fields.resistance.fields.abilityScore
+                value=resistance.abilityScore
+                name=(concat "effects." @index ".resistance.abilityScore")
+                localize=true
+              }}
+            {{/if}}
+
+            {{#if (eq resistance.type "number") }}
+              {{formGroup
+                ../fields.effects.element.fields.resistance.fields.staticTarget
+                value=resistance.staticTarget
+                name=(concat "effects." @index ".resistance.staticTarget")
+                localize=true
+              }}
+            {{/if}}
+          {{/if}}
+        </fieldset>
+
+      {{#if (eq type "attack")}}
+        {{formGroup ../fields.effects.element.fields.formula
+          value=formula
+          name=(concat "effects." @index ".formula")
+          localize=true
+        }}
+        {{formGroup ../fields.effects.element.fields.note
+          value=note
+          name=(concat "effects." @index ".note")
+          localize=true
+        }}
+      {{/if}}
+
+      {{#if (eq type "healing")}}
+        {{formGroup ../fields.effects.element.fields.formula
+          value=formula
+          name=(concat "effects." @index ".formula")
+          localize=true
+        }}
+      {{/if}}
+
+
+      {{!-- Condition effects: effects that apply an Active Effect to the target --}}
+      {{#if (eq type "condition")}}
+        <fieldset>
+          <legend>{{localize "BAGS.Actions.Effects.Condition.Heading"}}</legend>
+        </fieldset>
+      {{/if}}
+
+      {{log ../fields}}
+
+      {{!-- Misc effects: effects that aren't easily modeled by the system --}}
+      {{#if (eq type "misc")}}
+        {{formInput ../fields.effects.element.fields.description
+          value=description
+          name=(concat "effects." @index ".description")
+          localize=true
+        }}
+      {{/if}}
+    </fieldset>
+  {{/each}}
+</article>

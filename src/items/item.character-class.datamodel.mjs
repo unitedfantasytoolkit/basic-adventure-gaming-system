@@ -82,7 +82,6 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
       banner: new FilePathField({
         required: false,
         categories: ["IMAGE"],
-        initial: "https://placehold.co/600x400/274240/d6cbb3",
       }),
 
       prerequisites: new SchemaField(prerequisiteFields),
@@ -294,5 +293,14 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
 
   get maxLevel() {
     return this.xpTable.length || 1
+  }
+
+  get currentLevelDetails() {
+    const currentLevelIndex = this.level - 1
+    return {
+      ...this.xpTable[currentLevelIndex],
+      resources: this.leveledResources,
+      spellSlots: this.spellSlots[currentLevelIndex],
+    }
   }
 }

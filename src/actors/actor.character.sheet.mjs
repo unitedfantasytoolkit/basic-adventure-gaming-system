@@ -2,6 +2,7 @@
  * @file The character sheet -- the primary UI for a player character.
  */
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
+import animatedSheetError from "../utils/animated-sheet-error.mjs"
 
 const { HandlebarsApplicationMixin } = foundry.applications.api
 const { ActorSheetV2 } = foundry.applications.sheets
@@ -15,7 +16,7 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
       classes: [
         "application--bags",
         "application--sheet",
-        "application--hide-title",
+        // "application--hide-title",
         "application--actor-sheet",
         "application--character-sheet",
       ],
@@ -44,25 +45,25 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
       //   template: `${SYSTEM_TEMPLATE_PATH}/character/header.hbs`,
       // },
       "left-rail": {
-        template: `${SYSTEM_TEMPLATE_PATH}/character/left-rail.hbs`,
+        template: `${this.TEMPLATE_ROOT}/left-rail.hbs`,
       },
       summary: {
-        template: `${SYSTEM_TEMPLATE_PATH}/character/content.hbs`,
+        template: `${this.TEMPLATE_ROOT}/summary.hbs`,
       },
       abilities: {
-        template: `${SYSTEM_TEMPLATE_PATH}/character/content.hbs`,
+        template: `${this.TEMPLATE_ROOT}/content.hbs`,
       },
       spells: {
-        template: `${SYSTEM_TEMPLATE_PATH}/character/content.hbs`,
+        template: `${this.TEMPLATE_ROOT}/content.hbs`,
       },
       inventory: {
-        template: `${SYSTEM_TEMPLATE_PATH}/character/content.hbs`,
+        template: `${this.TEMPLATE_ROOT}/inventory.hbs`,
       },
       description: {
-        template: `${SYSTEM_TEMPLATE_PATH}/character/content.hbs`,
+        template: `${this.TEMPLATE_ROOT}/content.hbs`,
       },
-      svg: {
-        template: `${SYSTEM_TEMPLATE_PATH}/svg-filters.hbs`,
+      tabs: {
+        template: "templates/generic/tab-navigation.hbs",
       },
     }
   }
@@ -82,6 +83,33 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
   async _preparePartContext(partId, context) {
     const doc = this.document
     switch (partId) {
+      case "left-rail":
+        context.classes = doc.itemTypes.class.map((cls) => ({
+          ...cls,
+          xpBar: {
+            current: cls.system.xp,
+            max: cls.system.xpTable[cls.system.level - 1].value,
+          },
+        }))
+        context.hp = doc.system.hp
+        break
+      case "summary":
+        context.tab = this.#getTabs()[partId]
+        break
+      case "abilities":
+        context.tab = this.#getTabs()[partId]
+        break
+      case "spells":
+        context.tab = this.#getTabs()[partId]
+        break
+      case "inventory":
+        context.tab = this.#getTabs()[partId]
+        break
+      case "description":
+        context.tab = this.#getTabs()[partId]
+        break
+      default:
+        break
     }
     return context
   }
@@ -147,28 +175,33 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
    *
    * This override modifies the default frame by adding the following:
    * - an alternative header: the existing elements in the header are moved
-   *                          around into a format tha makes more sense for
-   *                          our design.
-   * - tab navigation:        if the sheet has tabs, to enforce consistency.
-   * - an effects pane:       common UI for managing active effects on
-   *                          actors and items
-   *
-   * @param {RenderOptions} options                 Options which configure application rendering behavior
-   * @returns {Promise<HTMLElement>}
+   *   around into a format tha makes more sense for our design.
+   * - tab navigation: if the sheet has tabs, to enforce consistency.
+   * - an effects pane: a common UI for managing active effects on
+   *   actors and items
+   * @param {unknown} options - Options which configure application rendering behavior. RenderOptions in Foundry's types.
+   * @returns {Promise<HTMLElement>} The updated app frame
    * @protected
    * @override
    */
   async _renderFrame(options) {
     const frame = await super._renderFrame(options)
 
-    if (Object.keys(this.#getTabs()).length)
-      frame.append(await this.#renderTabNavigation())
+    // if (Object.keys(this.#getTabs()).length)
+    //   frame.append(await this.#renderTabNavigation())
 
-    frame.append(await this.#renderEffectsPane())
+    // frame.append(await this.#renderEncumbranceBar())
+    // frame.append(await this.#renderEffectsPane())
 
     // this.#reorganizeHeaderElements(frame)
 
     return frame
+  }
+
+  _attachFrameListeners() {
+    super._attachFrameListeners()
+
+    // this.element.addEventListener("drop", this._onDropAction.bind(this))
   }
 
   async #renderTabNavigation() {
@@ -183,12 +216,32 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
   }
 
   /**
-   * Given the window's frame, reconfigure its header to make it easier to style.
-   * @param frame {HTMLElement}  The window frame
+   * Given the window's frame, mutate its header to make it easier to style.
+   * @param {HTMLElement} frame - The window frame
    */
-  // async #reorganizeHeaderElements(frame) {
-  //   console.info(frame.querySelector(".window-header"))
-  // }
+  async #reorganizeHeaderElements(frame) {
+    const header = frame.querySelector(".window-header")
+    const title = frame.querySelector(".window-title")
+
+    const buttons = header.querySelectorAll("button")
+
+    const titleContainer = document.createElement("div")
+    titleContainer.classList.add("window-title-wrapper")
+
+    const buttonContainer = document.createElement("div")
+    buttonContainer.classList.add("window-buttons")
+
+    const actorArt = document.createElement("img")
+    actorArt.src = this.document.img
+
+    titleContainer.appendChild(title)
+    titleContainer.appendChild(actorArt)
+
+    buttons.forEach((b) => buttonContainer.appendChild(b))
+
+    header.appendChild(titleContainer)
+    header.appendChild(buttonContainer)
+  }
 
   async #renderEffectsPane() {
     const container = document.createElement("template")
@@ -200,58 +253,106 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
     return container.content.firstElementChild
   }
 
-  /**
-   * Change the active tab within a tab group in this Application instance.
-   *
-   * This override looks for tab content across the whole Application,
-   * rather than solely in the content frame.
-   *
-   * @param {string} tab        The name of the tab which should become active
-   * @param {string} group      The name of the tab group which defines the set of tabs
-   * @param {object} [options]  Additional options which affect tab navigation
-   * @param {Event} [options.event]                 An interaction event which caused the tab change, if any
-   * @param {HTMLElement} [options.navElement]      An explicit navigation element being modified
-   * @param {boolean} [options.force=false]         Force changing the tab even if the new tab is already active
-   * @param {boolean} [options.updatePosition=true] Update application position after changing the tab?
-   * @override
-   */
-  changeTab(
-    tab,
-    group,
-    { event, navElement, force = false, updatePosition = true } = {}
-  ) {
-    if (!tab || !group)
-      throw new Error("You must pass both the tab and tab group identifier")
-    if (this.tabGroups[group] === tab && !force) return // No change necessary
-    const tabElement = this.element.querySelector(
-      `.tabs > [data-group="${group}"][data-tab="${tab}"]`
-    )
-    if (!tabElement)
-      throw new Error(
-        `No matching tab element found for group "${group}" and tab "${tab}"`
-      )
+  // async #renderEncumbranceBar() {
+  //   const container = document.createElement("template")
+  //   container.innerHTML = `<uft-character-info-meter value="1200" max="1600" class="encumbrance"><i slot="icon" class="fa fa-weight-hanging"></i></uft-character-info-meter>`
+  //   return container.content.firstElementChild
+  // }
 
-    // Update tab navigation
-    for (const t of this.element.querySelectorAll(
-      `.tabs > [data-group="${group}"]`
-    )) {
-      t.classList.toggle("active", t.dataset.tab === tab)
+  async _onDropAction(event) {
+    const { uuid } = TextEditor.getDragEventData(event)
+    const droppedDocument = await fromUuid(uuid)
+    switch (droppedDocument.documentName) {
+      case "Actor":
+        break
+      default:
+        console.warn("Only Actor and Item documents may be dropped!")
     }
+    console.info(this, event, droppedDocument)
+  }
 
-    // Update tab contents
-    for (const section of this.element.querySelectorAll(
-      `.tab[data-group="${group}"]`
-    )) {
-      section.classList.toggle("active", section.dataset.tab === tab)
-    }
-    this.tabGroups[group] = tab
+  async _onDropActor(doc) {
+    console.warn("Not yet implemented!")
+        // switch (droppedDocument.type) {
+        //   case "character":
+        //     this.#onDropCharacter(droppedDocument)
+        //     break
+        //   case "monster":
+        //     this.#onDropMonster(droppedDocument)
+        //     break
+        //   case "mount":
+        //     this.#onDropMount(droppedDocument)
+        //     break
+        //   default:
+        //     this._onDropActor(droppedDocument)
+        //     break
+        // }
+  }
 
-    // Update automatic width or height
-    if (!updatePosition) return
-    const positionUpdate = {}
-    if (this.options.position.width === "auto") positionUpdate.width = "auto"
-    if (this.options.position.height === "auto") positionUpdate.height = "auto"
-    if (!foundry.utils.isEmpty(positionUpdate)) this.setPosition(positionUpdate)
+  async #onDropCharacter(doc) {
+    console.warn("Not yet implemented!")
+  }
+
+  async #onDropMonster(doc) {
+    console.warn("Not yet implemented!")
+  }
+
+  async #onDropMount(doc) {
+    console.warn("Not yet implemented!")
+  }
+
+  async #onDropWeapon(doc) {
+    console.warn("Not yet implemented!")
+  }
+
+  async #onDropArmor(doc) {
+    console.warn("Not yet implemented!")
+  }
+
+  async #onDropAmmunition(doc) {
+    console.warn("Not yet implemented!")
+  }
+
+  async #onDropMiscellaneous(doc) {
+    console.warn("Not yet implemented!")
+  }
+
+  async _onDropItem(event, data) {
+    if (!this.actor.isOwner) return false
+    const item = await Item.implementation.fromDropData(data)
+    const itemData = item.toObject()
+
+    if (this.actor.uuid === item.parent?.uuid)
+      return this._onSortItem(event, itemData)
+
+    console.info(item, itemData)
+        // switch (droppedDocument.type) {
+        //   case "class":
+        //     this.#onDropCharacterClass(droppedDocument)
+        //     break
+          //       case "spell":
+          //         this.#onDropSpell(droppedDocument)
+          // case "ability":
+          //   this.#onDropAbility(droppedDocument)
+          //   break
+          //       case "weapon":
+          //       case "armor":
+          //       case "ammunition":
+          //       case "item":
+  }
+
+  async #onDropSpell(doc) {
+    console.warn("Not yet implemented!")
+  }
+
+  async #onDropAbility(doc) {
+    this.document.createEmbeddedDocuments("Item", [doc])
+  }
+
+  async #onDropCharacterClass(doc) {
+    if (this.document.itemTypes.class.length)
+      animatedSheetError(this.element, "A character may only have one class.")
+    else this.document.createEmbeddedDocuments("Item", [doc])
   }
 
   _onClickAction(event, target) {

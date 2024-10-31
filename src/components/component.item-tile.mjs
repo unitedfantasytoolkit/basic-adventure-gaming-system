@@ -1,4 +1,3 @@
-
 /**
  * @file A custom element that represents an Ability Score and its modifier
  */
@@ -11,65 +10,73 @@ import html from "../utils/html.mjs"
 @component("uft-item-tile")
 class ItemTile extends BaseElement {
   static get styles() {
-    return [styles];
+    return [styles]
   }
 
-  document;
+  document
 
   async prepareData() {
-    if (this.uuid)
-      this.document = await fromUuid(this.uuid);
+    if (this.uuid) this.document = await fromUuid(this.uuid)
   }
 
   async #buildTooltipTemplate(level) {
-    const template = document.createElement("template");
-    const tooltip = await this.tooltip;
-    const banner = this.document.system.banner
-      ? html`<img src="${this.document.system.banner}" class="banner" alt="" />`
-      : "";
+    const template = document.createElement("template")
+    const tooltip = await this.tooltip
+    const banner = this.document?.system?.banner
+      ? html`<img
+          src="${this.document.system.banner}"
+          class="banner"
+          alt=""
+        />`
+      : ""
 
     template.innerHTML = html`
       <header>
         ${banner}
         <h1>${this.document.name}</h1>
+        ${this.document.system.description || ""}
+        <p>She sells sea shells by the sea shore</p>
       </header>
       ${tooltip}
-    `;
-    return template.content.firstElementChild;
+    `
+    return template.content.firstElementChild
   }
 
   events() {
-   this.addEventListener("mouseover", this.#onMouseOver.bind(this));
-   this.addEventListener("mouseout", this.#onMouseOut.bind(this));
+    this.addEventListener("mouseover", this.#onMouseOver.bind(this))
+    this.addEventListener("mouseout", this.#onMouseOut.bind(this))
   }
 
   get uuid() {
-    return this.getAttribute("uuid");
+    return this.getAttribute("uuid")
   }
   get src() {
-    return this.getAttribute("src");
+    return this.getAttribute("src")
   }
   get tooltip() {
-    return this.document?.sheet?.tooltip || "";
+    return this.document?.system?.tooltip || ""
   }
 
   get template() {
-    if (!this.document || !this.src) return "";
-    return html`<img src="${this.src}" alt="${this.document.name}" />`;
+    if (!this.document) return ""
+    return html`<img
+      src="${this.document.img}"
+      alt="${this.document.name}"
+    />`
   }
 
   async #onMouseOver(e) {
-    e.stopPropagation();
-    const content = await this.#buildTooltipTemplate();
+    e.stopPropagation()
+    const content = await this.#buildTooltipTemplate()
     game.tooltip.activate(this, {
       content,
-      cssClass: "tooltip--enriched-tooltip"
+      cssClass: "tooltip--enriched-tooltip",
     })
   }
 
-  #onMouseOut(e) {
-    game.tooltip.deactivate();
+  #onMouseOut() {
+    game.tooltip.deactivate()
   }
 }
 
-export default ItemTile;
+export default ItemTile

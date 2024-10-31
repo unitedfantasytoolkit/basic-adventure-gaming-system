@@ -1,50 +1,96 @@
 <section class="left-rail">
-  <article class="character-name">
-    <img src="https://placehold.co/128x128/000/fff" class="document-art" alt="" />
-    <div class="character-details">
-      <h2>{{actor.name}}</h2>
-      <uft-character-info-meter value="8" max="24" class="hp">
-        <i slot="icon" class="fa fa-heart"></i>
-      </uft-character-info-meter>
+  {{#each classes}}
+    <article class="character-class">
+      <img src="{{img}}" class="document-art" alt="" />
+      <div class="character-details">
+        <span>Level {{system.level}} {{name}}</span>
+        <uft-character-info-meter value="{{xpBar.current}}" max="{{xpBar.max}}" class="xp">
+          <i slot="icon" class="fa fa-trophy-star"></i>
+        </uft-character-info-meter>
+      </div>
+    </article>
+  {{else}}
 
-      <uft-character-info-meter value="686" max="1600" class="encumbrance">
-        <i slot="icon" class="fa fa-weight-hanging"></i>
-      </uft-character-info-meter>
-    </div>
-  </article>
-  <article class="character-classes">
-    <uft-xp-bar uuid="Item.eikV7zsBQuNnrEpv"></uft-xp-bar>
-  </article>
+  {{/each}}
   <article class="meters">
+    <uft-character-info-meter value="{{actor.system.hp.value}}" max="{{actor.system.hp.max}}" class="hp">
+      <i slot="icon" class="fa fa-heart"></i>
+    </uft-character-info-meter>
+
+    <span>TODO</span>
+    <uft-character-info-meter
+      value="2600"
+      max="1600"
+      class="encumbrance"
+    >
+    
+      <i slot="icon" class="fa fa-scale-balanced"></i>
+    </uft-character-info-meter>
   </article>
-    <div class="character-tiles">
+    <div class="character-tiles scrollable">
+      <dl>
+        <dt>THAC0</dt>
+        <dd>{{actor.system.thac0}}</dd>
+        <dt>Armor Class</dt>
+        <dd>TODO</dd>
+        <dt>Movement</dt>
+        {{!--<dd>120/40/24</dd>--}}
+        <dd>TODO</dd>
+      </dl>
 
-      <div class="attack">
-
+      <div class="combat">
+        <header>
+        <h3>Modifiers</h3>
+        <span>Atk</span>
+        <span>Dmg</span>
+        </header>
+        
+        <dl>
+        <dt>Melee</dt>
+        <dd>{{actor.system.meleeAttackMod}}</dd>
+        <dd>{{actor.system.meleeDamageMod}}</dd>
+        <dt>Missile</dt>
+        <dd>{{actor.system.missileAttackMod}}</dd>
+        <dd>{{actor.system.missileDamageMod}}</dd>
+        </dl>
       </div>
-      <div class="damage">
-
+            
+      <div class="ability-scores">
+        <h3>Ability Scores</h3>
+        <dl>
+          <dt>Strength</dt>
+          <dd>{{actor.system.abilityScores.str.value}}</dd>
+          <dt>Intelligence</dt>
+          <dd>{{actor.system.abilityScores.int.value}}</dd>
+          <dt>Wisdom</dt>
+          <dd>{{actor.system.abilityScores.wis.value}}</dd>
+          <dt>Dexterity</dt>
+          <dd>{{actor.system.abilityScores.dex.value}}</dd>
+          <dt>Constitution</dt>
+          <dd>{{actor.system.abilityScores.con.value}}</dd>
+          <dt>Charisma</dt>
+          <dd>{{actor.system.abilityScores.cha.value}}</dd>
+        </dl>
       </div>
 
-      <div class="movement">
-
+      <div class="defenses">
+        <h3>Saving Throws</h3>
+        <dl>
+          <dt>Death/Poison</dt>
+          <dd>{{actor.system.savingThrows.death}}</dd>
+          <dt>Wands</dt>
+          <dd>{{actor.system.savingThrows.wands}}</dd>
+          <dt>Paralysis/Petrify</dt>
+          <dd>{{actor.system.savingThrows.paralysis}}</dd>
+          <dt>Breath Weapons</dt>
+          <dd>{{actor.system.savingThrows.breath}}</dd>
+          <dt>Spells/Rods/Staves</dt>
+          <dd>{{actor.system.savingThrows.spell}}</dd>
+          <dt>Bonus vs. Magic</dt>
+          <dd>{{actor.system.abilityScores.wis.magicSave}}</dd>
+        </dl>
       </div>
+
     </div>
-
-    <ul class="equipment">
-      <li>
-        <img src="https://placehold.co/32x32/000/fff" alt="" />
-      </li>
-    </ul>
-
-    <ul class="favorites">
-      <li>
-        <img src="https://placehold.co/32x32/000/fff" alt="" />
-      </li>
-    </ul>
-  </div>
-  <div class="ability-score-tile">
-    <label>STR</label>
-    <span class="value">18</span>
   </div>
 </section>

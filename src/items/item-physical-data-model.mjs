@@ -4,10 +4,12 @@
 
 const {
   NumberField,
+  StringField,
   SchemaField,
   DocumentUUIDField,
   HTMLField,
   FilePathField,
+  BooleanField,
 } = foundry.data.fields
 
 const PhysicalItemDataMixin = (schema) =>
@@ -30,10 +32,17 @@ const PhysicalItemDataMixin = (schema) =>
         }),
         weight: new NumberField({ min: 0, initial: 0 }),
         description: new HTMLField({}),
+        flavorText: new HTMLField({}),
         banner: new FilePathField({
           categories: ["IMAGE"],
         }),
         containerUUID: new DocumentUUIDField({}),
+        identification: new SchemaField({
+          isIdentified: new BooleanField({ initial: true }),
+          name: new StringField(),
+          description: new HTMLField(),
+          xpReward: new NumberField({ initial: 0, min: 0 }),
+        }),
       }
     }
   }

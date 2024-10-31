@@ -3,7 +3,7 @@
  */
 
 import PhysicalItemDataMixin from "./item-physical-data-model.mjs"
-import { actionsFactory } from "./item.physical.fields.mjs"
+import { actionsFactory } from "../common/action.fields.mjs"
 
 export default class BAGSItemAmmunitionDataModel extends PhysicalItemDataMixin({
   actions: actionsFactory(),

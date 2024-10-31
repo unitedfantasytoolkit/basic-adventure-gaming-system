@@ -6,6 +6,163 @@
       "few": "rd",
       "other": "th"
     },
+    "Party": {
+      "Title": "Party",
+      "XP": "Distribute XP",
+      "Treasure": "Distribute Treasure",
+      "Empty": "No one has been added to the party."
+    },
+    "Actions": {
+      "TabLabel": "Actions",
+      "Editor": {
+        "Tabs": {
+          "Effects": "Effects",
+          "Details": "Details",
+          "Description": "Description"
+        },
+        "Attempt": {
+          "Heading": "Attempt Settings"
+        },
+        "Effects": {
+          "Heading": "Effects",
+          "Note": {
+            "Label": "Note",
+            "Hint": "Text displayed with the rolled effect (e.g: \"X hit dice turned\", \"Fire damage\""
+          }
+        }
+      },
+      "Flags": {
+        "UsesAttempt": {
+          "Label": "Uses an attempt roll",
+          "Hint": "When this action is used, a roll is made. On success, the action is successful."
+        },
+        "UsesEffect": {
+          "Label": "Has effects",
+          "Hint": "This action has effects that the system is able to model, such as healing, damage, or status effects."
+        }
+      },
+      "Attempt": {
+        "IsLikeAttack": {
+          "Label": "This is an attack",
+          "Hint": "This action represents a d20 roll made against a target's armor class."
+        },
+        "AttackType": {
+          "Label": "Attack Type",
+          "Hint": "Determines modifiers applied to attack and damage rolls.",
+          "Melee": "Melee",
+          "Missile": "Missile",
+          "None": "Unmodified"
+        },
+        "Roll": {
+          "Formula": {
+            "Label": "Roll Formula",
+            "Hint": "The dice to be rolled for this attempt."
+          },
+          "Operator": {
+            "Label": "Operator",
+            "Hint": "How the outcome of the roll formula will be compared to the target."
+          },
+          "Target": {
+            "Label": "Target",
+            "Hint": "The value to be compared to the roll formula."
+          }
+        },
+        "SuccessText": {
+          "Label": "Success Text",
+          "Hint": "Text displayed in the chat card for a successful use of this action."
+        },
+        "FailText": {
+          "Label": "Fail Text",
+          "Hint": "Text displayed in the chat card for a failed use of this action."
+        }
+      },
+      "Effects": {
+        "Type": {
+          "Label": "Effect Type",
+          "Hint": "How does this effect interact with targets?",
+          "Attack": "Damage",
+          "Healing": "Healing",
+          "Effect": "Apply Active Effect",
+          "Macro": "Macro",
+          "Miscellaneous": "Other"
+        },
+        "Resistance": {
+          "Heading": "Resistance",
+          "Type": {
+            "Label": "Resistance Type",
+            "Hint": "",
+            "AbilityScore": "Ability Score",
+            "SavingThrow": "Saving Throw",
+            "Number": "Number"
+          },
+          "SavingThrow": { "Label": "Saving Throw", "Hint": "" },
+          "AbilityScore": { "Label": "Ability Score", "Hint": "" },
+          "StaticTarget": { "Label": "Target", "Hint": "" },
+          "Formula": { "Label": "Dice Formula", "Hint": "" },
+          "Operator": { "Label": "Operator", "Hint": "" }
+        },
+        "Flags": {
+          "IsMagical": {
+            "Label": "Effect is Magical",
+            "Hint": "This effect counts as magical for purposes of bypassing mundane damage resistance or spell bonuses to saving throws."
+          },
+          "CanBeResisted": {
+            "Label": "Can be resisted",
+            "Hint": ""
+          }
+        },
+        "Formula": {
+          "Label": "Dice Formula",
+          "Hint": "The dice to be rolled for this effect. For help on dice notation, see <a href=\"#\">Foundry's docs</a>."
+        },
+        "Note": {
+          "Label": "Note",
+          "Hint": ""
+        },
+        "Condition": {
+          "Heading": "Active Effect",
+          "Label": "",
+          "Hint": ""
+        },
+        "AreaOfEffect": {
+          "Heading": "Area of Effect",
+          "Type": {
+            "Label": "",
+            "Hint": "",
+            "Circle": "Circle",
+            "Cone": "Cone",
+            "Rectangle": "Rectangle",
+            "Ray": "Ray",
+            "Target": "Targeted creature",
+            "Self": "Self"
+          }
+        },
+        "Macro": {
+          "Document": { "Label": "Macro Document", "Hint": "" },
+          "Editor": { "Label": "Custom Code", "Hint": "" }
+        }
+      },
+      "Consumption": {
+        "Types": {
+          "Label": "Consumed Resource",
+          "SelfQuantity": "This item's quantity",
+          "SelfUses": "This item's uses",
+          "ItemQuantity": "Another item's quantity",
+          "ItemUses": "Another item's uses",
+          "HP": "User's HP",
+          "Spellslot": "User's Spell slots",
+          "ActionUse": "This action's uses"
+        }
+      },
+      "Name": {
+        "Label": "Action Name",
+        "Hint": ""
+      },
+      "Description": {
+        "Label": "Description",
+        "Hint": "A summary of what this action does."
+      }
+    },
     "AbilityScores": {
       "Strength": {
         "Short": "Str",
@@ -87,7 +244,7 @@
       "Tabs": {
         "Summary": "Summary",
         "Advancement": "Advancement",
-        "Effects": "Effects",
+        "Effects": "Active Effects",
         "Description": "Description",
         "Restrictions": "Restrictions",
         "Information": "Details",

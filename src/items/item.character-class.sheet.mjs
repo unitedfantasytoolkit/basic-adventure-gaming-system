@@ -21,15 +21,6 @@ export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
       document: this.document,
     })
 
-    this.#deleteThisMethod()
-  }
-
-  async #deleteThisMethod() {
-    // console.clear()
-    // await this.#xpTableEditor.render(true)
-    // setTimeout(() => {
-    //   this.#xpTableEditor.bringToFront()
-    // }, 500)
   }
 
   static get DEFAULT_OPTIONS() {
@@ -73,6 +64,10 @@ export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
           handler: this.save,
           submitOnChange: true,
         },
+        position: {
+          width: 640,
+          height: 480,
+        },
       }
     )
   }
@@ -89,20 +84,17 @@ export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
   static get PARTS() {
     return {
       header: {
-        template: `${this.TEMPLATE_ROOT}/header.hbs`,
+        template: `${SYSTEM_TEMPLATE_PATH}/common/header.hbs`,
       },
-      // "tab-navigation": {
-      //   template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
-      // },
       summary: {
         template: `${this.TEMPLATE_ROOT}/main.hbs`,
       },
       advancement: {
         template: `${this.TEMPLATE_ROOT}/xp-table.view.hbs`,
       },
-      // main: {
-      //   template: `${this.TEMPLATE_ROOT}/main.hbs`,
-      // },
+      "tab-navigation": {
+        template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
+      },
     }
   }
 
@@ -112,9 +104,10 @@ export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
     console.log(partId)
     switch (partId) {
       case "header":
-        context.shouldShowFlavorText =
-          !!doc.system.flavorText && this.tabGroups.sheet === "summary"
-        console.log(context)
+        // context.shouldShowFlavorText =
+        //   !!doc.system.flavorText && this.tabGroups.sheet === "summary"
+        // console.log(context)
+        context.title = doc.name
         break
       case "summary":
         context.tab = context.tabs.summary
@@ -151,6 +144,16 @@ export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
       },
       tabs: this.#getTabs(),
     }
+  }
+
+  /**
+   * @todo Add an event listener for dragging the window around by the window content header
+   */
+  _onRender(options) {
+    super._onRender(options)
+    // this.element
+    //   ?.querySelector(".window-content__header")
+    //   ?.addEventListener("pointerdown", this.window.onDrag.bind(this))
   }
 
   _onClickAction(event, target) {
@@ -215,30 +218,30 @@ export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
     }
     return tabs
   }
-  async _renderFrame(options) {
-    let tabNav
-    let expandedHeader
-    let effectsPane
-    const frame = await super._renderFrame(options)
+  // async _renderFrame(options) {
+  //   let tabNav
+  //   let expandedHeader
+  //   let effectsPane
+  //   const frame = await super._renderFrame(options)
 
-    if (Object.keys(this.#getTabs()).length) {
-      const tabNavContainer = document.createElement("template")
-      tabNavContainer.innerHTML = await renderTemplate(
-        `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
-        {
-          tabs: this.#getTabs(),
-        }
-      )
-      tabNav = tabNavContainer.content.firstElementChild
-      console.info(tabNavContainer)
-      console.info(tabNav)
-      if (tabNav) frame.append(tabNav)
-    }
+  //   if (Object.keys(this.#getTabs()).length) {
+  //     const tabNavContainer = document.createElement("template")
+  //     tabNavContainer.innerHTML = await renderTemplate(
+  //       `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
+  //       {
+  //         tabs: this.#getTabs(),
+  //       }
+  //     )
+  //     tabNav = tabNavContainer.content.firstElementChild
+  //     console.info(tabNavContainer)
+  //     console.info(tabNav)
+  //     if (tabNav) frame.append(tabNav)
+  //   }
 
-    console.info(this.#getTabs(), tabNav)
+  //   console.info(this.#getTabs(), tabNav)
 
-    return frame
-  }
+  //   return frame
+  // }
 
   /**
    * Change the active tab within a tab group in this Application instance.
@@ -255,42 +258,42 @@ export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
    * @param {boolean} [options.updatePosition=true] Update application position after changing the tab?
    * @override
    */
-  changeTab(
-    tab,
-    group,
-    { event, navElement, force = false, updatePosition = true } = {}
-  ) {
-    if (!tab || !group)
-      throw new Error("You must pass both the tab and tab group identifier")
-    if (this.tabGroups[group] === tab && !force) return // No change necessary
-    const tabElement = this.element.querySelector(
-      `.tabs > [data-group="${group}"][data-tab="${tab}"]`
-    )
-    if (!tabElement)
-      throw new Error(
-        `No matching tab element found for group "${group}" and tab "${tab}"`
-      )
+  // changeTab(
+  //   tab,
+  //   group,
+  //   { event, navElement, force = false, updatePosition = true } = {}
+  // ) {
+  //   if (!tab || !group)
+  //     throw new Error("You must pass both the tab and tab group identifier")
+  //   if (this.tabGroups[group] === tab && !force) return // No change necessary
+  //   const tabElement = this.element.querySelector(
+  //     `.tabs > [data-group="${group}"][data-tab="${tab}"]`
+  //   )
+  //   if (!tabElement)
+  //     throw new Error(
+  //       `No matching tab element found for group "${group}" and tab "${tab}"`
+  //     )
 
-    // Update tab navigation
-    for (const t of this.element.querySelectorAll(
-      `.tabs > [data-group="${group}"]`
-    )) {
-      t.classList.toggle("active", t.dataset.tab === tab)
-    }
+  //   // Update tab navigation
+  //   for (const t of this.element.querySelectorAll(
+  //     `.tabs > [data-group="${group}"]`
+  //   )) {
+  //     t.classList.toggle("active", t.dataset.tab === tab)
+  //   }
 
-    // Update tab contents
-    for (const section of this.element.querySelectorAll(
-      `.tab[data-group="${group}"]`
-    )) {
-      section.classList.toggle("active", section.dataset.tab === tab)
-    }
-    this.tabGroups[group] = tab
+  //   // Update tab contents
+  //   for (const section of this.element.querySelectorAll(
+  //     `.tab[data-group="${group}"]`
+  //   )) {
+  //     section.classList.toggle("active", section.dataset.tab === tab)
+  //   }
+  //   this.tabGroups[group] = tab
 
-    // Update automatic width or height
-    if (!updatePosition) return
-    const positionUpdate = {}
-    if (this.options.position.width === "auto") positionUpdate.width = "auto"
-    if (this.options.position.height === "auto") positionUpdate.height = "auto"
-    if (!foundry.utils.isEmpty(positionUpdate)) this.setPosition(positionUpdate)
-  }
+  //   // Update automatic width or height
+  //   if (!updatePosition) return
+  //   const positionUpdate = {}
+  //   if (this.options.position.width === "auto") positionUpdate.width = "auto"
+  //   if (this.options.position.height === "auto") positionUpdate.height = "auto"
+  //   if (!foundry.utils.isEmpty(positionUpdate)) this.setPosition(positionUpdate)
+  // }
 }
