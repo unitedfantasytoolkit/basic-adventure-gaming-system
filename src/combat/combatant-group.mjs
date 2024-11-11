@@ -1,33 +1,33 @@
-import BAGSCombatant from "./combatant";
+import BAGSCombatant from "./combatant"
 
 export default class BAGSGroupCombatant extends BAGSCombatant {
   get group() {
-    if (this.actor.system.isSlow) return "slow";
+    if (this.actor.system.isSlow) return "slow"
 
-    return this.groupRaw;
+    return this.groupRaw
   }
 
   get groupRaw() {
-    const assignedGroup = this.getFlag(game.system.id, "group");
-    if (assignedGroup) return assignedGroup;
+    const assignedGroup = this.getFlag(game.system.id, "group")
+    if (assignedGroup) return assignedGroup
 
     if (canvas.tokens) {
-      const token = canvas.tokens.get(this.token.id);
-      const disposition = token.document.disposition;
+      const token = canvas.tokens.get(this.token.id)
+      const { disposition } = token.document
       switch (disposition) {
         case -1:
-          return "red";
+          return "red"
         case 0:
-          return "yellow";
+          return "yellow"
         case 1:
-          return "green";
+          return "green"
       }
     }
 
-    return "white";
+    return "white"
   }
 
   set group(value) {
-    this.setFlag(game.system.id, "group", value || "black");
+    this.setFlag(game.system.id, "group", value || "black")
   }
 }

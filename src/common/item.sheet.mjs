@@ -2,11 +2,16 @@
  * @file The base class for Item sheets in this system.
  */
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
+import ActionResolver from "../rules-engines/action-resolver.mjs"
 
 const { HandlebarsApplicationMixin } = foundry.applications.api
 
+/**
+ * @typedef {import('../types.mjs').SheetNavTab} SheetNavTab
+ */
+
 export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
-  foundry.applications.sheets.ItemSheetV2
+  foundry.applications.sheets.ItemSheetV2,
 ) {
   static SUB_APPS = {}
 
@@ -36,24 +41,28 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
           }),
         }
       },
-      {}
+      {},
     )
   }
 
   static DOCUMENT_TYPE = "item"
 
+  /**
+   * Default tabs that *all* actor sheets should have.
+   * @type {SheetNavTab[]}
+   */
   static TABS = [
     {
       id: "summary",
       group: "sheet",
-      icon: "fa-solid fa-tag",
+      icon: "fa-solid fa-square-list",
       label: "BAGS.CharacterClass.Tabs.Summary",
       cssClass: "tab--summary",
     },
     {
-      id: "effects",
+      id: "active-effects",
       group: "sheet",
-      icon: "fa-solid fa-tag",
+      icon: "fa-solid fa-sitemap",
       label: "BAGS.CharacterClass.Tabs.Effects",
       cssClass: "tab--effects",
     },
@@ -90,7 +99,7 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
           handler: this.save,
           submitOnChange: true,
         },
-      }
+      },
     )
   }
 
@@ -144,8 +153,12 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     return context
   }
 
-  /** @override */
-  async _prepareContext(_options) {
+  /**
+   * Provide context to the templating engine.
+   * @todo Change `item` to `document`
+   * @override
+   */
+  async _prepareContext() {
     const doc = this.document
 
     return {
@@ -174,21 +187,40 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
         clientY: event.clientY,
         pointerId: event.pointerId,
         pointerType: event.pointerType,
-      })
+      }),
     )
   }
 
   _onClickAction(event, target) {
     const { action } = target.dataset
-    console.info(action)
 
     if (!action) return
 
     switch (action) {
+      case "perform-action":
+        this.resolveAction(
+          event.target.closest("[data-action-id]").dataset.actionId,
+        )
+        break
       default:
         super._onClickAction(event, target)
         break
     }
+  }
+
+  /**
+   * Given an action ID, prepare to, then resolve, the related action.
+   * @param {string} actionId - The ID of the action to resolve on this document
+   */
+  async resolveAction(actionId) {
+    const action = this.document.system.actions.find((a) => a.id === actionId)
+    const resolver = new ActionResolver(
+      action,
+      this.document,
+      this.document.parent,
+    )
+    const resolved = await resolver.resolve()
+    console.info(resolved)
   }
 
   tabGroups = {

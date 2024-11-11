@@ -7,7 +7,7 @@ import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api
 
 export default class BAGSCharacterClassDetailsEditor extends HandlebarsApplicationMixin(
-  ApplicationV2
+  ApplicationV2,
 ) {
   document
 
@@ -92,7 +92,7 @@ export default class BAGSCharacterClassDetailsEditor extends HandlebarsApplicati
         context.tab = context.tabs.information
         break
       default:
-        break;
+        break
     }
     return context
   }
@@ -115,8 +115,8 @@ export default class BAGSCharacterClassDetailsEditor extends HandlebarsApplicati
 
     const gearTable = doc.system.gearTable
       ? await TextEditor.enrichHTML(
-          fromUuidSync(doc.system.gearTable)._createDocumentLink()
-        )
+          fromUuidSync(doc.system.gearTable)._createDocumentLink(),
+      )
       : ""
 
     return {
@@ -156,7 +156,7 @@ export default class BAGSCharacterClassDetailsEditor extends HandlebarsApplicati
   // === UI Events==============================================================
 
   _onClickAction(event, target) {
-    const action = target.dataset.action
+    const { action } = target.dataset
 
     if (!action) return
 

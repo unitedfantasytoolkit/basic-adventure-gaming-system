@@ -52,7 +52,7 @@ import BAGSCharacterClassDetailsEditor from "./item-app-class-details-editor.mjs
 const { HandlebarsApplicationMixin } = foundry.applications.api
 
 export default class BAGSApplication extends HandlebarsApplicationMixin(
-  foundry.applications.sheets.ItemSheetV2
+  foundry.applications.sheets.ItemSheetV2,
 ) {
   static SUB_APPS = []
 
@@ -74,7 +74,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
         ...obj,
         [App.constructor.name]: new App(this.document),
       }),
-      {}
+      {},
     )
   }
 
@@ -106,7 +106,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
           handler: this.save,
           submitOnChange: true,
         },
-      }
+      },
     )
   }
 

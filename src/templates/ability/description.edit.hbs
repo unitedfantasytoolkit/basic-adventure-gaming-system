@@ -3,4 +3,7 @@
   class="tab tab--ability tab--ability-{{tab.id}} {{tab.cssClass}}"
   data-tab="{{tab.id}}"
   data-group="{{tab.group}}"
-></section>
+>
+  <h2>{{localize "BAGS.CharacterClass.Tabs.Description"}}</h2>
+  <prose-mirror name="description" value="{{.description}}"></prose-mirror>
+</section>

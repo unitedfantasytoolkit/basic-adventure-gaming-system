@@ -4,7 +4,7 @@ import { allianceGroups } from "./combat-group"
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api
 
 export default class BAGSCombatGroupSelector extends HandlebarsApplicationMixin(
-  ApplicationV2
+  ApplicationV2,
 ) {
   _highlighted
 
@@ -39,7 +39,8 @@ export default class BAGSCombatGroupSelector extends HandlebarsApplicationMixin(
 
   static PARTS = {
     main: {
-      template: `/systems/basic-adventure-gaming-system/dist/templates/apps/combat-set-groups.hbs`,
+      template:
+        "/systems/basic-adventure-gaming-system/dist/templates/apps/combat-set-groups.hbs",
     },
   }
 

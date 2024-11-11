@@ -27,14 +27,12 @@ export default class BAGSCombatTab extends CombatTracker {
     const context = await super.getData(options)
     const isGroupInitiative = game.settings.get(
       SYSTEM_NAME,
-      CONFIG.Combat.documentClass.CONFIG_SETTING
+      CONFIG.Combat.documentClass.CONFIG_SETTING,
     ).usesGroupInitiative
 
     const turns = context.turns.map((turn) => {
       const combatant = game.combat.combatants.get(turn.id)
-      turn.isSlowed =
-        turn.initiative ===
-        `${CONFIG.Combatant.documentClass.INITIATIVE_VALUE_SLOWED}`
+      turn.isSlowed = turn.initiative`${CONFIG.Combatant.documentClass.INITIATIVE_VALUE_SLOWED}`
       turn.isCasting = !!combatant.getFlag(game.system.id, "prepareSpell")
       turn.isRetreating = !!combatant.getFlag(game.system.id, "moveInCombat")
       turn.isOwnedByUser = !!combatant.actor.isOwner
@@ -101,7 +99,7 @@ export default class BAGSCombatTab extends CombatTracker {
   /**
    * Handle a Combatant control toggle
    * @private
-   * @param {Event} event   The originating mousedown event
+   * @param {Event} event - The originating mousedown event
    */
   async _onCombatantControl(event) {
     event.preventDefault()
@@ -137,7 +135,7 @@ export default class BAGSCombatTab extends CombatTracker {
         callback: (li) => {
           const combatantId = li.data("combatant-id")
           const turnToActivate = this.viewed.turns.findIndex(
-            (t) => t.id === combatantId
+            (t) => t.id === combatantId,
           )
           this.viewed.activateCombatant(turnToActivate)
         },

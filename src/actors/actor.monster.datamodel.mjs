@@ -9,7 +9,7 @@
 import {
   DEFAULT_BASE_SPEED,
   DEFAULT_MONSTER_HIT_DIE_SIZE,
-} from "../../config/constants.mjs";
+} from "../../config/constants.mjs"
 
 const {
   StringField,
@@ -20,7 +20,7 @@ const {
   SchemaField,
   DocumentUUIDField,
   HTMLField,
-} = foundry.data.fields;
+} = foundry.data.fields
 
 export default class OseDataModelMonster extends foundry.abstract
   .TypeDataModel {
@@ -45,7 +45,6 @@ export default class OseDataModelMonster extends foundry.abstract
   /**
    * Use an empty array for system.languages.value
    * in order to suppress Polyglot errors.
-   *
    * @param {OseDataModelMonster} source - Source data to migrate
    */
   static #migrateMonsterLanguages(source) {
@@ -242,7 +241,7 @@ export default class OseDataModelMonster extends foundry.abstract
           hint: "",
         }),
       }),
-    };
+    }
     return {
       // spells: new ObjectField(),
       // ac: new ObjectField(),
@@ -275,12 +274,12 @@ export default class OseDataModelMonster extends foundry.abstract
       //   loyalty: new NumberField({ integer: true }),
       //   wage: new StringField(),
       // }),
-    };
+    }
   }
 
   // @todo This only needs to be public until
   //       we can ditch sharing out AC/AAC.
-  // eslint-disable-next-line class-methods-use-this
+
   // get usesAscendingAC() {
   //   return game.settings.get(game.system.id, "ascendingAC");
   // }

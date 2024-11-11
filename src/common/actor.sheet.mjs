@@ -1,60 +1,18 @@
 /**
  * @file The base class for applications in this system.
  */
+import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
-// /**
-//  * Render the outer framing HTMLElement which wraps the inner HTML of the Application.
-//  * @param {RenderOptions} options                 Options which configure application rendering behavior
-//  * @returns {Promise<HTMLElement>}
-//  * @protected
-//  */
-// async _renderFrame(options) {
-//   const frame = document.createElement(this.options.tag);
-//   frame.id = this.#id;
-//   if ( this.options.classes.length ) frame.className = this.options.classes.join(" ");
-//   if ( !this.hasFrame ) return frame;
-
-//   // Window applications
-//   const labels = {
-//     controls: game.i18n.localize("APPLICATION.TOOLS.ControlsMenu"),
-//     toggleControls: game.i18n.localize("APPLICATION.TOOLS.ToggleControls"),
-//     close: game.i18n.localize("APPLICATION.TOOLS.Close")
-//   }
-//   const contentClasses = ["window-content", ...this.options.window.contentClasses].join(" ");
-//   frame.innerHTML = `<header class="window-header">
-//     <i class="window-icon hidden"></i>
-//     <h1 class="window-title"></h1>
-//     <button type="button" class="header-control fa-solid fa-ellipsis-vertical"
-//             data-tooltip="${labels.toggleControls}" aria-label="${labels.toggleControls}"
-//             data-action="toggleControls"></button>
-//     <button type="button" class="header-control fa-solid fa-times"
-//             data-tooltip="${labels.close}" aria-label="${labels.close}" data-action="close"></button>
-//   </header>
-//   <menu class="controls-dropdown"></menu>
-//   <${this.options.window.contentTag} class="${contentClasses}"></section>
-//   ${this.options.window.resizable ? `<div class="window-resize-handle"></div>` : ""}`;
-
-//   // Reference elements
-//   this.#window.header = frame.querySelector(".window-header");
-//   this.#window.title = frame.querySelector(".window-title");
-//   this.#window.icon = frame.querySelector(".window-icon");
-//   this.#window.resize = frame.querySelector(".window-resize-handle");
-//   this.#window.close = frame.querySelector("button[data-action=close]");
-//   this.#window.controls = frame.querySelector("button[data-action=toggleControls]");
-//   this.#window.controlsDropdown = frame.querySelector(".controls-dropdown");
-//   return frame;
-// }
-
-import { SYSTEM_TEMPLATE_PATH } from "../../config/constants.mjs"
-import BAGSCharacterClassXPTableEditor from "./item-app-class-xp-table-editor.mjs"
-import BAGSCharacterClassDetailsEditor from "./item-app-class-details-editor.mjs"
+/**
+ * @typedef {import('../types.mjs').SheetNavTab} SheetNavTab
+ */
 
 const { HandlebarsApplicationMixin } = foundry.applications.api
 
 export default class BAGSApplication extends HandlebarsApplicationMixin(
-  foundry.applications.sheets.ItemSheetV2
+  foundry.applications.sheets.ActorSheetV2,
 ) {
-  static SUB_APPS = []
+  static SUB_APPS = {}
 
   get subApps() {
     return this.#subApps
@@ -69,107 +27,127 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
   constructor(options = {}) {
     super(options)
 
-    this.#subApps = this.constructor.SUB_APPS.reduce(
-      (obj, App) => ({
-        ...obj,
-        [App.constructor.name]: new App(this.document),
-      }),
-      {}
+    /**
+     * @todo skip over non-Applications
+     */
+    this.#subApps = Object.keys(this.constructor.SUB_APPS).reduce(
+      (obj, key) => {
+        const App = this.constructor.SUB_APPS[key]
+        return {
+          ...obj,
+          [key]: new App({
+            document: this.document,
+          }),
+        }
+      },
+      {},
     )
   }
 
+  /** @type {string} */
+  static DOCUMENT_TYPE = "item"
+
+  /**
+   * Default tabs that *all* actor sheets should have.
+   * @type {SheetNavTab[]}
+   */
+  static TABS = [
+    {
+      id: "summary",
+      group: "sheet",
+      icon: "fa-solid fa-square-list",
+      label: "BAGS.CharacterClass.Tabs.Summary",
+      cssClass: "tab--summary",
+    },
+    {
+      id: "active-effects",
+      group: "sheet",
+      icon: "fa-solid fa-sitemap",
+      label: "BAGS.CharacterClass.Tabs.Effects",
+      cssClass: "tab--effects",
+    },
+  ]
+
+  /** @type {string[]} */
+  static CSS_CLASSES_WINDOW = []
+
+  /** @type {string[]} */
+  static CSS_CLASSES_CONTENT = []
+
   static get DEFAULT_OPTIONS() {
+    const controls = this.HEADER_CONTROLS
+    if (super.DEFAULT_OPTIONS.window)
+      controls.concat(super.DEFAULT_OPTIONS.window.controls)
+
     return foundry.utils.mergeObject(
       foundry.applications.sheets.ItemSheetV2.DEFAULT_OPTIONS,
       {
-        id: "character-class-{id}",
+        id: `${this.DOCUMENT_TYPE}-{id}`,
         classes: [
           "application--bags",
           "application--sheet",
-          "application--hide-title",
           "application--item-sheet",
-          "application--character-class-sheet",
+          "application--hide-title",
+          ...this.CSS_CLASSES_WINDOW,
         ],
-        tag: "form",
+        controls,
         window: {
-          frame: true,
-          positioned: true,
-          icon: "fa-regular fa-circle-star",
-          // window-icon fa-fw fa-regular fa-game-board
-          controls: [
-            {
-              action: "edit-xp-table",
-              icon: "fa-solid fa-table",
-              label: "BAGS.CharacterClass.XPTable.ActionLabel",
-              ownership: "OWNER",
-            },
-            {
-              action: "edit-details",
-              icon: "fa-solid fa-pencil",
-              label: "BAGS.CharacterClass.Information.ActionLabel",
-              ownership: "OWNER",
-            },
-          ],
           minimizable: true,
           resizable: true,
           contentTag: "section",
-          contentClasses: [],
+          contentClasses: this.CSS_CLASSES_CONTENT,
         },
         form: {
           handler: this.save,
           submitOnChange: true,
         },
-      }
+      },
     )
   }
 
   static async save(_event, _form, formData) {
-    // console.info(this, event, form, formData);
     await this.document.update(formData.object)
   }
 
   static get TEMPLATE_ROOT() {
-    return `${SYSTEM_TEMPLATE_PATH}/character-class`
+    return `${SYSTEM_TEMPLATE_PATH}/${this.DOCUMENT_TYPE}`
+  }
+
+  static TAB_PARTS = {
+    summary: {
+      template: `${SYSTEM_TEMPLATE_PATH}/common/summary.hbs`,
+    },
+    effects: {
+      template: `${SYSTEM_TEMPLATE_PATH}/common/effects.hbs`,
+    },
   }
 
   static get PARTS() {
     return {
       header: {
-        template: `${this.TEMPLATE_ROOT}/header.hbs`,
+        template: `${SYSTEM_TEMPLATE_PATH}/common/header.hbs`,
       },
+      ...this.TAB_PARTS,
       "tab-navigation": {
         template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
       },
-      summary: {
-        template: `${this.TEMPLATE_ROOT}/main.hbs`,
-      },
-      advancement: {
-        template: `${this.TEMPLATE_ROOT}/xp-table.view.hbs`,
-      },
-      // main: {
-      //   template: `${this.TEMPLATE_ROOT}/main.hbs`,
-      // },
     }
   }
 
   /** @override */
   async _preparePartContext(partId, context) {
     const doc = this.document
-    console.log(partId)
+    context.tab = context.tabs.find((t) => t.id === partId)
     switch (partId) {
       case "header":
-        context.shouldShowFlavorText =
-          !!doc.system.flavorText && this.tabGroups.sheet === "summary"
-        console.log(context)
+        context.canShowIcon = true
+        context.title = doc.name
         break
       case "summary":
-        context.tab = context.tabs.summary
-        break
-      case "advancement":
-        context.tab = context.tabs.advancement
         break
       case "effects":
-        context.tab = context.tabs.effects
+        break
+      case "tab-navigation":
         break
       default:
         break
@@ -177,26 +155,42 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
     return context
   }
 
-  /** @override */
-  async _prepareContext(_options) {
+  /**
+   * Provide context to the templating engine.
+   * @todo Change `item` to `document`
+   * @override
+   */
+  async _prepareContext() {
     const doc = this.document
-
-    const gearTable = doc.system.gearTable
-      ? await TextEditor.enrichHTML(
-          fromUuidSync(doc.system.gearTable)._createDocumentLink()
-        )
-      : ""
 
     return {
       item: doc,
       source: doc.toObject(),
       fields: doc.schema.fields,
       systemFields: doc.system.schema.fields,
-      formattedSystem: {
-        gearTable,
-      },
       tabs: this.#getTabs(),
     }
+  }
+
+  _onRender(options) {
+    super._onRender(options)
+    this.element
+      ?.querySelector(".window-content__header")
+      ?.addEventListener("pointerdown", this.delegateDrag.bind(this))
+  }
+
+  delegateDrag(event) {
+    event.preventDefault()
+    this.window.header.dispatchEvent(
+      new PointerEvent("pointerdown", {
+        bubbles: true,
+        cancellable: true,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        pointerId: event.pointerId,
+        pointerType: event.pointerType,
+      }),
+    )
   }
 
   _onClickAction(event, target) {
@@ -205,22 +199,10 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
     if (!action) return
 
     switch (action) {
-      case "edit-xp-table":
-        this.#xpTableEditor.render(true)
-        break
-      case "edit-details":
-        this.#detailsEditor.render(true)
-        break
       default:
         super._onClickAction(event, target)
         break
     }
-  }
-
-  close() {
-    this.#detailsEditor.close()
-    this.#xpTableEditor.close()
-    return super.close()
   }
 
   tabGroups = {
@@ -229,36 +211,24 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
 
   /**
    * Prepare an array of form header tabs.
-   * @returns {Record<string, Partial<ApplicationTab>>}
+   * @todo It'd be cool to be able to use Foundry's ApplicationTab type here.
+   * @returns {unknown[]} the list of tabs for this application
    */
   #getTabs() {
-    const tabs = {
-      summary: {
-        id: "summary",
-        group: "sheet",
-        icon: "fa-solid fa-tag",
-        label: "BAGS.CharacterClass.Tabs.Summary",
-        cssClass: "tab--summary",
-      },
-      advancement: {
-        id: "advancement",
-        group: "sheet",
-        icon: "fa-solid fa-tag",
-        label: "BAGS.CharacterClass.Tabs.Advancement",
-        cssClass: "tab--advancement",
-      },
-      effects: {
-        id: "effects",
-        group: "sheet",
-        icon: "fa-solid fa-tag",
-        label: "BAGS.CharacterClass.Tabs.Effects",
-        cssClass: "tab--effects",
-      },
-    }
-    for (const v of Object.values(tabs)) {
-      v.active = this.tabGroups[v.group] === v.id
-      v.cssClass = v.active ? "active" : ""
-    }
-    return tabs
+    const tabs = this.constructor.TABS
+    // for (const v of Object.values(tabs)) {
+    //   v.active = this.tabGroups[v.group] === v.id
+    //   v.cssClass = v.active ? "active" : ""
+    // }
+
+    return tabs.map((t) => {
+      const active = this.tabGroups[t.group] === t.id
+
+      return {
+        ...t,
+        active,
+        cssClass: active ? "active" : "",
+      }
+    })
   }
 }

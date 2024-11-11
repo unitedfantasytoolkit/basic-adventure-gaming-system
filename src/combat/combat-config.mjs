@@ -26,7 +26,7 @@ export default class BAGSCombatTrackerConfig extends foundry.applications.apps
         ...data.settings,
         ...game.settings.get(
           SYSTEM_NAME,
-          CONFIG.Combat.documentClass.CONFIG_SETTING
+          CONFIG.Combat.documentClass.CONFIG_SETTING,
         ),
       },
       rerollBehaviorChoices: {
@@ -42,7 +42,7 @@ export default class BAGSCombatTrackerConfig extends foundry.applications.apps
     const gameCombatThemeUpdate = game.settings.set(
       "core",
       "combatTheme",
-      formData["core.combatTheme"]
+      formData["core.combatTheme"],
     )
     const coreSettingsUpdate = game.settings.set(
       "core",
@@ -50,7 +50,7 @@ export default class BAGSCombatTrackerConfig extends foundry.applications.apps
       {
         resource: formData.resource,
         skipDefeated: formData.skipDefeated,
-      }
+      },
     )
     const systemSettingsUpdate = game.settings.set(
       SYSTEM_NAME,
@@ -58,7 +58,7 @@ export default class BAGSCombatTrackerConfig extends foundry.applications.apps
       {
         usesGroupInitiative: formData.usesGroupInitiative,
         rerollBehavior: formData.rerollBehavior,
-      }
+      },
     )
 
     return Promise.all([

@@ -7,7 +7,7 @@ import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api
 
 export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicationMixin(
-  ApplicationV2
+  ApplicationV2,
 ) {
   document
 
@@ -172,7 +172,7 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
     const newRow = structuredClone(
       highestLevel > -1
         ? this.document.system.xpTable[highestLevel]
-        : this.document.system.schema.fields.xpTable.initial[0]
+        : this.document.system.schema.fields.xpTable.initial[0],
     )
 
     await this.document.update({
@@ -203,7 +203,8 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
 
   async #removeResource(event) {
     const confirm = await foundry.applications.api.DialogV2.confirm({
-      content: `<p>Are you sure you want to remove this category? This change is irreversable.</p>`,
+      content:
+        "<p>Are you sure you want to remove this category? This change is irreversable.</p>",
     })
 
     if (!confirm) return
@@ -233,7 +234,8 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
 
   async #removeResourcePool(event) {
     const confirm = await foundry.applications.api.DialogV2.confirm({
-      content: `<p>Are you sure you want to remove this resource? This change is irreversable.</p>`,
+      content:
+        "<p>Are you sure you want to remove this resource? This change is irreversable.</p>",
     })
 
     if (!confirm) return
@@ -260,7 +262,8 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
 
   async #removeSpellLevel(event) {
     const confirm = await foundry.applications.api.DialogV2.confirm({
-      content: `<p>Are you sure you want to remove this spell level? This change is irreversable.</p>`,
+      content:
+        "<p>Are you sure you want to remove this spell level? This change is irreversable.</p>",
     })
 
     if (!confirm) return
@@ -276,7 +279,7 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
   // === Event Delegation =======================================================
 
   _onClickAction(event, target) {
-    const action = target.dataset.action
+    const { action } = target.dataset
 
     if (!action) return
 

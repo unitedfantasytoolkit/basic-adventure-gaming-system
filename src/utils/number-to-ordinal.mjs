@@ -1,5 +1,14 @@
+/**
+ * @file Convert a number to an ordinal string.
+ */
+
 import html from "./html.mjs"
 
+/**
+ * Convert a number to an ordinal string.
+ * @param {number} value - The number to convert
+ * @returns {string} An ordinal string
+ */
 const numberToOrdinal = (value) => {
   const number = parseInt(value || "0", 10)
   if (!number) return ""

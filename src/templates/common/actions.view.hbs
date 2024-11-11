@@ -15,19 +15,21 @@
     </button>
   </header>
   <main>
-    <ul>
+    <ul class="action-list">
       {{#each actions}}{{log this}}
-      <li data-action-id="{{id}}">
-        <header>
+      <li class="action-list-item" data-action-id="{{id}}">
+        <header class="action-list-item__header">
           <img
             src="{{img}}"
             alt=""
+            class="action-list-item__icon"
+            data-action="perform-action"
           />
           <div>
-            <h3>{{name}}</h3>
-            <ul>
+            <h3 data-action="perform-action">{{name}}</h3>
+            <ul class="action-list-item-tags">
               {{#if flags.usesAttempt}}
-              <li>
+              <li class="action-list-item__tag">
                 {{#if attempt.isLikeAttack}}
                 <i class="fa fa-dice-d20"></i>
                 <span>Missile</span>
@@ -55,17 +57,18 @@
                 {{else if (eq type "other")}}
                   <i class="sparkles"></i>
                   <span>{{note}}</span>
-
                 {{/if}}
                 </li>
               {{/each}}
             </ul>
           </div>
-          <button data-action="editAction"><i class="fa fa-pencil"></i></button>
-          <button data-action="deleteAction"><i class="fa fa-trash"></i></button>
+          <menu class="action-list-item__controls">
+            <li><button data-action="editAction"><i class="fa fa-pencil"></i></button></li>
+            <li><button data-action="deleteAction"><i class="fa fa-trash"></i></button></li>
+          </menu>
         </header>
         <main>
-          <div>{{{description}}}</div>
+          <blockquote>{{{description}}}</blockquote>
         </main>
       </li>
       {{/each}}

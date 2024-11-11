@@ -4,15 +4,16 @@
   --border-width: 0.1429rem;
   --window-content-padding: 0.5rem;
   --window-content-header-padding: 1rem;
-  --application-filler-gradient:
-    linear-gradient(
-      15deg,
-      #0d0e23 20%,
-      #3c5063 100%
-    );
+  --application-filler-gradient: linear-gradient(
+    15deg,
+    #0d0e23 20%,
+    #3c5063 100%
+  );
   --header-banner: var(--application-filler-gradient);
 
-  border: 6px double var(--border-color);
+  /* border: 6px double var(--border-color); */
+
+  border: 1px solid #444d;
 
   .window-header {
     padding: 0 0 var(--border-width);

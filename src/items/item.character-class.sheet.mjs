@@ -5,7 +5,7 @@ import BAGSCharacterClassDetailsEditor from "./item.character-class.details-edit
 const { HandlebarsApplicationMixin } = foundry.applications.api
 
 export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
-  foundry.applications.sheets.ItemSheetV2
+  foundry.applications.sheets.ItemSheetV2,
 ) {
   #xpTableEditor
 
@@ -20,7 +20,6 @@ export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
     this.#detailsEditor = new BAGSCharacterClassDetailsEditor({
       document: this.document,
     })
-
   }
 
   static get DEFAULT_OPTIONS() {
@@ -68,7 +67,7 @@ export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
           width: 640,
           height: 480,
         },
-      }
+      },
     )
   }
 
@@ -130,8 +129,8 @@ export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
 
     const gearTable = doc.system.gearTable
       ? await TextEditor.enrichHTML(
-          fromUuidSync(doc.system.gearTable)._createDocumentLink()
-        )
+          fromUuidSync(doc.system.gearTable)._createDocumentLink(),
+      )
       : ""
 
     return {
@@ -147,6 +146,7 @@ export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
   }
 
   /**
+   * @param options
    * @todo Add an event listener for dragging the window around by the window content header
    */
   _onRender(options) {
@@ -248,14 +248,13 @@ export default class BAGSCharacterClassSheet extends HandlebarsApplicationMixin(
    *
    * This override looks for tab content across the whole Application,
    * rather than solely in the content frame.
-   *
-   * @param {string} tab        The name of the tab which should become active
-   * @param {string} group      The name of the tab group which defines the set of tabs
-   * @param {object} [options]  Additional options which affect tab navigation
-   * @param {Event} [options.event]                 An interaction event which caused the tab change, if any
-   * @param {HTMLElement} [options.navElement]      An explicit navigation element being modified
-   * @param {boolean} [options.force=false]         Force changing the tab even if the new tab is already active
-   * @param {boolean} [options.updatePosition=true] Update application position after changing the tab?
+   * @param {string} tab - The name of the tab which should become active
+   * @param {string} group - The name of the tab group which defines the set of tabs
+   * @param {object} [options] - Additional options which affect tab navigation
+   * @param {Event} [options.event] - An interaction event which caused the tab change, if any
+   * @param {HTMLElement} [options.navElement] - An explicit navigation element being modified
+   * @param {boolean} [options.force=false] - Force changing the tab even if the new tab is already active
+   * @param {boolean} [options.updatePosition=true] - Update application position after changing the tab?
    * @override
    */
   // changeTab(

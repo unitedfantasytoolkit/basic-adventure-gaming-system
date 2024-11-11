@@ -1,3 +1,7 @@
+/**
+ * @file Make a positive integer field out of a key and optional label/hint
+ */
+
 const { NumberField } = foundry.data.fields
 
 const mapToNumberField = (obj, [key, { label, hint }]) => ({

@@ -8,5 +8,5 @@ import { actionsFactory } from "../common/action.fields.mjs"
 export default class BAGSItemMiscellaneousDataModel extends PhysicalItemDataMixin(
   {
     actions: actionsFactory(),
-  }
+  },
 ) {}

@@ -1,7 +1,5 @@
 /**
  * @file Overrides to default Foundry behavior.
- *
- *
  */
 
 // --- Combat ------------------------------------------------------------------

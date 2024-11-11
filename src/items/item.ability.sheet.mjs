@@ -5,6 +5,10 @@ import BAGSActionEditor from "../common/action-editor.mjs"
 import BAGSBaseItemSheet from "../common/item.sheet.mjs"
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
+/**
+ * @typedef {import('../types.mjs').SheetNavTab} SheetNavTab
+ */
+
 export default class BAGSAbilitySheet extends BAGSBaseItemSheet {
   static SUB_APPS = []
 
@@ -45,7 +49,7 @@ export default class BAGSAbilitySheet extends BAGSBaseItemSheet {
 
   static async #onDeleteAction(event) {
     await this.document.deleteAction(
-      event.target.closest("[data-action-id]").dataset.actionId
+      event.target.closest("[data-action-id]").dataset.actionId,
     )
   }
 
@@ -55,7 +59,12 @@ export default class BAGSAbilitySheet extends BAGSBaseItemSheet {
     context.tab = context.tabs.find((t) => t.id === partId)
     switch (partId) {
       case "actions":
-        context.actions = doc.system.actions
+        context.actions = await Promise.all(
+          doc.system.actions.map(async (a) => ({
+            ...a,
+            description: await TextEditor.enrichHTML(a.description),
+          })),
+        )
         break
       default:
         return super._preparePartContext(partId, context)
@@ -63,15 +72,26 @@ export default class BAGSAbilitySheet extends BAGSBaseItemSheet {
     return context
   }
 
+  /**
+   * Tabs for the Ability sheet.
+   * @returns {SheetNavTab[]} The tabs to display, in the order they should be
+   * displayed.
+   */
   static get TABS() {
     return [
       ...BAGSBaseItemSheet.TABS,
       {
         id: "actions",
         group: "sheet",
-        icon: "fa-solid fa-tag",
+        icon: "fa-solid fa-sparkles",
         label: "BAGS.Actions.TabLabel",
         cssClass: "tab--actions",
+      },
+      {
+        id: "active-description",
+        group: "sheet",
+        icon: "fa-solid fa-scroll-old",
+        label: "BAGS.Actions.Editor.Tabs.Description",
       },
     ]
   }

@@ -15,7 +15,12 @@ const {
   FilePathField,
 } = foundry.data.fields
 
-export const saveOptions = { min: 0, nullable: false, blank: false, initial: 0 }
+export const saveOptions = {
+  min: 0,
+  nullable: false,
+  blank: false,
+  initial: 0,
+}
 
 export const baseFactory = (fields) =>
   new SchemaField({

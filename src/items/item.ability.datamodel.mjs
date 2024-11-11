@@ -1,16 +1,8 @@
 import { ABILITY_TYPES } from "../config/constants.mjs"
 import { actionsFactory } from "../common/action.fields.mjs"
 
-const {
-  StringField,
-  ArrayField,
-  NumberField,
-  BooleanField,
-  SchemaField,
-  DocumentUUIDField,
-  HTMLField,
-  FilePathField,
-} = foundry.data.fields
+const { StringField, DocumentUUIDField, HTMLField, FilePathField } =
+  foundry.data.fields
 
 export default class BAGSAbilityDataModel extends foundry.abstract
   .TypeDataModel {
@@ -22,9 +14,6 @@ export default class BAGSAbilityDataModel extends foundry.abstract
 
   static LOCALIZATION_PREFIXES = ["BAGS.Ability"]
 
-  /**
-   *
-   */
   static defineSchema() {
     return {
       flavorText: new HTMLField({

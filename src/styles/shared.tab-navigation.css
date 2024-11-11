@@ -3,38 +3,41 @@
     display: none !important;
   }
 
-  transition:
-    transform 333ms ease-in-out,
-    opacity 125ms ease-in;
-  transform: translateX(-50%) translateY(calc(100% + 15px)) scaleY(1);
+  position: absolute;
+  top: 4.5rem;
+  right: 0;
+  transform: translateX(100%);
+  width: max-content;
+  flex-direction: column;
+  gap: 0.5em !important;
+
+  button {
+    flex: 0 0 max-content;
+    border: 1px solid var(--border-color);
+    border-left: 0;
+    background: var(--application-filler-gradient);
+    border-radius: 3px;
+    padding: 0.25em;
+    width: 2rem;
+    height: 1.5rem;
+    display: block;
+    line-height: 1.5rem;
+    transform-origin: center left;
+
+    &.active {
+      padding-left: 0.25em;
+      box-shadow: unset;
+      outline: unset;
+    }
+
+    &[disabled] {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
 
   :is(.minimizing, .minimized) & {
     transform: translateX(-50%) translateY(-100%) scaleY(0);
     opacity: 0;
-  }
-}
-
-.application--bags {
-  .sheet-tabs {
-    position: absolute;
-    bottom: calc(var(--outer-border-offset) * -2 + var(--border-width) + 1px);
-    left: 50%;
-    width: max-content;
-    gap: 0.75em !important;
-    transform: translateX(-50%) translateY(100%);
-    padding: 1px var(--outer-border-offset) var(--outer-border-offset);
-    border: 2px solid var(--border-color);
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
-    border-top: none;
-    background: var(--background);
-
-    a {
-      flex: 0 0 max-content;
-      border: 1px solid var(--border-color);
-      background: var(--application-filler-gradient);
-      border-radius: 3px;
-      padding: 0.25em;
-    }
   }
 }

@@ -1,11 +1,14 @@
 /**
- * @file The Action Resolver engine -- a class that accepts an Action and the context that it's used within, waits for it to be processed, then returns the rueslt.
+ * @file The Action Resolver engine -- a class that accepts an Action and the
+ * context that it's used within, waits for it to be processed, then returns
+ * the result.
  * @todo Given an action, validate that the action can be performed.
  * @todo Given an action, consume resources for the action.
  * @todo Given an action, perform the action without a target.
  * @todo Given an action, perform the action with one target.
  * @todo Given an action, perform the action with multiple targets.
- * @todo Given an action, perform the action against multiple targets with a minimum/maximum number of targets.
+ * @todo Given an action, perform the action against multiple targets with a
+ * minimum/maximum number of targets.
  */
 
 import rollDice from "../utils/roll-dice.mjs"
@@ -15,19 +18,13 @@ import rollDice from "../utils/roll-dice.mjs"
  */
 
 /**
- * @typedef ActionContext
- * Who is using the Action, where's the action coming from, and who's it being used on?
- * @property {unknown} actor - The Actor that is using the Action
- * @property {unknown} item - The Item that the Action belongs to.
- * @property {unknown[]} targets - The Actors that are the target of the Action
- */
-
-/**
  * @typedef ActionResult
  * The reported outcome of an ActionResolver.
  * @property {boolean} success - Was this Action successfully used?
- * @property {Roll|null} attempt - The Roll object associated with attempting this action.
- * @property {unknown[]} effect - A list of target UUIDs and updates to apply to them.
+ * @property {Roll|null} attempt - The Roll object associated with attempting
+ * this action.
+ * @property {unknown[]} effect - A list of target UUIDs and updates to apply
+ * to them.
  */
 
 export default class ActionResolver {
@@ -38,23 +35,48 @@ export default class ActionResolver {
     effect: [],
   }
 
+  /** @type {Action} */
+  action
+
+  actor
+
+  document
+
+  targets
+
+  #attempts = []
+
+  #effects = []
+
   /**
    * Constructs an ActionResolver.
    * @param {Action} action - The Action being performed.
-   * @param {ActionContext} context - Context in which the Action is used.
+   * @param {unknown} document - The Actions's source document.
+   * @param {unknown} actor - The Action's owner, if any.
+   * @param {unknown[]} targets - The Actors that are the target of the Action
    */
-  constructor(action, context = {}) {
+  constructor(action, document, actor, targets = []) {
     if (!action)
       throw new TypeError("An action resolver must have an action to resolve.")
 
-    this.actor = context?.actor
-    this.item = context?.item
+    this.actor = actor
+    this.document = document
     this.action = action
-    this.targets = context?.targets instanceof Array ? context.targets : []
+    this.targets = targets instanceof Array ? targets : [targets]
   }
 
   get result() {
-    return this.#result
+    return {
+      // success: this.#attempts.some(),
+      success: true,
+      targets: this.#attempts.map((attempt, idx) => {
+        const effects = this.#effects?.[idx] || []
+        return {
+          attempt,
+          effects,
+        }
+      }),
+    }
   }
 
   /**
@@ -81,25 +103,27 @@ export default class ActionResolver {
 
   async attemptActionWithTargets() {
     this.targets.forEach(async (target) => {
-      const attemptSuccess = this.action.usesAttempt
+      const attemptSuccess = this.action.flags.usesAttempt
         ? await this.performAttempt(target)
         : true
       this.result.targetResults[target.id] = attemptSuccess
 
-      if (attemptSuccess && this.action.usesEffect) {
+      if (attemptSuccess && this.action.flags.usesEffect)
         await this.applyEffects(target)
-      }
     })
   }
 
   async attemptActionWithoutTargets() {
     // No targets; action may affect self or environment
-    const attemptSuccess = this.action.usesAttempt
+    const attempt = this.action.flags.usesAttempt
       ? await this.performAttempt()
       : true
-    this.result.success = attemptSuccess
 
-    if (attemptSuccess && this.action.usesEffect) await this.applyEffects(null)
+    if (!attempt || !this.action.flags.usesEffect) return
+
+    this.#attempts.push(attempt)
+
+    await this.applyEffects(null)
   }
 
   /**
@@ -114,18 +138,20 @@ export default class ActionResolver {
   validateAction() {
     const { actor, action } = this
 
-    // #1: Does the Actor meet the Action's min/max level requirements?
-    if (action.level.min !== undefined)
-      if (actor.system.details?.level < action.level.min)
-        throw new Error(
-          `${actor.name} does not meet the minimum level for ${action.name}`
-        )
+    if (actor) {
+      // #1: Does the Actor meet the Action's min/max level requirements?
+      if (action.level.min !== undefined)
+        if (actor.system.details?.level < action.level.min)
+          throw new Error(
+            `${actor.name} does not meet the minimum level for ${action.name}`,
+          )
 
-    if (action.level.min !== undefined)
-      if (actor.system.details?.level > action.level.max)
-        throw new Error(
-          `${actor.name} exceeds the maximum level for ${action.name}`
-        )
+      if (action.level.min !== undefined)
+        if (actor.system.details?.level > action.level.max)
+          throw new Error(
+            `${actor.name} exceeds the maximum level for ${action.name}`,
+          )
+    }
 
     // #2: If the Action consumes its own charges, are there any left to use?
     if (action.uses.max)
@@ -139,7 +165,8 @@ export default class ActionResolver {
 
   /**
    * Consumes the necessary resources for the action.
-   * @returns {Promise<boolean>} True if resources were successfully consumed, false otherwise.
+   * @returns {Promise<boolean>} True if resources were successfully consumed,
+   * false otherwise.
    */
   async consumeResources() {
     return true
@@ -148,15 +175,15 @@ export default class ActionResolver {
   /**
    * Performs the attempt roll against a single target.
    * @param {Actor|null} target - The target of the action, or null.
-   * @returns {Promise<boolean>} True if the attempt was successful, false otherwise.
+   * @param targetActor
+   * @returns {Promise<boolean>} True if the attempt was successful,
+   * false otherwise.
    */
-  async performAttempt(target) {
+  async performAttempt(targetActor) {
     // Case #0: action doesn't have an attempt roll.
     if (!this.action.flags.usesAttempt) return true
 
-    const { actor, action, result } = this
-
-    const { formula } = action.attempt
+    const { actor, action } = this
 
     if (action.attempt.isLikeAttack) {
       let attackModifier = ""
@@ -171,74 +198,25 @@ export default class ActionResolver {
           attackModifier = "@system.baseAttackBonus"
       }
       const formulaToRoll = `1d20+${attackModifier}`
-      if (!target) {
-        const roll = await rollDice(actor, formulaToRoll)
+      if (!targetActor)
         // Case #1: Action is like an attack, but no target is provided
-        // TODO: Case for "is an attack, has no target". This case should always succeed.
+        return rollDice(actor, formulaToRoll)
 
-        console.info(roll)
-      } else {
-        // Case #2: Action is like an attack, and is used against a target
-        // TODO: Case for "Is an attack, has a target." This case should compare
-        // user's attack vs. target's AC, and succeed if the roll meets or exceeds AC.
-      }
+      // Case #2: Action is like an attack, and is used against a target
+      // TODO: Case for "Is an attack, has a target." This case should compare
+      // user's attack vs. target's AC, and succeed if the roll meets or
+      // exceeds AC.
+      return null
     }
+
+    const { formula, operator, target } = action.attempt.roll
 
     // Case #3: Action is not like an attack; it has a static value that it
     // rolls against.
-
-    // let rollResult
-    // Evaluate the formula using Foundry's Roll class
-    // try {
-    //   await roll.evaluate({ async: true })
-    //   rollResult = roll.total
-    //   // Optionally display the roll to the chat if desired
-    //   await roll.toMessage({
-    //     speaker: ChatMessage.getSpeaker({ actor }),
-    //     flavor: `${actor.name} attempts ${action.name}${target ? ` on ${target.name}` : ""}`,
-    //   })
-    // } catch (error) {
-    //   throw new Error(`$ ${action.name}`)
-    //   result.success = false
-    //   result.messages.push(`Error evaluating attempt formula: ${error.message}`)
-    //   return false
-    // }
-    // Determine the target number
-    // let targetNumber = 0
-    // if (action.targetDefense && target) {
-    //   targetNumber = this.getTargetDefenseValue(target, action.targetDefense)
-    //   if (targetNumber === undefined) {
-    //     throw new Error(`${actor.name} is out of uses of ${action.name}`)
-    //     result.success = false
-    //     result.messages.push(
-    //       `${target.name} does not have a defense named ${action.targetDefense}.`
-    //     )
-    //     return false
-    //   }
-    // }
-    // Apply the operator
-    // const operator = action.attempt.operator || ">="
-    // let success
-    // try {
-    //   success = this.compareRoll(operator, rollResult, targetNumber)
-    // } catch (error) {
-    //   result.success = false
-    //   result.messages.push(error.message)
-    //   return false
-    // }
-    // // Record the attempt result
-    // if (success) {
-    //   const successMessage =
-    //     action.attempt.successText ||
-    //     `${actor.name} successfully performs ${action.name}${target ? " on " + target.name : ""}.`
-    //   result.messages.push(successMessage)
-    // } else {
-    //   const failMessage =
-    //     action.attempt.failText ||
-    //     `${actor.name} fails to perform ${action.name}${target ? " on " + target.name : ""}.`
-    //   result.messages.push(failMessage)
-    // }
-    // return success
+    return rollDice(actor, formula, {
+      operator,
+      target,
+    })
   }
 
   /**
@@ -246,6 +224,19 @@ export default class ActionResolver {
    * @param {Target|null} target - The target to apply effects to, or null.
    */
   async applyEffects(target) {
+    const results = this.action.effects.map((effect) => {
+      // Step 1: target attempts to resist, if resistance is an option and
+      // target is specified. If it's a saving throw and the effect is
+      // magic-based, be sure to add in the character's spell save bonus.
+      // Step 2: Split logic by effect type:
+      // - Damage/healing, roll and report. One makes HP go up; the other down.
+      // - Condition, construct and apply the Active Effect to the target.
+      // - Macro, run the macro and report.
+      // - Miscellaneous, report the description and continue.
+      //
+      // const didResist = (effect.flags.canBeResisted) ? await this.processTargetResistance(effect, target) : false
+      // }
+    })
     //   console.info(target, this.action)
     // const { actor, action, result } = this
     // if (!action.effects || action.effects.length === 0) {
@@ -288,6 +279,8 @@ export default class ActionResolver {
     // }
   }
 
+  processTargetResistance(effect, target) {}
+
   async processMacroEffect(effect, target) {
     if (effect.type !== "macro") return
     if (!effect.macro.fromDocument && !effect.macro.fromEditor) return
@@ -301,7 +294,7 @@ export default class ActionResolver {
       "target",
       "action",
       "effect",
-      `{${effect.macro.fromEditor}`
+      `{${effect.macro.fromEditor}`,
     )
 
     await fn(this.actor, target, this.action)

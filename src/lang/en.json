@@ -55,7 +55,7 @@
         },
         "Roll": {
           "Formula": {
-            "Label": "Roll Formula",
+            "Label": "Formula",
             "Hint": "The dice to be rolled for this attempt."
           },
           "Operator": {

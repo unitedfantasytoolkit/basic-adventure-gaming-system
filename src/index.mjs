@@ -45,4 +45,10 @@ Hooks.once("ready", async () => {
   // await actor.sheet.render(true)
   window.TEST = { actor, actionItem }
   // window.TEST.actionItem.resolveAction(window.TEST.actionItem.system.actions[0])
+
+  const src = `http://${(window.location.host || "localhost").split(":")[0]}:9999/livereload.js?snipver=1`
+  const script = document.createElement("script")
+  script.src = src
+
+  document.body.appendChild(script)
 })

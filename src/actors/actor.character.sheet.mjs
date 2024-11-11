@@ -8,7 +8,7 @@ const { HandlebarsApplicationMixin } = foundry.applications.api
 const { ActorSheetV2 } = foundry.applications.sheets
 
 export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
-  ActorSheetV2
+  ActorSheetV2,
 ) {
   static get DEFAULT_OPTIONS() {
     return foundry.utils.mergeObject(ActorSheetV2.DEFAULT_OPTIONS, {
@@ -63,13 +63,16 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
         template: `${this.TEMPLATE_ROOT}/content.hbs`,
       },
       tabs: {
-        template: "templates/generic/tab-navigation.hbs",
+        template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
       },
     }
   }
 
-  /** @override */
-  async _prepareContext(_options) {
+  /**
+   * Provide context to the templating engine.
+   * @override
+   */
+  async _prepareContext() {
     const doc = this.document
     return {
       actor: doc,
@@ -127,7 +130,7 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
       summary: {
         id: "summary",
         group: "sheet",
-        icon: "fa-solid fa-tag",
+        icon: "fa-solid fa-square-list",
         label: "BAGS.CharacterClass.Tabs.Summary",
         cssClass: "tab--summary",
       },
@@ -155,7 +158,7 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
       description: {
         id: "description",
         group: "sheet",
-        icon: "fa-solid fa-tag",
+        icon: "fa-solid fa-scroll-old",
         label: "Description",
         cssClass: "tab--effects",
       },
@@ -171,7 +174,8 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
   }
 
   /**
-   * Render the outer framing HTMLElement which wraps the inner HTML of the Application.
+   * Render the outer framing HTMLElement which wraps the inner HTML of
+   * the Application.
    *
    * This override modifies the default frame by adding the following:
    * - an alternative header: the existing elements in the header are moved
@@ -179,7 +183,8 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
    * - tab navigation: if the sheet has tabs, to enforce consistency.
    * - an effects pane: a common UI for managing active effects on
    *   actors and items
-   * @param {unknown} options - Options which configure application rendering behavior. RenderOptions in Foundry's types.
+   * @param {unknown} options - Options which configure application rendering
+   * behavior. See {RenderOptions} in Foundry's types.
    * @returns {Promise<HTMLElement>} The updated app frame
    * @protected
    * @override
@@ -210,7 +215,7 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
       `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
       {
         tabs: this.#getTabs(),
-      }
+      },
     )
     return container.content.firstElementChild
   }
@@ -247,7 +252,7 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
     const container = document.createElement("template")
     container.innerHTML = await renderTemplate(
       `${SYSTEM_TEMPLATE_PATH}/common/effects-pane.hbs`,
-      { effects: this.document.effects }
+      { effects: this.document.effects },
     )
 
     return container.content.firstElementChild
@@ -273,20 +278,20 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
 
   async _onDropActor(doc) {
     console.warn("Not yet implemented!")
-        // switch (droppedDocument.type) {
-        //   case "character":
-        //     this.#onDropCharacter(droppedDocument)
-        //     break
-        //   case "monster":
-        //     this.#onDropMonster(droppedDocument)
-        //     break
-        //   case "mount":
-        //     this.#onDropMount(droppedDocument)
-        //     break
-        //   default:
-        //     this._onDropActor(droppedDocument)
-        //     break
-        // }
+    // switch (droppedDocument.type) {
+    //   case "character":
+    //     this.#onDropCharacter(droppedDocument)
+    //     break
+    //   case "monster":
+    //     this.#onDropMonster(droppedDocument)
+    //     break
+    //   case "mount":
+    //     this.#onDropMount(droppedDocument)
+    //     break
+    //   default:
+    //     this._onDropActor(droppedDocument)
+    //     break
+    // }
   }
 
   async #onDropCharacter(doc) {
@@ -326,19 +331,19 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
       return this._onSortItem(event, itemData)
 
     console.info(item, itemData)
-        // switch (droppedDocument.type) {
-        //   case "class":
-        //     this.#onDropCharacterClass(droppedDocument)
-        //     break
-          //       case "spell":
-          //         this.#onDropSpell(droppedDocument)
-          // case "ability":
-          //   this.#onDropAbility(droppedDocument)
-          //   break
-          //       case "weapon":
-          //       case "armor":
-          //       case "ammunition":
-          //       case "item":
+    // switch (droppedDocument.type) {
+    //   case "class":
+    //     this.#onDropCharacterClass(droppedDocument)
+    //     break
+    //       case "spell":
+    //         this.#onDropSpell(droppedDocument)
+    // case "ability":
+    //   this.#onDropAbility(droppedDocument)
+    //   break
+    //       case "weapon":
+    //       case "armor":
+    //       case "ammunition":
+    //       case "item":
   }
 
   async #onDropSpell(doc) {

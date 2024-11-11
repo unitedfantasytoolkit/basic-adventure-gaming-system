@@ -3,15 +3,16 @@
   aria-role="{{localize 'SHEETS.FormNavLabel'}}"
 >
   {{#each tabs as |tab|}}
-    <a
+    <button
       class="{{tab.cssClass}}"
       data-action="tab"
       data-group="{{tab.group}}"
       data-tab="{{tab.id}}"
-      data-tooltip={{localize tab.label}}
+      data-tooltip="{{localize tab.label}}"
+      aria-label="{{localize tab.label}}"
+      {{#if tab.disabled}}disabled{{/if}}
     >
       <i class="{{tab.icon}}"></i>
-      <label>{{localize tab.label}}</label>
-    </a>
+    </button>
   {{/each}}
 </nav>

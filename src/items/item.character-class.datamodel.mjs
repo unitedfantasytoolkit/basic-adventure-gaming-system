@@ -36,15 +36,15 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
   static defineSchema() {
     const prerequisiteFields = ABILITY_SCORES.entries().reduce(
       mapToNumberField,
-      {}
+      {},
     )
     const halfPrimeRequisiteFields = ABILITY_SCORES.entries().reduce(
       mapToNumberField,
-      {}
+      {},
     )
     const fullPrimeRequisiteFields = ABILITY_SCORES.entries().reduce(
       mapToNumberField,
-      {}
+      {},
     )
     const savingThrowFields = SAVING_THROWS.reduce(
       (obj, key) => ({
@@ -56,14 +56,14 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
           initial: WORST_POSSIBLE_SAVE,
         }),
       }),
-      {}
+      {},
     )
     const savingThrowDefaults = SAVING_THROWS.reduce(
       (obj, key) => ({
         ...obj,
         [key]: WORST_POSSIBLE_SAVE,
       }),
-      {}
+      {},
     )
 
     return {
@@ -120,7 +120,7 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
             ...obj,
             [key]: `d${key}`,
           }),
-          []
+          [],
         ),
         initial: DEFAULT_CHARACTER_HIT_DIE_SIZE,
         integer: true,
@@ -147,7 +147,7 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
             initial: 10,
             min: 1,
           }),
-        })
+        }),
       ),
 
       // --- Advancement -------------------------------------------------------
@@ -178,7 +178,7 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
               saves: savingThrowDefaults,
             },
           ],
-        }
+        },
       ),
 
       manuallySetLevel: new NumberField({
@@ -203,21 +203,21 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
               perLevel: new ArrayField(
                 // Third level: amount of this tier of resource at Index+1 level
                 // (Magic User of level 1 has "Spell Slots" > "1st" > 1)
-                new NumberField({ blank: true, nullable: true })
+                new NumberField({ blank: true, nullable: true }),
               ),
-            })
+            }),
           ),
-        })
+        }),
       ),
       // --- Spell slots -------------------------------------------------------
       spellSlots: new ArrayField(
-        new ArrayField(new NumberField({ blank: true, nullable: true }))
+        new ArrayField(new NumberField({ blank: true, nullable: true })),
       ),
     }
   }
 
   /**
-   *  @returns {Promise[]} - An array of promises that make up the requested items
+   * @returns {Promise[]} - An array of promises that make up the requested items
    */
   get featureItems() {
     return this.features.map((i) => fromUuidSync(i)).filter((i) => !!i)
@@ -225,14 +225,13 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
 
   /**
    *  @todo Separate by spell level
-   *
    * @returns {Promise[]} - An array of promises that make up the requested items
    */
   async getSpellItems() {
     const items = await Promise.all(this.spellList.map((i) => fromUuid(i)))
     const highestLevel = items.reduce(
       (highest, i) => (i?.system?.lvl > highest ? i?.system?.lvl : highest),
-      0
+      0,
     )
     if (!highestLevel) return []
     const list = new Array(highestLevel).fill(null).map(() => [])

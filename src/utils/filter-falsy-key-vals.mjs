@@ -10,7 +10,7 @@ const filterFalsyKeyVals = (source) => ({
         ...obj,
         [k]: source[k],
       }),
-      {}
+      {},
     ),
 })
 

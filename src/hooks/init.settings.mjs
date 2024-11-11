@@ -1,11 +1,11 @@
-import BAGSCombat from "../combat/combat.mjs";
-import { SYSTEM_NAME } from "../config/constants.mjs";
+import BAGSCombat from "../combat/combat.mjs"
+import { SYSTEM_NAME } from "../config/constants.mjs"
 import {
   CLASS_OVERRIDE_COMBAT,
   CLASS_OVERRIDE_SIDEBAR_COMBAT_CONFIG,
-} from "../config/overrides.mjs";
+} from "../config/overrides.mjs"
 
-Hooks.once("init", async function () {
+Hooks.once("init", async () => {
   // Combat Tracker Configuration
   game.settings.registerMenu(
     SYSTEM_NAME,
@@ -17,7 +17,7 @@ Hooks.once("init", async function () {
       icon: "fa-solid fa-swords",
       type: CLASS_OVERRIDE_SIDEBAR_COMBAT_CONFIG,
     },
-  );
+  )
 
   game.settings.register(SYSTEM_NAME, CLASS_OVERRIDE_COMBAT.CONFIG_SETTING, {
     name: "Combat Tracker Configuration",
@@ -30,11 +30,11 @@ Hooks.once("init", async function () {
     type: Object,
     onChange: () => {
       if (game.combat) {
-        game.combat.reset();
-        game.combats.render();
+        game.combat.reset()
+        game.combats.render()
       }
     },
-  });
+  })
 
   game.settings.register(SYSTEM_NAME, "usesAscendingAC", {
     name: game.i18n.localize("BAGS.settings.useFactionRepModifiers.name"),
@@ -43,5 +43,5 @@ Hooks.once("init", async function () {
     scope: "world",
     type: Boolean,
     config: true,
-  });
-});
+  })
+})

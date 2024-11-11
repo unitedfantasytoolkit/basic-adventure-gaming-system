@@ -1,7 +1,5 @@
 /**
  * @file A collection of defaults and overrides for the system
- *
- *
  */
 // --- Ability Scores and Saves ------------------------------------------------
 import abilityScoreModifiers from "./ability-scores.mjs"

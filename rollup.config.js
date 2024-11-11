@@ -19,12 +19,12 @@ import path from "path"
 import { nodeResolve } from "@rollup/plugin-node-resolve"
 import terser from "@rollup/plugin-terser"
 import babel from "@rollup/plugin-babel"
-import eslint from "@rollup/plugin-eslint"
+// import eslint from "@rollup/plugin-eslint"
 import livereload from "rollup-plugin-livereload"
 
 // --- System-specific plugins -------------------------------------------------
 import commonjs from "@rollup/plugin-commonjs"
-import sourcemaps from "rollup-plugin-sourcemaps"
+import sourcemaps from "rollup-plugin-sourcemaps2"
 import copy from "rollup-plugin-copy-assets"
 
 // --- Component-specific plugins-----------------------------------------------
@@ -73,7 +73,7 @@ export default defineConfig([
       nodeResolve({ browser: true }),
       commonjs(),
       babel({ babelHelpers: "bundled" }),
-      !isWatchMode && eslint(),
+      // !isWatchMode && eslint(),
       !isWatchMode && terser(),
       copy({
         assets: [
@@ -109,7 +109,7 @@ export default defineConfig([
         modules: true,
       }),
       babel({ babelHelpers: "bundled" }),
-      !isWatchMode && eslint(),
+      // !isWatchMode && eslint(),
       !isWatchMode && terser(),
       // isWatchMode && watcher(["src/**/*.hbs", "src/**/*.html"]),
       // isWatchMode && livereload({ watch: "dist", port: 9999, delay: 1000 }),

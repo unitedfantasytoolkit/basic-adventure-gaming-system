@@ -10,8 +10,9 @@
   {{/if}}
   <section>
     {{#unless hideIcon}}
+    {{log img}}
     <img
-      src="{{item.img}}"
+      src="{{#unless (eq img undefined)}}{{img}}{{else}}{{item.img}}{{/unless}}"
       alt=""
       data-edit="img"
       class="window-content__document-image"

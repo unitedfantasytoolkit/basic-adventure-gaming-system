@@ -7,7 +7,7 @@ import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api
 
 export default class BAGSActionEditor extends HandlebarsApplicationMixin(
-  ApplicationV2
+  ApplicationV2,
 ) {
   document
 
@@ -69,12 +69,15 @@ export default class BAGSActionEditor extends HandlebarsApplicationMixin(
     details: {
       template: `${this.TEMPLATE_ROOT}/details.hbs`,
     },
-    description: {
-      template: `${this.TEMPLATE_ROOT}/description.hbs`,
+    attempt: {
+      template: `${this.TEMPLATE_ROOT}/attempt.hbs`,
     },
     effects: {
       template: `${this.TEMPLATE_ROOT}/effects.hbs`,
       scrollable: [".scrollable"],
+    },
+    description: {
+      template: `${this.TEMPLATE_ROOT}/description.edit.hbs`,
     },
   }
 
@@ -92,19 +95,27 @@ export default class BAGSActionEditor extends HandlebarsApplicationMixin(
       details: {
         id: "details",
         group: "sheet",
-        icon: "fa-solid fa-list-tree",
+        icon: "fa-solid fa-square-list",
         label: "BAGS.Actions.Editor.Tabs.Details",
+      },
+      attempt: {
+        id: "attempt",
+        group: "sheet",
+        icon: "fa-solid fa-bullseye",
+        label: "BAGS.Actions.Editor.Tabs.Attempt",
+        disabled: !this.action.flags.usesAttempt,
       },
       effects: {
         id: "effects",
         group: "sheet",
         icon: "fa-solid fa-sparkle",
         label: "BAGS.Actions.Editor.Tabs.Effects",
+        disabled: !this.action.flags.usesEffect,
       },
       description: {
         id: "description",
         group: "sheet",
-        icon: "fa-solid fa-trophy",
+        icon: "fa-solid fa-scroll-old",
         label: "BAGS.Actions.Editor.Tabs.Description",
       },
     }
@@ -129,9 +140,6 @@ export default class BAGSActionEditor extends HandlebarsApplicationMixin(
   // === Render setup ==========================================================
   async _prepareContext(_options) {
     const doc = this.document
-
-    console.info(this.#getTabs())
-
     return {
       item: doc,
       source: doc.toObject(),
@@ -147,15 +155,18 @@ export default class BAGSActionEditor extends HandlebarsApplicationMixin(
     switch (partId) {
       case "header":
         context.title = this.title
-        context.hideIcon = true
+        context.img = this.action.img
         break
-      case "description":
+      case "attempt":
         context.tab = context.tabs[partId]
         break
       case "details":
         context.tab = context.tabs[partId]
         break
       case "effects":
+        context.tab = context.tabs[partId]
+        break
+      case "description":
         context.tab = context.tabs[partId]
         break
       default:
@@ -168,7 +179,7 @@ export default class BAGSActionEditor extends HandlebarsApplicationMixin(
   static async save(_event, _form, formData) {
     const updates = foundry.utils.expandObject(formData.object)
     const actions = this.document.system.actions.map((a) =>
-      a.id !== this.actionId ? a : { ...a, ...updates }
+      a.id !== this.actionId ? a : { ...a, ...updates },
     )
     console.log(actions)
     await this.document.update({

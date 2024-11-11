@@ -9,7 +9,6 @@ import html from "../utils/html.mjs"
 export default class BaseComponent extends HTMLElement {
   /**
    * This component's constructed stylesheets.
-   *
    * @returns An array of `CSSStyleSheet`s to be attached to the Shadow DOM
    */
   static get styles() {
@@ -74,13 +73,13 @@ export default class BaseComponent extends HTMLElement {
     this.shadowRoot.innerHTML = this.template
     this.events()
     this.dispatchEvent(
-      new CustomEvent("component:connected", { bubbles: false })
+      new CustomEvent("component:connected", { bubbles: false }),
     )
   }
 
   async disconnectedCallback() {
     this.dispatchEvent(
-      new CustomEvent("component:disconnected", { bubbles: false })
+      new CustomEvent("component:disconnected", { bubbles: false }),
     )
   }
 
@@ -94,7 +93,6 @@ export default class BaseComponent extends HTMLElement {
   /**
    * Set the component's value on its internals and in its attributes,
    * then tell the containing Sheet that we're ready to update.
-   *
    * @param newValue - The new value that we'll use to update the component's value.
    */
   set value(newValue) {

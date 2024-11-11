@@ -8,7 +8,7 @@ import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
  * - Add/remove Characters
  * - Display character info -- HP, move speed, etc.
  */
-// eslint-disable-next-line no-undef
+
 export default class PartySidebar extends SidebarTab {
   /** @override */
   static get defaultOptions() {
@@ -43,7 +43,7 @@ export default class PartySidebar extends SidebarTab {
     await PartySidebar.lookupActor(actor)?.setFlag(
       game.system.id,
       "party",
-      true
+      true,
     )
     ui.sidebar.render()
   }
@@ -52,7 +52,7 @@ export default class PartySidebar extends SidebarTab {
     await PartySidebar.lookupActor(actor)?.setFlag(
       game.system.id,
       "party",
-      false
+      false,
     )
     ui.sidebar.render()
   }
@@ -86,7 +86,7 @@ export default class PartySidebar extends SidebarTab {
 
   /**
    * @override
-   * @param  {DragEvent} event - The drag event fired when dropping an item onto the party list
+   * @param {DragEvent} event - The drag event fired when dropping an item onto the party list
    */
   async _onDrop(event) {
     const typesAllowed = ["Actor", "Item", "Folder"]
@@ -157,10 +157,8 @@ export default class PartySidebar extends SidebarTab {
   /**
    * @todo - Listener for "Distribute XP"
    * @todo - Listener for "Distrbute Treasure"
-   *
-   *
    * @override
-   * */
+   */
   activateListeners(html) {
     super.activateListeners(html)
 
@@ -190,12 +188,12 @@ export default class PartySidebar extends SidebarTab {
     ]
 
     // ContextMenu is a global.
-    // eslint-disable-next-line no-undef
+
     ContextMenu.create(
       this,
       html,
       this.options.contextMenuSelector,
-      contextOptions
+      contextOptions,
     )
   }
 }

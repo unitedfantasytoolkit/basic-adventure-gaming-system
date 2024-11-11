@@ -67,7 +67,7 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
           width: 640,
           height: 480,
         },
-      }
+      },
     )
   }
 
@@ -131,8 +131,8 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
 
     const gearTable = doc.system.gearTable
       ? await TextEditor.enrichHTML(
-          fromUuidSync(doc.system.gearTable)._createDocumentLink()
-        )
+          fromUuidSync(doc.system.gearTable)._createDocumentLink(),
+      )
       : ""
 
     const context = await super._prepareContext(_options)
@@ -230,14 +230,13 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
    *
    * This override looks for tab content across the whole Application,
    * rather than solely in the content frame.
-   *
-   * @param {string} tab        The name of the tab which should become active
-   * @param {string} group      The name of the tab group which defines the set of tabs
-   * @param {object} [options]  Additional options which affect tab navigation
-   * @param {Event} [options.event]                 An interaction event which caused the tab change, if any
-   * @param {HTMLElement} [options.navElement]      An explicit navigation element being modified
-   * @param {boolean} [options.force=false]         Force changing the tab even if the new tab is already active
-   * @param {boolean} [options.updatePosition=true] Update application position after changing the tab?
+   * @param {string} tab - The name of the tab which should become active
+   * @param {string} group - The name of the tab group which defines the set of tabs
+   * @param {object} [options] - Additional options which affect tab navigation
+   * @param {Event} [options.event] - An interaction event which caused the tab change, if any
+   * @param {HTMLElement} [options.navElement] - An explicit navigation element being modified
+   * @param {boolean} [options.force=false] - Force changing the tab even if the new tab is already active
+   * @param {boolean} [options.updatePosition=true] - Update application position after changing the tab?
    * @override
    */
   // changeTab(

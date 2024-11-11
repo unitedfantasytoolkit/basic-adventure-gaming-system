@@ -60,7 +60,7 @@ const buildSchema = () => ({
 const cumulativeModifiers = (...modifiers) => {
   let total
   try {
-    total = modifiers.reduce(total, mod => total + mod, 0)
+    total = modifiers.reduce(total, (mod) => total + mod, 0)
     if (Number.isNaN(total)) throw new TypeError("Modifiers should be numeric")
     if (!total) return 0
     if (total > 0) return total
@@ -71,10 +71,9 @@ const cumulativeModifiers = (...modifiers) => {
 }
 
 export default class BAGSCharacterDataModel extends BaseActorDataMixin(
-  buildSchema()
+  buildSchema(),
 ) {
   prepareDerivedData() {
-    // eslint-disable-next-line new-cap
     // this.encumbrance = new CONFIG.OSE.encumbrance(
     //   this.encumbrance.max,
     //   [...this.parent.items],
@@ -148,14 +147,14 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
   get meleeAttackMod() {
     return cumulativeModifiers(
       this.abilityScores?.str?.meleeAttack,
-      this.modifiers.melee.attack
+      this.modifiers.melee.attack,
     )
   }
 
   get meleeDamageMod() {
     return cumulativeModifiers(
       this.abilityScores?.str?.meleeDamage,
-      this.modifiers.melee.damage
+      this.modifiers.melee.damage,
     )
   }
 
@@ -189,14 +188,14 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
   get missileAttackMod() {
     return cumulativeModifiers(
       this.abilityScores?.dex?.missileAttack,
-      this.modifiers.missile.attack
+      this.modifiers.missile.attack,
     )
   }
 
   get missileDamageMod() {
     return cumulativeModifiers(
       this.abilityScores?.dex?.missileDamage,
-      this.modifiers.missile.damage
+      this.modifiers.missile.damage,
     )
   }
 }
