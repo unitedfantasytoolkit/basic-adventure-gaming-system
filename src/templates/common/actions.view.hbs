@@ -16,14 +16,14 @@
   </header>
   <main>
     <ul class="action-list">
-      {{#each actions}}{{log this}}
+      {{#each actions}}
       <li class="action-list-item" data-action-id="{{id}}">
         <header class="action-list-item__header">
           <img
             src="{{img}}"
             alt=""
             class="action-list-item__icon"
-            data-action="perform-action"
+            data-action="performAction"
           />
           <div>
             <h3 data-action="perform-action">{{name}}</h3>

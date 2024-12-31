@@ -5,13 +5,14 @@ import ActionResolver from "../rules-engines/action-resolver.mjs"
 
 export default class BAGSItem extends Item {
   async resolveAction(action) {
-    const resolver = new ActionResolver(action, {
-      item: this,
-      actor: this.parent,
-      targets: game.user.targets,
-    })
+    const resolver = new ActionResolver(
+      action,
+      this,
+      this.parent,
+      game.user.targets,
+    )
 
-    console.info(await resolver.resolve())
+    return resolver.resolve()
   }
 
   async createAction() {
@@ -19,7 +20,7 @@ export default class BAGSItem extends Item {
       ...this.system.actions,
       {
         ...this.system.schema.fields.actions.element.initial(),
-        id: crypto.randomUUID(),
+        id: foundry.utils.randomID(),
       },
     ]
     return this.update({

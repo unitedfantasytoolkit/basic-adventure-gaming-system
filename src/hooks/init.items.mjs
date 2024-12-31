@@ -51,7 +51,7 @@ Hooks.once("init", async () => {
   Items.registerSheet(SYSTEM_NAME, BAGSWeaponSheet, {
     types: ["weapon"],
     makeDefault: true,
-    label: "BAGS.SheetAbility",
+    label: "BAGS.SheetWeapon",
   })
   Items.registerSheet(SYSTEM_NAME, BAGSArmorSheet, {
     types: ["armor"],
@@ -61,7 +61,7 @@ Hooks.once("init", async () => {
   Items.registerSheet(SYSTEM_NAME, BAGSContainerSheet, {
     types: ["container"],
     makeDefault: true,
-    label: "BAGS.SheetWeapon",
+    label: "BAGS.SheetContainer",
   })
 
   // --- Non-physical items ----------------------------------------------------
@@ -73,11 +73,11 @@ Hooks.once("init", async () => {
   Items.registerSheet(SYSTEM_NAME, BAGSSpellSheet, {
     types: ["spell"],
     makeDefault: true,
-    label: "BAGS.SheetArmor",
+    label: "BAGS.SheetSpell",
   })
   Items.registerSheet(SYSTEM_NAME, BAGSAbilitySheet, {
     types: ["ability"],
     makeDefault: true,
-    label: "BAGS.SheetArmor",
+    label: "BAGS.SheetAbility",
   })
 })

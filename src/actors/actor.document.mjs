@@ -39,4 +39,12 @@ export default class BAGSActor extends Actor {
     console.info(action)
     console.info(game.user)
   }
+
+  async rollSave(save, modifier) {
+    const roll = new Roll(
+      `1d20+${modifier}cs<=${this.system.savingThrows[save]}`,
+    )
+
+    await roll.resolve()
+  }
 }

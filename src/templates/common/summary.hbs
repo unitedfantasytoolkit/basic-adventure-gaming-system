@@ -3,5 +3,32 @@
   data-tab="{{tab.id}}"
   data-group="{{tab.group}}"
 >
-{{log this}}
+  <div>
+    {{{item.system.flavorText}}}
+  </div>
+
+  <main>
+    <h2>Description</h2>
+    {{{item.system.description}}}
+  </main>
+
+  <aside>
+    <p>Quantity</p>
+    <p>Uses (if max uses > 0)</p
+    <h2>Actions</h2>
+    {{#if item.system.actions.length}}
+    <menu>
+      {{#each item.system.actions}}
+        <li>
+        <bags-action-tile src="{{img}}" uuid="../item.uuid"
+          actionId="{{id}}"></bags-action-tile>
+        <img src="{{img}}" alt="{{name}}"
+          data-action-id="{{id}}" />
+        </li>
+      {{/each}}
+    </menu>
+    {{else}}
+    <p class="bags__empty">This item has no actions.</p>
+    {{/if}}
+  </aside>
 </article>

@@ -270,28 +270,37 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
     switch (droppedDocument.documentName) {
       case "Actor":
         break
+      case "Item":
+        this._onDropItem()
+        break
       default:
         console.warn("Only Actor and Item documents may be dropped!")
     }
     console.info(this, event, droppedDocument)
   }
 
-  async _onDropActor(doc) {
+  /**
+   * A handler for dropping actors onto the sheet.
+   * @param {DragEvent} event - The browser event fired when dropping the item
+   * @param {unknown} doc - The Foundry Actor to handle
+   * @returns {Promise<unknown>} The dropped actor, if associating it works.
+   */
+  async _onDropActor(event, doc) {
     console.warn("Not yet implemented!")
-    // switch (droppedDocument.type) {
-    //   case "character":
-    //     this.#onDropCharacter(droppedDocument)
-    //     break
-    //   case "monster":
-    //     this.#onDropMonster(droppedDocument)
-    //     break
-    //   case "mount":
-    //     this.#onDropMount(droppedDocument)
-    //     break
-    //   default:
-    //     this._onDropActor(droppedDocument)
-    //     break
-    // }
+    switch (doc.type) {
+      case "character":
+        this.#onDropCharacter(doc)
+        break
+      case "monster":
+        this.#onDropMonster(doc)
+        break
+      case "mount":
+        this.#onDropMount(doc)
+        break
+      default:
+        this._onDropActor(doc)
+        break
+    }
   }
 
   async #onDropCharacter(doc) {
@@ -304,6 +313,20 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
 
   async #onDropMount(doc) {
     console.warn("Not yet implemented!")
+  }
+
+  async #onDropSpell(doc) {
+    console.warn("Not yet implemented!")
+  }
+
+  async #onDropAbility(doc) {
+    this.document.createEmbeddedDocuments("Item", [doc])
+  }
+
+  async #onDropCharacterClass(doc) {
+    if (this.document.itemTypes.class.length)
+      animatedSheetError(this.element, "A character may only have one class.")
+    else this.document.createEmbeddedDocuments("Item", [doc])
   }
 
   async #onDropWeapon(doc) {
@@ -319,45 +342,43 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
   }
 
   async #onDropMiscellaneous(doc) {
-    console.warn("Not yet implemented!")
-  }
-
-  async _onDropItem(event, data) {
-    if (!this.actor.isOwner) return false
-    const item = await Item.implementation.fromDropData(data)
-    const itemData = item.toObject()
-
-    if (this.actor.uuid === item.parent?.uuid)
-      return this._onSortItem(event, itemData)
-
-    console.info(item, itemData)
-    // switch (droppedDocument.type) {
-    //   case "class":
-    //     this.#onDropCharacterClass(droppedDocument)
-    //     break
-    //       case "spell":
-    //         this.#onDropSpell(droppedDocument)
-    // case "ability":
-    //   this.#onDropAbility(droppedDocument)
-    //   break
-    //       case "weapon":
-    //       case "armor":
-    //       case "ammunition":
-    //       case "item":
-  }
-
-  async #onDropSpell(doc) {
-    console.warn("Not yet implemented!")
-  }
-
-  async #onDropAbility(doc) {
     this.document.createEmbeddedDocuments("Item", [doc])
   }
 
-  async #onDropCharacterClass(doc) {
-    if (this.document.itemTypes.class.length)
-      animatedSheetError(this.element, "A character may only have one class.")
-    else this.document.createEmbeddedDocuments("Item", [doc])
+  /**
+   * A handler for dropping items onto the sheet.
+   * @param {DragEvent} event - The browser event fired when dropping the item
+   * @param {unknown} doc - The Foundry Item to handle
+   * @todo handle duplicate items on types with quantities
+   * @todo handle duplicate items on types that shouldn't have copies
+   * @returns {Promise<unknown>} The dropped item, if creating it works.
+   */
+  async _onDropItem(event, doc) {
+    console.info("???")
+    if (!this.actor.isOwner) return false
+
+    if (this.actor.uuid === doc.parent?.uuid)
+      return this._onSortItem(event, doc)
+
+    switch (doc.type) {
+      case "class":
+        return this.#onDropCharacterClass(doc)
+      case "spell":
+        return this.#onDropSpell(doc)
+      case "ability":
+        return this.#onDropAbility(doc)
+      case "weapon":
+        return this.#onDropWeapon(doc)
+      case "armor":
+        return this.#onDropArmor(doc)
+      case "ammunition":
+        return this.#onDropAmmunition(doc)
+      case "item":
+        return this.#onDropMiscellaneous(doc)
+      default:
+        break
+    }
+    throw new Error(`Item of type ${doc.type} has no drop handling.`)
   }
 
   _onClickAction(event, target) {

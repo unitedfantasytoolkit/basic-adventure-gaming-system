@@ -2,7 +2,7 @@
  * @file The base class for Item sheets in this system.
  */
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
-import ActionResolver from "../rules-engines/action-resolver.mjs"
+import BAGSActionEditor from "../common/action-editor.mjs"
 
 const { HandlebarsApplicationMixin } = foundry.applications.api
 
@@ -45,7 +45,7 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     )
   }
 
-  static DOCUMENT_TYPE = "item"
+  // static DOCUMENT_TYPE = "item"
 
   /**
    * Default tabs that *all* actor sheets should have.
@@ -74,18 +74,19 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
 
   static get DEFAULT_OPTIONS() {
     const controls = this.HEADER_CONTROLS
-    if (super.DEFAULT_OPTIONS.window)
-      controls.concat(super.DEFAULT_OPTIONS.window.controls)
+    // if (this.DEFAULT_OPTIONS.window)
+    // controls.concat(this.DEFAULT_OPTIONS.window.controls)
 
-    return foundry.utils.mergeObject(
+    const options = foundry.utils.mergeObject(
       foundry.applications.sheets.ItemSheetV2.DEFAULT_OPTIONS,
       {
-        id: `${this.DOCUMENT_TYPE}-{id}`,
+        id: "{id}",
         classes: [
           "application--bags",
           "application--sheet",
           "application--item-sheet",
           "application--hide-title",
+          // `application--${this.DOCUMENT_TYPE}-sheet`,
           ...this.CSS_CLASSES_WINDOW,
         ],
         controls,
@@ -99,8 +100,16 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
           handler: this.save,
           submitOnChange: true,
         },
+        actions: {
+          addAction: this._onAddAction,
+          editAction: this._onEditAction,
+          deleteAction: this._onDeleteAction,
+          performAction: this._onPerformAction,
+        },
       },
     )
+
+    return options
   }
 
   static async save(_event, _form, formData) {
@@ -197,30 +206,45 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     if (!action) return
 
     switch (action) {
-      case "perform-action":
-        this.resolveAction(
-          event.target.closest("[data-action-id]").dataset.actionId,
-        )
-        break
       default:
         super._onClickAction(event, target)
         break
     }
   }
 
-  /**
-   * Given an action ID, prepare to, then resolve, the related action.
-   * @param {string} actionId - The ID of the action to resolve on this document
-   */
-  async resolveAction(actionId) {
-    const action = this.document.system.actions.find((a) => a.id === actionId)
-    const resolver = new ActionResolver(
-      action,
-      this.document,
-      this.document.parent,
+  static async _onAddAction() {
+    await this.document.createAction()
+  }
+
+  static _onEditAction(event) {
+    const { actionId } = event.target.closest("[data-action-id]").dataset
+    const editor = new BAGSActionEditor(this.document, actionId)
+    editor.render(true)
+  }
+
+  static async _onDeleteAction(event) {
+    await this.document.deleteAction(
+      event.target.closest("[data-action-id]").dataset.actionId,
     )
-    const resolved = await resolver.resolve()
-    console.info(resolved)
+  }
+
+  /**
+   * Given an event, prepare to, then resolve, the related action.
+   * @param {string} actionId - The ID of the action to resolve on this document
+   * @param event
+   */
+  static async _onPerformAction(event) {
+    const { actionId } = event.target.closest("[data-action-id]").dataset
+
+    const action = this.document.system.actions.find((a) => a.id === actionId)
+    await this.document.resolveAction(action)
+    // const resolver = new ActionResolver(
+    //   action,
+    //   this.document,
+    //   this.document.parent,
+    //   game.user.targets,
+    // )
+    // const resolved = await resolver.resolve()
   }
 
   tabGroups = {

@@ -2,7 +2,7 @@
  * @file A collection of defaults and overrides for the system
  */
 // --- Ability Scores and Saves ------------------------------------------------
-import abilityScoreModifiers from "./ability-scores.mjs"
+import abilityScoreModifiers from "./bx.ability-scores.mjs"
 
 // --- System Config and Filepaths ---------------------------------------------
 export const SYSTEM_NAME = "basic-adventure-gaming-system"

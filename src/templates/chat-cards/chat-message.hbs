@@ -1,0 +1,191 @@
+<li class="chat-message chat-message--bags chat-message--{{message.type}} message flexcol {{cssClass}}" data-message-id="{{message._id}}"
+  {{#if borderColor}}style="border-color:{{borderColor}}"{{/if}}>
+  {{#if (eq message.type "action")}}
+  {{log this}}
+<!--
+
+# How this ought to look
+
+## Attack, weapon has no other actions
+
+┌──────────( 19 )───────────┐
+│         vs. AC 13         │
+│ ┌─────┐  ┌─────┐  ┌─────┐ │
+│ │Actor│  │Item │  │Act  │ │
+│ │Icon │  │Icon │  │Icon │ │
+│ └─────┘  └─────┘  └─────┘ │
+│   Thorgrim attacks with   │
+│       Warhammer +1        │
+│   [+] Show Roll Details   │
+├───────────────────────────┤
+│ ◆ EFFECTS                 │
+│   The crystal ball        │
+│   reveals:                │
+│    > "Beware the one who  │
+│    > walks in shadow"     │
+└───────────────────────────┘
+
+## Ability/spell, no target, single effect
+
+┌───────────( 1 )───────────┐
+│          under 4          │
+│ ┌─────┐  ┌─────┐  ┌─────┐ │
+│ │Actor│  │Item │  │Act  │ │
+│ │Icon │  │Icon │  │Icon │ │
+│ └─────┘  └─────┘  └─────┘ │
+│ Thorgrim uses Crystal Ball│
+│   [+] Show Roll Details   │
+├───────────────────────────┤
+│ ◆ EFFECTS                 │
+│   The crystal ball        │
+    reveals:                │
+│    > "Beware the one who  │
+│    > walks in shadow"     │
+└───────────────────────────┘
+
+
+## Any action type, multiple targets
+
+┌──────────────( 2 )──────────────────┐
+│      under 4                        │
+│ ┌─────┐  ┌─────┐  ┌─────┐           │
+│ │Actor│  │Item │  │Act  │           │
+│ │Icon │  │Icon │  │Icon │
+│ └─────┘  └─────┘  └─────┘
+│ Thorgrim uses Thunderous Strike
+│ from Mjolnir
+│  [+] Show Roll Details
+├──────────────────────────────────────┤
+│ ◆ TARGETS
+│   Hill Giant
+│   ├─ Saving Throw (STR) ✗
+│   │  [+] Show Roll Details
+│   ├─ Takes {12} damage
+│   └─ Is knocked prone
+│
+│   Stone Giant
+│   ├─ Saving Throw (STR) ✓
+│   │  [+] Show Roll Details
+│   └─ Takes {6} damage
+└──────────────────────────────────────┘
+
+-->
+
+
+    <header class="action-header">
+      <time class="message-timestamp">{{timeSince message.timestamp}}</time>
+      {{#if canDelete}}
+      <a aria-label="{{localize 'Delete'}}" class="message-delete" data-action="deleteMessage">
+        <i class="fas fa-trash"></i>
+      </a>
+      {{/if}}
+      {{#if canClose}}
+      <a aria-label="{{ localize "CHAT.Dismiss" }}" class="message-dismiss" data-action="dismissMessage">
+        <i class="fas fa-xmark"></i>
+      </a>
+      {{/if}}
+    </header>
+
+    <div class="action">
+      <div class="action__description">
+        <!--
+          @TODO:
+            - If there is a source item, show the actor/item/action icons.
+            - If the action is the source item's only action, don't show the
+              action icon
+        -->
+        <div class="action__icons">
+          <img src="https://placehold.co/32x32" alt="" data-action="" />
+          <img src="https://placehold.co/32x32" alt="" data-action="" />
+          <img src="https://placehold.co/32x32" alt="" data-action="" />
+        </div>
+
+        <p class="action__attempt-flavor">Character attacks with Weapon!</p>
+      </div>
+
+        <!--
+          @TODO:
+            - If there's an attempt, show the attempt container
+              - Display rolled value as a circle, with context below as a banner
+              - Context wording changes depending on if action is an attack,
+                under a value, etc.
+            - Show icons for the actor, action source, and, if there's more than
+              one action on the action source, the action icon.
+            - Construct a descriptive line ("A attacks B with C", "A casts D", etc)
+        -->
+        <div class="action__attempt">
+          <span class="action__attempt__result">9</span>
+          <span class="action__attempt__context action__attempt__context--attack">vs. AC ??</span>
+        </div>
+
+
+      <ul class="action__targets">
+        <!--
+          @TODO:
+            - If there's a 2+ targets, render this.
+            - Enumerate the list of effects on the 0-1 targets
+            - Include saving throws
+        -->
+
+
+      </ul>
+
+      <ul class="action__effects">
+        <!--
+          @TODO:
+            - If there's a 0-1 targets, and the effect isn't damage or healing,
+              render this.
+            - Enumerate the list of effects on the 0-1 targets
+        -->
+
+      </ul>
+
+      <div class="action__result">
+        <!--
+          @TODO:
+            - If there's a 0-1 targets, and the effect is damage or healing,
+              render this.
+            - "99 damage dealt/healed" with optional note
+        -->
+        99 damage dealt
+      </div>
+    </div>
+
+    <footer class="action__footer">
+    <!--
+      @TODO:
+      - If there's an attempt, show the attempt container
+      - If there are effects, show the list of effects
+    -->
+    </footer>
+
+  {{else}}
+  <header class="message-header flexrow">
+    <h4 class="message-sender">{{alias}}</h4>
+    <span class="message-metadata">
+      <time class="message-timestamp">{{timeSince message.timestamp}}</time>
+      {{#if canDelete}}
+      <a aria-label="{{localize 'Delete'}}" class="message-delete" data-action="deleteMessage">
+        <i class="fas fa-trash"></i>
+      </a>
+      {{/if}}
+      {{#if canClose}}
+      <a aria-label="{{ localize "CHAT.Dismiss" }}" class="message-dismiss" data-action="dismissMessage">
+        <i class="fas fa-xmark"></i>
+      </a>
+      {{/if}}
+    </span>
+
+    {{#if isWhisper}}
+    <span class="whisper-to">{{localize 'CHAT.To'}}: {{whisperTo}}</span>
+    {{/if}}
+
+    {{#if message.flavor}}
+    <span class="flavor-text">{{{message.flavor}}}</span>
+    {{/if}}
+  </header>
+  <div class="message-content">
+    {{{message.content}}}
+  </div>
+  {{/if}}
+</li>

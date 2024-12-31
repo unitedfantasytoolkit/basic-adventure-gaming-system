@@ -133,6 +133,8 @@ export const actionRechargeOptions = {
   other: "BAGS.Actions.RechargeType.Other",
 }
 
+/* === The Actions Factory ================================================== */
+
 /**
  * A unit of functionality; if an item, ability, spell, etc. can
  * -do something-, this is how we represent it.
@@ -181,6 +183,11 @@ export const actionsFactory = (fields) => {
       initial: false,
       label: "BAGS.Actions.Flags.UsesConsumption.Label",
       // hint: "BAGS.Actions.Flags.UsesEffect.Hint",
+    }),
+    isBlind: new BooleanField({
+      initial: false,
+      label: "BAGS.Actions.Flags.IsBlind.Label",
+      hint: "BAGS.Actions.Flags.isBlind.Hint",
     }),
   })
 
@@ -478,9 +485,10 @@ export const actionsFactory = (fields) => {
       blank: false,
       nullable: false,
     }),
+
     name: new StringField({
       blank: false,
-      initial: "Localize me!",
+      initial: "New Action",
       label: "BAGS.Actions.Name.Label",
       hint: "BAGS.Actions.Name.Hint",
     }),
@@ -501,7 +509,12 @@ export const actionsFactory = (fields) => {
     ...fields,
   })
 
+  // @TODO: Figure out a way to get `id` to autofill
+  // return new ArrayField(schema, {
+  //   initial: [schema.initial()],
+  // })
+
   return new ArrayField(schema, {
-    initial: [schema.initial()],
+    initial: [],
   })
 }

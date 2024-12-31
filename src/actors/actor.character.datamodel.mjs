@@ -13,11 +13,6 @@ import {
   retainerFactory,
 } from "./actor.fields.mjs"
 
-// import OseDataModelCharacterAC from "./data-model-classes/data-model-character-ac";
-// import OseDataModelCharacterMove from "./data-model-classes/data-model-character-move";
-// import OseDataModelCharacterScores from "./data-model-classes/data-model-character-scores";
-// import OseDataModelCharacterSpells from "./data-model-classes/data-model-character-spells";
-
 const { StringField, NumberField, SchemaField } = foundry.data.fields
 const abilityScoreFields = ABILITY_SCORES.entries().reduce(mapToNumberField, {})
 
@@ -73,45 +68,7 @@ const cumulativeModifiers = (...modifiers) => {
 export default class BAGSCharacterDataModel extends BaseActorDataMixin(
   buildSchema(),
 ) {
-  prepareDerivedData() {
-    // this.encumbrance = new CONFIG.OSE.encumbrance(
-    //   this.encumbrance.max,
-    //   [...this.parent.items],
-    //   {
-    //     significantTreasure: game.settings.get(
-    //       game.system.id,
-    //       "significantTreasure"
-    //     ),
-    //     scores: this.scores,
-    //   }
-    // );
-    // this.movement = new OseDataModelCharacterMove(
-    //   this.encumbrance,
-    //   this.config.movementAuto,
-    //   this.movement.base
-    // );
-    // // @todo Once we create the new character sheet,
-    // //       we shouldn't need to list both AC schemes
-    // this.ac = new OseDataModelCharacterAC(
-    //   false,
-    //   [
-    //     ...getItemsOfActorOfType(
-    //       this.parent,
-    //       "armor",
-    //       (a) => a.system.equipped
-    //     ),
-    //   ],
-    //   this.scores.dex.mod,
-    //   this.ac.mod
-    // );
-    // this.aac = new OseDataModelCharacterAC(
-    //   true,
-    //   getItemsOfActorOfType(this.parent, "armor", (a) => a.system.equipped),
-    //   this.scores.dex.mod,
-    //   this.aac.mod
-    // );
-    // this.spells = new OseDataModelCharacterSpells(this.spells, this.#spellList);
-  }
+  prepareDerivedData() {}
 
   get abilityScores() {
     return Object.keys(this.base.abilityScores).reduce((obj, key) => {

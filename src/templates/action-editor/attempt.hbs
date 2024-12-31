@@ -7,10 +7,10 @@ data-group="{{tab.group}}"
     <h2>{{localize "BAGS.Actions.Editor.Attempt.Heading"}}</h2>
   </header>
 
-  {{formGroup fields.attempt.fields.isLikeAttack value=action.attempt.isLikeAttack localize=true}}
+  {{formGroup fields.attempt.fields.flags.fields.isLikeAttack value=action.attempt.flags.isLikeAttack localize=true}}
 
-  {{#if action.attempt.isLikeAttack}}
-    {{formGroup fields.attempt.fields.attackType value=action.attempt.attackType localize=true}}
+  {{#if action.attempt.flags.isLikeAttack}}
+    {{formGroup fields.attempt.fields.attack.fields.type value=action.attempt.attack.type localize=true}}
   {{else}}
     <fieldset class="attempt-roll">
       <legend>Roll</legend>
@@ -20,8 +20,8 @@ data-group="{{tab.group}}"
     </fieldset>
   {{/if}}
 
-  {{formGroup fields.attempt.fields.successText value=action.attempt.successText localize=true}}
-  {{formGroup fields.attempt.fields.failText value=action.attempt.failText localize=true}}
+  {{formGroup fields.attempt.fields.text.fields.success value=action.attempt.successText localize=true}}
+  {{formGroup fields.attempt.fields.text.fields.fail value=action.attempt.failText localize=true}}
 
 </section>
 

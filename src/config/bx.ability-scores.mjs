@@ -313,33 +313,33 @@ const abilityScoreModifiers = new Map()
 
 abilityScoreModifiers.set("str", {
   modifiers: strengthModifiers,
-  label: "",
-  hint: "",
+  label: "BAGS.BX.AbilityScores.str.Label",
+  hint: "BAGS.BX.AbilityScores.str.Hint",
 })
 abilityScoreModifiers.set("int", {
   modifiers: intelligenceModifiers,
-  label: "",
-  hint: "",
+  label: "BAGS.BX.AbilityScores.int.Label",
+  hint: "BAGS.BX.AbilityScores.int.Hint",
 })
 abilityScoreModifiers.set("wis", {
   modifiers: wisdomModifiers,
-  label: "",
-  hint: "",
+  label: "BAGS.BX.AbilityScores.wis.Label",
+  hint: "BAGS.BX.AbilityScores.wis.Hint",
 })
 abilityScoreModifiers.set("dex", {
   modifiers: dexterityModifiers,
-  label: "",
-  hint: "",
+  label: "BAGS.BX.AbilityScores.dex.Label",
+  hint: "BAGS.BX.AbilityScores.dex.Hint",
 })
 abilityScoreModifiers.set("con", {
   modifiers: constitutionModifiers,
-  label: "",
-  hint: "",
+  label: "BAGS.BX.AbilityScores.con.Label",
+  hint: "BAGS.BX.AbilityScores.con.Hint",
 })
 abilityScoreModifiers.set("cha", {
   modifiers: charismaModifiers,
-  label: "",
-  hint: "",
+  label: "BAGS.BX.AbilityScores.cha.Label",
+  hint: "BAGS.BX.AbilityScores.cha.Hint",
 })
 
 export default abilityScoreModifiers

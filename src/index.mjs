@@ -20,6 +20,7 @@ import "./hooks/init.handlebars.mjs"
 import "./hooks/init.actors.mjs"
 import "./hooks/init.items.mjs"
 import "./hooks/init.combat.mjs"
+import "./hooks/init.chat.mjs"
 // import "./hooks/init.ui.mjs"
 
 /* --- Setup -------------------------------------------------------------------
@@ -34,17 +35,15 @@ import "./hooks/setup.ui.mjs"
  *
  * TODO: It would be cool to enable stuff like this for dev envs only
  */
-const devCharacter = "Actor.A81XqzmshDo9D55H"
-const devAbility = `${devCharacter}.Item.BXFL6acXceuFHwo9`
-
 Hooks.once("ready", async () => {
-  if (!devCharacter) return
-  const actor = await fromUuid(devCharacter)
-  const actionItem = await fromUuid(devAbility)
-  await actionItem.sheet.render(true)
-  // await actor.sheet.render(true)
-  window.TEST = { actor, actionItem }
-  // window.TEST.actionItem.resolveAction(window.TEST.actionItem.system.actions[0])
+  try {
+    const devAbility = "Item.8T913vV1JM1aVIRT"
+    const actionItem = await fromUuid(devAbility)
+    await actionItem.sheet.render(true)
+    actionItem.resolveAction(actionItem.system.actions[0])
+  } catch {
+    // noop -- add your own devAbility UUID above if this breaks
+  }
 
   const src = `http://${(window.location.host || "localhost").split(":")[0]}:9999/livereload.js?snipver=1`
   const script = document.createElement("script")

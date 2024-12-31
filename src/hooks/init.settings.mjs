@@ -4,8 +4,14 @@ import {
   CLASS_OVERRIDE_COMBAT,
   CLASS_OVERRIDE_SIDEBAR_COMBAT_CONFIG,
 } from "../config/overrides.mjs"
+import BXConfig from "../config/bx.mjs"
 
 Hooks.once("init", async () => {
+  if (!CONFIG.BAGS) CONFIG.BAGS = {}
+  if (!(CONFIG.BAGS.systems instanceof Map)) CONFIG.BAGS.systems = new Map()
+
+  CONFIG.BAGS.systems.set("bx", BXConfig)
+
   // Combat Tracker Configuration
   game.settings.registerMenu(
     SYSTEM_NAME,
