@@ -7,7 +7,7 @@
     <table class="xp-table">
       <colgroup>
         <col span="4" />
-        <col span="5" class="saves" />
+        <col span="{{SavingThrowTypeCount}}" class="saves" />
         {{#each item.system.leveledResources}}
         {{#if pool.length}}
         <col span="{{pool.length}}" class="resource-{{@index}}" />
@@ -20,7 +20,7 @@
           <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.XP"}}</th>
           <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.HD"}}</th>
           <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.THAC0"}}</th>
-          <th colspan="5">{{localize "BAGS.CharacterClass.XPTable.Saves"}}</th>
+          <th colspan="{{savingThrowTypeCount}}">{{localize "BAGS.CharacterClass.XPTable.Saves"}}</th>
           {{#each item.system.leveledResources}}
           {{#if pool.length}}
           <th colspan="{{pool.length}}">{{label}}</th>
@@ -31,17 +31,9 @@
           {{/if}}
         </tr>
         <tr>
-          <th data-tooltip="{{localize " BAGS.SavingThrows.Death.Long"}}">{{localize "BAGS.SavingThrows.Death.Initial"}}
-          </th>
-          <th data-tooltip="{{localize " BAGS.SavingThrows.Wand.Long"}}">{{localize "BAGS.SavingThrows.Wands.Initial"}}
-          </th>
-          <th data-tooltip="{{localize " BAGS.SavingThrows.Paralysis.long"}}">{{localize
-            "BAGS.SavingThrows.Paralysis.Initial"}}</th>
-          <th data-tooltip="{{localize " BAGS.SavingThrows.Breath.Long"}}">{{localize
-            "BAGS.SavingThrows.Breath.Initial"}}
-          </th>
-          <th data-tooltip="{{localize " BAGS.SavingThrows.Spell.Long"}}">{{localize "BAGS.SavingThrows.Spell.Initial"}}
-          </th>
+          {{#each savingThrows as |save key|}}
+          <th data-tooltip="{{localize save.label}}">{{localize save.initial}}</th>
+          {{/each}}
           {{#each item.system.leveledResources}}
           {{#each pool}}
           <th>{{label}}</th>
@@ -61,18 +53,22 @@
           <td>{{levelObj.hd.count}}d{{../item.system.hitDieSize}}{{#if
             levelObj.hd.modifier}}+{{levelObj.hd.modifier}}{{/if}}{{#unless levelObj.hd.canUseConMod}}*{{/unless}}</td>
           <td>{{levelObj.thac0}} (+{{levelObj.attackBonus}})</td>
-          <td data-tooltip="{{localize " OSE.saves.death.long"}}">{{levelObj.saves.death}}</td>
-          <td data-tooltip="{{localize " OSE.saves.wand.long"}}">{{levelObj.saves.wands}}</td>
-          <td data-tooltip="{{localize " OSE.saves.paralysis.long"}}">{{levelObj.saves.paralysis}}</td>
-          <td data-tooltip="{{localize " OSE.saves.breath.long"}}">{{levelObj.saves.breath}}</td>
-          <td data-tooltip="{{localize " OSE.saves.spell.long"}}">{{levelObj.saves.spell}}</td>
+
+          {{!-- Saving throws --}}
+          {{#each ../savingThrows as |save key|}}
+            <td data-tooltip="{{localize save.label}}">{{lookup levelObj.saves key}}</th>
+          {{/each}}
+
+          {{!-- Leveled resources (thief skills) --}}
           {{#each ../item.system.leveledResources}}
-          {{#each pool}}
-          <td>{{#if (lookup perLevel index)}}{{lookup perLevel index}}{{else}}&ndash;{{/if}}</td>
+            {{#each pool}}
+              <td>{{#if (lookup perLevel index)}}{{lookup perLevel index}}{{else}}&ndash;{{/if}}</td>
+            {{/each}}
           {{/each}}
-          {{/each}}
+
+          {{!-- Spell slots --}}
           {{#each ../item.system.spellSlots as |perLevel|}}
-          <td>{{#if (lookup perLevel index)}}{{lookup perLevel index}}{{else}}&ndash;{{/if}}</td>
+            <td>{{#if (lookup perLevel index)}}{{lookup perLevel index}}{{else}}&ndash;{{/if}}</td>
           {{/each}}
         </tr>
         {{else}}

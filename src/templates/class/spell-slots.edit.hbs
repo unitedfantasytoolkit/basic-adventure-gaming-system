@@ -21,7 +21,7 @@
           <td>
             <input type="text" data-dtype="Number"
               name="system.spellSlots.{{spellLevelIndex}}.{{@index}}"
-              value="{{#if (lookup spellLevel.perLevel @index)}}{{lookup spellLevel @index}}{{/if}}"
+              value="{{#if (lookup spellLevel @index)}}{{lookup spellLevel @index}}{{/if}}"
               placeholder="&ndash;" />
           </td>
           {{/each}}

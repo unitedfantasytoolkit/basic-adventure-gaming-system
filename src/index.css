@@ -10,6 +10,7 @@
 
 /* --- Actors: Character ---------------------------------------------------- */
 @import url("./actors/actor.character.sheet.css");
+@import url("./actors/actor.character.creation-wizard.css");
 
 /* --- Items: Character Class ----------------------------------------------- */
 @import url("./items/item.character-class.sheet.css");
@@ -21,3 +22,6 @@
 
 /* --- Chat cards: Actions -------------------------------------------------- */
 @import url("./chat/chat-message.action.css");
+
+/* --- Miscellanous applications -------------------------------------------- */
+@import url("./applications/character-creation-source-config.css");

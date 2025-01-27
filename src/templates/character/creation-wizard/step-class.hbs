@@ -1,0 +1,103 @@
+
+
+
+{{!-- templates/character/creation-wizard/step-class.hbs --}}
+<div class="step-content class-step {{#if this.steps.class.current}}active{{/if}}">
+  <h2>{{localize "BAGS.Actors.Character.CreationWizard.Class.Title"}}</h2>
+
+  <div class="class-selection">
+    <div class="class-list">
+      {{#each availableClasses as |cls|}}
+      <div class="class-option {{#if (eq @root.data.selectedClass.id cls.id)}}selected{{/if}}"
+        data-uuid="{{cls.uuid}}"
+        data-action="select-class">
+          <img src="{{cls.img}}" alt="{{cls.name}}">
+          <div class="class-info">
+            <h3>{{cls.name}}</h3>
+            <div class="class-details">
+              <span class="hit-die">
+                <i class="fas fa-heart"></i>
+                d{{cls.system.hitDieSize}}
+              </span>
+
+              {{#if (gt cls.system.prerequisitesCount 0)}}
+                <span class="prerequisites">
+                  <i class="fas fa-exclamation-circle"></i>
+                  {{#each cls.system.prerequisites as |value key|}}
+                    {{key}}: {{value}}{{#unless @last}}, {{/unless}}
+                  {{/each}}
+                </span>
+              {{/if}}
+
+              {{#if (gt cls.system.fullPrimeRequisitesCount 0)}}
+                <span class="prime-requisites">
+                  <i class="fas fa-star"></i>
+                  {{#each cls.system.fullPrimeRequisites as |value key|}}
+                    {{#unless (eq key "isAnd")}}
+                      {{key}}: {{value}}
+                      {{#unless @last}}
+                        {{#if ../isAnd}}&{{else}}/{{/if}}
+                      {{/unless}}
+                    {{/unless}}
+                  {{/each}}
+                </span>
+              {{/if}}
+
+              {{#if (gt cls.system.halfPrimeRequisitesCount 0 )}}
+                <span class="half-prime-requisites">
+                  <i class="fas fa-star-half-alt"></i>
+                  {{#each cls.system.halfPrimeRequisites as |value key|}}
+                    {{#unless (eq key "isAnd")}}
+                      {{key}}: {{value}}
+                      {{#unless @last}}
+                        {{#if ../isAnd}}&{{else}}/{{/if}}
+                      {{/unless}}
+                    {{/unless}}
+                  {{/each}}
+                </span>
+              {{/if}}
+            </div>
+          </div>
+
+          {{#if (gt getClassCompatibilityScore cls 0)}}
+            <div class="compatibility-badge">
+              <i class="fas fa-check"></i>
+              {{localize "BAGS.Actors.Character.CreationWizard.Class.Recommended"}}
+            </div>
+          {{/if}}
+        </div>
+
+        {{/each}}
+      </div>
+
+      {{#if data.selectedClass}}
+        <div class="class-preview">
+        <h3>{{data.selectedClass.name}}</h3>
+        <div class="class-description">
+          {{{data.selectedClass.system.description}}}
+        </div>
+        {{#if data.selectedClass.system.features}}
+          <div class="class-features">
+            <h4>{{localize "BAGS.Actors.Character.CreationWizard.Class.Features"}}</h4>
+            <div class="feature-list">
+              {{#each data.selectedClass.system.features as |featureUuid|}}
+                <bags-item-tile uuid="{{featureUuid}}"></bags-item-tile>
+              {{/each}}
+            </div>
+          </div>
+        {{/if}}
+      </div>
+    {{/if}}
+  </div>
+
+  <div class="controls">
+    <button type="button" data-action="previous-step">
+      {{localize "BAGS.Actors.Character.CreationWizard.Previous"}}
+    </button>
+
+    <button type="button" data-action="confirm-class"
+            {{disabled (eq this.steps.class.valid false)}}>
+      {{localize "BAGS.Actors.Character.CreationWizard.Next"}}
+    </button>
+  </div>
+</div>

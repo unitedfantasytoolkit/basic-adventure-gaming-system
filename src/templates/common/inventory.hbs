@@ -1,0 +1,7 @@
+<article class="tab character-class-sheet-{{tab.id}} {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+  <ol class="item-grid" style="--item-grid-minimum-rows: 5">
+{{#each inventory}}
+    <li class="item-grid__item"><uft-item-tile uuid="{{uuid}}"></uft-item-tile></li>
+{{/each}}
+  </ol>
+</article>

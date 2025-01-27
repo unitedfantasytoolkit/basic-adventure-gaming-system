@@ -4,7 +4,8 @@
 
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
-const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api
+const { HandlebarsApplicationMixin, ApplicationV2, DialogV2 } =
+  foundry.applications.api
 
 export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicationMixin(
   ApplicationV2,
@@ -23,7 +24,6 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
       "application--xp-table-editor",
       "application--bags",
       "application--hide-title",
-      "scrollable",
     ],
     tag: "form",
     window: {
@@ -35,7 +35,16 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
       contentTag: "section",
       contentClasses: [],
     },
-    actions: {},
+    actions: {
+      "add-level": this.addClassLevel,
+      "remove-level": this.removeClassLevel,
+      "add-resource-pool": this.addResourcePool,
+      "remove-resource-pool": this.removeResourcePool,
+      "add-resource": this.addResource,
+      "remove-resource": this.removeResource,
+      "add-spell-level": this.addSpellLevel,
+      "remove-spell-level": this.removeSpellLevel,
+    },
     form: {
       handler: this.save,
       submitOnChange: true,
@@ -50,7 +59,7 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
 
   // --- Tabs and Templates ----------------------------------------------------
   static get TEMPLATE_ROOT() {
-    return `${SYSTEM_TEMPLATE_PATH}/character-class`
+    return `${SYSTEM_TEMPLATE_PATH}/class`
   }
 
   static PARTS = {
@@ -166,7 +175,7 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
   // === UI Events==============================================================
 
   // --- Class Levels ----------------------------------------------------------
-  async #addClassLevel() {
+  static async addClassLevel() {
     const highestLevel = this.document.system.xpTable.length - 1
 
     const newRow = structuredClone(
@@ -182,7 +191,7 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
     await this.render()
   }
 
-  async #removeClassLevel() {
+  static async removeClassLevel() {
     const rows = [...this.document.system.xpTable]
     if (!rows?.length) return
     await this.document.update({
@@ -192,7 +201,7 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
   }
 
   // --- Class Resources Categories --------------------------------------------
-  async #addResource() {
+  static async addResource() {
     const template = { label: "", pool: [] }
     const resources = [...this.document.system.leveledResources, template]
     await this.document.update({
@@ -201,8 +210,8 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
     await this.render()
   }
 
-  async #removeResource(event) {
-    const confirm = await foundry.applications.api.DialogV2.confirm({
+  static async removeResource(event) {
+    const confirm = await DialogV2.confirm({
       content:
         "<p>Are you sure you want to remove this category? This change is irreversable.</p>",
     })
@@ -219,7 +228,7 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
   }
 
   // --- Class Resources Pools -------------------------------------------------
-  async #addResourcePool(event) {
+  static async addResourcePool(event) {
     const { categoryId } = event.target.closest("[data-category-id]").dataset
     const resourceList = [...this.document.system.leveledResources]
     const resource = structuredClone(resourceList[categoryId])
@@ -232,8 +241,8 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
     await this.render()
   }
 
-  async #removeResourcePool(event) {
-    const confirm = await foundry.applications.api.DialogV2.confirm({
+  static async removeResourcePool(event) {
+    const confirm = await DialogV2.confirm({
       content:
         "<p>Are you sure you want to remove this resource? This change is irreversable.</p>",
     })
@@ -251,7 +260,7 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
   }
 
   // --- Spell Levels ----------------------------------------------------------
-  async #addSpellLevel() {
+  static async addSpellLevel() {
     const template = { label: "", pool: [] }
     const spellSlots = [...this.document.system.spellSlots, []]
     await this.document.update({
@@ -260,8 +269,8 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
     await this.render()
   }
 
-  async #removeSpellLevel(event) {
-    const confirm = await foundry.applications.api.DialogV2.confirm({
+  static async removeSpellLevel(event) {
+    const confirm = await DialogV2.confirm({
       content:
         "<p>Are you sure you want to remove this spell level? This change is irreversable.</p>",
     })
@@ -274,42 +283,5 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
       "system.spellSlots": rows.splice(0, rows.length - 1),
     })
     await this.render()
-  }
-
-  // === Event Delegation =======================================================
-
-  _onClickAction(event, target) {
-    const { action } = target.dataset
-
-    if (!action) return
-
-    switch (action) {
-      case "add-level":
-        this.#addClassLevel()
-        break
-      case "remove-level":
-        this.#removeClassLevel()
-        break
-      case "add-resource-pool":
-        this.#addResourcePool(event)
-        break
-      case "remove-resource-pool":
-        this.#removeResourcePool(event)
-        break
-      case "add-resource":
-        this.#addResource()
-        break
-      case "remove-resource":
-        this.#removeResource(event)
-        break
-      case "add-spell-level":
-        this.#addSpellLevel()
-        break
-      case "remove-spell-level":
-        this.#removeSpellLevel(event)
-        break
-    }
-
-    super._onClickAction(event, target)
   }
 }

@@ -1,0 +1,24 @@
+<div class="step-content abilities-step {{#if this.steps.abilityScores.current}}active{{/if}}">
+  <h2>{{localize "BAGS.Actors.Character.CreationWizard.AbilityScores.Title"}}</h2>
+
+  <div class="ability-scores">
+    {{#each config.abilityScores as |ability key|}}
+      <div class="ability-score" data-ability="{{key}}">
+        <label>{{localize ability.label}}</label>
+        <div class="value">{{lookup @root.data.abilityScores key default="-"}}</div>
+      </div>
+    {{/each}}
+  </div>
+
+  <div class="controls">
+    <button type="button" data-action="roll-abilities">
+      <i class="fas fa-dice"></i>
+      {{localize "BAGS.Actors.Character.CreationWizard.AbilityScores.Roll"}}
+    </button>
+
+    <button type="button" data-action="accept-abilities" {{disabled
+      (eq this.steps.abilityScores.valid false)}}>
+        {{localize "BAGS.Actors.Character.CreationWizard.Next"}}
+      </button>
+  </div>
+</div>

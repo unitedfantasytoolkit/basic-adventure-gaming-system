@@ -30,21 +30,24 @@ class ItemTile extends BaseElement {
         />`
       : ""
 
-    template.innerHTML = html`
+    console.info(tooltip)
+
+    template.innerHTML = html`<div>
       <header>
         ${banner}
         <h1>${this.document.name}</h1>
-        ${this.document.system.description || ""}
-        <p>She sells sea shells by the sea shore</p>
       </header>
-      ${tooltip}
-    `
+      <hr />
+      <main>${tooltip}</main>
+    </div>`
     return template.content.firstElementChild
   }
 
   events() {
     this.addEventListener("mouseover", this.#onMouseOver.bind(this))
     this.addEventListener("mouseout", this.#onMouseOut.bind(this))
+    this.addEventListener("click", this.#onClick.bind(this))
+    this.addEventListener("contextmenu", this.#onContextMenu.bind(this))
   }
 
   get uuid() {
@@ -59,10 +62,26 @@ class ItemTile extends BaseElement {
 
   get template() {
     if (!this.document) return ""
-    return html`<img
+    const img = html`<img
       src="${this.document.img}"
       alt="${this.document.name}"
     />`
+    const { quantity } = this.document.system
+    console.info(quantity)
+    const quantityLabel =
+      typeof quantity === "number" && quantity > 1
+        ? html`<span class="quantity">${quantity}</span>`
+        : ""
+
+    return `${img}${quantityLabel}`
+  }
+
+  async #onClick(e) {
+    this.document?.sheet.render(true)
+  }
+
+  async #onContextMenu(e) {
+    console.info(e)
   }
 
   async #onMouseOver(e) {

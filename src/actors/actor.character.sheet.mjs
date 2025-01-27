@@ -3,6 +3,7 @@
  */
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import animatedSheetError from "../utils/animated-sheet-error.mjs"
+import sortDocuments from "../utils/sort-documents.mjs"
 
 const { HandlebarsApplicationMixin } = foundry.applications.api
 const { ActorSheetV2 } = foundry.applications.sheets
@@ -11,7 +12,7 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
   ActorSheetV2,
 ) {
   static get DEFAULT_OPTIONS() {
-    return foundry.utils.mergeObject(ActorSheetV2.DEFAULT_OPTIONS, {
+    return {
       id: "character-{id}",
       classes: [
         "application--bags",
@@ -24,7 +25,6 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
       window: {
         frame: true,
         positioned: true,
-        icon: "fa-flag",
         minimizable: true,
         resizable: true,
         contentTag: "section",
@@ -34,16 +34,48 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
         handler: undefined,
         submitOnChange: true,
       },
-    })
+      actions: {
+        "use-character-action": this.#onCharacterAction,
+      },
+      dragDrop: [],
+    }
+  }
+
+  #dragDropHandlers
+
+  constructor(options = {}) {
+    super(options)
+
+    // this.#dragDropHandlers = this.options.dragDrop.map((config) => {
+    //   config.permissions = {
+    //     dragstart: this._canDragStart.bind(this),
+    //     drop: this._canDragDrop.bind(this),
+    //   }
+    //   config.callbacks = {
+    //     dragstart: this._onDragStart.bind(this),
+    //     dragover: this._onDragOver.bind(this),
+    //     drop: this.#onDrop.bind(this),
+    //   }
+    //   return new DragDrop(config)
+    // })
+  }
+
+  static async #onCharacterAction(e) {
+    const el = e.target.closest("[data-action-id]")
+    if (!el) return
+
+    const { actionId } = el.dataset
+
+    const action = this.actor.system.actions.find((a) => a.id === actionId)
+
+    const resolved = await this.actor.resolveAction(action)
+    console.info(resolved)
   }
 
   static TEMPLATE_ROOT = `${SYSTEM_TEMPLATE_PATH}/character`
 
   static get PARTS() {
     return {
-      // header: {
-      //   template: `${SYSTEM_TEMPLATE_PATH}/character/header.hbs`,
-      // },
       "left-rail": {
         template: `${this.TEMPLATE_ROOT}/left-rail.hbs`,
       },
@@ -54,13 +86,13 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
         template: `${this.TEMPLATE_ROOT}/content.hbs`,
       },
       spells: {
-        template: `${this.TEMPLATE_ROOT}/content.hbs`,
+        template: `${this.TEMPLATE_ROOT}/spells.hbs`,
       },
       inventory: {
         template: `${this.TEMPLATE_ROOT}/inventory.hbs`,
       },
       description: {
-        template: `${this.TEMPLATE_ROOT}/content.hbs`,
+        template: `${this.TEMPLATE_ROOT}/identity.hbs`,
       },
       tabs: {
         template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
@@ -95,18 +127,40 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
           },
         }))
         context.hp = doc.system.hp
+        context.savingThrowLocaleStrings =
+          CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+            CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
+          )?.savingThrows
+        context.usesDescendingAC =
+          CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+            CONFIG.BAGS.SystemRegistry.categories.COMBAT,
+          )?.descending
+
         break
       case "summary":
         context.tab = this.#getTabs()[partId]
         break
       case "abilities":
         context.tab = this.#getTabs()[partId]
+        context.abilities = this.actor.items.documentsByType.ability
         break
       case "spells":
         context.tab = this.#getTabs()[partId]
+        context.abilities = this.actor.items.documentsByType.spell
         break
       case "inventory":
         context.tab = this.#getTabs()[partId]
+        context.weapons =
+          this.actor.items.documentsByType.weapon.sort(sortDocuments)
+        context.armor =
+          this.actor.items.documentsByType.armor.sort(sortDocuments)
+        context.items =
+          this.actor.items.documentsByType.item.sort(sortDocuments)
+        context.inventory = [
+          ...context.weapons,
+          ...context.armor,
+          ...context.items,
+        ].sort(sortDocuments)
         break
       case "description":
         context.tab = this.#getTabs()[partId]
@@ -144,14 +198,14 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
       inventory: {
         id: "inventory",
         group: "sheet",
-        icon: "fa-solid fa-tag",
+        icon: "fa-solid fa-backpack",
         label: "Inventory",
         cssClass: "tab--effects",
       },
-      spelllist: {
-        id: "spelllist",
+      spells: {
+        id: "spells",
         group: "sheet",
-        icon: "fa-solid fa-tag",
+        icon: "fa-solid fa-sparkle",
         label: "Spell List",
         cssClass: "tab--effects",
       },
@@ -159,18 +213,22 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
         id: "description",
         group: "sheet",
         icon: "fa-solid fa-scroll-old",
-        label: "Description",
+        label: "Character Identity",
         cssClass: "tab--effects",
       },
     }
 
-    if (!this.document.itemTypes.spell.length) delete tabs.spelllist
+    if (!this.document.itemTypes.spell.length) delete tabs.spells
 
     for (const v of Object.values(tabs)) {
       v.active = this.tabGroups[v.group] === v.id
       v.cssClass = v.active ? "active" : ""
     }
     return tabs
+  }
+
+  get title() {
+    return this.actor.name
   }
 
   /**
@@ -192,13 +250,10 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
   async _renderFrame(options) {
     const frame = await super._renderFrame(options)
 
-    // if (Object.keys(this.#getTabs()).length)
-    //   frame.append(await this.#renderTabNavigation())
-
     // frame.append(await this.#renderEncumbranceBar())
     // frame.append(await this.#renderEffectsPane())
 
-    // this.#reorganizeHeaderElements(frame)
+    this.#reorganizeHeaderElements(frame)
 
     return frame
   }
@@ -207,6 +262,11 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
     super._attachFrameListeners()
 
     // this.element.addEventListener("drop", this._onDropAction.bind(this))
+  }
+
+  _onRender(context, options) {
+    super._onRender(context, options)
+    // this.#dragDropHandlers.forEach((handler) => handler.bind(this.element))
   }
 
   async #renderTabNavigation() {
@@ -230,54 +290,34 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
 
     const buttons = header.querySelectorAll("button")
 
-    const titleContainer = document.createElement("div")
-    titleContainer.classList.add("window-title-wrapper")
-
     const buttonContainer = document.createElement("div")
     buttonContainer.classList.add("window-buttons")
 
     const actorArt = document.createElement("img")
     actorArt.src = this.document.img
 
-    titleContainer.appendChild(title)
-    titleContainer.appendChild(actorArt)
-
     buttons.forEach((b) => buttonContainer.appendChild(b))
 
-    header.appendChild(titleContainer)
+    header.appendChild(title)
+    header.appendChild(actorArt)
     header.appendChild(buttonContainer)
   }
 
-  async #renderEffectsPane() {
-    const container = document.createElement("template")
-    container.innerHTML = await renderTemplate(
-      `${SYSTEM_TEMPLATE_PATH}/common/effects-pane.hbs`,
-      { effects: this.document.effects },
-    )
-
-    return container.content.firstElementChild
-  }
+  // async #renderEffectsPane() {
+  //   const container = document.createElement("template")
+  //   container.innerHTML = await renderTemplate(
+  //     `${SYSTEM_TEMPLATE_PATH}/common/effects-pane.hbs`,
+  //     { effects: this.document.effects },
+  //   )
+  //
+  //   return container.content.firstElementChild
+  // }
 
   // async #renderEncumbranceBar() {
   //   const container = document.createElement("template")
   //   container.innerHTML = `<uft-character-info-meter value="1200" max="1600" class="encumbrance"><i slot="icon" class="fa fa-weight-hanging"></i></uft-character-info-meter>`
   //   return container.content.firstElementChild
   // }
-
-  async _onDropAction(event) {
-    const { uuid } = TextEditor.getDragEventData(event)
-    const droppedDocument = await fromUuid(uuid)
-    switch (droppedDocument.documentName) {
-      case "Actor":
-        break
-      case "Item":
-        this._onDropItem()
-        break
-      default:
-        console.warn("Only Actor and Item documents may be dropped!")
-    }
-    console.info(this, event, droppedDocument)
-  }
 
   /**
    * A handler for dropping actors onto the sheet.
@@ -330,17 +370,14 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
   }
 
   async #onDropWeapon(doc) {
-    console.warn("Not yet implemented!")
+    this.document.createEmbeddedDocuments("Item", [doc])
   }
 
   async #onDropArmor(doc) {
-    console.warn("Not yet implemented!")
+    this.document.createEmbeddedDocuments("Item", [doc])
   }
 
-  async #onDropAmmunition(doc) {
-    console.warn("Not yet implemented!")
-  }
-
+  // TODO: Add onto an existing stack, if one exists.
   async #onDropMiscellaneous(doc) {
     this.document.createEmbeddedDocuments("Item", [doc])
   }
@@ -354,9 +391,9 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
    * @returns {Promise<unknown>} The dropped item, if creating it works.
    */
   async _onDropItem(event, doc) {
-    console.info("???")
     if (!this.actor.isOwner) return false
 
+    // TODO: Handle containers
     if (this.actor.uuid === doc.parent?.uuid)
       return this._onSortItem(event, doc)
 
@@ -364,37 +401,13 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
       case "class":
         return this.#onDropCharacterClass(doc)
       case "spell":
-        return this.#onDropSpell(doc)
       case "ability":
-        return this.#onDropAbility(doc)
       case "weapon":
-        return this.#onDropWeapon(doc)
       case "armor":
-        return this.#onDropArmor(doc)
-      case "ammunition":
-        return this.#onDropAmmunition(doc)
       case "item":
-        return this.#onDropMiscellaneous(doc)
       default:
+        super._onDropItem(event, doc)
         break
-    }
-    throw new Error(`Item of type ${doc.type} has no drop handling.`)
-  }
-
-  _onClickAction(event, target) {
-    const { action } = target.dataset
-
-    if (!action) return
-
-    switch (action) {
-      case "toggle-effects-pane":
-        target
-          .closest(".application")
-          .querySelector(".application__effects-pane ul")
-          .toggleAttribute("aria-hidden")
-        break
-      default:
-        super._onClickAction(event, target)
     }
   }
 }

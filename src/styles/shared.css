@@ -1,6 +1,8 @@
 @import url("./shared.header.css");
 @import url("./shared.tab-navigation.css");
 @import url("./shared.actions.css");
+@import url("./shared.item-grid.css");
+@import url("./shared.enhanced-tooltip.css");
 
 .application--bags:not(.minimized) {
   &.animate {

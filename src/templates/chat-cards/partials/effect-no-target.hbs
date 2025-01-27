@@ -1,0 +1,25 @@
+{{log this}}
+<div class="action__result">
+  {{#if (gt this.length 1)}}
+    <ul class="action__effects">
+      <!--
+        @TODO:
+          - If there's a 0-1 targets, and the effect isn't damage or healing,
+            render this.
+          - Enumerate the list of effects on the 0-1 targets
+      -->
+
+    </ul>
+  {{else}}
+    {{#with (lookup this 0)}}
+        <!--
+          @TODO:
+            - Healing message
+        -->
+      <p class="action__effect action__effect--damage">{{localize
+        "BAGS.ChatCards.Action.Effect.Damage"
+        amount=value
+      }}</p>
+    {{/with}}
+  {{/if}}
+</div>

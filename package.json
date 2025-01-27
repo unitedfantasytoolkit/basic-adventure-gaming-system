@@ -46,6 +46,7 @@
     "postcss-nested": "^7.0.1",
     "postcss-reporter": "^7.0.5",
     "prettier": "^3.3.3",
+    "prettier-plugin-ember-template-tag": "^2.0.4",
     "rollup": "^4.0.0",
     "rollup-plugin-copy-assets": "^2.0.3",
     "rollup-plugin-dotenv": "^0.5.1",

@@ -3,6 +3,7 @@
  */
 
 const {
+  ArrayField,
   NumberField,
   StringField,
   SchemaField,
@@ -28,7 +29,6 @@ const PhysicalItemDataMixin = (schema) =>
         uses: new SchemaField({
           value: new NumberField({ min: 0, initial: 1 }),
           max: new NumberField({ min: 0, initial: 1 }),
-          uuid: new DocumentUUIDField({}),
         }),
         weight: new NumberField({ min: 0, initial: 0 }),
         description: new HTMLField({}),
@@ -36,7 +36,10 @@ const PhysicalItemDataMixin = (schema) =>
         banner: new FilePathField({
           categories: ["IMAGE"],
         }),
-        containerUUID: new DocumentUUIDField({}),
+        container: new SchemaField({
+          isContainer: new BooleanField({ initial: false }),
+          contains: new ArrayField(new DocumentUUIDField({})),
+        }),
         identification: new SchemaField({
           isIdentified: new BooleanField({ initial: true }),
           name: new StringField(),

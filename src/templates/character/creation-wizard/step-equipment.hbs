@@ -1,0 +1,98 @@
+{{!-- step-equipment.hbs --}}
+<div class="step-content equipment-step {{#if (eq steps.equipment.current true)}}active{{/if}}">
+  <h2>{{localize "BAGS.Actors.Character.CreationWizard.Equipment.Title"}}</h2>
+
+  {{#unless tableResults}}
+    <div class="shopping-interface">
+      <div class="money-tracker">
+        <span class="starting">
+          {{localize "BAGS.Actors.Character.CreationWizard.Equipment.StartingGold"}}:
+          {{shoppingData.startingGold}}
+        </span>
+        <span class="remaining">
+          {{localize "BAGS.Actors.Character.CreationWizard.Equipment.RemainingGold"}}:
+          {{shoppingData.remainingGold}}
+        </span>
+      </div>
+
+      <div class="filter-controls">
+        <div class="search">
+          <input type="text"
+            placeholder="{{localize 'BAGS.Search'}}"
+            value="{{shoppingData.filters.current.search}}"
+            data-action="update-equipment-search">
+        </div>
+
+        <div class="type-filters">
+          {{#each shoppingData.filters.options.types as |label type|}}
+            <label class="type-filter">
+              <input type="checkbox"
+                value="{{type}}"
+                {{checked (includes ../shoppingData.filters.current.types type)}}
+                data-action="toggle-equipment-type">
+              {{localize label}}
+            </label>
+          {{/each}}
+        </div>
+
+        <div class="sort-control">
+          <select data-action="change-equipment-sort">
+          {{!--
+            {{#each shoppingData.filters.options.sort as |label value|}}
+              <option value="{{value}}"
+                {{selected (eq ../shoppingData.filters.current.sort value)}}>
+                {{localize label}}
+              </option>
+            {{/each}}
+            --}}
+          </select>
+        </div>
+      </div>
+
+      <div class="shopping-grid">
+        <div class="available-items">
+          {{#each shoppingData.availableItems as |item|}}
+            <div class="shop-item" data-uuid="{{item.uuid}}">
+              <img src="{{item.img}}" alt="{{item.name}}">
+              <div class="item-details">
+                <span class="name">{{item.name}}</span>
+                <span class="cost">{{item.system.value}}</span>
+              </div>
+              <div class="purchase-controls">
+                <input type="number" min="1" value="1" data-quantity>
+                <button type="button" data-action="add-to-cart"
+                  {{!--disabled (gt (multiply item.system.value value) shoppingData.remainingGold)--}}>
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+
+        <div class="shopping-cart">
+          <h3>{{localize "BAGS.Actors.Character.CreationWizard.Equipment.Cart"}}</h3>
+          {{#each shoppingData.cart as |item index|}}
+            <div class="cart-item" data-index="{{index}}">
+              <img src="{{item.img}}" alt="{{item.name}}">
+              <div class="item-details">
+                <span class="name">{{item.name}}</span>
+                <span class="quantity">×{{item.quantity}}</span>
+                <span class="cost">{{item.cost}}</span>
+              </div>
+              <button type="button" data-action="remove-from-cart">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  {{/unless}}
+
+  <div class="controls">
+    <button type="button" data-action="confirm-equipment"
+      {{disabled (eq steps.equipment.valid false)}}>
+      {{localize "BAGS.Actors.Character.CreationWizard.Next"}}
+    </button>
+  </div>
+</div>

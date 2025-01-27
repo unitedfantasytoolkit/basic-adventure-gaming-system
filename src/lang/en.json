@@ -163,81 +163,51 @@
         "Hint": "A summary of what this action does."
       }
     },
-    "AbilityScores": {
-      "Strength": {
-        "Short": "Str",
-        "Long": "Strength"
-      },
-      "Intelligence": {
-        "Short": "Int",
-        "Long": "Intelligence"
-      },
-      "Wisdom": {
-        "Short": "Wis",
-        "Long": "Wisdom"
-      },
-      "Dexterity": {
-        "Short": "Dex",
-        "Long": "Dexterity"
-      },
-      "Constitution": {
-        "Short": "Con",
-        "Long": "Constitution"
-      },
-      "Charisma": {
-        "Short": "Cha",
-        "Long": "Charisma"
-      },
-      "str": {
-        "Short": "Str",
-        "Long": "Strength"
-      },
-      "int": {
-        "Short": "Int",
-        "Long": "Intelligence"
-      },
-      "wis": {
-        "Short": "Wis",
-        "Long": "Wisdom"
-      },
-      "dex": {
-        "Short": "Dex",
-        "Long": "Dexterity"
-      },
-      "con": {
-        "Short": "Con",
-        "Long": "Constitution"
-      },
-      "cha": {
-        "Short": "Cha",
-        "Long": "Charisma"
+    "Actors": {
+      "Character": {
+        "CreationWizard": {
+          "Title": "Character Creation: {name}",
+          "Previous": "Previous",
+          "Next": "Next",
+          "AbilityScores": {
+            "Title": "Ability Scores",
+            "Roll": "Roll",
+            "Reroll": "Reroll"
+          },
+          "Class": {
+            "Title": "Character Class",
+            "Recommended": "Recommended"
+          },
+          "Equipment": {
+            "Cart": "Purchased Items",
+            "Title": "Starting Gear",
+            "StartingGold": "Starting Gold",
+            "RemainingGold": "Gold Remaining"
+          }
+        }
       }
     },
-    "SavingThrows": {
-      "Death": {
-        "Short": "Death",
-        "Long": "Death/Poison",
-        "Initial": "D"
-      },
-      "Wands": {
-        "Short": "Wands",
-        "Long": "Wands",
-        "Initial": "W"
-      },
-      "Paralysis": {
-        "Short": "Paralysis",
-        "Long": "Paralysis/Petrification",
-        "Initial": "P"
-      },
-      "Breath": {
-        "Short": "Breath",
-        "Long": "Breath Weapons",
-        "Initial": "B"
-      },
-      "Spell": {
-        "Short": "Spells",
-        "Long": "Spells/Rods/Staves",
-        "Initial": "S"
+    "ChatCards": {
+      "Action": {
+        "Attempt": {
+          "Attack": {
+            "ContextualDescription": {
+              "WithTargetAndItem": "{actor} attacks {target} with {item}!",
+              "WithoutTarget": "{actor} attacks with {item}!",
+              "WithoutItem": "{actor} attacks {target}!",
+              "WithoutItemOrTarget": "{actor} attacks!"
+            },
+            "ArmorClassHit": {
+              "Ascending": "vs. AC {amount}",
+              "Descending": "hit AC {amount}"
+            }
+          }
+        },
+        "Effect": {
+          "Damage": "{amount} damage dealt!",
+          "DamageToTarget": "{target} suffers {amount} damage!",
+          "Healing": "{amount} healiing received!"
+        }
       }
     },
     "CharacterClass": {
@@ -338,6 +308,128 @@
           "long": "Experience"
         }
       }
+    },
+    "Settings": {
+      "Rules": {
+        "AbilityScores": {
+          "Name": "Ability Scores",
+          "Hint": "While most systems use the six core stats, modifiers from stats may vary between systems."
+        },
+        "SavingThrows": {
+          "Name": "Saving Throws",
+          "Hint": "The set of saving throws and save resolution style to use"
+        },
+        "Combat": {
+          "Name": "Combat Rules",
+          "Hint": "Changes between combat rules include the base AC and whether or not the system uses ascending/descending AC"
+        },
+        "Initiative": {
+          "Name": "Initiative Rules",
+          "Hint": "Typical modifications to initiative include dice rolls, surprise, and whether the game uses group or individual initiative."
+        },
+        "Movement": {
+          "Name": "Movement Rules",
+          "Hint": "The movement scheme to use"
+        },
+        "Encumbrance": {
+          "Name": "Encumbrance Rules",
+          "Hint": "The encumbrance scheme to use"
+        }
+      },
+      "CharacterCreation": {
+        "Sources": {
+          "Name": "Data Sources for Character Creation",
+          "Hint": "The folders and compendiums that the Character Wizard pulls classes and equipment from.",
+          "Configure": "Configure Data Sources",
+          "Title": "Character Creation: Data Sources",
+          "AddSource": "Add an additional data source...",
+          "Categories": {
+            "classes": "Character Classes",
+            "equipment": "Basic Equipment"
+          }
+        }
+      }
+    },
+    "Systems": {
+      "BX": {
+        "AbilityScores": {
+          "str": {
+            "Short": "Str",
+            "Label": "Strength",
+            "Hint": "Hit harder and more accurately with melee weapons; open stuck doors."
+          },
+          "int": {
+            "Short": "Int",
+            "Label": "Intelligence",
+            "Hint": "Learn more languages."
+          },
+          "wis": {
+            "Short": "Wis",
+            "Label": "Wisdom",
+            "Hint": "More easily resist the effects of spells."
+          },
+          "dex": {
+            "Short": "Dex",
+            "Label": "Dexterity",
+            "Hint": "Hit harder, and more accurately, with missle weapons; become harder to hit."
+          },
+          "con": {
+            "Short": "Con",
+            "Label": "Constitution",
+            "Hint": "Gain more HP per level."
+          },
+          "cha": {
+            "Short": "Cha",
+            "Label": "Charisma",
+            "Hint": "Garner better reactions from hirelings and monsters; inspire loyalty."
+          }
+        },
+        "SavingThrows": {
+          "death": {
+            "Short": "Death",
+            "Long": "Death/Poison",
+            "Initial": "D"
+          },
+          "wands": {
+            "Short": "Wands",
+            "Long": "Wands",
+            "Initial": "W"
+          },
+          "paralysis": {
+            "Short": "Paralysis",
+            "Long": "Paralysis/Petrification",
+            "Initial": "P"
+          },
+          "breath": {
+            "Short": "Breath",
+            "Long": "Breath Weapons",
+            "Initial": "B"
+          },
+          "spell": {
+            "Short": "Spells",
+            "Long": "Spells/Rods/Staves",
+            "Initial": "S"
+          }
+        },
+        "Exploration": {
+          "OpenDoors": {
+            "Label": "Open Stuck Doors",
+            "Description": ""
+          },
+          "ListenAtDoors": {
+            "Label": "Listen At Doors",
+            "Description": ""
+          },
+          "FindSecretDoors": {
+            "Label": "Find Secret Doors",
+            "Description": ""
+          },
+          "FindTraps": {
+            "Label": "Find Room Traps",
+            "Description": ""
+          }
+        }
+      }
     }
   },
   "COMBAT": {
@@ -360,11 +452,9 @@
     "Item": {
       "weapon": "Weapon",
       "armor": "Armor",
-      "item": "Item/Wealth",
+      "item": "Item",
       "class": "Character Class",
       "ability": "Ability",
-      "ammunition": "Ammunition",
-      "container": "Container",
       "spell": "Spell"
     }
   }

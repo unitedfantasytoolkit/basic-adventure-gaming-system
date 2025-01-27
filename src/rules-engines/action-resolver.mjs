@@ -42,12 +42,24 @@ export default class ActionResolver {
     this.actor = actor
     this.document = document
     this.action = action
-    if (targets) this.targets = targets instanceof Array ? targets : [targets]
-    else this.targets = []
+
+    if (!targets) this.targets = []
+    else if (targets instanceof UserTargets)
+      this.targets = Array.from(targets.entries())
+    else if (!Array.isArray(targets)) this.targets = [targets]
+    else this.targets = targets
+    this.targets = this.targets.flat()
   }
 
   get result() {
-    return Object.fromEntries(this.#resolutions)
+    const resultObj = Object.fromEntries(this.#resolutions)
+    return this.#resolutions
+      .keys()
+      .reduce(
+        (arr, key) => [...arr, { ...this.#resolutions.get(key), target: key }],
+        [],
+      )
+    // return resultObj
   }
 
   /**
@@ -62,7 +74,9 @@ export default class ActionResolver {
       await this.#consumeResources()
       // Step 3: Perform attempt rolls and apply effects
       if (this.targets.length)
-        this.targets.forEach((target) => this.#attemptAction(target))
+        await Promise.all(
+          this.targets.map((target) => this.#attemptAction(target)),
+        )
       else await this.#attemptAction()
 
       await this.#report()
@@ -75,13 +89,12 @@ export default class ActionResolver {
   }
 
   async #attemptAction(target) {
-    const targetId = target?.uuid || ActionResolver.KEY_WITH_NO_TARGETS
+    const targetId = target?.actor?.uuid || ActionResolver.KEY_WITH_NO_TARGETS
 
     const attempt = await this.#performAttempt(target)
-    const attemptWasSuccessful = !!attempt?.total || attempt
 
     const effects =
-      attemptWasSuccessful && this.action.flags.usesEffect
+      attempt.success && this.action.flags.usesEffect
         ? await this.#applyEffects(target)
         : []
 
@@ -148,44 +161,30 @@ export default class ActionResolver {
     // Case #0: action doesn't have an attempt roll.
     if (!this.action.flags.usesAttempt) return true
 
-    if (this.action.attempt.isLikeAttack)
-      return this.#performAttemptAsAttack(targetActor)
-
     // Case #1: Action is like an attack. It's a d20 roll plus modifier against
     // a target.
-    const { formula, operator, target } = this.action.attempt.roll
+    if (this.action.attempt.flags.isLikeAttack)
+      return this.#performAttemptAsAttack(targetActor)
 
     // Case #3: Action is not like an attack; it has a static value that it
     // rolls against.
-    return rollDice(this.actor, formula, {
-      operator,
-      target,
-    })
+    const { formula, operator, target } = this.action.attempt.roll
+    const roll = await rollDice(this.actor, formula)
+
+    return {
+      roll,
+      success: this.#compareRoll(roll.total, operator, target),
+    }
   }
 
-  async #performAttemptAsAttack(targetActor) {
-    let attackModifier = ""
-    switch (this.action.attempt.attackType) {
-      case "missile":
-        attackModifier = "@system.missileAttackMod"
-        break
-      case "melee":
-        attackModifier = "@system.meleeAttackMod"
-        break
-      default:
-        attackModifier = "@system.baseAttackBonus"
-    }
-    const formulaToRoll = `1d20+${attackModifier}`
-    if (!targetActor)
-      // Case #1: Action is like an attack, but no target is provided. Attempt
-      // an attack with no target.
-      return rollDice(this.actor, formulaToRoll)
+  async #performAttemptAsAttack(target) {
+    const combatSettings = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+      CONFIG.BAGS.SystemRegistry.categories.COMBAT,
+    )
 
-    // Case #2: Action is like an attack, and is used against a target
-    // TODO: Case for "Is an attack, has a target." This case should compare
-    // user's attack vs. target's AC, and succeed if the roll meets or
-    // exceeds AC (if using descending AC) or the whole THAC0 calculation.
-    return null
+    return combatSettings.resolveAttackRoll(this.actor, target?.actor, {
+      attackType: this.action.attempt.attack.type,
+    })
   }
 
   /**
@@ -225,6 +224,9 @@ export default class ActionResolver {
           case "macro":
             return this.#processMacroEffect(effect, target)
 
+          case "script":
+            return this.#processScriptEffect(effect, target)
+
           case "table":
             return this.#processTableEffect(effect, target)
 
@@ -255,28 +257,51 @@ export default class ActionResolver {
 
     switch (type) {
       case "savingThrow": {
-        // Map save type if cross-system content
-        // const saveToUse = await this.mapSavingThrow(savingThrow, target)
-        const saveToUse = "death"
-        const save = await target.rollSave(saveToUse)
+        const saveSettings = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+          CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
+        )
 
-        // Add magic save bonus if effect is magical
-        const magicMod = effect.flags.isMagical
-          ? target.system.modifiers.magicSave || 0
-          : 0
+        console.info(saveSettings)
 
-        return save.total + magicMod >= target.system.saves[saveToUse]
+        // const systemId = target.system.template
+        // const context = {
+        //   isMagical: effect.flags.isMagical,
+        //   bxEquivalent: CONFIG.BAGS.SaveResolver.getBXEquivalent(
+        //     systemId,
+        //     savingThrow,
+        //   ),
+        // }
+        //
+        // const saveResult = await CONFIG.BAGS.SaveResolver.resolveSave(
+        //   target,
+        //   systemId,
+        //   savingThrow,
+        //   context,
+        // )
+        //
+        // // Handle different return types
+        // if (typeof saveResult === "number") {
+        //   // Traditional save vs target number
+        //   return saveResult >= effect.resistance.target
+        // }
+        //
+        // if (typeof saveResult === "object" && "success" in saveResult) {
+        //   // Systems that return explicit success/failure
+        //   return saveResult.success
+        // }
+
+        return false
       }
 
       case "abilityScore": {
         const result = await rollDice(target, roll.formula)
         const score = target.system.abilities[roll.abilityScore].value
-        return this.compareRoll(result.total, roll.operator, score)
+        return this.#compareRoll(result.total, roll.operator, score)
       }
 
       case "number": {
         const result = await rollDice(target, roll.formula)
-        return this.compareRoll(result.total, roll.operator, staticTarget)
+        return this.#compareRoll(result.total, roll.operator, staticTarget)
       }
 
       default:
@@ -291,7 +316,22 @@ export default class ActionResolver {
    * @returns {Promise<object>} The result of processing the effect
    */
   async #processNumericEffect(effect, target) {
-    const roll = await rollDice(this.actor, effect.formula)
+    let { formula } = effect
+
+    if (effect.flags.isLikeAttack) {
+      switch (this.action.attempt.attack.type) {
+        case "melee":
+          formula = `${formula}+@meleeDamageBonus`
+          break
+        case "missile":
+          formula = `${formula}+@missileDamageBonus`
+          break
+        default:
+          break
+      }
+    }
+
+    const roll = await rollDice(this.actor, formula)
     const value = roll.total
 
     if (!target) {
@@ -303,16 +343,17 @@ export default class ActionResolver {
       }
     }
 
-    // Apply to target
-    const currentHP = target.system.hp.value
-    const newHP =
-      effect.type === "attack"
-        ? Math.max(0, currentHP - value)
-        : Math.min(target.system.hp.max, currentHP + value)
+    // TODO:  Automatically apply damage to targets?
 
-    await target.update({
-      "system.hp.value": newHP,
-    })
+    // const currentHP = target.system.hp.value
+    // const newHP =
+    //   effect.type === "attack"
+    //     ? Math.max(0, currentHP - value)
+    //     : Math.min(target.system.hp.max, currentHP + value)
+    //
+    // await target.update({
+    //   "system.hp.value": newHP,
+    // })
 
     return {
       type: effect.type,
@@ -363,24 +404,29 @@ export default class ActionResolver {
    * @returns {Promise<object>} The result of processing the effect
    */
   async #processMacroEffect(effect, target) {
-    if (effect.macro.fromDocument) {
-      const macro = await fromUuid(effect.macro.fromDocument)
-      await macro?.execute({ actor: this.actor, target, action: this.action })
-    } else if (effect.macro.fromEditor) {
-      // We ignore here because, how else do we make a fake macro?
-      // eslint-disable-next-line no-new-func
-      const fn = new Function(
-        "actor",
-        "target",
-        "action",
-        effect.macro.fromEditor,
-      )
-      await fn(this.actor, target, this.action)
-    }
-
+    const macro = await fromUuid(effect.macro)
+    await macro?.execute({ actor: this.actor, target, action: this.action })
     return {
       type: "macro",
       message: "Executed macro effect",
+    }
+  }
+
+  /**
+   * Processes embedded script effects
+   * @param {object} effect - The effect to process
+   * @param {Actor} target - The target of the effect
+   * @returns {Promise<object>} The result of processing the effect
+   */
+  async #processScriptEffect(effect, target) {
+    // We ignore here because, how else do we make a fake macro?
+    // eslint-disable-next-line no-new-func
+    const fn = new Function("actor", "target", "action", effect.script)
+    await fn(this.actor, target, this.action)
+
+    return {
+      type: "script",
+      message: "Executed script effect",
     }
   }
 

@@ -5,7 +5,7 @@
 const BaseActorDataMixin = (schema) =>
   class BaseActorDataModel extends foundry.abstract.TypeDataModel {
     static defineSchema() {
-      return schema
+      return schema()
     }
 
     // // @todo This only needs to be public until

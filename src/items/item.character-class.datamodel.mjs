@@ -1,11 +1,7 @@
-import {
-  ABILITY_SCORES,
-  DEFAULT_BASE_THAC0,
-  DEFAULT_CHARACTER_HIT_DIE_SIZE,
-  HIT_DIE_OPTIONS,
-  SAVING_THROWS,
-  WORST_POSSIBLE_SAVE,
-} from "../config/constants.mjs"
+/**
+ * @file Data model for a character's class.
+ */
+import { SYSTEM_NAME } from "../config/constants.mjs"
 import filterFalsyKeyVals from "../utils/filter-falsy-key-vals.mjs"
 import mapToNumberField from "../utils/map-to-number-field.mjs"
 
@@ -34,34 +30,44 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
    *
    */
   static defineSchema() {
-    const prerequisiteFields = ABILITY_SCORES.entries().reduce(
-      mapToNumberField,
-      {},
+    const abilityScoreSettings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.ABILITY_SCORES,
+      )
+
+    const savingThrowSettings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
+      )
+
+    const combatSettings = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+      CONFIG.BAGS.SystemRegistry.categories.COMBAT,
     )
-    const halfPrimeRequisiteFields = ABILITY_SCORES.entries().reduce(
-      mapToNumberField,
-      {},
-    )
-    const fullPrimeRequisiteFields = ABILITY_SCORES.entries().reduce(
-      mapToNumberField,
-      {},
-    )
-    const savingThrowFields = SAVING_THROWS.reduce(
+
+    const abilityScores = abilityScoreSettings?.abilityScores || new Map()
+    const scores = abilityScores.keys()
+    const saves = savingThrowSettings?.savingThrows || {}
+    const worstPossibleSave = savingThrowSettings?.worstPossible || 19
+
+    const prerequisiteFields = scores.reduce(mapToNumberField, {})
+    const halfPrimeRequisiteFields = scores.reduce(mapToNumberField, {})
+    const fullPrimeRequisiteFields = scores.reduce(mapToNumberField, {})
+    const savingThrowFields = Object.keys(saves).reduce(
       (obj, key) => ({
         ...obj,
         [key]: new NumberField({
           min: 0,
           nullable: false,
           blank: false,
-          initial: WORST_POSSIBLE_SAVE,
+          initial: worstPossibleSave,
         }),
       }),
       {},
     )
-    const savingThrowDefaults = SAVING_THROWS.reduce(
+    const savingThrowDefaults = Object.keys(saves).reduce(
       (obj, key) => ({
         ...obj,
-        [key]: WORST_POSSIBLE_SAVE,
+        [key]: worstPossibleSave,
       }),
       {},
     )
@@ -114,15 +120,15 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
       }),
 
       hitDieSize: new NumberField({
-        min: HIT_DIE_OPTIONS[0],
-        choices: HIT_DIE_OPTIONS.reduce(
+        min: 4,
+        choices: [4, 6, 8, 10, 12].reduce(
           (obj, key) => ({
             ...obj,
             [key]: `d${key}`,
           }),
           [],
         ),
-        initial: DEFAULT_CHARACTER_HIT_DIE_SIZE,
+        initial: 4,
         integer: true,
       }),
 
@@ -138,6 +144,7 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
       isAncestryClass: new BooleanField({
         initial: false,
       }),
+
       ancestryClassConstraints: new ArrayField(
         new SchemaField({
           ancestry: new DocumentUUIDField({
@@ -160,7 +167,7 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
         new SchemaField({
           value: new NumberField({ min: 0, initial: 0 }),
           attackBonus: new NumberField({ min: 0, initial: 0 }),
-          thac0: new NumberField({ min: 1, max: DEFAULT_BASE_THAC0 }),
+          thac0: new NumberField({ min: 1, max: combatSettings?.baseTHAC0 }),
           hd: new SchemaField({
             count: new NumberField({ min: 1, initial: 1, integer: true }),
             modifier: new NumberField({ min: 0, initial: 0 }),
@@ -171,7 +178,7 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
         {
           initial: [
             {
-              value: 2000,
+              value: 0,
               attackBonus: 0,
               thac0: 19,
               hd: { count: 1, modifier: 0, canUseConMod: true },

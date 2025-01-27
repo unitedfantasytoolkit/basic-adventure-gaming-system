@@ -7,11 +7,9 @@ import {
 } from "../config/overrides.mjs"
 
 Hooks.once("init", async () => {
-  // Give modules a chance to add encumbrance schemes
-  //
-  // They can do so by adding their encumbrance schemes
-  // to CONFIG.BAGS.encumbranceOptions
-  Hooks.call("bags-setup-encumbrance")
+  const { default: CharacterDataModel } = await import(
+    "../actors/actor.character.datamodel.mjs"
+  )
 
   CONFIG.Actor.documentClass = CLASS_OVERRIDE_ACTOR
 

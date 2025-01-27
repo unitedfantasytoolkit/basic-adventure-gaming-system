@@ -75,8 +75,16 @@ export const effectTypeOptions = {
   healing: "BAGS.Actions.Effects.Type.Healing",
   /** This effect inflicts a status effect. */
   effect: "BAGS.Actions.Effects.Type.Effect",
-  /** This effect can be represented with code. */
+  /**
+   * This effect can be represented with code, and it uses an existing macro to
+   * do so.
+   */
   macro: "BAGS.Actions.Effects.Type.Macro",
+  /**
+   * This effect can be represented with code, and the code is embedded into
+   * the effect.
+   */
+  script: "BAGS.Actions.Effects.Type.Script",
   /** This effect draws a result from a RollTable. */
   table: "BAGS.Actions.Effects.Type.RollTable",
   /** This effect has no mechanical impact. */
@@ -282,6 +290,11 @@ export const actionsFactory = (fields) => {
         label: "BAGS.Actions.Effects.Flags.IsMagical.Label",
         hint: "BAGS.Actions.Effects.Flags.IsMagical.Hint",
       }),
+      isLikeAttack: new BooleanField({
+        initial: false,
+        label: "BAGS.Actions.Attempt.IsLikeAttack.Label",
+        hint: "BAGS.Actions.Attempt.IsLikeAttack.Hint",
+      }),
     }),
     note: new StringField({
       label: "BAGS.Actions.Effects.Note.Label",
@@ -346,18 +359,18 @@ export const actionsFactory = (fields) => {
         hint: "BAGS.Actions.Effects.Resistance.StaticTarget.Hint",
       }),
     }),
-    macro: new SchemaField({
-      fromDocument: new DocumentUUIDField({
-        type: "Macro",
-        label: "BAGS.Actions.Effects.Macro.Document.Label",
-        hint: "BAGS.Actions.Effects.Macro.Document.Hint",
-      }),
-      fromEditor: new JavaScriptField({
-        initial: "// Macro",
-        label: "BAGS.Actions.Effects.Macro.Editor.Label",
-        hint: "BAGS.Actions.Effects.Macro.Editor.Hint",
-        async: true,
-      }),
+    macro: new DocumentUUIDField({
+      type: "Macro",
+      label: "BAGS.Actions.Effects.Macro.Document.Label",
+      hint: "BAGS.Actions.Effects.Macro.Document.Hint",
+    }),
+
+    script: new JavaScriptField({
+      initial:
+        "/**\n * Write your own script that executes when this effect triggers.\n * @param {Actor} actor - the actor performing this action.\n * @param {Actor} target - the actor targeted by this action.\n * @param {Action} action - the action being executed.\n */",
+      label: "BAGS.Actions.Effects.Script.Label",
+      hint: "BAGS.Actions.Effects.Script.Hint",
+      async: true,
     }),
 
     rollTable: new SchemaField({

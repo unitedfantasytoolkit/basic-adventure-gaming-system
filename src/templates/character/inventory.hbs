@@ -1,22 +1,8 @@
-
 <article class="tab character-class-sheet-{{tab.id}} {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
-
-
-<div class="inventory">
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-  <uft-item-tile uuid="Item.t3tS6u7Gzg2uBPS3"></uft-item-tile>
-</div>
+  <h3>Inventory</h3>
+  <div class="item-grid" style="--item-grid-minimum-rows: 5">
+    {{#each inventory}}
+      <uft-item-tile class="item-grid__item draggable" data-item-id="{{id}}" uuid="{{uuid}}"></uft-item-tile>
+    {{/each}}
+  </div>
 </article>

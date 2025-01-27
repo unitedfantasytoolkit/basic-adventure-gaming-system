@@ -23,7 +23,6 @@ export default class BAGSCharacterClassDetailsEditor extends HandlebarsApplicati
       "application--class-details-editor",
       "application--bags",
       "application--hide-title",
-      "scrollable",
     ],
     tag: "form",
     window: {
@@ -47,7 +46,7 @@ export default class BAGSCharacterClassDetailsEditor extends HandlebarsApplicati
   }
 
   static get TEMPLATE_ROOT() {
-    return `${SYSTEM_TEMPLATE_PATH}/character-class`
+    return `${SYSTEM_TEMPLATE_PATH}/class`
   }
 
   static PARTS = {
@@ -116,7 +115,7 @@ export default class BAGSCharacterClassDetailsEditor extends HandlebarsApplicati
     const gearTable = doc.system.gearTable
       ? await TextEditor.enrichHTML(
           fromUuidSync(doc.system.gearTable)._createDocumentLink(),
-      )
+        )
       : ""
 
     return {

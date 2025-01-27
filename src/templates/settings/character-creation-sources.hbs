@@ -1,0 +1,41 @@
+<div class="character-creation-sources">
+  {{#each sources as |categorySources category|}}
+    <div class="source-category" data-category="{{category}}">
+      <h2>{{localize (concat "BAGS.Settings.CharacterCreation.Sources.Categories." category)}}</h2>
+      <div class="source-list">
+        {{#each categorySources as |source index|}}
+          <div class="source-item" data-source-id="{{source.id}}" data-source-index="{{index}}" data-category="{{category}}">
+            <span class="source-name">
+              {{#if (eq source.type "folder")}}
+                <i class="fas fa-folder"></i>
+              {{else}}
+                <i class="fas fa-book"></i>
+              {{/if}}
+              {{source.name}}
+            </span>
+            <button type="button" data-action="remove-source">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        {{/each}}
+      </div>
+
+      <div class="source-add" data-category="{{category}}">
+        <select name="{{category}}">
+          <option value="">{{localize "BAGS.Settings.CharacterCreation.Sources.AddSource"}}</option>
+          <optgroup label="{{localize 'BAGS.Settings.CharacterCreation.Sources.Folders'}}">
+            {{#each (lookup (lookup ../availableSources category) "folders") as |folder|}}
+              <option value="{{folder.id}}" data-type="folder">{{folder.name}}</option>
+            {{/each}}
+          </optgroup>
+
+          <optgroup label="{{localize 'BAGS.Settings.CharacterCreation.Sources.Compendiums'}}">
+            {{#each (lookup (lookup ../availableSources category) "compendiums") as |pack|}}
+              <option value="{{pack.id}}" data-type="compendium">{{pack.name}}</option>
+            {{/each}}
+          </optgroup>
+        </select>
+      </div>
+    </div>
+  {{/each}}
+</div>

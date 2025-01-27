@@ -25,7 +25,7 @@ const rollDice = async (
 ) => {
   let formula = dice
   if (modifier) formula = `${formula}+${modifier}`
-  if (target) formula = `${formula}cs${operator || ">="}${target}`
+  if (target) formula = `(${formula})cs${operator || ">="}${target}`
 
   const roll = new Roll(formula, actor?.getRollData())
   const reroll = rollType ? roll.clone() : null

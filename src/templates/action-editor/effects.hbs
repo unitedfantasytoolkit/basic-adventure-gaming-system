@@ -23,25 +23,36 @@
         localize=true
       }}
 
+      {{formGroup ../fields.effects.element.fields.flags.fields.isLikeAttack
+        name=(concat "effects." @index ".flags.isLikeAttack")
+        value=flags.isLikeAttack
+        localize=true
+      }}
+
+
       {{#if (eq type "macro")}}
         <fieldset>
           <legend>Macro settings</legend>
 
-        {{formGroup ../fields.effects.element.fields.macro.fields.fromDocument
-          value=macro.fromDocument
-          name=(concat "effects." @index ".macro.fromDocument")
+        {{formGroup ../fields.effects.element.fields.macro
+          value=macro
+          name=(concat "effects." @index ".macro")
           localize=true
         }}
-
-        {{#unless macro.fromDocument}}
-          {{formInput ../fields.effects.element.fields.macro.fields.fromEditor
-            value=macro.fromEditor
-            name=(concat "effects." @index ".macro.fromEditor")
-            localize=true
-          }}
-        {{/unless}}
         </fieldset>
       {{/if}}
+
+            {{#if (eq type "script")}}
+        <fieldset>
+          <legend>Script settings</legend>
+          {{formInput ../fields.effects.element.fields.script
+          value=script
+            name=(concat "effects." @index ".script")
+            localize=true
+          }}
+</fieldset>
+            {{/if}}
+
 
         <fieldset>
           <legend>{{localize "BAGS.Actions.Effects.Resistance.Heading"}}</legend>

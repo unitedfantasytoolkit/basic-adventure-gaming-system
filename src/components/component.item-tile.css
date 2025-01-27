@@ -6,8 +6,6 @@
   border-radius: 4px;
   overflow: hidden;
   background-color: #383531;
-
-  /* box-shadow: 0 0 2px 6px inset #00000077; */
   position: relative;
 }
 
@@ -18,13 +16,117 @@ img {
   z-index: 0;
 }
 
+.quantity {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  color: var(--color-text-emphatic);
+  background-color: var(--color-cool-5-90);
+}
+
 :host::after {
   content: "";
   position: absolute;
   box-shadow: 0 0 6px 1px inset #0007;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  inset: 0;
   z-index: 1;
 }
+
+/*
+TODO: Implement equipped/active/etc visual states
+
+@property --border-angle {
+  inherits: false;
+  initial-value: 0deg;
+  syntax: "<angle>";
+}
+
+:host {
+  display: block;
+  width: var(--size, 32px);
+  height: var(--size, 32px);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  background-color: #383531;
+  position: relative;
+}
+
+img {
+  width: var(--size, 100%);
+  height: 100%;
+  object-fit: contain;
+  position: relative;
+  z-index: 0;
+}
+
+:host::after {
+  content: "";
+  position: absolute;
+  box-shadow: 0 0 6px 1px inset #0007;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+:host(:is([equipped], [magical], [cursed]))::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border: 2px solid transparent;
+  border-radius: inherit;
+  animation: rotate-border 2.5s linear infinite;
+  z-index: 2;
+}
+
+/* Equipped items get a golden/yellow border
+:host([equipped])::before {
+  background:
+    linear-gradient(to bottom, #383531, #383531) padding-box,
+    conic-gradient(
+        from var(--border-angle),
+        oklch(85% 0.37 60deg) 0%,
+        oklch(75% 0.37 85deg) 50%,
+        oklch(85% 0.37 60deg) 100%
+      )
+      border-box;
+}
+
+/* Magical items get a blue/purple border
+:host([magical])::before {
+  background:
+    linear-gradient(to bottom, #383531, #383531) padding-box,
+    conic-gradient(
+        from var(--border-angle),
+        oklch(85% 0.37 270deg) 0%,
+        oklch(75% 0.37 300deg) 50%,
+        oklch(85% 0.37 270deg) 100%
+      )
+      border-box;
+}
+
+/* Cursed items get a red/black border
+:host([cursed])::before {
+  background:
+    linear-gradient(to bottom, #383531, #383531) padding-box,
+    conic-gradient(
+        from var(--border-angle),
+        oklch(40% 0.37 30deg) 0%,
+        oklch(30% 0.37 0deg) 50%,
+        oklch(40% 0.37 30deg) 100%
+      )
+      border-box;
+}
+
+@keyframes rotate-border {
+  to {
+    --border-angle: 360deg;
+  }
+}
+
+:host([equipped]:hover)::before,
+:host([magical]:hover)::before,
+:host([cursed]:hover)::before {
+  animation-play-state: paused;
+}
+*/

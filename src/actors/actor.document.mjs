@@ -8,6 +8,9 @@ import {
   DEFAULT_ART_ACTOR_MOUNT,
 } from "../config/constants.mjs"
 
+import CharacterCreationWizard from "./actor.character.creation-wizard.mjs"
+import ActionResolver from "../rules-engines/action-resolver.mjs"
+
 export default class BAGSActor extends Actor {
   static getDefaultArtwork(actorData) {
     let art = ""
@@ -33,11 +36,10 @@ export default class BAGSActor extends Actor {
     }
   }
 
-  resolveAction(item, action) {
-    console.info(this)
-    console.info(item)
-    console.info(action)
-    console.info(game.user)
+  async resolveAction(action, item = null) {
+    const resolver = new ActionResolver(action, item, this, game.user.targets)
+
+    return resolver.resolve()
   }
 
   async rollSave(save, modifier) {
@@ -46,5 +48,17 @@ export default class BAGSActor extends Actor {
     )
 
     await roll.resolve()
+  }
+
+  async doCreationWizard() {
+    const wizard = new CharacterCreationWizard({
+      actor: this,
+    })
+
+    wizard.render(true)
+  }
+
+  getRollData() {
+    return this.system
   }
 }

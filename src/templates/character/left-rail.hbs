@@ -1,96 +1,99 @@
 <section class="left-rail">
   {{#each classes}}
-    <article class="character-class">
+  <article class="character-class" aria-label="Level {{system.level}} {{name}}">
       <img src="{{img}}" class="document-art" alt="" />
       <div class="character-details">
-        <span>Level {{system.level}} {{name}}</span>
+        <span>{{name}}</span>
         <uft-character-info-meter value="{{xpBar.current}}" max="{{xpBar.max}}" class="xp">
-          <i slot="icon" class="fa fa-trophy-star"></i>
+          <!--i slot="icon" class="fa fa-trophy-star"></i-->
+          <span slot="icon">{{system.level}}</span>
         </uft-character-info-meter>
       </div>
     </article>
   {{else}}
-
+    <p>Unclassed</p>
   {{/each}}
   <article class="meters">
     <uft-character-info-meter value="{{actor.system.hp.value}}" max="{{actor.system.hp.max}}" class="hp">
       <i slot="icon" class="fa fa-heart"></i>
     </uft-character-info-meter>
 
-    <span>TODO</span>
     <uft-character-info-meter
       value="2600"
       max="1600"
       class="encumbrance"
     >
-    
       <i slot="icon" class="fa fa-scale-balanced"></i>
     </uft-character-info-meter>
+
   </article>
-    <div class="character-tiles scrollable">
-      <dl>
+  <div class="character-tiles scrollable">
+    <dl>
+      {{#if usesDescendingAC}}
         <dt>THAC0</dt>
         <dd>{{actor.system.thac0}}</dd>
-        <dt>Armor Class</dt>
-        <dd>TODO</dd>
-        <dt>Movement</dt>
-        {{!--<dd>120/40/24</dd>--}}
-        <dd>TODO</dd>
+      {{else}}
+        <dt>Attack Bonus</dt>
+        <dd>{{signNumber actor.system.baseAttackBonus forceSign=true}}</dd>
+      {{/if}}
+
+      <dt>Armor Class</dt>
+      <dd>{{actor.system.armorClass}}</dd>
+
+      <dt class="movement">Movement</dt>
+      <dd>120/40/24</dd>
+    </dl>
+
+    <div class="combat">
+      <header>
+      <h3>Modifiers</h3>
+      <span>Atk</span>
+      <span>Dmg</span>
+      </header>
+
+      <dl>
+      <dt>Melee</dt>
+      <dd>{{signNumber actor.system.meleeAttackBonus forceSign=true}}</dd>
+      <dd>{{signNumber actor.system.meleeDamageBonus forceSign=true}}</dd>
+      <dt>Missile</dt>
+      <dd>{{signNumber actor.system.missileAttackBonus forceSign=true}}</dd>
+      <dd>{{signNumber actor.system.missileDamageBonus forceSign=true}}</dd>
       </dl>
-
-      <div class="combat">
-        <header>
-        <h3>Modifiers</h3>
-        <span>Atk</span>
-        <span>Dmg</span>
-        </header>
-        
-        <dl>
-        <dt>Melee</dt>
-        <dd>{{actor.system.meleeAttackMod}}</dd>
-        <dd>{{actor.system.meleeDamageMod}}</dd>
-        <dt>Missile</dt>
-        <dd>{{actor.system.missileAttackMod}}</dd>
-        <dd>{{actor.system.missileDamageMod}}</dd>
-        </dl>
-      </div>
-            
-      <div class="ability-scores">
-        <h3>Ability Scores</h3>
-        <dl>
-          <dt>Strength</dt>
-          <dd>{{actor.system.abilityScores.str.value}}</dd>
-          <dt>Intelligence</dt>
-          <dd>{{actor.system.abilityScores.int.value}}</dd>
-          <dt>Wisdom</dt>
-          <dd>{{actor.system.abilityScores.wis.value}}</dd>
-          <dt>Dexterity</dt>
-          <dd>{{actor.system.abilityScores.dex.value}}</dd>
-          <dt>Constitution</dt>
-          <dd>{{actor.system.abilityScores.con.value}}</dd>
-          <dt>Charisma</dt>
-          <dd>{{actor.system.abilityScores.cha.value}}</dd>
-        </dl>
-      </div>
-
-      <div class="defenses">
-        <h3>Saving Throws</h3>
-        <dl>
-          <dt>Death/Poison</dt>
-          <dd>{{actor.system.savingThrows.death}}</dd>
-          <dt>Wands</dt>
-          <dd>{{actor.system.savingThrows.wands}}</dd>
-          <dt>Paralysis/Petrify</dt>
-          <dd>{{actor.system.savingThrows.paralysis}}</dd>
-          <dt>Breath Weapons</dt>
-          <dd>{{actor.system.savingThrows.breath}}</dd>
-          <dt>Spells/Rods/Staves</dt>
-          <dd>{{actor.system.savingThrows.spell}}</dd>
-          <dt>Bonus vs. Magic</dt>
-          <dd>{{actor.system.abilityScores.wis.magicSave}}</dd>
-        </dl>
-      </div>
-
     </div>
+
+    <div class="ability-scores">
+      <h3>Ability Scores</h3>
+      <dl>
+        {{#each actor.system.schema.fields.base.fields.abilityScores}}
+          <dt>{{localize this.label }}</dt>
+          <dd>{{lookup ../this.actor.system.base.abilityScores name}}</dd>
+        {{/each}}
+      </dl>
+    </div>
+
+    <div class="defenses">
+      <h3>Saving Throws</h3>
+      <dl>
+        {{!--
+          TODO: Use the values from saving throw settings
+        --}}
+        {{#each savingThrowLocaleStrings as |save key|}}
+          <dt>{{localize save.short}}</dt>
+          <dd>{{lookup ../actor.system.savingThrows key}}</dd>
+        {{/each}}
+        <dt>Bonus vs. Magic</dt>
+        <dd>{{signNumber actor.system.abilityScores.wis.magicSave forceSign=true}}</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="character-tiles">
+    <h3>Actions</h3>
+    <ul class="character-actions">
+    {{#each actor.system.actions}}
+      <li data-tooltip="{{name}}" data-action="use-character-action" data-action-id="{{id}}">
+      <img src="{{img}}" alt="{{localize name}}" />
+      </li>
+    {{/each}}
+    </ul>
   </div>
 </section>

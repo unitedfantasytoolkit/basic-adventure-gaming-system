@@ -35,4 +35,8 @@ export default class BAGSItem extends Item {
       "system.actions": actions,
     })
   }
+
+  async onConsumption(attempt, target) {
+    console.info(this, this.parent, attempt, target)
+  }
 }

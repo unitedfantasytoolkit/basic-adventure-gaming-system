@@ -1,32 +1,5 @@
 /**
- * @file A Map of Ability Scores to their labels, editing hints, and
- * a map of potential modifiers.
- *
- * The numbers in this file represent a certain Basic/Expert game and its
- * default resolution mechanics. For any changes here, I'd recommend
- * ensuring that they are accounted for in the Character data model and the
- * dice resolution rule module.
- *
- * Examples:
- * - Using Target 20 might require adding modifiers to each stat at each level.
- * - Using OSRIC-like encumbrance limits might require adding encumbrance
- *   to each strength level.
- * - Ability score types might be removed to represent games that use fewer
- *   than the "classic" six scores.
- */
-
-// =============================================================================
-/**
  * A Map of possible strength scores to modifiers.
- *
- * Any strength score above the highest listed value will be treated
- * as having the modifiers of the highest value.
- *
- * Examples might include:
- * - Max encumbrance
- * - Attack roll modifier
- * - Damage modifier
- * - Chance of major/minor strength feats
  */
 export const strengthModifiers = new Map()
 strengthModifiers.set(0, { meleeAttack: -3, meleeDamage: -3, openDoors: 0 })
@@ -49,18 +22,8 @@ strengthModifiers.set(16, { meleeAttack: 2, meleeDamage: 2, openDoors: 4 })
 strengthModifiers.set(17, { meleeAttack: 2, meleeDamage: 2, openDoors: 4 })
 strengthModifiers.set(18, { meleeAttack: 3, meleeDamage: 3, openDoors: 5 })
 
-// =============================================================================
 /**
  * A Map of possible intelligence scores to modifiers.
- *
- * Any intelligence score above the highest listed value will be treated
- * as having the modifiers of the highest value.
- *
- * Examples might include:
- * - Percent chance to fail at scribing a spell
- * - Literacy
- * - Number of extra languages
- * - Additional spells at first level
  */
 export const intelligenceModifiers = new Map()
 intelligenceModifiers.set(0, { languages: 0, literacy: -1 })
@@ -83,17 +46,8 @@ intelligenceModifiers.set(16, { languages: 2, literacy: 1 })
 intelligenceModifiers.set(17, { languages: 2, literacy: 1 })
 intelligenceModifiers.set(18, { languages: 3, literacy: 1 })
 
-// =============================================================================
 /**
  * A Map of possible wisdom scores to modifiers.
- *
- * Any wisdom score above the highest listed value will be treated
- * as having the modifiers of the highest value.
- *
- * Examples might include:
- * - Chance to see through illusions
- * - Additional spell slots for WIS-scaled casters of specific levels
- * - Bonuses to saves vs. magical effects
  */
 export const wisdomModifiers = new Map()
 wisdomModifiers.set(0, { magicSave: -3 })
@@ -116,17 +70,8 @@ wisdomModifiers.set(16, { magicSave: 2 })
 wisdomModifiers.set(17, { magicSave: 2 })
 wisdomModifiers.set(18, { magicSave: 3 })
 
-// =============================================================================
 /**
  * A Map of possible dexterity scores to modifiers.
- *
- * Any dexterity score above the highest listed value will be treated
- * as having the modifiers of the highest value.
- *
- * Examples might include:
- * - Improvements to AC
- * - Better chance at thief-like abilities
- * - Bonuses to saving throws related to dodging things
  */
 export const dexterityModifiers = new Map()
 dexterityModifiers.set(0, {
@@ -244,16 +189,8 @@ dexterityModifiers.set(18, {
   initiative: 2,
 })
 
-// =============================================================================
 /**
  * A Map of possible constitution scores to modifiers.
- *
- * Any constitution score above the highest listed value will be treated
- * as having the modifiers of the highest value.
- *
- * Examples might include:
- * - System shock resistance (chance to die from polymorph or being revived)
- * - Bonus HP per level
  */
 export const constitutionModifiers = new Map()
 constitutionModifiers.set(0, { bonusHP: -3 })
@@ -276,12 +213,8 @@ constitutionModifiers.set(16, { bonusHP: 2 })
 constitutionModifiers.set(17, { bonusHP: 2 })
 constitutionModifiers.set(18, { bonusHP: 3 })
 
-// =============================================================================
 /**
  * A Map of possible charisma scores to modifiers.
- *
- * Any charisma score above the highest listed value will be treated
- * as having the modifiers of the highest value.
  */
 export const charismaModifiers = new Map()
 charismaModifiers.set(0, { reaction: -2, maxRetainers: 1, baseLoyalty: 4 })
@@ -309,37 +242,37 @@ charismaModifiers.set(18, { reaction: 2, maxRetainers: 7, baseLoyalty: 10 })
  * A map of ability score keys to modifiers, labels, field hints, and other
  * related data.
  */
-const abilityScoreModifiers = new Map()
+const abilityScores = new Map()
 
-abilityScoreModifiers.set("str", {
+abilityScores.set("str", {
   modifiers: strengthModifiers,
-  label: "BAGS.BX.AbilityScores.str.Label",
-  hint: "BAGS.BX.AbilityScores.str.Hint",
+  label: "BAGS.Systems.BX.AbilityScores.str.Label",
+  hint: "BAGS.Systems.BX.AbilityScores.str.Hint",
 })
-abilityScoreModifiers.set("int", {
+abilityScores.set("int", {
   modifiers: intelligenceModifiers,
-  label: "BAGS.BX.AbilityScores.int.Label",
-  hint: "BAGS.BX.AbilityScores.int.Hint",
+  label: "BAGS.Systems.BX.AbilityScores.int.Label",
+  hint: "BAGS.Systems.BX.AbilityScores.int.Hint",
 })
-abilityScoreModifiers.set("wis", {
+abilityScores.set("wis", {
   modifiers: wisdomModifiers,
-  label: "BAGS.BX.AbilityScores.wis.Label",
-  hint: "BAGS.BX.AbilityScores.wis.Hint",
+  label: "BAGS.Systems.BX.AbilityScores.wis.Label",
+  hint: "BAGS.Systems.BX.AbilityScores.wis.Hint",
 })
-abilityScoreModifiers.set("dex", {
+abilityScores.set("dex", {
   modifiers: dexterityModifiers,
-  label: "BAGS.BX.AbilityScores.dex.Label",
-  hint: "BAGS.BX.AbilityScores.dex.Hint",
+  label: "BAGS.Systems.BX.AbilityScores.dex.Label",
+  hint: "BAGS.Systems.BX.AbilityScores.dex.Hint",
 })
-abilityScoreModifiers.set("con", {
+abilityScores.set("con", {
   modifiers: constitutionModifiers,
-  label: "BAGS.BX.AbilityScores.con.Label",
-  hint: "BAGS.BX.AbilityScores.con.Hint",
+  label: "BAGS.Systems.BX.AbilityScores.con.Label",
+  hint: "BAGS.Systems.BX.AbilityScores.con.Hint",
 })
-abilityScoreModifiers.set("cha", {
+abilityScores.set("cha", {
   modifiers: charismaModifiers,
-  label: "BAGS.BX.AbilityScores.cha.Label",
-  hint: "BAGS.BX.AbilityScores.cha.Hint",
+  label: "BAGS.Systems.BX.AbilityScores.cha.Label",
+  hint: "BAGS.Systems.BX.AbilityScores.cha.Hint",
 })
 
-export default abilityScoreModifiers
+export default abilityScores
