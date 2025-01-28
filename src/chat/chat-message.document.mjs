@@ -105,6 +105,8 @@ export default class BAGSChatMessage extends ChatMessage {
       messageData.borderColor = this.author?.color.css
     }
 
+    console.info(this)
+
     // Render the chat message
     let html = await renderTemplate(this.template, messageData)
     html = foundry.applications.parseHTML(html)
