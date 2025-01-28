@@ -9,22 +9,7 @@
     - Construct a descriptive line ("A attacks B with C", "A casts D", etc)
 -->
 <div class="action__attempt">
-  <span class="action__attempt__result{{#if target}} action__attempt__result--{{#if attempt.success}}success{{else}}fail{{/if}}{{/if}}">{{attempt.roll.total}}</span>
-  <span class="action__attempt__context action__attempt__context--attack">
-    {{log ../this}}
-    {{#if target}}
-      {{localize
-        "BAGS.ChatCards.Action.Attempt.Attack.ArmorClassHit.Ascending"
-        amount=target.system.armorClass
-      }}
-    {{else}}
-      {{#if usesDescendingAC}}
-        {{localize
-          "BAGS.ChatCards.Action.Attempt.Attack.ArmorClassHit.Descending"
-          amount=target.system.armorClass
-        }}
-      {{/if}}
-    {{/if}}
-  </span>
+  <span class="action__attempt__result action__attempt__result--{{#if attempt.success}}success{{else}}fail{{/if}}">{{attempt.roll.total}}</span>
+  <span class="action__attempt__context action__attempt__context--static">{{formatRoll roll.formula roll.operator attempt.target}}</span>
 </div>
 
