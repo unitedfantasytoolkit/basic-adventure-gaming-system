@@ -86,6 +86,7 @@ export default class BAGSChatMessage extends ChatMessage {
         this.blind ? "blind" : null,
       ].filterJoin(" "),
       isWhisper: this.whisper.length,
+      isGM: game.user.isGM,
       whisperTo: this.whisper
         .map((u) => {
           const user = game.users.get(u)
