@@ -487,7 +487,7 @@ export default class ActionResolver {
   }
 
   async #report() {
-    const message = await ChatMessage.create({
+    const messageData = {
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       type: "action",
       system: {
@@ -495,9 +495,14 @@ export default class ActionResolver {
         item: this.document?.uuid || undefined,
         action: this.action.id,
         outcome: this.result,
-      },
-    })
-    if (this.action.flags.isBlind)
-      await message.applyRollMode(CONST.DICE_ROLL_MODES.BLIND)
+      }
+    }
+    
+    if (this.action.flags.isBlind) {
+      messageData.blind = true
+      messageData.whisper = [game.user.id]
+    }
+
+    const message = await ChatMessage.create(messageData)
   }
 }
