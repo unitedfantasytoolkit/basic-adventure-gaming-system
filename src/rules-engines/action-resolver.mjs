@@ -154,6 +154,7 @@ export default class ActionResolver {
   /**
    * Performs the attempt roll against a single target.
    * @param {Actor|null} targetActor - The target of the action, or null.
+   * @todo Case #2 is kinda hideous. It'd be better if we could use `cs>=`.
    * @returns {Promise<boolean>} True if the attempt was successful,
    * false otherwise.
    */
@@ -166,14 +167,22 @@ export default class ActionResolver {
     if (this.action.attempt.flags.isLikeAttack)
       return this.#performAttemptAsAttack(targetActor)
 
-    // Case #3: Action is not like an attack; it has a static value that it
+    // Case #2: Action is not like an attack; it has a static value that it
     // rolls against.
     const { formula, operator, target } = this.action.attempt.roll
     const roll = await rollDice(this.actor, formula)
 
+    let parsedTarget =
+      typeof target === "string" && target.startsWith("@")
+        ? foundry.utils.getProperty(this.actor.system, target.replace("@", ""))
+        : target
+
+    if (!parsedTarget) parsedTarget = 1
+
     return {
       roll,
-      success: this.#compareRoll(roll.total, operator, target),
+      target: parsedTarget,
+      success: this.#compareRoll(roll.total, operator, parsedTarget),
     }
   }
 
@@ -478,7 +487,7 @@ export default class ActionResolver {
   }
 
   async #report() {
-    await ChatMessage.create({
+    const message = await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       type: "action",
       system: {
@@ -488,5 +497,7 @@ export default class ActionResolver {
         outcome: this.result,
       },
     })
+    if (this.action.flags.isBlind)
+      await message.applyRollMode(CONST.DICE_ROLL_MODES.BLIND)
   }
 }
