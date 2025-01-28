@@ -90,9 +90,9 @@
               usesDescendingAC = ../action.details.attempt.usesDescendingAC
             }}
           {{else}}
-            {{log ../action.details.attempt}}
+            {{log ../this}}
             {{> actionAttemptStatic
-              formula = ../action.details.attempt.roll
+              roll = ../action.details.attempt.roll
             }}
           {{/if}}
         {{/with}}
