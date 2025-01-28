@@ -9,7 +9,7 @@
     - Construct a descriptive line ("A attacks B with C", "A casts D", etc)
 -->
 <div class="action__attempt">
-  <span class="action__attempt__result action__attempt__result--{{#if attempt.success}}success{{else}}fail{{/if}}">{{attempt.roll.total}}</span>
+  <span class="action__attempt__result action__attempt__result--{{#if message.blind}}blind{{else if attempt.success}}success{{else}}fail{{/if}}">{{#if message.blind}}??{{else}}{{attempt.roll.total}}{{/if}}</span>
   <span class="action__attempt__context action__attempt__context--static">{{formatRoll roll.formula roll.operator attempt.target}}</span>
 </div>
 
