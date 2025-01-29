@@ -1,236 +1,42 @@
-{{!--
-
-# How this ought to look
-
-## Attack, weapon has no other actions
-
-┌──────────( 19 )───────────┐
-│         vs. AC 13         │
-│ ┌─────┐  ┌─────┐  ┌─────┐ │
-│ │Actor│  │Item │  │Act  │ │
-│ │Icon │  │Icon │  │Icon │ │
-│ └─────┘  └─────┘  └─────┘ │
-│   Thorgrim attacks with   │
-│       Warhammer +1        │
-│   [+] Show Roll Details   │
-├───────────────────────────┤
-│ ◆ EFFECTS                 │
-│   The crystal ball        │
-│   reveals:                │
-│    > "Beware the one who  │
-│    > walks in shadow"     │
-└───────────────────────────┘
-
-## Ability/spell, no target, single effect
-
-┌───────────( 1 )───────────┐
-│          under 4          │
-│ ┌─────┐  ┌─────┐  ┌─────┐ │
-│ │Actor│  │Item │  │Act  │ │
-│ │Icon │  │Icon │  │Icon │ │
-│ └─────┘  └─────┘  └─────┘ │
-│ Thorgrim uses Crystal Ball│
-│   [+] Show Roll Details   │
-├───────────────────────────┤
-│ ◆ EFFECTS                 │
-│   The crystal ball        │
-    reveals:                │
-│    > "Beware the one who  │
-│    > walks in shadow"     │
-└───────────────────────────┘
-
-
-## Any action type, multiple targets
-
-┌──────────────( 2 )──────────────────┐
-│      under 4                        │
-│ ┌─────┐  ┌─────┐  ┌─────┐           │
-│ │Actor│  │Item │  │Act  │           │
-│ │Icon │  │Icon │  │Icon │
-│ └─────┘  └─────┘  └─────┘
-│ Thorgrim uses Thunderous Strike
-│ from Mjolnir
-│  [+] Show Roll Details
-├──────────────────────────────────────┤
-│ ◆ TARGETS
-│   Hill Giant
-│   ├─ Saving Throw (STR) ✗
-│   │  [+] Show Roll Details
-│   ├─ Takes {12} damage
-│   └─ Is knocked prone
-│
-│   Stone Giant
-│   ├─ Saving Throw (STR) ✓
-│   │  [+] Show Roll Details
-│   └─ Takes {6} damage
-└──────────────────────────────────────┘
-
---}}
 <li class="chat-message chat-message--bags chat-message--{{message.type}} message flexcol {{cssClass}}" data-message-id="{{message._id}}">
-  <header class="action-header">
-    <time class="message-timestamp">{{timeSince message.timestamp}}</time>
-    {{#if canDelete}}
-      <a aria-label="{{localize 'Delete'}}" class="message-delete" data-action="deleteMessage">
-        <i class="fas fa-trash"></i>
-      </a>
-    {{/if}}
-    {{#if canClose}}
-      <a aria-label="{{ localize "CHAT.Dismiss" }}" class="message-dismiss" data-action="dismissMessage">
-        <i class="fas fa-xmark"></i>
-      </a>
-    {{/if}}
-  </header>
+  {{> "chat-cards/partials/action-header"}}
 
   <div class="action">
     {{#if (eq action.outcome.length 1)}}
-      {{#if action.details.flags.usesAttempt}}
-        {{#with (lookup action.outcome 0)}}
-          {{#if ../action.details.attempt.flags.isLikeAttack}}
-            {{> actionAttemptAttack
-              usesDescendingAC = ../action.details.attempt.usesDescendingAC
-            }}
-          {{else}}
-            {{> actionAttemptStatic
-              roll = ../action.details.attempt.roll
-              message = ../message
-              isGM = ../isGM
-            }}
-          {{/if}}
-        {{/with}}
-      {{/if}}
+      {{> "chat-cards/partials/action-attempt"}}
     {{/if}}
 
-
     <div class="action__context">
-      <div class="action__icons">
-        {{#if action.actor}}
-          <img src="{{action.actor.img}}" alt="{{action.actor.name}}" />
-        {{/if}}
-        {{#if action.item}}
-          <img src="{{action.item.img}}" alt="{{action.item.name}}" />
-        {{/if}}
-        {{#if action.details}}
-          <img src="{{action.details.img}}" alt="{{action.details.name}}" />
-        {{/if}}
-      </div>
-
+      {{> "chat-cards/partials/action-icons"}}
       <h1>{{localize action.details.name}}</h1>
-
-      {{#if action.details.flags.usesAttempt}}
-        {{#if action.details.attempt.flags.isLikeAttack}}
-          {{#if (and action.actor (eq action.outcome.length 1))}}
-            <p class="action__attempt-flavor">
-              {{#if action.outcome.0.target}}
-                {{#if action.item}}
-                  {{localize
-                    "BAGS.ChatCards.Action.Attempt.Attack.ContextualDescription.WithTargetAndItem"
-                    actor=action.actor.name
-                    target=action.outcome.0.target.name
-                    item=action.item.name
-                  }}
-                {{else}}
-                  {{localize
-                    "BAGS.ChatCards.Action.Attempt.Attack.ContextualDescription.WithoutItem"
-                    actor=action.actor.name
-                    target=action.outcome.0.target.name
-                  }}
-                {{/if}}
-              {{else}}
-                {{#if action.item}}
-                  {{localize
-                    "BAGS.ChatCards.Action.Attempt.Attack.ContextualDescription.WithoutTarget"
-                    actor=action.actor.name
-                    item=action.item.name
-                  }}
-
-                {{else}}
-                  {{localize
-                    "BAGS.ChatCards.Action.Attempt.Attack.ContextualDescription.WithoutItemOrTarget"
-                    actor=action.actor.name
-                  }}
-                {{/if}}
-              {{/if}}
-            </p>
-          {{/if}}
-        {{else}}
-          {{#if (and action.actor (eq action.outcome.length 1))}}
-            <p class="action__attempt-flavor">
-              {{#if action.details.attempt.flavorText.attempt}}
-                {{localize action.details.attempt.flavorText.attempt
-                  name=action.actor.name
-                  target=action.target.name
-                  item=action.item.name
-                }}
-              {{else if action.outcome.0.target}}
-                {{#if action.item}}
-                  {{localize
-                    "BAGS.ChatCards.Action.Attempt.Static.ContextualDescription.WithTargetAndItem"
-                    actor=action.actor.name
-                    target=action.outcome.0.target.name
-                    item=action.item.name
-                  }}
-                {{else}}
-                  {{localize
-                    "BAGS.ChatCards.Action.Attempt.Static.ContextualDescription.WithoutItem"
-                    actor=action.actor.name
-                    target=action.outcome.0.target.name
-                  }}
-                {{/if}}
-              {{else}}
-                {{#if action.item}}
-                  {{localize
-                    "BAGS.ChatCards.Action.Attempt.Static.ContextualDescription.WithoutTarget"
-                    actor=action.actor.name
-                    item=action.item.name
-                  }}
-
-                {{else}}
-                  {{localize
-                    "BAGS.ChatCards.Action.Attempt.Static.ContextualDescription.WithoutItemOrTarget"
-                    actor=action.actor.name
-                  }}
-                {{/if}}
-              {{/if}}
-            </p>
-          {{/if}}
-        {{/if}}
+      {{#if (and action.actor (eq action.outcome.length 1))}}
+        <p class="action__attempt-flavor">
+          {{getActionFlavorText action message}}
+        </p>
       {{/if}}
     </div>
 
     <div class="action__result">
       {{#unless (and message.blind (not isGM))}}
         {{#if (lte action.outcome.length 1)}}
-          {{#with action}}
-            {{> actionEffectTargetsNoneOrOne}}
-          {{/with}}
+          {{> actionEffectTargetsNoneOrOne action=action}}
         {{else}}
           {{> actionEffectTargetsMany}}
         {{/if}}
       {{else}}
         <p class="action__result__flavor action__result__flavor--blind">
-          {{#if action.details.attempt.flavorText.blind}}
-            {{localize action.details.attempt.flavorText.blind
-              name = action.actor.name
-              target = action.target.name
-              item = action.item.name
-            }}
-          {{else}}
-            {{localize "BAGS.ChatCards.Action.Attempt.Result.Blind"
-              name = action.actor.name
-              target = action.target.name
-              item = action.item.name
-            }}
-          {{/if}}
+          {{getBlindFlavorText action}}
         </p>
       {{/unless}}
     </div>
   </div>
 
   <footer class="action__footer">
-  <!--
-    @TODO:
-    - If there's an attempt, show the attempt container
-    - If there are effects, show the list of effects
-  -->
+    {{#if action.details.flags.usesAttempt}}
+      {{> "chat-cards/partials/action-attempt-details"}}
+    {{/if}}
+    {{#if action.details.flags.usesEffect}}
+      {{> "chat-cards/partials/action-effects"}}
+    {{/if}}
   </footer>
 </li>

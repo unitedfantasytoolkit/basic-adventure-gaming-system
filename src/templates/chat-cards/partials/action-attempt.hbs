@@ -1,0 +1,11 @@
+{{#if action.details.flags.usesAttempt}}
+  {{#if action.details.attempt.flags.isLikeAttack}}
+    {{> actionAttemptAttack usesDescendingAC=action.details.attempt.usesDescendingAC}}
+  {{else}}
+    {{> actionAttemptStatic 
+      roll=action.details.attempt.roll
+      message=message
+      isGM=isGM
+    }}
+  {{/if}}
+{{/if}}
