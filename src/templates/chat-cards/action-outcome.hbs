@@ -199,16 +199,10 @@
 
     <div class="action__result">
       {{#unless (and message.blind (not isGM))}}
-        {{#if (eq action.outcome.length 1)}}
-          {{#if action.outcome.0.target}}
-            {{#with action}}
-              {{> actionEffectTargetsOne }}
-            {{/with}}
-          {{else}}
-            {{#with action}}
-              {{> actionEffectTargetsNone}}
-            {{/with}}
-          {{/if}}
+        {{#if (lte action.outcome.length 1)}}
+          {{#with action}}
+            {{> actionEffectTargetsNoneOrOne}}
+          {{/with}}
         {{else}}
           {{> actionEffectTargetsMany}}
         {{/if}}
