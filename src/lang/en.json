@@ -201,6 +201,14 @@
               "Ascending": "vs. AC {amount}",
               "Descending": "hit AC {amount}"
             }
+          },
+          "Static": {
+            "ContextualDescription": {
+              "WithTargetAndItem": "{actor} uses {item} on {target}!",
+              "WithoutTarget": "{actor} uses {item}!",
+              "WithoutItem": "{actor} uses something on {target}!",
+              "WithoutItemOrTarget": "{actor} uses something!"
+            }
           }
         },
         "Effect": {
@@ -414,18 +422,34 @@
         "Exploration": {
           "OpenDoors": {
             "Label": "Open Stuck Doors",
+            "SuccessText": "... and the door is forced open!",
+            "FailText": "... but the door holds fast.",
+            "AttemptText": "{name} attempts to force open the stuck door...",
+            "BlindText": "... but did they manage to open it?",
             "Description": ""
           },
           "ListenAtDoors": {
             "Label": "Listen At Doors",
+            "SuccessText": "... and if there's something to hear, {name} heard it!",
+            "FailText": "... but {name} failed to hear anything.",
+            "AttemptText": "{name} listens closely at the door...",
+            "BlindText": "... but did they hear anything?",
             "Description": ""
           },
           "FindSecretDoors": {
             "Label": "Find Secret Doors",
+            "SuccessText": "... and if there's something to find, {name} found it!",
+            "FailText": "... but {name} failed to find anything.",
+            "AttemptText": "{name} searches for secret doors...",
+            "BlindText": "... but did they find anything?",
             "Description": ""
           },
           "FindTraps": {
             "Label": "Find Room Traps",
+            "SuccessText": "... and if there's something to find, {name} found it!",
+            "FailText": "... but {name} failed to find anything.",
+            "AttemptText": "{name} searches for traps...",
+            "BlindText": "... but did they find anything?",
             "Description": ""
           }
         }

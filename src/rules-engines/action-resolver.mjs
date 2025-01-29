@@ -495,12 +495,11 @@ export default class ActionResolver {
         item: this.document?.uuid || undefined,
         action: this.action.id,
         outcome: this.result,
-      }
+      },
     }
-    
+
     if (this.action.flags.isBlind) {
       messageData.blind = true
-      messageData.whisper = [game.user.id]
     }
 
     const message = await ChatMessage.create(messageData)

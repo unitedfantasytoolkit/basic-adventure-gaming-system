@@ -482,12 +482,24 @@ export const actionsFactory = (fields) => {
       }),
     }),
     flavorText: new SchemaField({
+      // Attempt text displays when the actor uses the action. It is displayed
+      // regardless of success, fail, or blind state.
+      attempt: new StringField({
+        label: "BAGS.Actions.Attempt.AttemptText.Label",
+        // hint: "BAGS.Actions.Attempt.FailText.Hint",
+      }),
+      // Success text displays when the
       success: new StringField({
         label: "BAGS.Actions.Attempt.SuccessText.Label",
         // hint: "BAGS.Actions.Attempt.SuccessText.Hint",
       }),
       fail: new StringField({
         label: "BAGS.Actions.Attempt.FailText.Label",
+        // hint: "BAGS.Actions.Attempt.FailText.Hint",
+      }),
+      // Blind text displays when success and failure should be ambiguous.
+      blind: new StringField({
+        label: "BAGS.Actions.Attempt.BlindText.Label",
         // hint: "BAGS.Actions.Attempt.FailText.Hint",
       }),
     }),

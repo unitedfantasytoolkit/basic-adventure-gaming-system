@@ -59,13 +59,13 @@
           z-index: -1;
         }
 
-        &:not(:is(&--success, &--fail)) {
+        &:not(:is(&--success, &--fail, &--blind)) {
           &::after {
             display: none;
           }
         }
 
-        &:is(&--success, &--fail) {
+        &:is(&--success, &--fail, &--blind) {
           color: #fff;
 
           &::after {
@@ -85,6 +85,15 @@
         &--fail {
           &::after {
             background-color: var(--color-level-error);
+          }
+        }
+
+        &--blind {
+          font-size: 1.5em;
+          line-height: 2em;
+
+          &::after {
+            background-color: #8f7ad6;
           }
         }
       }
@@ -117,11 +126,19 @@
         position: absolute;
         right: 2rem;
       }
+
+      h1 {
+        color: var(--text-color-primary);
+        line-height: 1.4;
+        margin: 0;
+        font-style: normal;
+        font-size: var(--font-size-18);
+      }
     }
 
     &__icons {
       display: flex;
-      margin: 0 auto;
+      margin: 0 auto 0.25rem;
       justify-content: space-around;
       gap: 1em;
 
@@ -148,6 +165,11 @@
 
     &__result {
       padding: 0.5rem 1rem 1rem;
+
+      &__flavor {
+        margin: 0;
+        text-align: center;
+      }
     }
 
     &__effect {

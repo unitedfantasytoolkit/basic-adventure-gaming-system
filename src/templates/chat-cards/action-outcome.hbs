@@ -90,10 +90,10 @@
               usesDescendingAC = ../action.details.attempt.usesDescendingAC
             }}
           {{else}}
-            {{log ../this}}
             {{> actionAttemptStatic
               roll = ../action.details.attempt.roll
               message = ../message
+              isGM = ../isGM
             }}
           {{/if}}
         {{/with}}
@@ -113,6 +113,8 @@
           <img src="{{action.details.img}}" alt="{{action.details.name}}" />
         {{/if}}
       </div>
+
+      <h1>{{localize action.details.name}}</h1>
 
       {{#if action.details.flags.usesAttempt}}
         {{#if action.details.attempt.flags.isLikeAttack}}
@@ -150,23 +152,84 @@
               {{/if}}
             </p>
           {{/if}}
+        {{else}}
+          {{#if (and action.actor (eq action.outcome.length 1))}}
+            <p class="action__attempt-flavor">
+              {{#if action.details.attempt.flavorText.attempt}}
+                {{localize action.details.attempt.flavorText.attempt
+                  name=action.actor.name
+                  target=action.target.name
+                  item=action.item.name
+                }}
+              {{else if action.outcome.0.target}}
+                {{#if action.item}}
+                  {{localize
+                    "BAGS.ChatCards.Action.Attempt.Static.ContextualDescription.WithTargetAndItem"
+                    actor=action.actor.name
+                    target=action.outcome.0.target.name
+                    item=action.item.name
+                  }}
+                {{else}}
+                  {{localize
+                    "BAGS.ChatCards.Action.Attempt.Static.ContextualDescription.WithoutItem"
+                    actor=action.actor.name
+                    target=action.outcome.0.target.name
+                  }}
+                {{/if}}
+              {{else}}
+                {{#if action.item}}
+                  {{localize
+                    "BAGS.ChatCards.Action.Attempt.Static.ContextualDescription.WithoutTarget"
+                    actor=action.actor.name
+                    item=action.item.name
+                  }}
+
+                {{else}}
+                  {{localize
+                    "BAGS.ChatCards.Action.Attempt.Static.ContextualDescription.WithoutItemOrTarget"
+                    actor=action.actor.name
+                  }}
+                {{/if}}
+              {{/if}}
+            </p>
+          {{/if}}
         {{/if}}
       {{/if}}
     </div>
 
-    {{#if (eq action.outcome.length 1)}}
-      {{#if action.outcome.0.target}}
-        {{#with action.outcome.0.effects}}
-          {{> actionEffectTargetsOne target=../action.outcome.0.target.name }}
-        {{/with}}
+    <div class="action__result">
+      {{#unless (and message.blind (not isGM))}}
+        {{#if (eq action.outcome.length 1)}}
+          {{#if action.outcome.0.target}}
+            {{#with action}}
+              {{> actionEffectTargetsOne }}
+            {{/with}}
+          {{else}}
+            {{#with action}}
+              {{> actionEffectTargetsNone}}
+            {{/with}}
+          {{/if}}
+        {{else}}
+          {{> actionEffectTargetsMany}}
+        {{/if}}
       {{else}}
-        {{#with action.outcome.0.effects}}
-          {{> actionEffectTargetsNone}}
-        {{/with}}
-      {{/if}}
-    {{else}}
-      {{> actionEffectTargetsMany}}
-    {{/if}}
+        <p class="action__result__flavor action__result__flavor--blind">
+          {{#if action.details.attempt.flavorText.blind}}
+            {{localize action.details.attempt.flavorText.blind
+              name = action.actor.name
+              target = action.target.name
+              item = action.item.name
+            }}
+          {{else}}
+            {{localize "BAGS.ChatCards.Action.Attempt.Result.Blind"
+              name = action.actor.name
+              target = action.target.name
+              item = action.item.name
+            }}
+          {{/if}}
+        </p>
+      {{/unless}}
+    </div>
   </div>
 
   <footer class="action__footer">
