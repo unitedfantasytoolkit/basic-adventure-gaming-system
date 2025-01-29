@@ -1,0 +1,13 @@
+{{#if details.attempt.flavorText.[type]}}
+  {{localize details.attempt.flavorText.[type]
+    name=actor.name
+    target=target.name
+    item=item.name
+  }}
+{{else}}
+  {{localize (concat "BAGS.ChatCards.Action.Attempt.Result." type)
+    name=actor.name
+    target=target.name
+    item=item.name
+  }}
+{{/if}}
