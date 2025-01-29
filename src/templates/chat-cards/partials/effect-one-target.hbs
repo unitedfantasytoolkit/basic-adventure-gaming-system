@@ -1,18 +1,30 @@
-{{#with outcome.0}}
+{{#with (lookup outcome 0)}}
   {{!-- Show attempt result message if no effects --}}
-  {{#if (eq effects.length 0)}}
+  {{#if (
+    or (
+      not ../details.flags.usesEffect
+    ) (
+      eq effects.length 0
+    )
+  )}}
     <p class="action__result__flavor action__result__flavor--{{#if attempt.success}}success{{else}}fail{{/if}}">
-      {{> "chat-cards/partials/effect-message" type=(if attempt.success "success" "fail")}}
+      {{> actionEffectMessage
+        actor=../actor
+        target=../target
+        item=../item
+        type=(ifThen attempt.success "success" "fail")
+        flavorText=../details.attempt.flavorText
+      }}
     </p>
   {{/if}}
 
   {{!-- Show single effect --}}
   {{#if (eq effects.length 1)}}
     {{#with (lookup effects 0)}}
-      {{#if (eq type "damage")}}
-        {{> "chat-cards/partials/effect-damage"}}
+      {{#if (eq type "attack")}}
+        {{> actionEffectDamage}}
       {{else}}
-        {{> "chat-cards/partials/effect-generic"}}
+        {{> actionEffectGeneric}}
       {{/if}}
     {{/with}}
   {{/if}}
@@ -22,10 +34,10 @@
     <ul class="action__effects">
       {{#each effects}}
         <li>
-          {{#if (eq type "damage")}}
-            {{> "chat-cards/partials/effect-damage"}}
+          {{#if (eq type "attack")}}
+            {{> actionEffectDamage}}
           {{else}}
-            {{> "chat-cards/partials/effect-generic"}}
+            {{> actionEffectGeneric}}
           {{/if}}
         </li>
       {{/each}}

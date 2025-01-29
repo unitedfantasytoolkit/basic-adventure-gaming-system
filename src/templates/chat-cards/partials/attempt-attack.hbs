@@ -1,15 +1,6 @@
-<!--
-  @TODO:
-    - If there's an attempt, show the attempt container
-      - Display rolled value as a circle, with context below as a banner
-      - Context wording changes depending on if action is an attack,
-        under a value, etc.
-    - Show icons for the actor, action source, and, if there's more than
-      one action on the action source, the action icon.
-    - Construct a descriptive line ("A attacks B with C", "A casts D", etc)
--->
 <div class="action__attempt">
-  <span class="action__attempt__result{{#if target}} action__attempt__result--{{#if attempt.success}}success{{else}}fail{{/if}}{{/if}}">{{attempt.roll.total}}</span>
+  {{log this}}
+  <span class="action__attempt__result{{#if target}} action__attempt__result--{{ifThen attempt.success "success" "fail"}}{{/if}}">{{attempt.roll.total}}</span>
   <span class="action__attempt__context action__attempt__context--attack">
     {{#if target}}
       {{localize

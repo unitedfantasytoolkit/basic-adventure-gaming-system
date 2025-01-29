@@ -1,13 +1,13 @@
 <li class="chat-message chat-message--bags chat-message--{{message.type}} message flexcol {{cssClass}}" data-message-id="{{message._id}}">
-  {{> "chat-cards/partials/action-header"}}
+  {{> actionHeader}}
 
   <div class="action">
-    {{#if (eq action.outcome.length 1)}}
-      {{> "chat-cards/partials/action-attempt"}}
+    {{#if (and action.details.flags.usesAttempt (eq action.outcome.length 1))}}
+      {{> actionAttempt}}
     {{/if}}
 
     <div class="action__context">
-      {{> "chat-cards/partials/action-icons"}}
+      {{> actionIcons}}
       <h1>{{localize action.details.name}}</h1>
       {{#if (and action.actor (eq action.outcome.length 1))}}
         <p class="action__attempt-flavor">
@@ -31,12 +31,4 @@
     </div>
   </div>
 
-  <footer class="action__footer">
-    {{#if action.details.flags.usesAttempt}}
-      {{> "chat-cards/partials/action-attempt-details"}}
-    {{/if}}
-    {{#if action.details.flags.usesEffect}}
-      {{> "chat-cards/partials/action-effects"}}
-    {{/if}}
-  </footer>
 </li>

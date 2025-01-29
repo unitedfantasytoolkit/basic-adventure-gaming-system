@@ -1,12 +1,12 @@
-{{#if details.attempt.flavorText.[type]}}
+{{#if (lookup flavorText type)}}
   {{#if target}}
-    {{localize details.attempt.flavorText.[type]
+    {{localize (lookup flavorText type)
       name=actor.name
       target=target.name
       item=item.name
     }}
   {{else}}
-    {{localize details.attempt.flavorText.[type]
+    {{localize (lookup flavorText type)
       name=actor.name
       item=item.name
     }}
