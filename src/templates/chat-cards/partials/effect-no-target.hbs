@@ -1,64 +1,34 @@
-{{#if (eq outcome.0.effects.length 0)}}
-  {{#if outcome.0.attempt.success}}
-    {{!--
-      Success messaging
-    --}}
-    <p class="action__result__flavor action__result__flavor--success">
-      {{#if details.attempt.flavorText.success}}
-        {{localize details.attempt.flavorText.success
-          name = actor.name
-          target = target.name
-          item = item.name
-        }}
-      {{else}}
-        {{localize "BAGS.ChatCards.Action.Attempt.Result.Success"
-          name = actor.name
-          target = target.name
-          item = item.name
-        }}
-      {{/if}}
-    </p>
-  {{else}}
-    {{!--
-      Fail messaging
-    --}}
-    <p class="action__result__flavor action__result__flavor--fail">
-      {{#if details.attempt.flavorText.fail}}
-        {{localize details.attempt.flavorText.fail
-          name = actor.name
-          target = target.name
-          item = item.name
-        }}
-      {{else}}
-        {{localize "BAGS.ChatCards.Action.Attempt.Result.Fail"
-          name = actor.name
-          target = target.name
-          item = item.name
-        }}
-      {{/if}}
+{{#with outcome.0}}
+  {{!-- Show attempt result message if no effects --}}
+  {{#if (eq effects.length 0)}}
+    <p class="action__result__flavor action__result__flavor--{{#if attempt.success}}success{{else}}fail{{/if}}">
+      {{> "chat-cards/partials/effect-message" type=(if attempt.success "success" "fail")}}
     </p>
   {{/if}}
-{{else if (eq outcome.0.effects.length 1)}}
-  {{#with (lookup outcome.0.effects 0)}}
-      <!--
-        @TODO:
-          - Healing message
-      -->
-    <p class="action__effect action__effect--damage">{{localize
-      "BAGS.ChatCards.Action.Effect.Damage"
-      amount=value
-    }}</p>
-  {{/with}}
 
-{{else}}
-  <ul class="action__effects">
-    <!--
-      @TODO:
-        - If there's a 0-1 targets, and the effect isn't damage or healing,
-          render this.
-        - Enumerate the list of effects on the 0-1 targets
-    -->
+  {{!-- Show single effect --}}
+  {{#if (eq effects.length 1)}}
+    {{#with (lookup effects 0)}}
+      {{#if (eq type "damage")}}
+        {{> "chat-cards/partials/effect-damage"}}
+      {{else}}
+        {{> "chat-cards/partials/effect-generic"}}
+      {{/if}}
+    {{/with}}
+  {{/if}}
 
-  </ul>
-
-{{/if}}
+  {{!-- Show multiple effects --}}
+  {{#if (gt effects.length 1)}}
+    <ul class="action__effects">
+      {{#each effects}}
+        <li>
+          {{#if (eq type "damage")}}
+            {{> "chat-cards/partials/effect-damage"}}
+          {{else}}
+            {{> "chat-cards/partials/effect-generic"}}
+          {{/if}}
+        </li>
+      {{/each}}
+    </ul>
+  {{/if}}
+{{/with}}
