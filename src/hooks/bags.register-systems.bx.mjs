@@ -43,15 +43,12 @@ const registerBX = (registry) => {
       }
 
       const roll = await rollDice(actor, options.rollFormula || "1d20", {
-        operator: options.operator || ">=",
-        target,
         modifier: options.modifier,
-        rollType: options.rollMode,
       })
 
       return {
         success: roll.total >= target,
-        rolls: [roll],
+        roll,
         target,
         save: saveName,
       }

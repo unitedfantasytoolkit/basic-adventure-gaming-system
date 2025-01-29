@@ -212,32 +212,23 @@ export default class ActionResolver {
           ? await this.#processResistance(effect, target)
           : false
 
-        if (wasResisted) {
-          return {
-            type: effect.type,
-            resisted: true,
-            value: 0,
-            message: `${target.name} resisted the ${effect.note || "effect"}`,
-          }
-        }
-
         // Step 2: Process effect based on type
         switch (effect.type) {
           case "attack":
           case "healing":
-            return this.#processNumericEffect(effect, target)
+            return this.#processNumericEffect(effect, target, wasResisted)
 
           case "effect":
-            return this.#processActiveEffect(effect, target)
+            return this.#processActiveEffect(effect, target, wasResisted)
 
           case "macro":
-            return this.#processMacroEffect(effect, target)
+            return this.#processMacroEffect(effect, target, wasResisted)
 
           case "script":
-            return this.#processScriptEffect(effect, target)
+            return this.#processScriptEffect(effect, target, wasResisted)
 
           case "table":
-            return this.#processTableEffect(effect, target)
+            return this.#processTableEffect(effect, target, wasResisted)
 
           case "misc":
             return {
@@ -270,34 +261,9 @@ export default class ActionResolver {
           CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
         )
 
-        console.info(saveSettings)
+        const didSave = saveSettings.resolve(target, savingThrow)
 
-        // const systemId = target.system.template
-        // const context = {
-        //   isMagical: effect.flags.isMagical,
-        //   bxEquivalent: CONFIG.BAGS.SaveResolver.getBXEquivalent(
-        //     systemId,
-        //     savingThrow,
-        //   ),
-        // }
-        //
-        // const saveResult = await CONFIG.BAGS.SaveResolver.resolveSave(
-        //   target,
-        //   systemId,
-        //   savingThrow,
-        //   context,
-        // )
-        //
-        // // Handle different return types
-        // if (typeof saveResult === "number") {
-        //   // Traditional save vs target number
-        //   return saveResult >= effect.resistance.target
-        // }
-        //
-        // if (typeof saveResult === "object" && "success" in saveResult) {
-        //   // Systems that return explicit success/failure
-        //   return saveResult.success
-        // }
+        console.info(didSave)
 
         return false
       }
