@@ -9,7 +9,11 @@
   {{!-- Show single effect --}}
   {{#if (eq effects.length 1)}}
     {{#with (lookup effects 0)}}
-      {{> "chat-cards/partials/effect-damage"}}
+      {{#if (eq type "damage")}}
+        {{> "chat-cards/partials/effect-damage"}}
+      {{else}}
+        {{> "chat-cards/partials/effect-generic"}}
+      {{/if}}
     {{/with}}
   {{/if}}
 
@@ -17,7 +21,13 @@
   {{#if (gt effects.length 1)}}
     <ul class="action__effects">
       {{#each effects}}
-        <li>{{> "chat-cards/partials/effect-damage"}}</li>
+        <li>
+          {{#if (eq type "damage")}}
+            {{> "chat-cards/partials/effect-damage"}}
+          {{else}}
+            {{> "chat-cards/partials/effect-generic"}}
+          {{/if}}
+        </li>
       {{/each}}
     </ul>
   {{/if}}

@@ -1,13 +1,27 @@
 {{#if details.attempt.flavorText.[type]}}
-  {{localize details.attempt.flavorText.[type]
-    name=actor.name
-    target=target.name
-    item=item.name
-  }}
+  {{#if target}}
+    {{localize details.attempt.flavorText.[type]
+      name=actor.name
+      target=target.name
+      item=item.name
+    }}
+  {{else}}
+    {{localize details.attempt.flavorText.[type]
+      name=actor.name
+      item=item.name
+    }}
+  {{/if}}
 {{else}}
-  {{localize (concat "BAGS.ChatCards.Action.Attempt.Result." type)
-    name=actor.name
-    target=target.name
-    item=item.name
-  }}
+  {{#if target}}
+    {{localize (concat "BAGS.ChatCards.Action.Attempt.Result." type)
+      name=actor.name
+      target=target.name
+      item=item.name
+    }}
+  {{else}}
+    {{localize (concat "BAGS.ChatCards.Action.Attempt.Result." type)
+      name=actor.name
+      item=item.name
+    }}
+  {{/if}}
 {{/if}}

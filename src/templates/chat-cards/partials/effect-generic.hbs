@@ -1,8 +1,16 @@
 <p class="action__effect">
-  {{localize effect.label
-    name=actor.name
-    target=target.name
-    item=item.name
-    value=effect.value
-  }}
+  {{#if target}}
+    {{localize effect.label
+      name=actor.name
+      target=target.name
+      item=item.name
+      value=effect.value
+    }}
+  {{else}}
+    {{localize effect.label
+      name=actor.name
+      item=item.name
+      value=effect.value
+    }}
+  {{/if}}
 </p>

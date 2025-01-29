@@ -1,6 +1,12 @@
 <p class="action__effect action__effect--damage">
-  {{localize "BAGS.ChatCards.Action.Effect.DamageToTarget"
-    amount=value
-    target=target.name
-  }}
+  {{#if target}}
+    {{localize "BAGS.ChatCards.Action.Effect.DamageToTarget"
+      amount=value
+      target=target.name
+    }}
+  {{else}}
+    {{localize "BAGS.ChatCards.Action.Effect.Damage"
+      amount=value
+    }}
+  {{/if}}
 </p>
