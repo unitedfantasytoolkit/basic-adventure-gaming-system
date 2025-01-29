@@ -1,19 +1,16 @@
-{{#with (lookup outcome 0)}}
+{{#with (lookup action.outcome 0)}}
   {{!-- Show attempt result message if no effects --}}
-  {{#if (
-    or (
-      not ../details.flags.usesEffect
-    ) (
-      eq effects.length 0
-    )
+  {{#if (or
+    (not ../action.details.flags.usesEffect)
+    (eq effects.length 0)
   )}}
     <p class="action__result__flavor action__result__flavor--{{#if attempt.success}}success{{else}}fail{{/if}}">
       {{> actionEffectMessage
-        actor=../actor
-        target=../target
-        item=../item
+        actor=../action.actor
+        target=../action.target
+        item=../action.item
         type=(ifThen attempt.success "success" "fail")
-        flavorText=../details.attempt.flavorText
+        flavorText=../action.details.attempt.flavorText
       }}
     </p>
   {{/if}}
@@ -24,7 +21,12 @@
       {{#if (eq type "attack")}}
         {{> actionEffectDamage}}
       {{else}}
-        {{> actionEffectGeneric}}
+        {{> actionEffectGeneric
+          actor=../action.actor
+          target=../action.target
+          item=../action.item
+          effect=effect
+        }}
       {{/if}}
     {{/with}}
   {{/if}}

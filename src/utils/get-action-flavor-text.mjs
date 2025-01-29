@@ -2,7 +2,7 @@ export default (action, message) => {
   const { actor, item, details, outcome } = action
 
   if (details.attempt.flavorText.attempt) {
-    return game.i18n.localize(details.attempt.flavorText.attempt, {
+    return game.i18n.format(details.attempt.flavorText.attempt, {
       name: actor.name,
       target: outcome[0]?.target?.name,
       item: item?.name,
@@ -18,7 +18,7 @@ export default (action, message) => {
   else if (hasTarget) suffix = "WithoutItem"
   else if (hasItem) suffix = "WithoutTarget"
 
-  return game.i18n.localize(
+  return game.i18n.format(
     `BAGS.ChatCards.Action.Attempt.${key}.ContextualDescription.${suffix}`,
     {
       actor: actor.name,

@@ -19,7 +19,9 @@
     <div class="action__result">
       {{#unless (and message.blind (not isGM))}}
         {{#if (lte action.outcome.length 1)}}
-          {{> actionEffectTargetsNoneOrOne action=action}}
+          {{> actionEffectTargetsNoneOrOne
+            action=action
+          }}
         {{else}}
           {{> actionEffectTargetsMany}}
         {{/if}}

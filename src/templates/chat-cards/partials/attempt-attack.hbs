@@ -1,5 +1,4 @@
 <div class="action__attempt">
-  {{log this}}
   <span class="action__attempt__result{{#if target}} action__attempt__result--{{ifThen attempt.success "success" "fail"}}{{/if}}">{{attempt.roll.total}}</span>
   <span class="action__attempt__context action__attempt__context--attack">
     {{#if target}}

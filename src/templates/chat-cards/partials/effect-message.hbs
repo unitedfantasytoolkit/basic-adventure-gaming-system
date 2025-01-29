@@ -1,16 +1,9 @@
 {{#if (lookup flavorText type)}}
-  {{#if target}}
-    {{localize (lookup flavorText type)
-      name=actor.name
-      target=target.name
-      item=item.name
-    }}
-  {{else}}
-    {{localize (lookup flavorText type)
-      name=actor.name
-      item=item.name
-    }}
-  {{/if}}
+  {{localize (lookup flavorText type)
+    name=actor.name
+    target=target.name
+    item=item.name
+  }}
 {{else}}
   {{#if target}}
     {{localize (concat "BAGS.ChatCards.Action.Attempt.Result." type)
