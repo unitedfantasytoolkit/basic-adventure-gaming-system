@@ -24,6 +24,7 @@ export default class BAGSItemArmorDataModel extends PhysicalItemDataMixin({
       ...super.defineSchema(),
       armorClassOffset: new NumberField({ integer: true }),
       shouldTreatAsBonus: new BooleanField({ initial: false }),
+      isHeavy: new BooleanField({ initial: false }),
     }
   }
 

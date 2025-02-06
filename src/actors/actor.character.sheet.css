@@ -215,4 +215,15 @@
       }
     }
   }
+
+  .character-sheet {
+    &-inventory {
+      search {
+        display: flex;
+        align-items: center;
+        padding-inline: 8px;
+        gap: 8px;
+      }
+    }
+  }
 }

@@ -11,6 +11,17 @@ const { ActorSheetV2 } = foundry.applications.sheets
 export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
   ActorSheetV2,
 ) {
+  static INVENTORY_SORT_MODES = {
+    NAME_ASCENDING: 0,
+    NAME_DESCENDING: 1,
+    ENCUMBRANCE_DESCENDING: 2,
+    ENCUMBRANCE_ASCENDING: 3,
+    VALUE_DESCENDING: 4,
+    VALUE_ASCENDING: 5,
+  }
+
+  #inventorySortMode = BAGSCharacterSheet.INVENTORY_SORT_MODES.NAME_ASCENDING
+
   static get DEFAULT_OPTIONS() {
     return {
       id: "character-{id}",
@@ -37,39 +48,15 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
       actions: {
         "use-character-action": this.#onCharacterAction,
       },
-      dragDrop: [],
     }
-  }
-
-  #dragDropHandlers
-
-  constructor(options = {}) {
-    super(options)
-
-    // this.#dragDropHandlers = this.options.dragDrop.map((config) => {
-    //   config.permissions = {
-    //     dragstart: this._canDragStart.bind(this),
-    //     drop: this._canDragDrop.bind(this),
-    //   }
-    //   config.callbacks = {
-    //     dragstart: this._onDragStart.bind(this),
-    //     dragover: this._onDragOver.bind(this),
-    //     drop: this.#onDrop.bind(this),
-    //   }
-    //   return new DragDrop(config)
-    // })
   }
 
   static async #onCharacterAction(e) {
     const el = e.target.closest("[data-action-id]")
     if (!el) return
-
     const { actionId } = el.dataset
-
     const action = this.actor.system.actions.find((a) => a.id === actionId)
-
-    const resolved = await this.actor.resolveAction(action)
-    console.info(resolved)
+    await this.actor.resolveAction(action)
   }
 
   static TEMPLATE_ROOT = `${SYSTEM_TEMPLATE_PATH}/character`
@@ -105,18 +92,29 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
    * @override
    */
   async _prepareContext() {
+    const context = await super._prepareContext()
+    if (!this.actor.items.documentsByType.spell.length)
+      delete context.tabs.spells
+
     const doc = this.document
     return {
+      ...context,
       actor: doc,
       source: doc.toObject(),
       fields: doc.schema.fields,
-      tabs: this.#getTabs(),
+      // tabs: this.#getTabs(),
     }
   }
 
   /** @override */
   async _preparePartContext(partId, context) {
     const doc = this.document
+
+    const encumbranceSettings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.ENCUMBRANCE,
+      )
+
     switch (partId) {
       case "left-rail":
         context.classes = doc.itemTypes.class.map((cls) => ({
@@ -136,20 +134,19 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
             CONFIG.BAGS.SystemRegistry.categories.COMBAT,
           )?.descending
 
+        context.encumbranceMeter = encumbranceSettings.encumbranceMeter(
+          doc.system,
+        )
         break
       case "summary":
-        context.tab = this.#getTabs()[partId]
         break
       case "abilities":
-        context.tab = this.#getTabs()[partId]
         context.abilities = this.actor.items.documentsByType.ability
         break
       case "spells":
-        context.tab = this.#getTabs()[partId]
         context.abilities = this.actor.items.documentsByType.spell
         break
       case "inventory":
-        context.tab = this.#getTabs()[partId]
         context.weapons =
           this.actor.items.documentsByType.weapon.sort(sortDocuments)
         context.armor =
@@ -160,14 +157,18 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
           ...context.weapons,
           ...context.armor,
           ...context.items,
-        ].sort(sortDocuments)
+        ].sort(sortDocuments())
+        context.sortMode = this.#inventorySortMode
         break
       case "description":
-        context.tab = this.#getTabs()[partId]
         break
       default:
         break
     }
+
+    context.tab = context.tabs[partId] || null
+
+    // context.tab = this.#getTabs()[partId]
     return context
   }
 
@@ -175,57 +176,103 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
     sheet: "summary",
   }
 
-  /**
-   * Prepare an array of form header tabs.
-   * @returns {Record<string, Partial<ApplicationTab>>}
-   */
-  #getTabs() {
-    const tabs = {
-      summary: {
-        id: "summary",
-        group: "sheet",
-        icon: "fa-solid fa-square-list",
-        label: "BAGS.CharacterClass.Tabs.Summary",
-        cssClass: "tab--summary",
-      },
-      abilities: {
-        id: "abilities",
-        group: "sheet",
-        icon: "fa-solid fa-tag",
-        label: "Abilities",
-        cssClass: "tab--advancement",
-      },
-      inventory: {
-        id: "inventory",
-        group: "sheet",
-        icon: "fa-solid fa-backpack",
-        label: "Inventory",
-        cssClass: "tab--effects",
-      },
-      spells: {
-        id: "spells",
-        group: "sheet",
-        icon: "fa-solid fa-sparkle",
-        label: "Spell List",
-        cssClass: "tab--effects",
-      },
-      description: {
-        id: "description",
-        group: "sheet",
-        icon: "fa-solid fa-scroll-old",
-        label: "Character Identity",
-        cssClass: "tab--effects",
-      },
-    }
-
-    if (!this.document.itemTypes.spell.length) delete tabs.spells
-
-    for (const v of Object.values(tabs)) {
-      v.active = this.tabGroups[v.group] === v.id
-      v.cssClass = v.active ? "active" : ""
-    }
-    return tabs
+  static TABS = {
+    sheet: {
+      tabs: [
+        {
+          id: "summary",
+          group: "sheet",
+          icon: "fa-solid fa-square-list",
+          label: "BAGS.CharacterClass.Tabs.Summary",
+          cssClass: "tab--summary",
+        },
+        {
+          id: "abilities",
+          group: "sheet",
+          icon: "fa-solid fa-tag",
+          label: "Abilities",
+          cssClass: "tab--advancement",
+        },
+        {
+          id: "inventory",
+          group: "sheet",
+          icon: "fa-solid fa-backpack",
+          label: "Inventory",
+          cssClass: "tab--effects",
+        },
+        {
+          id: "spells",
+          group: "sheet",
+          icon: "fa-solid fa-sparkle",
+          label: "Spell List",
+          cssClass: "tab--effects",
+        },
+        {
+          id: "description",
+          group: "sheet",
+          icon: "fa-solid fa-scroll-old",
+          label: "Character Identity",
+          cssClass: "tab--effects",
+        },
+      ],
+      initial: "summary",
+      labelPrefix: "BAGS.Actors.Character.Tabs",
+    },
   }
+
+  // /**
+  //  * Prepare an array of form header tabs.
+  //  * @returns {Record<string, Partial<ApplicationTab>>}
+  //  */
+  // #getTabs() {
+  //   const tabs = {
+  //     summary: {
+  //       id: "summary",
+  //       group: "sheet",
+  //       icon: "fa-solid fa-square-list",
+  //       label: "BAGS.CharacterClass.Tabs.Summary",
+  //       cssClass: "tab--summary",
+  //     },
+  //     abilities: {
+  //       id: "abilities",
+  //       group: "sheet",
+  //       icon: "fa-solid fa-tag",
+  //       label: "Abilities",
+  //       cssClass: "tab--advancement",
+  //     },
+  //     inventory: {
+  //       id: "inventory",
+  //       group: "sheet",
+  //       icon: "fa-solid fa-backpack",
+  //       label: "Inventory",
+  //       cssClass: "tab--effects",
+  //     },
+  //     spells: {
+  //       id: "spells",
+  //       group: "sheet",
+  //       icon: "fa-solid fa-sparkle",
+  //       label: "Spell List",
+  //       cssClass: "tab--effects",
+  //     },
+  //     description: {
+  //       id: "description",
+  //       group: "sheet",
+  //       icon: "fa-solid fa-scroll-old",
+  //       label: "Character Identity",
+  //       cssClass: "tab--effects",
+  //     },
+  //   }
+  //
+  //   if (!this.document.itemTypes.spell.length) delete tabs.spells
+  //
+  //   return Object.values(tabs)
+  //     .map((v) => ({
+  //       ...v,
+  //       active: this.tabGroups[v.group] === v.id,
+  //       cssClass: v.active ? "active" : "",
+  //     }))
+  //     .reduce((obj, curr) => ({ ...obj, [curr.id]: curr }), {})
+  // }
 
   get title() {
     return this.actor.name
@@ -249,35 +296,21 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
    */
   async _renderFrame(options) {
     const frame = await super._renderFrame(options)
-
-    // frame.append(await this.#renderEncumbranceBar())
-    // frame.append(await this.#renderEffectsPane())
-
     this.#reorganizeHeaderElements(frame)
-
     return frame
-  }
-
-  _attachFrameListeners() {
-    super._attachFrameListeners()
-
-    // this.element.addEventListener("drop", this._onDropAction.bind(this))
   }
 
   _onRender(context, options) {
     super._onRender(context, options)
-    // this.#dragDropHandlers.forEach((handler) => handler.bind(this.element))
-  }
 
-  async #renderTabNavigation() {
-    const container = document.createElement("template")
-    container.innerHTML = await renderTemplate(
-      `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
-      {
-        tabs: this.#getTabs(),
-      },
-    )
-    return container.content.firstElementChild
+    if (options.parts.includes("inventory")) {
+      new SearchFilter({
+        inputSelector: "search input",
+        contentSelector: ".character-sheet-inventory .item-grid",
+        callback: this._onFilterInventory.bind(this),
+        initial: this.element.querySelector("search input").value,
+      }).bind(this.element)
+    }
   }
 
   /**
@@ -303,22 +336,6 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
     header.appendChild(buttonContainer)
   }
 
-  // async #renderEffectsPane() {
-  //   const container = document.createElement("template")
-  //   container.innerHTML = await renderTemplate(
-  //     `${SYSTEM_TEMPLATE_PATH}/common/effects-pane.hbs`,
-  //     { effects: this.document.effects },
-  //   )
-  //
-  //   return container.content.firstElementChild
-  // }
-
-  // async #renderEncumbranceBar() {
-  //   const container = document.createElement("template")
-  //   container.innerHTML = `<uft-character-info-meter value="1200" max="1600" class="encumbrance"><i slot="icon" class="fa fa-weight-hanging"></i></uft-character-info-meter>`
-  //   return container.content.firstElementChild
-  // }
-
   /**
    * A handler for dropping actors onto the sheet.
    * @param {DragEvent} event - The browser event fired when dropping the item
@@ -326,7 +343,6 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
    * @returns {Promise<unknown>} The dropped actor, if associating it works.
    */
   async _onDropActor(event, doc) {
-    console.warn("Not yet implemented!")
     switch (doc.type) {
       case "character":
         this.#onDropCharacter(doc)
@@ -406,8 +422,30 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
       case "armor":
       case "item":
       default:
-        super._onDropItem(event, doc)
-        break
+        return super._onDropItem(event, doc)
     }
+  }
+
+  _onFilterInventory(event, query, rgx, html) {
+    const ids = new Set()
+    const options = {}
+
+    // Match entries and folders.
+    if (query) this._matchSearchItems(rgx, ids, options)
+
+    html
+      .querySelectorAll(".item-grid--inventory uft-item-tile")
+      .forEach((el) => {
+        if (el.hidden) return
+        el.classList.toggle("filtered", query && !ids.has(el.dataset.itemId))
+      })
+  }
+
+  _matchSearchItems(query, entryIds) {
+    this.actor.items.contents.forEach((entry) => {
+      if (query.test(SearchFilter.cleanQuery(entry.name))) {
+        entryIds.add(entry.id)
+      }
+    })
   }
 }

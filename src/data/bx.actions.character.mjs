@@ -4,7 +4,7 @@ const createExplorationSkillAction = (
   id,
   { name, description, img, isBlind, flavorText, target },
 ) => {
-  const action = actionsFactory().element.initial()
+  const action = actionsFactory().element.getInitialValue()
 
   return {
     ...action,

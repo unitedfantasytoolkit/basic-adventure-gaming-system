@@ -10,6 +10,7 @@ const {
   DocumentUUIDField,
   HTMLField,
   FilePathField,
+  BooleanField,
   NumberField,
   SchemaField,
 } = foundry.data.fields
@@ -21,34 +22,7 @@ export default class BAGSItemWeaponDataModel extends PhysicalItemDataMixin({
 
   static defineSchema() {
     return {
-      flavorText: new HTMLField({
-        required: false,
-        blank: true,
-      }),
-      description: new HTMLField({
-        required: false,
-        blank: true,
-      }),
-      banner: new FilePathField({
-        required: false,
-        categories: ["IMAGE"],
-      }),
-      quantity: new NumberField({
-        required: true,
-        integer: true,
-        min: 0,
-      }),
-      uses: new SchemaField({
-        minimum: new NumberField({
-          integer: true,
-          min: 0,
-        }),
-        maximum: new NumberField({
-          integer: true,
-          min: 1,
-        }),
-      }),
-      actions: actionsFactory(),
+      ...super.defineSchema(),
     }
   }
 

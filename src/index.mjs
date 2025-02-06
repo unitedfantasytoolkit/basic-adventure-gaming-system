@@ -49,7 +49,7 @@ Hooks.once("ready", async () => {
     // await actionItem.sheet.render(true)
     // actionItem.resolveAction(actionItem.system.actions[0])
     //
-    // fromUuidSync("Actor.A81XqzmshDo9D55H").sheet.render(true)
+    fromUuidSync("Actor.A81XqzmshDo9D55H").sheet.render(true)
     // fromUuidSync("Item.aRxw6uspU4Ipf9xN").sheet.render(true)
   } catch {
     // noop -- add your own devAbility UUID above if this breaks
@@ -61,5 +61,5 @@ Hooks.once("ready", async () => {
 
   document.body.appendChild(script)
 
-  ui.sidebar.toggleExpanded()
+  // ui.sidebar.toggleExpanded()
 })

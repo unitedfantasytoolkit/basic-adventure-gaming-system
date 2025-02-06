@@ -1,8 +1,22 @@
-<article class="tab character-class-sheet-{{tab.id}} {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+<article class="tab character-sheet-{{tab.id}} {{tab.cssClass}}{{ifThen tab.active " active" ""}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
   <h3>Inventory</h3>
-  <div class="item-grid" style="--item-grid-minimum-rows: 5">
+
+    {{!-- Search & Sort --}}
+  <search>
+    <i class="fa fa-search"></i>
+    <input type="search" name="search" autocomplete="off" placeholder="{{ searchMode.placeholder }}"
+            aria-label="{{ searchMode.placeholder }}">
+    {{!--
+    TODO: Sort types (asc/desc for gold value, encumbrance, and name)
+    <button type="button" class="inline-control toggle-sort icon {{ sortMode.icon }}" data-action="toggleSort"
+            data-tooltip="{{ sortMode.label }}" aria-label="{{ localize sortMode.label }}"></button>
+    --}}
+  </search>
+
+
+  <div class="item-grid item-grid--inventory" style="--item-grid-minimum-rows: 5">
     {{#each inventory}}
       <uft-item-tile class="item-grid__item draggable" data-item-id="{{id}}" uuid="{{uuid}}"></uft-item-tile>
     {{/each}}
   </div>
-</article>
+</search>

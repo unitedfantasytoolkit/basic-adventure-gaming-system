@@ -1,6 +1,8 @@
 import abilityScores from "../data/bx.ability-scores.mjs"
 import savingThrows from "../data/bx.saving-throws.mjs"
 import characterActions from "../data/bx.actions.character.mjs"
+import bxBasicEncumbrance from "../data/bx.encumbrance.basic.mjs"
+import bxDetailedEncumbrance from "../data/bx.encumbrance.detailed.mjs"
 import rollDice from "../utils/roll-dice.mjs"
 
 /**
@@ -168,7 +170,7 @@ const registerBX = (registry) => {
           isCriticalMiss,
         }
       } catch (error) {
-        console.error("Error resolving attack:", error)
+        ui.notifications.error("Error resolving attack:", error)
         throw error
       }
     },
@@ -187,26 +189,17 @@ const registerBX = (registry) => {
     formula: "1d6+@initiative",
   })
 
-  registry.register(registry.categories.MOVEMENT, {
-    id: "bx",
-    name: "BX",
-    default: true,
-    base: 120,
-    units: "ft",
-  })
-
   registry.register(registry.categories.ENCUMBRANCE, {
     id: "bx-basic",
     name: "BX, Basic",
     default: true,
-    base: 1600,
-    units: "coin",
-    thresholds: [
-      { max: 400, speedMultiplier: 0.75 },
-      { max: 600, speedMultiplier: 0.5 },
-      { max: 800, speedMultiplier: 0.25 },
-      { max: 1600, speedMultiplier: 0 },
-    ],
+    ...bxBasicEncumbrance,
+  })
+
+  registry.register(registry.categories.ENCUMBRANCE, {
+    id: "bx-detailed",
+    name: "BX, Detailed",
+    ...bxDetailedEncumbrance,
   })
 
   registry.register(registry.categories.CHARACTER_ACTIONS, {

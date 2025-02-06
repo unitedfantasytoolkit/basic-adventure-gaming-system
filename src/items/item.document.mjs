@@ -19,7 +19,7 @@ export default class BAGSItem extends Item {
     const actions = [
       ...this.system.actions,
       {
-        ...this.system.schema.fields.actions.element.initial(),
+        ...this.system.schema.fields.actions.element.getInitialValue(),
         id: foundry.utils.randomID(),
       },
     ]

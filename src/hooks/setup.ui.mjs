@@ -6,6 +6,6 @@ import BAGSSidebar from "../sidebar/sidebar.mjs"
  * @TODO: v13.334 borked this. Get it working again.
  */
 Hooks.once("setup", () => {
-  CONFIG.ui.party = PartySidebar
-  CONFIG.ui.sidebar = BAGSSidebar
+  // CONFIG.ui.party = PartySidebar
+  // CONFIG.ui.sidebar = BAGSSidebar
 })

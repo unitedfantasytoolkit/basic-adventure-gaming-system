@@ -18,13 +18,7 @@
       <i slot="icon" class="fa fa-heart"></i>
     </uft-character-info-meter>
 
-    <uft-character-info-meter
-      value="2600"
-      max="1600"
-      class="encumbrance"
-    >
-      <i slot="icon" class="fa fa-scale-balanced"></i>
-    </uft-character-info-meter>
+    {{{ encumbranceMeter }}}
 
   </article>
   <div class="character-tiles scrollable">
@@ -41,7 +35,7 @@
       <dd>{{actor.system.armorClass}}</dd>
 
       <dt class="movement">Movement</dt>
-      <dd>120/40/24</dd>
+      <dd>{{actor.system.speed.exploration}}/{{actor.system.speed.encounter}}/{{actor.system.speed.overland}}</dd>
     </dl>
 
     <div class="combat">

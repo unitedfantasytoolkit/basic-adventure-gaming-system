@@ -7,6 +7,14 @@
   overflow: hidden;
   background-color: #383531;
   position: relative;
+  transition:
+    opacity ease-in-out 333ms,
+    filter ease-in-out 333ms;
+}
+
+:host(.filtered) {
+  opacity: 0.5;
+  filter: grayscale(1);
 }
 
 img {

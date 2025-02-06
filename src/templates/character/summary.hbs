@@ -1,5 +1,5 @@
 <article
-  class="tab character-class-sheet-{{tab.id}} {{tab.cssClass}}"
+  class="tab character-class-sheet-{{tab.id}} {{tab.cssClass}}{{ifThen tab.active " active" ""}}"
   data-tab="{{tab.id}}"
   data-group="{{tab.group}}"
 >

@@ -39,6 +39,8 @@ const PhysicalItemDataMixin = (schema) =>
         container: new SchemaField({
           isContainer: new BooleanField({ initial: false }),
           contains: new ArrayField(new DocumentUUIDField({})),
+          weightMax: new NumberField(),
+          weightModifier: new NumberField({ initial: 1 }),
         }),
         identification: new SchemaField({
           isIdentified: new BooleanField({ initial: true }),
@@ -46,6 +48,7 @@ const PhysicalItemDataMixin = (schema) =>
           description: new HTMLField(),
           xpReward: new NumberField({ initial: 0, min: 0 }),
         }),
+        countsAsTreasure: new BooleanField({ initial: false }),
       }
     }
   }

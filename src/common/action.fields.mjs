@@ -529,14 +529,14 @@ export const actionsFactory = (fields) => {
     level,
     consumption,
     uses,
-    effects: new ArrayField(effect, { initial: [effect.initial()] }),
+    effects: new ArrayField(effect, { initial: [effect.getInitialValue()] }),
     attempt,
     ...fields,
   })
 
   // @TODO: Figure out a way to get `id` to autofill
   // return new ArrayField(schema, {
-  //   initial: [schema.initial()],
+  //   initial: [schema.getInitialValue()],
   // })
 
   return new ArrayField(schema, {

@@ -48,6 +48,18 @@ const buildSchema = () => {
           hint: "",
         }),
       }),
+      encumbrance: new NumberField({
+        nullable: false,
+        initial: 0,
+        label: "",
+        hint: "",
+      }),
+      speed: new NumberField({
+        nullable: false,
+        initial: 0,
+        label: "",
+        hint: "",
+      }),
     }),
     biographicalDetails: biographicalDetailsFactory({
       title: new StringField({
@@ -76,6 +88,30 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
   buildSchema,
 ) {
   prepareDerivedData() {}
+
+  get encumbrance() {
+    const encumbranceSettings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.ENCUMBRANCE,
+      )
+
+    const value = encumbranceSettings.calculateEncumbrance(this)
+    const thresholds = encumbranceSettings.getEncumbranceThresholds(this)
+
+    return {
+      value,
+      thresholds,
+    }
+  }
+
+  get speed() {
+    const encumbranceSettings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.ENCUMBRANCE,
+      )
+
+    return encumbranceSettings.getSpeedCategories(this)
+  }
 
   get abilityScores() {
     const abilityScoreSettings =

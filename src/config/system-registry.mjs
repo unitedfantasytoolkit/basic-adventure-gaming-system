@@ -24,7 +24,6 @@ class SystemRegistry {
     SAVING_THROWS: "SavingThrows",
     COMBAT: "Combat",
     INITIATIVE: "Initiative",
-    MOVEMENT: "Movement",
     ENCUMBRANCE: "Encumbrance",
     CHARACTER_ACTIONS: "CharacterActions",
   }
