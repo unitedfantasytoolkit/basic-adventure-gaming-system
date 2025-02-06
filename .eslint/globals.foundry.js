@@ -39,4 +39,5 @@ export default {
   PoolTerm: "readonly",
   ContextMenu: "readonly",
   ActiveEffect: "readonly",
+  SearchFilder: "readonly",
 }
