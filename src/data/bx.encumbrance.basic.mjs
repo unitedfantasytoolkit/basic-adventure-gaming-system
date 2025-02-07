@@ -1,4 +1,6 @@
 import html from "../utils/html.mjs"
+import getModifiersOfKey from "../utils/get-modifiers-of-key.mjs"
+import getEffectiveItemWeight from "../utils/get-effective-item-weight.mjs"
 
 export default {
   baseEncumbrance: 1600,
@@ -31,52 +33,6 @@ export default {
   },
 
   /**
-   * Helper to calculate effective weight of an item considering containers
-   * @param {Item} item - The Item to get the weight of.
-   * @param {any} actorData - The system object of the actor who owns the item.
-   * @returns {number} The weight of the Item.
-   */
-  getEffectiveItemWeight(item, actorData) {
-    const { quantity } = item.system
-    if (!quantity) return 0
-
-    let { weight } = item.system
-
-    if (item.system.container?.containerId) {
-      const container = actorData.parent.items.get(
-        item.system.container.containerId,
-      )
-      if (container?.system.container?.weightModifier) {
-        weight *= container.system.container.weightModifier
-      }
-    }
-
-    const totalWeight = weight * quantity
-    return totalWeight >= 0 ? totalWeight : 0
-  },
-
-  /**
-   * Helper to get all relevant modifiers from effects
-   * @todo Should we account for more than just addition?
-   * @param {any} actorData - The system object of the actor to get modifiers
-   * of.
-   * @param {string} modifierKey - The active effect key to look up and apply.
-   * @returns {number} The modifier.
-   */
-  getModifiers(actorData, modifierKey) {
-    return actorData.parent.effects
-      .filter((e) => e.changes.some((c) => c.key === modifierKey))
-      .reduce(
-        (total, effect) =>
-          total +
-          effect.changes
-            .filter((c) => c.key === modifierKey)
-            .reduce((sum, change) => sum + Number(change.value), 0),
-        0,
-      )
-  },
-
-  /**
    * Total up the actor's encumbrance.
    * @param {any} actorData - The system object of the actor to calculate
    * encumbrance thresholds for
@@ -87,7 +43,7 @@ export default {
 
     return item.reduce((total, i) => {
       if (!i.system.countsAsTreasure) return total
-      return total + this.getEffectiveItemWeight(i, actorData)
+      return total + getEffectiveItemWeight(i, actorData)
     }, 0)
   },
 
@@ -99,35 +55,40 @@ export default {
    * @returns {Record<string, number>} The encumbrance thresholds for the actor.
    */
   getEncumbranceThresholds(actorData) {
-    // Get base values
     const baseThresholds = {
       significant: this.baseEncumbrance / 2,
       maximum: this.baseEncumbrance,
     }
 
-    // Get additive modifiers from effects
-    const maximumModifier = this.getModifiers(
-      actorData,
-      "system.modifiers.encumbranceMaximumModifier",
-    )
+    const encumbranceModifier =
+      getModifiersOfKey(actorData, "system.modifiers.encumbranceModifier") ?? 0
 
-    const encumbranceMultiplier = this.getModifiers(
-      actorData,
-      "system.modifiers.encumbranceMultiplier",
-    )
+    const maximumModifier =
+      getModifiersOfKey(
+        actorData,
+        "system.modifiers.encumbranceMaximumModifier",
+      ) ?? 0
+
+    const encumbranceMultiplier =
+      getModifiersOfKey(actorData, "system.modifiers.encumbranceMultiplier") ??
+      1
 
     // Get additive modifiers from effects
-    const significantModifier = this.getModifiers(
-      actorData,
-      "system.modifiers.encumbranceSignificantTreasureModifier",
-    )
+    const significantModifier =
+      getModifiersOfKey(
+        actorData,
+        "system.modifiers.encumbranceSignificantTreasureModifier",
+      ) ?? 0
 
     // Apply multipliers and modifiers
     return {
       significant:
-        baseThresholds.significant * encumbranceMultiplier +
+        (baseThresholds.significant + encumbranceModifier) *
+          encumbranceMultiplier +
         significantModifier,
-      maximum: baseThresholds.maximum * encumbranceMultiplier + maximumModifier,
+      maximum:
+        (baseThresholds.maximum + encumbranceModifier) * encumbranceMultiplier +
+        maximumModifier,
     }
   },
 
@@ -142,11 +103,10 @@ export default {
     const { armor } = actorData.parent.items.documentsByType
 
     // Get speed modifiers
-    const speedModifier = this.getModifiers(actorData, "system.modifiers.speed")
-    const speedMultiplier = this.getModifiers(
-      actorData,
-      "system.modifiers.speedMultiplier",
-    )
+    const speedModifier =
+      getModifiersOfKey(actorData, "system.modifiers.speed") ?? 0
+    const speedMultiplier =
+      getModifiersOfKey(actorData, "system.modifiers.speedMultiplier") ?? 1
 
     const currentEncumbrance = this.calculateEncumbrance(actorData)
     const { significant } = this.getEncumbranceThresholds(actorData)
