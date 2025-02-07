@@ -93,6 +93,11 @@
   }
 }
 
+.window-content {
+  overflow: hidden !important;
+  position: static;
+}
+
 .application__effects-pane {
   --pos: translateX(4px);
   --scale: scaleX(0);
@@ -183,7 +188,7 @@
 
       .tab {
         &.active {
-          display: flex !important;
+          display: flex;
           flex-direction: column;
           overflow: hidden;
           gap: 1em;

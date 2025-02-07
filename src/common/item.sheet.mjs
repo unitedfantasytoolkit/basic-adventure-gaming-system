@@ -83,7 +83,6 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       minimizable: true,
       resizable: true,
       contentTag: "section",
-      contentClasses: this.CSS_CLASSES_CONTENT,
     },
     form: {
       handler: this.save,
@@ -108,6 +107,7 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   static TAB_PARTS = {
     summary: {
       template: `${SYSTEM_TEMPLATE_PATH}/common/summary.hbs`,
+      scrollable: [".scrollable"],
     },
     effects: {
       template: `${SYSTEM_TEMPLATE_PATH}/common/effects.hbs`,
@@ -132,10 +132,6 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     const doc = this.document
     context.tab = context.tabs.find((t) => t.id === partId)
     switch (partId) {
-      case "header":
-        context.canShowIcon = true
-        context.title = doc.name
-        break
       case "summary":
         break
       case "effects":
@@ -277,10 +273,6 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
    */
   #getTabs() {
     const tabs = this.constructor.TABS
-    // for (const v of Object.values(tabs)) {
-    //   v.active = this.tabGroups[v.group] === v.id
-    //   v.cssClass = v.active ? "active" : ""
-    // }
 
     return tabs.map((t) => {
       const active = this.tabGroups[t.group] === t.id

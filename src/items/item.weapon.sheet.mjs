@@ -30,7 +30,7 @@ export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
         template: `${SYSTEM_TEMPLATE_PATH}/common/actions.view.hbs`,
       },
       description: {
-        template: `${SYSTEM_TEMPLATE_PATH}/weapon/description.edit.hbs`,
+        template: `${SYSTEM_TEMPLATE_PATH}/common/description.hbs`,
       },
     }
   }

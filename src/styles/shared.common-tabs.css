@@ -1,0 +1,50 @@
+.tab {
+  &--item-summary.active {
+    display: grid !important;
+    grid-template-areas: "flavor flavor" "details description";
+    grid-template-columns: 1fr 2fr;
+
+    > div {
+      grid-area: flavor;
+    }
+
+    > main {
+      grid-area: description;
+
+      :is(h1, h2, h3, h4, h5, h6) {
+        text-align: left;
+      }
+
+      p {
+        text-align: justify;
+      }
+    }
+
+    > aside {
+      grid-area: details;
+
+      h2 {
+        font-size: var(--font-h3-size);
+        text-align: left;
+        margin-bottom: 0.25rem;
+      }
+
+      .action-menu {
+        li {
+          display: grid;
+          grid-template-columns: 32px 1fr;
+          align-items: center;
+          gap: 0.5rem;
+        }
+      }
+    }
+  }
+
+  &--item-description.active {
+    flex: 1 0;
+
+    prose-mirror {
+      flex: 1;
+    }
+  }
+}
