@@ -1,7 +1,6 @@
 /**
  * @file The UI for viewing and editiing a weapon Item.
  */
-import BAGSActionEditor from "../common/action-editor.mjs"
 import BAGSBaseItemSheet from "../common/item.sheet.mjs"
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
@@ -10,17 +9,8 @@ export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
 
   static DOCUMENT_TYPE = "weapon"
 
-  static CSS_CLASSES_WINDOW = ["application--weapon-sheet"]
-
-  static get DEFAULT_OPTIONS() {
-    return foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
-      classes: [...super.DEFAULT_OPTIONS.classes, ...this.CSS_CLASSES_WINDOW],
-      actions: {
-        addAction: this.onAddAction,
-        editAction: this.onEditAction,
-        deleteAction: this.onDeleteAction,
-      },
-    })
+  static DEFAULT_OPTIONS = {
+    classes: ["application--weapon-sheet"],
   }
 
   static get TAB_PARTS() {
@@ -33,22 +23,6 @@ export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
         template: `${SYSTEM_TEMPLATE_PATH}/common/description.hbs`,
       },
     }
-  }
-
-  static async onAddAction() {
-    await this.document.createAction()
-  }
-
-  static onEditAction(event) {
-    const { actionId } = event.target.closest("[data-action-id]").dataset
-    const editor = new BAGSActionEditor(this.document, actionId)
-    editor.render(true)
-  }
-
-  static async onDeleteAction(event) {
-    await this.document.deleteAction(
-      event.target.closest("[data-action-id]").dataset.actionId,
-    )
   }
 
   /** @override */

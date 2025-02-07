@@ -1,36 +1,28 @@
-.application--bags {
-  .item-grid {
-    --item-grid-cell-size: 32px;
-    --item-grid-cell-gap: 4px;
-    --item-grid-cell-padded-size: calc(
-      var(--item-grid-cell-size) + var(--item-grid-cell-gap)
-    );
+.application--bags .item-grid {
+  /* Background grid */
+  background-image: var(--item-grid-empty-cell-image);
+  background-repeat: repeat;
+  background-size: var(--item-grid-cell-padded-size)
+    var(--item-grid-cell-padded-size);
 
-    /* Background grid */
-    background-image: url("data:image/svg+xml,%3Csvg width='36' height='36' viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='32' height='32' fill='none' stroke='%238B4513' stroke-width='1' rx='4' ry='4'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: var(--item-grid-cell-padded-size)
-      var(--item-grid-cell-padded-size);
+  /* Foreground grid */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, var(--item-grid-cell-size));
+  grid-template-rows: repeat(auto-fit, var(--item-grid-cell-size));
+  gap: var(--item-grid-cell-gap);
+  justify-content: start;
 
-    /* Foreground grid */
-    display: grid;
-    grid-template-columns: repeat(auto-fit, var(--item-grid-cell-size));
-    grid-template-rows: repeat(auto-fit, var(--item-grid-cell-size));
-    gap: var(--item-grid-cell-gap);
-    justify-content: start;
+  /* Display reset */
+  list-style: none;
+  margin: 0;
+  padding: calc((var(--item-grid-cell-gap) / 2));
+  width: minmax(100%, fit-content);
+  max-width: 100%;
+  min-height: calc(
+    var(--item-grid-minimum-rows, 1) * var(--item-grid-cell-padded-size)
+  );
 
-    /* Display reset */
-    list-style: none;
+  &__item {
     margin: 0;
-    padding: calc((var(--item-grid-cell-gap) / 2));
-    width: minmax(100%, fit-content);
-    max-width: 100%;
-    min-height: calc(
-      var(--item-grid-minimum-rows, 1) * var(--item-grid-cell-padded-size)
-    );
-
-    &__item {
-      margin: 0;
-    }
   }
 }

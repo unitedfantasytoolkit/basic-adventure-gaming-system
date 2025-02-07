@@ -49,9 +49,11 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
     const saves = savingThrowSettings?.savingThrows || {}
     const worstPossibleSave = savingThrowSettings?.worstPossible || 19
 
-    const prerequisiteFields = scores.reduce(mapToNumberField, {})
-    const halfPrimeRequisiteFields = scores.reduce(mapToNumberField, {})
-    const fullPrimeRequisiteFields = scores.reduce(mapToNumberField, {})
+    const scoreObjs = Array.from(abilityScores.entries())
+
+    const prerequisiteFields = scoreObjs.reduce(mapToNumberField, {})
+    const halfPrimeRequisiteFields = scoreObjs.reduce(mapToNumberField, {})
+    const fullPrimeRequisiteFields = scoreObjs.reduce(mapToNumberField, {})
     const savingThrowFields = Object.keys(saves).reduce(
       (obj, key) => ({
         ...obj,

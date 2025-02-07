@@ -3,12 +3,11 @@
  */
 
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
+import BAGSApplication from "../common/app.mjs"
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api
 
-export default class BAGSCharacterClassDetailsEditor extends HandlebarsApplicationMixin(
-  ApplicationV2,
-) {
+export default class BAGSCharacterClassDetailsEditor extends BAGSApplication {
   document
 
   constructor(options = {}) {
@@ -50,12 +49,6 @@ export default class BAGSCharacterClassDetailsEditor extends HandlebarsApplicati
   }
 
   static PARTS = {
-    header: {
-      template: `${SYSTEM_TEMPLATE_PATH}/common/header.hbs`,
-    },
-    "tab-navigation": {
-      template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
-    },
     description: {
       template: `${this.TEMPLATE_ROOT}/description.edit.hbs`,
     },

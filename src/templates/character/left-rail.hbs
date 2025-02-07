@@ -1,57 +1,71 @@
 <section class="left-rail">
   {{#each classes}}
-  <article class="character-class" aria-label="Level {{system.level}} {{name}}">
-      <img src="{{img}}" class="document-art" alt="" />
-      <div class="character-details">
-        <span>{{name}}</span>
-        <uft-character-info-meter value="{{xpBar.current}}" max="{{xpBar.max}}" class="xp">
-          <!--i slot="icon" class="fa fa-trophy-star"></i-->
-          <span slot="icon">{{system.level}}</span>
-        </uft-character-info-meter>
-      </div>
-    </article>
-  {{else}}
-    <p>Unclassed</p>
+  <article
+    class="character-class"
+    aria-label="Level {{system.level}} {{name}}"
+  >
+    <img
+      src="{{img}}"
+      class="document-art"
+      alt=""
+    />
+    <div class="character-details">
+      <span>Lv. {{system.level}} {{name}}</span>
+      <uft-character-info-meter
+        value="{{xpBar.current}}"
+        max="{{xpBar.max}}"
+        class="xp"
+      ></uft-character-info-meter>
+    </div>
+  </article>
   {{/each}}
   <article class="meters">
-    <uft-character-info-meter value="{{actor.system.hp.value}}" max="{{actor.system.hp.max}}" class="hp">
-      <i slot="icon" class="fa fa-heart"></i>
+    <uft-character-info-meter
+      value="{{actor.system.hp.value}}"
+      max="{{actor.system.hp.max}}"
+      class="hp"
+    >
+      <i
+        slot="icon"
+        class="fa fa-heart"
+      ></i>
     </uft-character-info-meter>
 
     {{{ encumbranceMeter }}}
-
   </article>
   <div class="character-tiles scrollable">
     <dl>
       {{#if usesDescendingAC}}
-        <dt>THAC0</dt>
-        <dd>{{actor.system.thac0}}</dd>
+      <dt>THAC0</dt>
+      <dd>{{actor.system.thac0}}</dd>
       {{else}}
-        <dt>Attack Bonus</dt>
-        <dd>{{signNumber actor.system.baseAttackBonus forceSign=true}}</dd>
+      <dt>Attack Bonus</dt>
+      <dd>{{signNumber actor.system.baseAttackBonus forceSign=true}}</dd>
       {{/if}}
 
       <dt>Armor Class</dt>
       <dd>{{actor.system.armorClass}}</dd>
 
       <dt class="movement">Movement</dt>
-      <dd>{{actor.system.speed.exploration}}/{{actor.system.speed.encounter}}/{{actor.system.speed.overland}}</dd>
+      <dd>
+        {{actor.system.speed.exploration}}/{{actor.system.speed.encounter}}/{{actor.system.speed.overland}}
+      </dd>
     </dl>
 
     <div class="combat">
       <header>
-      <h3>Modifiers</h3>
-      <span>Atk</span>
-      <span>Dmg</span>
+        <h3>Modifiers</h3>
+        <span>Atk</span>
+        <span>Dmg</span>
       </header>
 
       <dl>
-      <dt>Melee</dt>
-      <dd>{{signNumber actor.system.meleeAttackBonus forceSign=true}}</dd>
-      <dd>{{signNumber actor.system.meleeDamageBonus forceSign=true}}</dd>
-      <dt>Missile</dt>
-      <dd>{{signNumber actor.system.missileAttackBonus forceSign=true}}</dd>
-      <dd>{{signNumber actor.system.missileDamageBonus forceSign=true}}</dd>
+        <dt>Melee</dt>
+        <dd>{{signNumber actor.system.meleeAttackBonus forceSign=true}}</dd>
+        <dd>{{signNumber actor.system.meleeDamageBonus forceSign=true}}</dd>
+        <dt>Missile</dt>
+        <dd>{{signNumber actor.system.missileAttackBonus forceSign=true}}</dd>
+        <dd>{{signNumber actor.system.missileDamageBonus forceSign=true}}</dd>
       </dl>
     </div>
 
@@ -59,8 +73,8 @@
       <h3>Ability Scores</h3>
       <dl>
         {{#each actor.system.schema.fields.base.fields.abilityScores}}
-          <dt>{{localize this.label }}</dt>
-          <dd>{{lookup ../this.actor.system.base.abilityScores name}}</dd>
+        <dt>{{localize this.label }}</dt>
+        <dd>{{lookup ../this.actor.system.base.abilityScores name}}</dd>
         {{/each}}
       </dl>
     </div>
@@ -68,26 +82,32 @@
     <div class="defenses">
       <h3>Saving Throws</h3>
       <dl>
-        {{!--
-          TODO: Use the values from saving throw settings
-        --}}
         {{#each savingThrowLocaleStrings as |save key|}}
-          <dt>{{localize save.short}}</dt>
-          <dd>{{lookup ../actor.system.savingThrows key}}</dd>
+        <dt>{{localize save.short}}</dt>
+        <dd>{{lookup ../actor.system.savingThrows key}}</dd>
         {{/each}}
         <dt>Bonus vs. Magic</dt>
-        <dd>{{signNumber actor.system.abilityScores.wis.magicSave forceSign=true}}</dd>
+        <dd>
+          {{signNumber actor.system.abilityScores.wis.magicSave forceSign=true}}
+        </dd>
       </dl>
     </div>
   </div>
   <div class="character-tiles">
     <h3>Actions</h3>
     <ul class="character-actions">
-    {{#each actor.system.actions}}
-      <li data-tooltip="{{name}}" data-action="use-character-action" data-action-id="{{id}}">
-      <img src="{{img}}" alt="{{localize name}}" />
+      {{#each actor.system.actions}}
+      <li
+        data-tooltip="{{name}}"
+        data-action="use-character-action"
+        data-action-id="{{id}}"
+      >
+        <img
+          src="{{img}}"
+          alt="{{localize name}}"
+        />
       </li>
-    {{/each}}
+      {{/each}}
     </ul>
   </div>
 </section>

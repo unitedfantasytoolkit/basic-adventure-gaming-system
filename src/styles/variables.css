@@ -18,42 +18,58 @@
     --font-style-document-name: normal;
 
     /* === Miscellaneous ==================================================== */
-    --color: #f00;
-  }
-
-  .application {
     --border-color: #b78846 !important;
+    --document-icon-size: 32px;
+
+    /* === Applications ===================================================== */
+    --application-content-padding: 0.5rem;
+    --application-header-padding: 0.5rem 1rem;
+    --application-filler-gradient: linear-gradient(
+      15deg,
+      #0d0e23 20%,
+      #3c5063 100%
+    );
+    --application-header-banner: var(--application-filler-gradient);
+
+    /* === Item Grids ====== */
+
+    --item-grid-cell-size: var(--document-icon-size);
+    --item-grid-cell-gap: 4px;
+    --item-grid-cell-padded-size: calc(
+      var(--item-grid-cell-size) + var(--item-grid-cell-gap)
+    );
+    --item-grid-empty-cell-image: url("data:image/svg+xml,%3Csvg width='36' height='36' viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='2' y='2' width='32' height='32' fill='none' stroke='%238B4513' stroke-width='1' rx='4' ry='4'/%3E%3C/svg%3E");
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+    transform-origin: 50% 50%;
   }
 
-  @keyframes shake {
-    0%,
-    100% {
-      transform: rotate(0deg);
-      transform-origin: 50% 50%;
-    }
+  10% {
+    transform: rotate(1deg);
+  }
 
-    10% {
-      transform: rotate(1deg);
-    }
+  20%,
+  40%,
+  60% {
+    transform: rotate(-2deg);
+  }
 
-    20%,
-    40%,
-    60% {
-      transform: rotate(-2deg);
-    }
+  30%,
+  50%,
+  70% {
+    transform: rotate(2deg);
+  }
 
-    30%,
-    50%,
-    70% {
-      transform: rotate(2deg);
-    }
+  80% {
+    transform: rotate(-1deg);
+  }
 
-    80% {
-      transform: rotate(-1deg);
-    }
-
-    90% {
-      transform: rotate(1deg);
-    }
+  90% {
+    transform: rotate(1deg);
   }
 }

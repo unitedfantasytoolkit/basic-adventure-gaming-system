@@ -4,7 +4,7 @@
 
 const { NumberField } = foundry.data.fields
 
-const mapToNumberField = (obj, [key, { label, hint }]) => ({
+export default (obj, [key, { label, hint }]) => ({
   ...obj,
   [key]: new NumberField({
     min: 0,
@@ -15,5 +15,3 @@ const mapToNumberField = (obj, [key, { label, hint }]) => ({
     hint,
   }),
 })
-
-export default mapToNumberField

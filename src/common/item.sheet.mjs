@@ -117,9 +117,9 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   static get PARTS() {
     return {
       ...this.TAB_PARTS,
-      "tab-navigation": {
-        template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
-      },
+      // "tab-navigation": {
+      //   template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
+      // },
     }
   }
 
@@ -180,14 +180,39 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   async _renderFrame(options) {
     const frame = await super._renderFrame(options)
     this.#reorganizeHeaderElements(frame)
+    this.#addTabsToFrame(frame)
     return frame
+  }
+
+  #addTabsToFrame(frame) {
+    const tabContainer = document.createElement("nav")
+    tabContainer.classList.value = "application__tab-navigation sheet-tabs tabs"
+    tabContainer.ariaRole = game.i18n.localize("SHEETS.FormNavLabel")
+
+    this.constructor.TABS.forEach((t) => {
+      const btn = document.createElement("button")
+      btn.dataset.action = "tab"
+      btn.dataset.group = t.group
+      btn.dataset.tab = t.id
+      btn.dataset.tooltip = game.i18n.localize(t.label)
+      btn.ariaLabel = game.i18n.localize(t.label)
+      if (t.disabled) btn.disabled = true
+
+      const icon = document.createElement("i")
+      icon.classList.value = t.icon
+
+      btn.appendChild(icon)
+      tabContainer.appendChild(btn)
+    })
+
+    frame.appendChild(tabContainer)
   }
 
   /**
    * Given the window's frame, mutate its header to make it easier to style.
    * @param {HTMLElement} frame - The window frame
    */
-  async #reorganizeHeaderElements(frame) {
+  #reorganizeHeaderElements(frame) {
     const header = frame.querySelector(".window-header")
     const title = frame.querySelector(".window-title")
 
@@ -283,5 +308,57 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
         cssClass: active ? "active" : "",
       }
     })
+  }
+
+  /**
+   * Change the active tab within a tab group in this Application instance.
+   * @param {string} tab        The name of the tab which should become active
+   * @param {string} group      The name of the tab group which defines the set of tabs
+   * @param {object} [options]  Additional options which affect tab navigation
+   * @param {Event} [options.event]                 An interaction event which caused the tab change, if any
+   * @param {HTMLElement} [options.navElement]      An explicit navigation element being modified
+   * @param {boolean} [options.force=false]         Force changing the tab even if the new tab is already active
+   * @param {boolean} [options.updatePosition=true] Update application position after changing the tab?
+   * @override
+   */
+  changeTab(
+    tab,
+    group,
+    { event, navElement, force = false, updatePosition = true } = {},
+  ) {
+    if (!tab || !group)
+      throw new Error("You must pass both the tab and tab group identifier")
+    if (this.tabGroups[group] === tab && !force) return // No change necessary
+    const tabElement = this.element.querySelector(
+      `.tabs [data-group="${group}"][data-tab="${tab}"]`,
+    )
+    if (!tabElement)
+      throw new Error(
+        `No matching tab element found for group "${group}" and tab "${tab}"`,
+      )
+
+    // Update tab navigation
+    for (const t of this.element.querySelectorAll(
+      `.tabs [data-group="${group}"]`,
+    )) {
+      t.classList.toggle("active", t.dataset.tab === tab)
+      if (t instanceof HTMLButtonElement)
+        t.ariaPressed = `${t.dataset.tab === tab}`
+    }
+
+    // Update tab contents
+    for (const section of this.element.querySelectorAll(
+      `.tab[data-group="${group}"]`,
+    )) {
+      section.classList.toggle("active", section.dataset.tab === tab)
+    }
+    this.tabGroups[group] = tab
+
+    // Update automatic width or height
+    if (!updatePosition) return
+    const positionUpdate = {}
+    if (this.options.position.width === "auto") positionUpdate.width = "auto"
+    if (this.options.position.height === "auto") positionUpdate.height = "auto"
+    if (!foundry.utils.isEmpty(positionUpdate)) this.setPosition(positionUpdate)
   }
 }

@@ -12,12 +12,11 @@
   --meter-height: calc(1em - var(--meter-padding) * 2);
 }
 
-:host:has(:host(i)) {
-  color: #f00;
-}
-
-:host(i) {
-  font-size: 0.8em;
+.icon {
+  width: 3ch;
+  text-align: center;
+  font-size: 0.9em;
+  line-height: 1;
 }
 
 .value {
@@ -62,19 +61,16 @@
   border-width: calc(var(--meter-height) / 2);
   border-style: solid;
   height: 0;
-  width:
-    calc(
-      var(--meter-fill-pct) - var(--meter-padding) - var(--meter-height)
-    );
+  width: calc(
+    var(--meter-fill-pct) - var(--meter-padding) - var(--meter-height)
+  );
   top: 2px;
   left: calc(var(--meter-padding));
   border-radius: var(--meter-radius-inner);
 
   /* --- Color --- */
-  border-color:
-    var(--meter-color-highlight) var(--meter-color-midtone)
+  border-color: var(--meter-color-highlight) var(--meter-color-midtone)
     var(--meter-color-shadow) var(--meter-color-midtone);
-  outline:
-    var(--meter-edge-highlight-width) solid
+  outline: var(--meter-edge-highlight-width) solid
     var(--meter-color-edge-highlight);
 }

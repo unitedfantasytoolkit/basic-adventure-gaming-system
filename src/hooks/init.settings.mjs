@@ -19,8 +19,6 @@ Hooks.once("init", async () => {
     ([_, category]) => {
       const components = systemRegistry.getAll(category)
       const choices = Object.fromEntries(components.map((c) => [c.id, c.name]))
-      if (category === CONFIG.BAGS.SystemRegistry.categories.CHARACTER_ACTIONS)
-        console.info(components)
 
       game.settings.register(SYSTEM_NAME, `selected${category}`, {
         name: `BAGS.Settings.Rules.${category}.Name`,

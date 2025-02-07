@@ -1,36 +1,53 @@
 .application--character-sheet {
-  --application-height: 640px;
+  /* .window-header { */
 
-  min-width: 220px;
+  /* background: transparent; */
 
-  .window-header {
-    background: transparent;
-    overflow: visible;
-    z-index: 1;
-    position: relative;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--border-color) !important;
+  /* overflow: visible; */
 
-    h1,
-    .window-buttons {
-      flex: 1;
-    }
+  /* z-index: 1; */
 
-    img {
-      width: 4em;
-      height: 4em;
-      object-fit: cover;
-      position: absolute;
-      left: 50%;
-      translate: -50% -1em;
-    }
+  /* position: relative; */
 
-    .window-buttons {
-      display: flex;
-      gap: 0.5em;
-      justify-content: flex-end;
-    }
-  }
+  /* justify-content: space-between; */
+
+  /* border-bottom: 1px solid var(--border-color) !important; */
+
+  /* h1, */
+
+  /* .window-buttons { */
+
+  /* flex: 1; */
+
+  /* } */
+
+  /* img { */
+
+  /* width: 4em; */
+
+  /* height: 4em; */
+
+  /* object-fit: cover; */
+
+  /* position: absolute; */
+
+  /* left: 50%; */
+
+  /* translate: -50% -1em; */
+
+  /* } */
+
+  /* .window-buttons { */
+
+  /* display: flex; */
+
+  /* gap: 0.5em; */
+
+  /* justify-content: flex-end; */
+
+  /* } */
+
+  /* } */
 
   uft-character-info-meter {
     &.hp {
@@ -62,168 +79,166 @@
     grid-template-columns: minmax(210px, 1fr) 2fr;
     padding: 0 !important;
     overflow: hidden !important;
+  }
 
-    .left-rail {
-      position: relative;
+  .left-rail {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: var(--window-content-padding) 1rem var(--window-content-padding)
+      var(--window-content-padding);
+    background-image: url("assets/sheets/background-texture.webp"),
+      var(--application-filler-gradient);
+    background-blend-mode: multiply;
+    overflow: hidden;
+    height: 100%;
+
+    &::after {
+      content: "";
+      width: 2px;
+      background-image: linear-gradient(
+        to bottom,
+
+        var(--border-color) 80%,
+        transparent 100%
+      );
+      position: absolute;
+
+      /* top: 2rem; */
+      top: 0;
+      bottom: 2rem;
+      right: -1px;
+    }
+  }
+
+  .character-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, var(--document-icon-size));
+    gap: 1em;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .character-class {
+    --art-size: 40px;
+
+    display: grid;
+    grid-template-columns: var(--art-size) 1fr;
+    gap: 1em;
+
+    .document-art {
+      width: var(--art-size);
+      height: var(--art-size);
+      border: 2px solid var(--border-color);
+      border-radius: var(--art-size);
       display: flex;
-      flex-direction: column;
-      gap: 1em;
-      padding: var(--window-content-padding) 1rem var(--window-content-padding)
-        var(--window-content-padding);
-      background-image: url("assets/sheets/background-texture.webp"),
-        var(--application-filler-gradient);
-      background-blend-mode: multiply;
+      align-items: center;
+      background: var(--background);
       overflow: hidden;
-      height: 100%;
-
-      &::after {
-        content: "";
-        width: 2px;
-        background-image: linear-gradient(
-          to bottom,
-
-          var(--border-color) 80%,
-          transparent 100%
-        );
-        position: absolute;
-
-        /* top: 2rem; */
-        top: 0;
-        bottom: 2rem;
-        right: -1px;
-      }
+      object-fit: cover;
     }
 
-    .character-actions {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, 32px);
-      gap: 1em;
-      padding: 0;
-      margin: 0;
-      list-style: none;
+    .class-level {
+      display: inline-block;
+      border: 2px solid var(--border-color);
+      border-radius: 1em;
+      width: 2ch;
     }
 
-    .character-class {
-      --art-size: 40px;
-
-      display: grid;
-      grid-template-columns: var(--art-size) 1fr;
-      gap: 1em;
-
-      .document-art {
-        width: var(--art-size);
-        height: var(--art-size);
-        border: 2px solid var(--border-color);
-        border-radius: var(--art-size);
-        display: flex;
-        align-items: center;
-        background: var(--background);
-        overflow: hidden;
-        object-fit: cover;
-      }
-
-      .class-level {
-        display: inline-block;
-        border: 2px solid var(--border-color);
-        border-radius: 1em;
-        width: 2ch;
-      }
-
-      .character-details {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5em;
-      }
-
-      h2 {
-        margin: 0;
-        padding: 0;
-        text-align: left;
-      }
-    }
-
-    .meters {
+    .character-details {
       display: flex;
       flex-direction: column;
       gap: 0.5em;
     }
 
-    .character-tiles {
-      --character-info-columns: 1fr 12ch;
-
-      h3 {
-        font-family: var(--font-primary);
-        font-size: 1rem;
-        opacity: 0.8;
-        font-variant: small-caps;
-        text-transform: lowercase;
-        margin: 0;
-      }
-
-      dl {
-        display: grid;
-        gap: 0.1em 0.5em;
-        margin: 0 0 0.5em;
-        grid-template-columns: var(--character-info-columns);
-
-        dd,
-        dt {
-          margin: 0;
-        }
-
-        dd {
-          text-align: right;
-        }
-      }
-
-      div {
-        --character-info-columns: 1fr 6ch;
-
-        &:has(header) {
-          --character-info-columns: 1fr 6ch 6ch;
-
-          header {
-            display: grid;
-            grid-template-columns: var(--character-info-columns);
-            gap: 0.5em;
-
-            span {
-              text-align: right;
-              font-family: var(--font-primary);
-              font-size: 1rem;
-              opacity: 0.8;
-              font-variant: small-caps;
-              text-transform: lowercase;
-              margin: 0;
-            }
-          }
-
-          h3 {
-            text-align: left;
-          }
-
-          dl {
-            display: grid;
-            grid-template-columns: var(--character-info-columns);
-            gap: 0 0.5em;
-          }
-        }
-      }
-
-      &:has(dt.movement) {
-        --character-info-columns: 1fr max-content;
-      }
+    h2 {
+      margin: 0;
+      padding: 0;
+      text-align: left;
     }
   }
 
-  .character-sheet {
-    &-inventory {
-      search {
-        display: flex;
-        align-items: center;
-        padding-inline: 8px;
-        gap: 8px;
+  .meters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+  }
+
+  .character-tiles {
+    --character-info-columns: 1fr 12ch;
+
+    h3 {
+      font-family: var(--font-primary);
+      font-size: 1rem;
+      opacity: 0.8;
+      font-variant: small-caps;
+      text-transform: lowercase;
+      margin: 0;
+    }
+
+    dl {
+      display: grid;
+      gap: 0.1em 0.5em;
+      margin: 0 0 0.5em;
+      grid-template-columns: var(--character-info-columns);
+
+      dd,
+      dt {
+        margin: 0;
       }
+
+      dd {
+        text-align: right;
+      }
+    }
+
+    div {
+      --character-info-columns: 1fr 6ch;
+
+      &:has(header) {
+        --character-info-columns: 1fr 6ch 6ch;
+
+        header {
+          display: grid;
+          grid-template-columns: var(--character-info-columns);
+          gap: 0.5em;
+
+          span {
+            text-align: right;
+            font-family: var(--font-primary);
+            font-size: 1rem;
+            opacity: 0.8;
+            font-variant: small-caps;
+            text-transform: lowercase;
+            margin: 0;
+          }
+        }
+
+        h3 {
+          text-align: left;
+        }
+
+        dl {
+          display: grid;
+          grid-template-columns: var(--character-info-columns);
+          gap: 0 0.5em;
+        }
+      }
+    }
+
+    &:has(dt.movement) {
+      --character-info-columns: 1fr max-content;
+    }
+  }
+
+  .character-sheet-inventory {
+    search {
+      display: flex;
+      align-items: center;
+      padding-inline: 8px;
+      gap: 8px;
     }
   }
 }

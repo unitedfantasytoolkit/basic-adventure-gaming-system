@@ -39,7 +39,9 @@ export default class CharacterInfoMeter extends BaseElement {
     if (this.#progress === 0) meterClasses.push("meter--empty");
     if (this.#progress === 100) meterClasses.push("meter--full");
     return html`
-      <slot name="icon"></slot>
+      <div class="icon">
+        <slot name="icon"></slot>
+      </div>
       <div class="${meterClasses.join(" ")}" style="--meter-fill-pct: ${this.#progress}%">
         <span class="value">${this.#value}/${this.#max}</span>
       </div>

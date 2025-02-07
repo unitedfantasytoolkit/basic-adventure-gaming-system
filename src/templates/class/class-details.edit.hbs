@@ -1,97 +1,61 @@
-<section class="tab region-{{tab.id}} {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+<section
+  class="tab region-{{tab.id}} {{tab.cssClass}}"
+  data-tab="{{tab.id}}"
+  data-group="{{tab.group}}"
+>
   <header class="tab__header">
     <h2>{{localize "BAGS.CharacterClass.Tabs.Information"}}</h2>
   </header>
-  
+
   <div class="control control--details">
     {{formGroup item.system.schema.fields.hitDieSize}}
     <div class="form-group">
       <label>{{localize "BAGS.CharacterClass.FIELDS.gearTable.label"}}</label>
-      {{#unless item.system.gearTable}}
-      {{formInput item.system.schema.fields.gearTable}}
-      {{else}}
+      {{#unless item.system.gearTable}} {{formInput
+      item.system.schema.fields.gearTable}} {{else}}
       <div class="form-fields">
         {{{formattedSystem.gearTable}}}
-        <button type="button" class="delete-button remove-gear-table" data-tooltip="Remove gear table"
-          aria-label="Remove gear table"><i class="fas fa-x"></i></button>
+        <button
+          type="button"
+          class="delete-button remove-gear-table"
+          data-tooltip="Remove gear table"
+          aria-label="Remove gear table"
+        >
+          <i class="fas fa-x"></i>
+        </button>
       </div>
-    {{/unless}}
+      {{/unless}}
     </div>
     <p class="hint">{{localize "BAGS.CharacterClass.FIELDS.gearTable.hint"}}</p>
   </div>
 
-  {{formGroup systemFields.weapons}}
-  {{formGroup systemFields.armor}}
+  {{formGroup systemFields.weapons}} {{formGroup systemFields.armor}}
   {{formGroup systemFields.languages}}
-  </div>
 
   <div class="control control--requisite-grid">
-    {{!-- First row --}}
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.AbilityScores.Strength.Short"
-      }}</span>
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.AbilityScores.Intelligence.Short"
-      }}</span>
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.AbilityScores.Wisdom.Short"
-      }}</span>
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.AbilityScores.Dexterity.Short"
-      }}</span>
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.AbilityScores.Constitution.Short"
-      }}</span>
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.AbilityScores.Charisma.Short"
-      }}</span>
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.CharacterClass.Information.PrimeRequisiteInclusivity"
-      }}</span>
+    {{!-- First row --}} {{#each systemFields.fullPrimeRequisites.fields}}
+    <span class="requisite-grid__stat-label">{{localize label}}</span>
+    {{/each}}
+    <span class="requisite-grid__stat-label"
+      >{{localize "BAGS.CharacterClass.Information.PrimeRequisiteInclusivity"
+      }}</span
+    >
 
     {{!-- Second row --}}
-    <span class="requisite-grid__heading">{{localize
-      "BAGS.CharacterClass.Information.HalfPrimeRequisites"
-      }}</span>
-    {{formInput
-      systemFields.halfPrimeRequisites.fields.str
-      value=item.system.halfPrimeRequisites.fields.str
-      }}
-    {{formInput
-      systemFields.halfPrimeRequisites.fields.int
-      value=item.system.halfPrimeRequisites.fields.int
-      }}
-    {{formInput
-      systemFields.halfPrimeRequisites.fields.wis
-      value=item.system.halfPrimeRequisites.fields.wis
-      }}
-    {{formInput
-      systemFields.halfPrimeRequisites.fields.dex
-      value=item.system.halfPrimeRequisites.fields.dex
-      }}
-    {{formInput
-      systemFields.halfPrimeRequisites.fields.con
-      value=item.system.halfPrimeRequisites.fields.con
-      }}
-    {{formInput
-      systemFields.halfPrimeRequisites.fields.cha
-      value=item.system.halfPrimeRequisites.fields.cha
-      }}
-    {{formInput
-      systemFields.halfPrimeRequisites.fields.isAnd
-      value=item.system.halfPrimeRequisites.fields.isAnd
-      }}
+    <span class="requisite-grid__heading"
+      >{{localize "BAGS.CharacterClass.Information.HalfPrimeRequisites" }}</span
+    >
 
-    {{!-- Third row --}}
-    <span class="requisite-grid__heading">{{localize
-      "BAGS.CharacterClass.Information.FullPrimeRequisites"
-      }}</span>
-    {{formInput systemFields.fullPrimeRequisites.fields.str }}
-    {{formInput systemFields.fullPrimeRequisites.fields.int }}
-    {{formInput systemFields.fullPrimeRequisites.fields.wis }}
-    {{formInput systemFields.fullPrimeRequisites.fields.dex }}
-    {{formInput systemFields.fullPrimeRequisites.fields.con }}
-    {{formInput systemFields.fullPrimeRequisites.fields.cha }}
-    {{formInput systemFields.fullPrimeRequisites.fields.isAnd }}
+    {{#each systemFields.halfPrimeRequisites.fields as |field key| }}
+    {{formInput field value=(lookup ../item.system.halfPrimeRequisites.fields
+    key) }} {{/each}} {{formInput systemFields.halfPrimeRequisites.fields.isAnd
+    }} {{!-- Third row --}}
+    <span class="requisite-grid__heading"
+      >{{localize "BAGS.CharacterClass.Information.FullPrimeRequisites" }}</span
+    >
+    {{#each systemFields.halfPrimeRequisites.fields as |field key| }}
+    {{formInput field value=(lookup ../item.system.halfPrimeRequisites.fields
+    key) }} {{/each}} {{formInput systemFields.fullPrimeRequisites.fields.isAnd
+    }}
   </div>
 </section>
