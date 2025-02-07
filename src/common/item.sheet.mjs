@@ -72,44 +72,29 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
 
   static CSS_CLASSES_CONTENT = []
 
-  static get DEFAULT_OPTIONS() {
-    const controls = this.HEADER_CONTROLS
-    // if (this.DEFAULT_OPTIONS.window)
-    // controls.concat(this.DEFAULT_OPTIONS.window.controls)
-
-    const options = foundry.utils.mergeObject(
-      foundry.applications.sheets.ItemSheetV2.DEFAULT_OPTIONS,
-      {
-        id: "{id}",
-        classes: [
-          "application--bags",
-          "application--sheet",
-          "application--item-sheet",
-          "application--hide-title",
-          // `application--${this.DOCUMENT_TYPE}-sheet`,
-          ...this.CSS_CLASSES_WINDOW,
-        ],
-        controls,
-        window: {
-          minimizable: true,
-          resizable: true,
-          contentTag: "section",
-          contentClasses: this.CSS_CLASSES_CONTENT,
-        },
-        form: {
-          handler: this.save,
-          submitOnChange: true,
-        },
-        actions: {
-          addAction: this._onAddAction,
-          editAction: this._onEditAction,
-          deleteAction: this._onDeleteAction,
-          performAction: this._onPerformAction,
-        },
-      },
-    )
-
-    return options
+  static DEFAULT_OPTIONS = {
+    id: "{id}",
+    classes: [
+      "application--bags",
+      "application--sheet",
+      "application--item-sheet",
+    ],
+    window: {
+      minimizable: true,
+      resizable: true,
+      contentTag: "section",
+      contentClasses: this.CSS_CLASSES_CONTENT,
+    },
+    form: {
+      handler: this.save,
+      submitOnChange: true,
+    },
+    actions: {
+      addAction: this._onAddAction,
+      editAction: this._onEditAction,
+      deleteAction: this._onDeleteAction,
+      performAction: this._onPerformAction,
+    },
   }
 
   static async save(_event, _form, formData) {
@@ -131,14 +116,15 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
 
   static get PARTS() {
     return {
-      header: {
-        template: `${SYSTEM_TEMPLATE_PATH}/common/header.hbs`,
-      },
       ...this.TAB_PARTS,
       "tab-navigation": {
         template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
       },
     }
+  }
+
+  get title() {
+    return this.document.name
   }
 
   /** @override */
@@ -179,37 +165,77 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     }
   }
 
-  _onRender(options) {
-    super._onRender(options)
-    this.element
-      ?.querySelector(".window-content__header")
-      ?.addEventListener("pointerdown", this.delegateDrag.bind(this))
+  /**
+   * Render the outer framing HTMLElement which wraps the inner HTML of
+   * the Application.
+   *
+   * This override modifies the default frame by adding the following:
+   * - an alternative header: the existing elements in the header are moved
+   *   around into a format tha makes more sense for our design.
+   * - tab navigation: if the sheet has tabs, to enforce consistency.
+   * - an effects pane: a common UI for managing active effects on
+   *   actors and items
+   * @param {unknown} options - Options which configure application rendering
+   * behavior. See {RenderOptions} in Foundry's types.
+   * @returns {Promise<HTMLElement>} The updated app frame
+   * @protected
+   * @override
+   */
+  async _renderFrame(options) {
+    const frame = await super._renderFrame(options)
+    this.#reorganizeHeaderElements(frame)
+    return frame
   }
 
-  delegateDrag(event) {
-    event.preventDefault()
-    this.window.header.dispatchEvent(
-      new PointerEvent("pointerdown", {
-        bubbles: true,
-        cancellable: true,
-        clientX: event.clientX,
-        clientY: event.clientY,
-        pointerId: event.pointerId,
-        pointerType: event.pointerType,
-      }),
-    )
-  }
+  /**
+   * Given the window's frame, mutate its header to make it easier to style.
+   * @param {HTMLElement} frame - The window frame
+   */
+  async #reorganizeHeaderElements(frame) {
+    const header = frame.querySelector(".window-header")
+    const title = frame.querySelector(".window-title")
 
-  _onClickAction(event, target) {
-    const { action } = target.dataset
+    const buttons = header.querySelectorAll("button")
 
-    if (!action) return
+    const buttonContainer = document.createElement("div")
+    buttonContainer.classList.add("window-buttons")
 
-    switch (action) {
-      default:
-        super._onClickAction(event, target)
-        break
+    const titleAreaContainer = document.createElement("div")
+    titleAreaContainer.classList.add("window-header__content")
+
+    const actorArt = document.createElement("img")
+    actorArt.src = this.document.img
+
+    buttons.forEach((b) => buttonContainer.appendChild(b))
+
+    titleAreaContainer.appendChild(actorArt)
+    titleAreaContainer.appendChild(title)
+
+    header.appendChild(buttonContainer)
+
+    // if (this.document.system.actions) {
+    //   const actionMenu = document.createElement("menu")
+    //   actionMenu.classList.add("window-header__actions")
+    //   this.document.system.actions.forEach((a) => {
+    //     const actionArt = document.createElement("img")
+    //     actionArt.src = a.img
+    //     const listItem = document.createElement("li")
+    //     listItem.dataset.actionId = a.id
+    //     listItem.dataset.tooltip = a.name
+
+    //     listItem.appendChild(actionArt)
+    //     actionMenu.appendChild(listItem)
+    //   })
+    //   titleAreaContainer.appendChild(actionMenu)
+    // }
+
+    if (this.document.system.banner) {
+      const banner = document.createElement("img")
+      banner.src = this.document.system.banner
+      header.appendChild(banner)
     }
+
+    header.appendChild(titleAreaContainer)
   }
 
   static async _onAddAction() {
@@ -238,13 +264,6 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
 
     const action = this.document.system.actions.find((a) => a.id === actionId)
     await this.document.resolveAction(action)
-    // const resolver = new ActionResolver(
-    //   action,
-    //   this.document,
-    //   this.document.parent,
-    //   game.user.targets,
-    // )
-    // const resolved = await resolver.resolve()
   }
 
   tabGroups = {

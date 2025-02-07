@@ -5,16 +5,6 @@
 import PhysicalItemDataMixin from "./item-physical-data-model.mjs"
 import { actionsFactory } from "../common/action.fields.mjs"
 
-const {
-  StringField,
-  DocumentUUIDField,
-  HTMLField,
-  FilePathField,
-  BooleanField,
-  NumberField,
-  SchemaField,
-} = foundry.data.fields
-
 export default class BAGSItemWeaponDataModel extends PhysicalItemDataMixin({
   actions: actionsFactory(),
 }) {

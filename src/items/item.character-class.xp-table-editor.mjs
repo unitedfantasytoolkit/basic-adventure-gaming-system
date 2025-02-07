@@ -4,12 +4,12 @@
 
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
+import BAGSApplication from "../common/app.mjs"
+
 const { HandlebarsApplicationMixin, ApplicationV2, DialogV2 } =
   foundry.applications.api
 
-export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicationMixin(
-  ApplicationV2,
-) {
+export default class BAGSCharacterClassXPTableEditor extends BAGSApplication {
   document
 
   constructor(options = {}) {
@@ -20,11 +20,7 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
   // === Application Setup =====================================================
   static DEFAULT_OPTIONS = {
     id: "xp-table-editor-{id}",
-    classes: [
-      "application--xp-table-editor",
-      "application--bags",
-      "application--hide-title",
-    ],
+    classes: ["application--xp-table-editor", "application--bags"],
     tag: "form",
     window: {
       frame: true,
@@ -63,9 +59,6 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
   }
 
   static PARTS = {
-    header: {
-      template: `${SYSTEM_TEMPLATE_PATH}/common/header.hbs`,
-    },
     "tab-navigation": {
       template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
     },
@@ -84,8 +77,7 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
   }
 
   tabGroups = {
-    // sheet: "xp-table",
-    sheet: "resources",
+    sheet: "xp-table",
   }
 
   /**
@@ -123,10 +115,8 @@ export default class BAGSCharacterClassXPTableEditor extends HandlebarsApplicati
   // --- UI Element Overrides --------------------------------------------------
   /** @override */
   get title() {
-    const { constructor: cls, id, name, type } = this.document
-    const prefix = cls.hasTypeData
-      ? CONFIG[cls.documentName].typeLabels[type]
-      : cls.metadata.label
+    const { id, name } = this.document
+
     return `${game.i18n.localize("BAGS.CharacterClass.XPTable.EditorTitle")}: ${name ?? id}`
   }
 

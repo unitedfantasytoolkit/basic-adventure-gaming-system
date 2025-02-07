@@ -1,4 +1,120 @@
-.application--bags {
+.application--bags:not(.minimized, .application--character-sheet)
+  .window-header {
+  position: relative;
+  display: block;
+  overflow: clip visible;
+
+  &:not(:has(.window-content__banner)) {
+    padding: var(--window-content-header-padding);
+    background-image: var(--header-banner);
+
+    &::after {
+      content: "";
+      height: 2px;
+      background-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--border-color) 20%,
+        var(--border-color) 80%,
+        transparent 100%
+      );
+      position: absolute;
+      left: 2rem;
+      right: 2rem;
+      bottom: -1px;
+    }
+  }
+
+  &:has(.window-content__banner) {
+    & > section {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      article {
+        img {
+          box-shadow: unset;
+        }
+      }
+    }
+
+    & > img {
+      mask-image: linear-gradient(
+        to bottom,
+        rgb(0 0 0 / 100%),
+        rgb(0 0 0 / 0%)
+      );
+    }
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+
+    > img {
+      height: 3rem;
+      object-fit: contain;
+      align-items: center;
+      background: var(--background);
+      border: 1px solid var(--border-color);
+      border-radius: 0.25rem;
+      display: flex;
+      overflow: hidden;
+      width: var(--art-size);
+    }
+
+    .window-title {
+      margin: 0;
+      text-align: center;
+      line-height: 1.1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: var(--font-h2-size);
+      font-family: var(--font-h1);
+    }
+  }
+
+  .window-icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .window-buttons {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .controls-dropdown {
+    z-index: 5;
+  }
+
+  &__actions {
+    display: flex;
+    list-style: none;
+    position: absolute;
+    bottom: -1rem;
+    left: 50%;
+    translate: -50% 0;
+    z-index: 1;
+
+    li {
+      img {
+        width: 2rem;
+        height: 2rem;
+        object-fit: contain;
+        border: 1px solid #fff;
+        border-radius: 0.25rem;
+      }
+    }
+  }
+
+  /*
   .window-header {
     position: absolute;
     right: 0;
@@ -18,23 +134,21 @@
       cursor: grab;
 
       &:not(:has(.window-content__banner)) {
-        background-image:
-          var(
-            --header-banner,
-            linear-gradient(15deg, #0d0e23 20%, #3c5063 100%)
-          );
+        background-image: var(
+          --header-banner,
+          linear-gradient(15deg, #0d0e23 20%, #3c5063 100%)
+        );
 
         &::after {
           content: "";
           height: 2px;
-          background-image:
-            linear-gradient(
-              90deg,
-              transparent 0%,
-              var(--border-color) 20%,
-              var(--border-color) 80%,
-              transparent 100%
-            );
+          background-image: linear-gradient(
+            90deg,
+            transparent 0%,
+            var(--border-color) 20%,
+            var(--border-color) 80%,
+            transparent 100%
+          );
           position: absolute;
           left: 2rem;
           right: 2rem;
@@ -57,12 +171,11 @@
         }
 
         & > img {
-          mask-image:
-            linear-gradient(
-              to bottom,
-              rgb(0 0 0 / 100%),
-              rgb(0 0 0 / 0%)
-            );
+          mask-image: linear-gradient(
+            to bottom,
+            rgb(0 0 0 / 100%),
+            rgb(0 0 0 / 0%)
+          );
         }
       }
 
@@ -78,9 +191,7 @@
         display: grid;
         gap: 1em;
 
-        /**
-         * @todo Do we really want this text centered?
-         */
+
         align-items: center;
 
         article {
@@ -103,4 +214,5 @@
       }
     }
   }
+  */
 }

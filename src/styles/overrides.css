@@ -3,7 +3,7 @@
   --inner-border-offset: -0.1429rem;
   --border-width: 0.1429rem;
   --window-content-padding: 0.5rem;
-  --window-content-header-padding: 1rem;
+  --window-content-header-padding: 0.5rem 1rem;
   --application-filler-gradient: linear-gradient(
     15deg,
     #0d0e23 20%,

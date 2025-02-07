@@ -220,60 +220,6 @@ export default class BAGSCharacterSheet extends HandlebarsApplicationMixin(
     },
   }
 
-  // /**
-  //  * Prepare an array of form header tabs.
-  //  * @returns {Record<string, Partial<ApplicationTab>>}
-  //  */
-  // #getTabs() {
-  //   const tabs = {
-  //     summary: {
-  //       id: "summary",
-  //       group: "sheet",
-  //       icon: "fa-solid fa-square-list",
-  //       label: "BAGS.CharacterClass.Tabs.Summary",
-  //       cssClass: "tab--summary",
-  //     },
-  //     abilities: {
-  //       id: "abilities",
-  //       group: "sheet",
-  //       icon: "fa-solid fa-tag",
-  //       label: "Abilities",
-  //       cssClass: "tab--advancement",
-  //     },
-  //     inventory: {
-  //       id: "inventory",
-  //       group: "sheet",
-  //       icon: "fa-solid fa-backpack",
-  //       label: "Inventory",
-  //       cssClass: "tab--effects",
-  //     },
-  //     spells: {
-  //       id: "spells",
-  //       group: "sheet",
-  //       icon: "fa-solid fa-sparkle",
-  //       label: "Spell List",
-  //       cssClass: "tab--effects",
-  //     },
-  //     description: {
-  //       id: "description",
-  //       group: "sheet",
-  //       icon: "fa-solid fa-scroll-old",
-  //       label: "Character Identity",
-  //       cssClass: "tab--effects",
-  //     },
-  //   }
-  //
-  //   if (!this.document.itemTypes.spell.length) delete tabs.spells
-  //
-  //   return Object.values(tabs)
-  //     .map((v) => ({
-  //       ...v,
-  //       active: this.tabGroups[v.group] === v.id,
-  //       cssClass: v.active ? "active" : "",
-  //     }))
-  //     .reduce((obj, curr) => ({ ...obj, [curr.id]: curr }), {})
-  // }
-
   get title() {
     return this.actor.name
   }
