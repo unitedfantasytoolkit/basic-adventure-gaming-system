@@ -12,8 +12,6 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
   constructor(options = {}) {
     super(options)
 
-    console.info(this.subApps)
-
     // this.#xpTableEditor = new BAGSCharacterClassXPTableEditor({
     //   document: this.document,
     // })
@@ -22,55 +20,43 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
     // })
   }
 
-  static get DEFAULT_OPTIONS() {
-    return foundry.utils.mergeObject(
-      foundry.applications.sheets.ItemSheetV2.DEFAULT_OPTIONS,
-      {
-        id: "character-class-{id}",
-        classes: [
-          "application--bags",
-          "application--sheet",
-          "application--hide-title",
-          "application--item-sheet",
-          "application--character-class-sheet",
-        ],
-        tag: "form",
-        window: {
-          frame: true,
-          positioned: true,
-          icon: "fa-regular fa-circle-star",
-          // window-icon fa-fw fa-regular fa-game-board
-          controls: [
-            {
-              action: "edit-xp-table",
-              icon: "fa-solid fa-table",
-              label: "BAGS.CharacterClass.XPTable.ActionLabel",
-              ownership: "OWNER",
-            },
-            {
-              action: "edit-details",
-              icon: "fa-solid fa-pencil",
-              label: "BAGS.CharacterClass.Information.ActionLabel",
-              ownership: "OWNER",
-            },
-          ],
-          minimizable: true,
-          resizable: true,
-          contentTag: "section",
-          contentClasses: [],
+  static DEFAULT_OPTIONS = {
+    id: "character-class-{id}",
+    classes: ["application--character-class-sheet"],
+    tag: "form",
+    window: {
+      frame: true,
+      positioned: true,
+      icon: "fa-regular fa-circle-star",
+      // window-icon fa-fw fa-regular fa-game-board
+      controls: [
+        {
+          action: "edit-xp-table",
+          icon: "fa-solid fa-table",
+          label: "BAGS.CharacterClass.XPTable.ActionLabel",
+          ownership: "OWNER",
         },
-        form: {
-          handler: this.save,
-          submitOnChange: true,
+        {
+          action: "edit-details",
+          icon: "fa-solid fa-pencil",
+          label: "BAGS.CharacterClass.Information.ActionLabel",
+          ownership: "OWNER",
         },
-        position: {
-          width: 640,
-          height: 480,
-        },
-      },
-    )
+      ],
+      minimizable: true,
+      resizable: true,
+      contentTag: "section",
+      contentClasses: [],
+    },
+    form: {
+      handler: this.save,
+      submitOnChange: true,
+    },
+    position: {
+      width: 640,
+      height: 480,
+    },
   }
-
   static async save(_event, _form, formData) {
     // console.info(this, event, form, formData);
     await this.document.update(formData.object)
@@ -132,7 +118,7 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
     const gearTable = doc.system.gearTable
       ? await TextEditor.enrichHTML(
           fromUuidSync(doc.system.gearTable)._createDocumentLink(),
-      )
+        )
       : ""
 
     const context = await super._prepareContext(_options)
@@ -200,81 +186,4 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
       cssClass: "tab--effects",
     },
   ]
-  // async _renderFrame(options) {
-  //   let tabNav
-  //   let expandedHeader
-  //   let effectsPane
-  //   const frame = await super._renderFrame(options)
-
-  //   if (Object.keys(this.#getTabs()).length) {
-  //     const tabNavContainer = document.createElement("template")
-  //     tabNavContainer.innerHTML = await renderTemplate(
-  //       `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
-  //       {
-  //         tabs: this.#getTabs(),
-  //       }
-  //     )
-  //     tabNav = tabNavContainer.content.firstElementChild
-  //     console.info(tabNavContainer)
-  //     console.info(tabNav)
-  //     if (tabNav) frame.append(tabNav)
-  //   }
-
-  //   console.info(this.#getTabs(), tabNav)
-
-  //   return frame
-  // }
-
-  /**
-   * Change the active tab within a tab group in this Application instance.
-   *
-   * This override looks for tab content across the whole Application,
-   * rather than solely in the content frame.
-   * @param {string} tab - The name of the tab which should become active
-   * @param {string} group - The name of the tab group which defines the set of tabs
-   * @param {object} [options] - Additional options which affect tab navigation
-   * @param {Event} [options.event] - An interaction event which caused the tab change, if any
-   * @param {HTMLElement} [options.navElement] - An explicit navigation element being modified
-   * @param {boolean} [options.force=false] - Force changing the tab even if the new tab is already active
-   * @param {boolean} [options.updatePosition=true] - Update application position after changing the tab?
-   * @override
-   */
-  // changeTab(
-  //   tab,
-  //   group,
-  //   { event, navElement, force = false, updatePosition = true } = {}
-  // ) {
-  //   if (!tab || !group)
-  //     throw new Error("You must pass both the tab and tab group identifier")
-  //   if (this.tabGroups[group] === tab && !force) return // No change necessary
-  //   const tabElement = this.element.querySelector(
-  //     `.tabs > [data-group="${group}"][data-tab="${tab}"]`
-  //   )
-  //   if (!tabElement)
-  //     throw new Error(
-  //       `No matching tab element found for group "${group}" and tab "${tab}"`
-  //     )
-
-  //   // Update tab navigation
-  //   for (const t of this.element.querySelectorAll(
-  //     `.tabs > [data-group="${group}"]`
-  //   )) {
-  //     t.classList.toggle("active", t.dataset.tab === tab)
-  //   }
-
-  //   // Update tab contents
-  //   for (const section of this.element.querySelectorAll(
-  //     `.tab[data-group="${group}"]`
-  //   )) {
-  //     section.classList.toggle("active", section.dataset.tab === tab)
-  //   }
-  //   this.tabGroups[group] = tab
-
-  //   // Update automatic width or height
-  //   if (!updatePosition) return
-  //   const positionUpdate = {}
-  //   if (this.options.position.width === "auto") positionUpdate.width = "auto"
-  //   if (this.options.position.height === "auto") positionUpdate.height = "auto"
-  //   if (!foundry.utils.isEmpty(positionUpdate)) this.setPosition(positionUpdate)
-  // }
 }

@@ -1,36 +1,32 @@
-<li class="chat-message chat-message--bags chat-message--{{message.type}} message flexcol {{cssClass}}" data-message-id="{{message._id}}">
-  {{> actionHeader}}
+<li
+  class="chat-message chat-message--bags chat-message--{{message.type}} message flexcol {{cssClass}}"
+  data-message-id="{{message._id}}"
+>
+  {{> chatActionHeader}}
 
   <div class="action">
     {{#if (and action.details.flags.usesAttempt (eq action.outcome.length 1))}}
-      {{> actionAttempt}}
-    {{/if}}
+    {{> chatActionAttempt}} {{/if}}
 
     <div class="action__context">
-      {{> actionIcons}}
+      {{> chatActionIcons}}
       <h1>{{localize action.details.name}}</h1>
       {{#if (and action.actor (eq action.outcome.length 1))}}
-        <p class="action__attempt-flavor">
-          {{getActionFlavorText action message}}
-        </p>
+      <p class="action__attempt-flavor">
+        {{getActionFlavorText action message}}
+      </p>
       {{/if}}
     </div>
 
     <div class="action__result">
-      {{#unless (and message.blind (not isGM))}}
-        {{#if (lte action.outcome.length 1)}}
-          {{> actionEffectTargetsNoneOrOne
-            action=action
-          }}
-        {{else}}
-          {{> actionEffectTargetsMany}}
-        {{/if}}
+      {{#unless (and message.blind (not isGM))}} {{#if (lte
+      action.outcome.length 1)}} {{> chatActionEffectTargetsNoneOrOne
+      action=action }} {{else}} {{> chatActionEffectTargetsMany}} {{/if}}
       {{else}}
-        <p class="action__result__flavor action__result__flavor--blind">
-          {{getBlindFlavorText action}}
-        </p>
+      <p class="action__result__flavor action__result__flavor--blind">
+        {{getBlindFlavorText action}}
+      </p>
       {{/unless}}
     </div>
   </div>
-
 </li>

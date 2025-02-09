@@ -38,28 +38,22 @@
 }
 
 .application--action-editor {
+  .roll-fields {
+    display: grid;
+    grid-template-columns: 1fr 10ch 10ch;
+    gap: 0.5em;
+
+    .form-group {
+      flex-direction: column;
+      text-align: left;
+      align-items: start;
+      gap: 0;
+    }
+  }
+
   fieldset {
     legend {
       margin-bottom: -100%;
-    }
-
-    &.attempt-roll {
-      display: grid;
-      grid-template-columns: 1fr 10ch 10ch;
-
-      legend {
-        margin-bottom: -100%;
-      }
-
-      .form-group {
-        flex-direction: column;
-        text-align: left;
-        align-items: start;
-        gap: 0;
-      }
-    }
-
-    &.resistance-roll {
     }
   }
 }

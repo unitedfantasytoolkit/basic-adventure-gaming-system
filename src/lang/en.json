@@ -21,7 +21,8 @@
           "Description": "Description"
         },
         "Attempt": {
-          "Heading": "Attempt Settings"
+          "Heading": "Attempt Settings",
+          "ResultText": "Attempt result text"
         },
         "Effects": {
           "Heading": "Effects",
@@ -39,6 +40,18 @@
         "UsesEffect": {
           "Label": "Has effects",
           "Hint": "This action has effects that the system is able to model, such as healing, damage, or status effects."
+        },
+        "UsesConsumption": {
+          "Label": "Consumes resources",
+          "Hint": "This action uses a resource such as spell slots, item charges, or item quantity."
+        },
+        "UsesRestrictions": {
+          "Label": "Is restricted",
+          "Hint": "This action is restricted by means such as level requirements, having a type of item, etc."
+        },
+        "IsBlind": {
+          "Label": "Is rolled blindly",
+          "Hint": "Players will see that the action was rolled blindly, but will not see the outcome. GMs will always see the outcome of the action."
         }
       },
       "Attempt": {
@@ -67,6 +80,10 @@
             "Hint": "The value to be compared to the roll formula."
           }
         },
+        "AttemptText": {
+          "Label": "Attempt Text",
+          "Hint": "Text displayed in the chat card when this action is attempted."
+        },
         "SuccessText": {
           "Label": "Success Text",
           "Hint": "Text displayed in the chat card for a successful use of this action."
@@ -74,6 +91,10 @@
         "FailText": {
           "Label": "Fail Text",
           "Hint": "Text displayed in the chat card for a failed use of this action."
+        },
+        "BlindText": {
+          "Label": "Blind Text",
+          "Hint": "Text displayed in the chat card on rolls where the result should be ambiguous."
         }
       },
       "Effects": {

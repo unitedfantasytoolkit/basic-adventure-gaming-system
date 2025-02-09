@@ -44,15 +44,14 @@ import "./hooks/setup.ui.mjs"
  */
 Hooks.once("ready", async () => {
   try {
-    // const devAbility = "Item.8T913vV1JM1aVIRT"
-    // const actionItem = await fromUuid(devAbility)
-    // await actionItem.sheet.render(true)
-    // actionItem.resolveAction(actionItem.system.actions[0])
-    //
-    fromUuidSync("Actor.A81XqzmshDo9D55H").sheet.render(true)
+    // fromUuidSync("Actor.A81XqzmshDo9D55H").sheet.render(true)
+    // fromUuidSync("Item.aRxw6uspU4Ipf9xN").sheet.render(true)
+    fromUuidSync("Actor.A81XqzmshDo9D55H.Item.Z2WUBXQlqDJV2m14").sheet.render(
+      true,
+    )
     // fromUuidSync("Item.aRxw6uspU4Ipf9xN").sheet.render(true)
   } catch {
-    // noop -- add your own devAbility UUID above if this breaks
+    // noop -- use your own UUIDs above if this breaks
   }
 
   const src = `http://${(window.location.host || "localhost").split(":")[0]}:9999/livereload.js?snipver=1`

@@ -2,7 +2,6 @@
  * @file The base class for Item sheets in this system.
  */
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
-import BAGSActionEditor from "../common/action-editor.mjs"
 
 const { HandlebarsApplicationMixin } = foundry.applications.api
 
@@ -13,18 +12,6 @@ const { HandlebarsApplicationMixin } = foundry.applications.api
 export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   foundry.applications.sheets.ItemSheetV2,
 ) {
-  static SUB_APPS = {}
-
-  get subApps() {
-    return this.#subApps
-  }
-
-  static get HEADER_CONTROLS() {
-    return []
-  }
-
-  #subApps = {}
-
   constructor(options = {}) {
     super(options)
 
@@ -45,7 +32,47 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     )
   }
 
-  // static DOCUMENT_TYPE = "item"
+  // === App config ============================================================
+
+  get title() {
+    return this.document.name
+  }
+
+  static DEFAULT_OPTIONS = {
+    id: "{id}",
+    classes: [
+      "application--bags",
+      "application--sheet",
+      "application--item-sheet",
+    ],
+    window: {
+      minimizable: true,
+      resizable: true,
+      contentTag: "section",
+    },
+    form: {
+      handler: this.save,
+      submitOnChange: true,
+    },
+    actions: {
+      performAction: this._onPerformAction,
+    },
+    position: {
+      width: 480,
+      height: 400,
+    },
+  }
+
+  // --- Sub apps --------------------------------------------------------------
+  static SUB_APPS = {}
+
+  get subApps() {
+    return this.#subApps
+  }
+
+  #subApps = {}
+
+  // --- Tabs ------------------------------------------------------------------
 
   /**
    * Default tabs that *all* actor sheets should have.
@@ -68,37 +95,11 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     },
   ]
 
-  static CSS_CLASSES_WINDOW = []
-
-  static CSS_CLASSES_CONTENT = []
-
-  static DEFAULT_OPTIONS = {
-    id: "{id}",
-    classes: [
-      "application--bags",
-      "application--sheet",
-      "application--item-sheet",
-    ],
-    window: {
-      minimizable: true,
-      resizable: true,
-      contentTag: "section",
-    },
-    form: {
-      handler: this.save,
-      submitOnChange: true,
-    },
-    actions: {
-      addAction: this._onAddAction,
-      editAction: this._onEditAction,
-      deleteAction: this._onDeleteAction,
-      performAction: this._onPerformAction,
-    },
+  tabGroups = {
+    sheet: "summary",
   }
 
-  static async save(_event, _form, formData) {
-    await this.document.update(formData.object)
-  }
+  // --- App parts -------------------------------------------------------------
 
   static get TEMPLATE_ROOT() {
     return `${SYSTEM_TEMPLATE_PATH}/${this.DOCUMENT_TYPE}`
@@ -123,9 +124,26 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     }
   }
 
-  get title() {
-    return this.document.name
+  /**
+   * Prepare an array of form header tabs.
+   * @todo It'd be cool to be able to use Foundry's ApplicationTab type here.
+   * @returns {unknown[]} the list of tabs for this application
+   */
+  #getTabs() {
+    const tabs = this.constructor.TABS
+
+    return tabs.map((t) => {
+      const active = this.tabGroups[t.group] === t.id
+
+      return {
+        ...t,
+        active,
+        cssClass: active ? "active" : "",
+      }
+    })
   }
+
+  // === Rendering =============================================================
 
   /** @override */
   async _preparePartContext(partId, context) {
@@ -184,7 +202,10 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     return frame
   }
 
+  // --- Tabs ------------------------------------------------------------------
+
   #addTabsToFrame(frame) {
+    if (!this.constructor.TABS.length) return
     const tabContainer = document.createElement("nav")
     tabContainer.classList.value = "application__tab-navigation sheet-tabs tabs"
     tabContainer.ariaRole = game.i18n.localize("SHEETS.FormNavLabel")
@@ -207,6 +228,66 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
 
     frame.appendChild(tabContainer)
   }
+
+  /**
+   * Change the active tab within a tab group in this Application instance.
+   * @param {string} tab - The name of the tab which should become active
+   * @param {string} group - The name of the tab group which defines the set
+   * of tabs
+   * @param {object} [options] - Additional options which affect tab navigation
+   * @param {Event} [options.event] - An interaction event which caused the
+   * tab change, if any
+   * @param {HTMLElement} [options.navElement] - An explicit navigation element
+   * being modified
+   * @param {boolean} [options.force=false] - Force changing the tab even if
+   * the new tab is already active
+   * @param {boolean} [options.updatePosition=true] - Update application
+   * position after changing the tab?
+   * @override
+   */
+  changeTab(
+    tab,
+    group,
+    // eslint-disable-next-line no-unused-vars
+    { event, navElement, force = false, updatePosition = true } = {},
+  ) {
+    if (!tab || !group)
+      throw new Error("You must pass both the tab and tab group identifier")
+    if (this.tabGroups[group] === tab && !force) return // No change necessary
+    const tabElement = this.element.querySelector(
+      `.tabs [data-group="${group}"][data-tab="${tab}"]`,
+    )
+    if (!tabElement)
+      throw new Error(
+        `No matching tab element found for group "${group}" and tab "${tab}"`,
+      )
+
+    this.element
+      .querySelectorAll(`.tabs [data-group="${group}"]`)
+      .forEach((t) => {
+        t.classList.toggle("active", t.dataset.tab === tab)
+        if (t instanceof HTMLButtonElement)
+          // eslint-disable-next-line no-param-reassign
+          t.ariaPressed = `${t.dataset.tab === tab}`
+      })
+
+    this.element
+      .querySelectorAll(`.tab[data-group="${group}"]`)
+      .forEach((section) => {
+        section.classList.toggle("active", section.dataset.tab === tab)
+      })
+
+    this.tabGroups[group] = tab
+
+    // Update automatic width or height
+    if (!updatePosition) return
+    const positionUpdate = {}
+    if (this.options.position.width === "auto") positionUpdate.width = "auto"
+    if (this.options.position.height === "auto") positionUpdate.height = "auto"
+    if (!foundry.utils.isEmpty(positionUpdate)) this.setPosition(positionUpdate)
+  }
+
+  // --- Header/Title manipulation ---------------------------------------------
 
   /**
    * Given the window's frame, mutate its header to make it easier to style.
@@ -234,46 +315,39 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
 
     header.appendChild(buttonContainer)
 
-    // if (this.document.system.actions) {
-    //   const actionMenu = document.createElement("menu")
-    //   actionMenu.classList.add("window-header__actions")
-    //   this.document.system.actions.forEach((a) => {
-    //     const actionArt = document.createElement("img")
-    //     actionArt.src = a.img
-    //     const listItem = document.createElement("li")
-    //     listItem.dataset.actionId = a.id
-    //     listItem.dataset.tooltip = a.name
-
-    //     listItem.appendChild(actionArt)
-    //     actionMenu.appendChild(listItem)
-    //   })
-    //   titleAreaContainer.appendChild(actionMenu)
-    // }
-
     if (this.document.system.banner) {
       const banner = document.createElement("img")
       banner.src = this.document.system.banner
       header.appendChild(banner)
     }
 
+    // TODO: Is this worth doing? Keeping it around until we know how to lay
+    // actions out.
+    // titleAreaContainer.appendChild(this.#buildActionMenu())
+
     header.appendChild(titleAreaContainer)
   }
 
-  static async _onAddAction() {
-    await this.document.createAction()
+  #buildActionMenu() {
+    if (this.document.system.actions) {
+      const actionMenu = document.createElement("menu")
+      actionMenu.classList.add("window-header__actions")
+      this.document.system.actions.forEach((a) => {
+        const actionArt = document.createElement("img")
+        actionArt.src = a.img
+        const listItem = document.createElement("li")
+        listItem.dataset.actionId = a.id
+        listItem.dataset.tooltip = a.name
+
+        listItem.appendChild(actionArt)
+        actionMenu.appendChild(listItem)
+      })
+      return actionMenu
+    }
+    return null
   }
 
-  static _onEditAction(event) {
-    const { actionId } = event.target.closest("[data-action-id]").dataset
-    const editor = new BAGSActionEditor(this.document, actionId)
-    editor.render(true)
-  }
-
-  static async _onDeleteAction(event) {
-    await this.document.deleteAction(
-      event.target.closest("[data-action-id]").dataset.actionId,
-    )
-  }
+  // === Action management =====================================================
 
   /**
    * Given an event, prepare to, then resolve, the related action.
@@ -287,78 +361,9 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     await this.document.resolveAction(action)
   }
 
-  tabGroups = {
-    sheet: "summary",
-  }
+  // === Saving ================================================================
 
-  /**
-   * Prepare an array of form header tabs.
-   * @todo It'd be cool to be able to use Foundry's ApplicationTab type here.
-   * @returns {unknown[]} the list of tabs for this application
-   */
-  #getTabs() {
-    const tabs = this.constructor.TABS
-
-    return tabs.map((t) => {
-      const active = this.tabGroups[t.group] === t.id
-
-      return {
-        ...t,
-        active,
-        cssClass: active ? "active" : "",
-      }
-    })
-  }
-
-  /**
-   * Change the active tab within a tab group in this Application instance.
-   * @param {string} tab        The name of the tab which should become active
-   * @param {string} group      The name of the tab group which defines the set of tabs
-   * @param {object} [options]  Additional options which affect tab navigation
-   * @param {Event} [options.event]                 An interaction event which caused the tab change, if any
-   * @param {HTMLElement} [options.navElement]      An explicit navigation element being modified
-   * @param {boolean} [options.force=false]         Force changing the tab even if the new tab is already active
-   * @param {boolean} [options.updatePosition=true] Update application position after changing the tab?
-   * @override
-   */
-  changeTab(
-    tab,
-    group,
-    { event, navElement, force = false, updatePosition = true } = {},
-  ) {
-    if (!tab || !group)
-      throw new Error("You must pass both the tab and tab group identifier")
-    if (this.tabGroups[group] === tab && !force) return // No change necessary
-    const tabElement = this.element.querySelector(
-      `.tabs [data-group="${group}"][data-tab="${tab}"]`,
-    )
-    if (!tabElement)
-      throw new Error(
-        `No matching tab element found for group "${group}" and tab "${tab}"`,
-      )
-
-    // Update tab navigation
-    for (const t of this.element.querySelectorAll(
-      `.tabs [data-group="${group}"]`,
-    )) {
-      t.classList.toggle("active", t.dataset.tab === tab)
-      if (t instanceof HTMLButtonElement)
-        t.ariaPressed = `${t.dataset.tab === tab}`
-    }
-
-    // Update tab contents
-    for (const section of this.element.querySelectorAll(
-      `.tab[data-group="${group}"]`,
-    )) {
-      section.classList.toggle("active", section.dataset.tab === tab)
-    }
-    this.tabGroups[group] = tab
-
-    // Update automatic width or height
-    if (!updatePosition) return
-    const positionUpdate = {}
-    if (this.options.position.width === "auto") positionUpdate.width = "auto"
-    if (this.options.position.height === "auto") positionUpdate.height = "auto"
-    if (!foundry.utils.isEmpty(positionUpdate)) this.setPosition(positionUpdate)
+  static async save(_event, _form, formData) {
+    await this.document.update(formData.object)
   }
 }

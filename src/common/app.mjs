@@ -1,13 +1,10 @@
 /**
  * @file The base class for applications in this system.
  */
-
-import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
-
-const { HandlebarsApplicationMixin } = foundry.applications.api
+const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api
 
 export default class BAGSApplication extends HandlebarsApplicationMixin(
-  foundry.applications.sheets.ItemSheetV2,
+  ApplicationV2,
 ) {
   static SUB_APPS = []
 
@@ -24,6 +21,8 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
   constructor(options = {}) {
     super(options)
 
+    this.document = options?.document
+
     this.#subApps = this.constructor.SUB_APPS.reduce(
       (obj, App) => ({
         ...obj,
@@ -37,6 +36,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
 
   static DEFAULT_OPTIONS = {
     classes: ["application--bags", "application--sheet"],
+    tag: "form",
     window: {
       controls: this.HEADER_CONTROLS,
       minimizable: true,
@@ -53,13 +53,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
     await this.document.update(formData.object)
   }
 
-  static get PARTS() {
-    return {
-      "tab-navigation": {
-        template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
-      },
-    }
-  }
+  static PARTS = {}
 
   /** @override */
   async _prepareContext(_options) {

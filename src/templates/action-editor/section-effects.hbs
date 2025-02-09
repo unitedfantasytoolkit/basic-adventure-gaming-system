@@ -1,11 +1,9 @@
 <article
-  class="tab standard-form bags-app-tab bags-app-tab--{{tab.id}} {{tab.cssClass}}"
-  data-tab="{{tab.id}}"
-  data-group="{{tab.group}}"
+  class=""
 >
   <header class="action-header">
     <h2>Effects</h2>
-    <button data-action="addEffect" aria-label="Add Effect"><i class="fa
+    <button data-action="add-effect" aria-label="Add Effect"><i class="fa
       fa-plus"></i></button>
   </header>
 
@@ -42,7 +40,7 @@
         </fieldset>
       {{/if}}
 
-            {{#if (eq type "script")}}
+      {{#if (eq type "script")}}
         <fieldset>
           <legend>Script settings</legend>
           {{formInput ../fields.effects.element.fields.script
@@ -50,8 +48,8 @@
             name=(concat "effects." @index ".script")
             localize=true
           }}
-</fieldset>
-            {{/if}}
+        </fieldset>
+       {{/if}}
 
 
         <fieldset>

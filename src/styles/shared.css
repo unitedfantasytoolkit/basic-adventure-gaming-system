@@ -93,73 +93,11 @@
   }
 }
 
-.window-content {
-  overflow: hidden !important;
-  position: static;
-}
-
-.application__effects-pane {
-  --pos: translateX(4px);
-  --scale: scaleX(0);
-  --button-pos: -1px;
-
-  position: absolute;
-  right: 0;
-  top: 64px;
-  bottom: 64px;
-  width: 200px;
-  transform: var(--pos);
-  z-index: -1;
-
-  &,
-  ul {
-    transition: all 333ms ease-in-out;
-  }
-
-  :is(.minimizing, .minimized) & {
-    transform: translateX(0) scale(0);
-    border-width: 0;
-    background: transparent;
-  }
-
-  &:not(:has(ul[aria-hidden])) {
-    /* transform: scaleX(0); */
-    --pos: translateX(100%);
-    --scale: scaleX(1);
-
-    border: 1px solid var(--border-color);
-    background: var(--background);
-  }
-
-  ul {
-    transform: var(--scale);
-    overflow: hidden scroll;
-  }
-
-  button {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    position: absolute;
-    top: -1px;
-    bottom: -1px;
-    right: 0;
-    transform: translateX(100%);
-    width: 16px;
-    background-color: var(--border-color);
-    color: navy;
-  }
-}
-
 @layer system {
   .application--bags {
-    height: var(--application-height, auto);
+    overflow: visible;
 
     .window-content {
-      height: calc(
-        var(--application-height, auto) - var(--outer-border-offset) * 2 -
-          var(--border-width) * 2
-      );
-
       &__tags {
         list-style-type: none;
         display: flex;
@@ -169,15 +107,6 @@
         opacity: 0.8;
         text-shadow: 1px 1px black;
       }
-    }
-
-    &,
-    .window-content {
-      overflow: visible !important;
-    }
-
-    &:not(.minimized) {
-      min-height: calc(var(--header-height) + 400px) !important;
     }
 
     &.application {

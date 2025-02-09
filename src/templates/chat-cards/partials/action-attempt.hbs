@@ -1,16 +1,6 @@
-{{#if action.details.flags.usesAttempt}}
-  {{#if action.details.attempt.flags.isLikeAttack}}
-    {{> actionAttemptAttack
-      target=action.outcome.0.target
-      attempt=action.outcome.0.attempt
-      usesDescendingAC=action.details.attempt.usesDescendingAC
-    }}
-  {{else}}
-    {{> actionAttemptStatic
-      roll=action.details.attempt.roll
-      attempt=action.outcome.0.attempt
-      message=message
-      isGM=isGM
-    }}
-  {{/if}}
-{{/if}}
+{{#if action.details.flags.usesAttempt}} {{#if
+action.details.attempt.flags.isLikeAttack}} {{> chatActionAttemptAttack
+target=action.outcome.0.target attempt=action.outcome.0.attempt
+usesDescendingAC=action.details.attempt.usesDescendingAC }} {{else}} {{>
+chatActionAttemptStatic roll=action.details.attempt.roll
+attempt=action.outcome.0.attempt message=message isGM=isGM }} {{/if}} {{/if}}

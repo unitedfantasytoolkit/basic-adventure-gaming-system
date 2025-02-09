@@ -1,11 +1,17 @@
 .tab {
   &--item-summary.active {
     display: grid !important;
-    grid-template-areas: "flavor flavor" "details description";
+    grid-template-areas: "details description";
     grid-template-columns: 1fr 2fr;
 
-    > div {
+    &:has(.flavor-text) {
+      grid-template-areas: "flavor flavor" "details description";
+    }
+
+    > .flavor-text {
       grid-area: flavor;
+      text-align: center;
+      color: var(--color-text-subtle);
     }
 
     > main {
@@ -17,6 +23,10 @@
 
       p {
         text-align: justify;
+
+        &:first-of-type {
+          margin-top: 0;
+        }
       }
     }
 

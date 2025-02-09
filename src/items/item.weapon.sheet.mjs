@@ -1,16 +1,44 @@
 /**
  * @file The UI for viewing and editiing a weapon Item.
  */
+import ActionEditor from "../applications/action-editor.mjs"
 import BAGSBaseItemSheet from "../common/item.sheet.mjs"
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
 export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
-  static SUB_APPS = []
+  static SUB_APPS = { actions: ActionEditor }
 
   static DOCUMENT_TYPE = "weapon"
 
   static DEFAULT_OPTIONS = {
     classes: ["application--weapon-sheet"],
+    window: {
+      frame: true,
+      positioned: true,
+      // icon: "fa-regular fa-sparkles",
+      controls: [
+        {
+          action: "edit-item",
+          icon: "fa-solid fa-pencil",
+          label: "Edit Weapon",
+          ownership: "OWNER",
+        },
+        {
+          action: "edit-actions",
+          icon: "fa-solid fa-sparkles",
+          label: "Edit Actions",
+          ownership: "OWNER",
+        },
+      ],
+    },
+    actions: {
+      "edit-item": this.editItem,
+      "edit-actions": this.editActions,
+    },
+    form: {
+      handler: this.save,
+      submitOnChange: true,
+    },
   }
 
   static get TAB_PARTS() {
@@ -23,6 +51,20 @@ export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
         template: `${SYSTEM_TEMPLATE_PATH}/common/description.hbs`,
       },
     }
+  }
+
+  #actionEditor
+
+  constructor(options = {}) {
+    super(options)
+
+    this.#actionEditor = new ActionEditor({
+      document: this.document,
+    })
+    // this.#itemEditor = new BAGSCharacterClassDetailsEditor({
+    //   document: this.document,
+    // })
+    setTimeout(() => this.#actionEditor.render(true), 2000)
   }
 
   /** @override */
@@ -44,27 +86,9 @@ export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
     return context
   }
 
-  /**
-   * Tabs for the Ability sheet.
-   * @returns {SheetNavTab[]} The tabs to display, in the order they should be
-   * displayed.
-   */
-  static get TABS() {
-    return [
-      ...BAGSBaseItemSheet.TABS,
-      {
-        id: "actions",
-        group: "sheet",
-        icon: "fa-solid fa-sparkles",
-        label: "BAGS.Actions.TabLabel",
-        cssClass: "tab--actions",
-      },
-      {
-        id: "description",
-        group: "sheet",
-        icon: "fa-solid fa-scroll-old",
-        label: "BAGS.Actions.Editor.Tabs.Description",
-      },
-    ]
+  static editItem() {}
+
+  static editActions(e) {
+    this.#actionEditor.render(true)
   }
 }

@@ -182,9 +182,9 @@ export const actionsFactory = (fields) => {
       label: "BAGS.Actions.Flags.UsesEffect.Label",
       // hint: "BAGS.Actions.Flags.UsesEffect.Hint",
     }),
-    usesLevelRestrictions: new BooleanField({
+    usesRestrictions: new BooleanField({
       initial: false,
-      label: "BAGS.Actions.Flags.UsesLevelRestrictions.Label",
+      label: "BAGS.Actions.Flags.UsesRestrictions.Label",
       // hint: "BAGS.Actions.Flags.UsesEffect.Hint",
     }),
     usesConsumption: new BooleanField({
@@ -195,7 +195,7 @@ export const actionsFactory = (fields) => {
     isBlind: new BooleanField({
       initial: false,
       label: "BAGS.Actions.Flags.IsBlind.Label",
-      hint: "BAGS.Actions.Flags.isBlind.Hint",
+      hint: "BAGS.Actions.Flags.IsBlind.Hint",
     }),
   })
 
@@ -279,6 +279,10 @@ export const actionsFactory = (fields) => {
    * @property {boolean} usesAttempt - Words
    */
   const effect = new SchemaField({
+    name: new StringField({
+      label: "BAGS.Actions.Effects.Name.Label",
+      initial: "New Effect",
+    }),
     flags: new SchemaField({
       canBeResisted: new BooleanField({
         initial: false,
@@ -292,8 +296,8 @@ export const actionsFactory = (fields) => {
       }),
       isLikeAttack: new BooleanField({
         initial: false,
-        label: "BAGS.Actions.Attempt.IsLikeAttack.Label",
-        hint: "BAGS.Actions.Attempt.IsLikeAttack.Hint",
+        label: "BAGS.Actions.Effects.IsLikeAttack.Label",
+        hint: "BAGS.Actions.Effects.IsLikeAttack.Hint",
       }),
     }),
     note: new StringField({
@@ -447,8 +451,8 @@ export const actionsFactory = (fields) => {
         nullable: false,
         blank: false,
         initial: "melee",
-        label: "BAGS.Actions.Attempt.Attack.Type.Label",
-        hint: "BAGS.Actions.Attempt.Attack.Type.Hint",
+        label: "BAGS.Actions.Attempt.AttackType.Label",
+        hint: "BAGS.Actions.Attempt.AttackType.Hint",
       }),
       bonus: new NumberField({
         min: 1,

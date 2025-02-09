@@ -10,6 +10,8 @@ export default class BAGSItemWeaponDataModel extends PhysicalItemDataMixin({
 }) {
   static LOCALIZATION_PREFIXES = ["BAGS.Weapon"]
 
+  static READ_VIEW_EDITABLE_FIELDS = ["quantity", "uses.value"]
+
   static defineSchema() {
     return {
       ...super.defineSchema(),
