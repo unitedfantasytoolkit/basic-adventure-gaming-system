@@ -29,6 +29,7 @@
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
     "autoprefixer": "^10.4.7",
     "cssnano": "^7.0.6",
+    "ember-template-lint-plugin-prettier": "^5.0.0",
     "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jsdoc": "^50.2.4",

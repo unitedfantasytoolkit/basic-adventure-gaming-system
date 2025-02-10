@@ -1,6 +1,12 @@
-plugins:
-  - "prettier-plugin-ember-template-tag"
 trailingComma: "all"
 semi: false
 bracketSameLine: false
 singleAttributePerLine: true
+printWidth: 80
+plugins:
+  - "prettier-plugin-ember-template-tag"
+overrides:
+  - files: "*.hbs"
+    options:
+      parser: glimmer
+      singleQuote: false
