@@ -6,18 +6,6 @@ const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api
 export default class BAGSApplication extends HandlebarsApplicationMixin(
   ApplicationV2,
 ) {
-  static SUB_APPS = []
-
-  get subApps() {
-    return this.#subApps
-  }
-
-  static get HEADER_CONTROLS() {
-    return []
-  }
-
-  #subApps = {}
-
   constructor(options = {}) {
     super(options)
 
@@ -32,13 +20,12 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
     )
   }
 
-  static TABS = []
+  // === App config ============================================================
 
   static DEFAULT_OPTIONS = {
     classes: ["application--bags", "application--sheet"],
     tag: "form",
     window: {
-      controls: this.HEADER_CONTROLS,
       minimizable: true,
       resizable: true,
       contentTag: "section",
@@ -49,17 +36,31 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
     },
   }
 
-  static async save(_event, _form, formData) {
-    await this.document.update(formData.object)
+  // --- Sub apps --------------------------------------------------------------
+
+  static SUB_APPS = []
+
+  get subApps() {
+    return this.#subApps
   }
 
+  #subApps = {}
+
+  // --- Tabs ------------------------------------------------------------------
+
+  static TABS = []
+
+  // --- App parts -------------------------------------------------------------
   static PARTS = {}
+
+  // === Rendering =============================================================
 
   /** @override */
   async _prepareContext(_options) {
+    const context = await super._prepareContext()
     const doc = this.document
-
     return {
+      ...context,
       document: doc,
       source: doc.toObject(),
       fields: doc.schema.fields,
@@ -68,13 +69,14 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
     }
   }
 
-  #prepareFormattedFields() {
-    return null
+  /** @override */
+  async _preparePartContext(partId, context) {
+    context.tab = context.tabs[partId] || null
+    return context
   }
 
-  close() {
-    Object.values(this.subApps).forEach((a) => a.close())
-    return super.close()
+  #prepareFormattedFields() {
+    return null
   }
 
   /**
@@ -96,6 +98,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
   async _renderFrame(options) {
     const frame = await super._renderFrame(options)
     this.#reorganizeHeaderElements(frame)
+    this.#addTabsToFrame(frame)
     return frame
   }
 
@@ -128,5 +131,103 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
     }
 
     header.appendChild(titleAreaContainer)
+  }
+
+  // --- Tabs ------------------------------------------------------------------
+
+  #addTabsToFrame(frame) {
+    if (!this.constructor.TABS.length) return
+    const tabContainer = document.createElement("nav")
+    tabContainer.classList.value = "application__tab-navigation sheet-tabs tabs"
+    tabContainer.ariaRole = game.i18n.localize("SHEETS.FormNavLabel")
+
+    this.constructor.TABS.forEach((t) => {
+      const btn = document.createElement("button")
+      btn.dataset.action = "tab"
+      btn.dataset.group = t.group
+      btn.dataset.tab = t.id
+      btn.dataset.tooltip = game.i18n.localize(t.label)
+      btn.ariaLabel = game.i18n.localize(t.label)
+      if (t.disabled) btn.disabled = true
+
+      const icon = document.createElement("i")
+      icon.classList.value = t.icon
+
+      btn.appendChild(icon)
+      tabContainer.appendChild(btn)
+    })
+
+    frame.appendChild(tabContainer)
+  }
+  /**
+   * Change the active tab within a tab group in this Application instance.
+   * @param {string} tab - The name of the tab which should become active
+   * @param {string} group - The name of the tab group which defines the set
+   * of tabs
+   * @param {object} [options] - Additional options which affect tab navigation
+   * @param {Event} [options.event] - An interaction event which caused the
+   * tab change, if any
+   * @param {HTMLElement} [options.navElement] - An explicit navigation element
+   * being modified
+   * @param {boolean} [options.force=false] - Force changing the tab even if
+   * the new tab is already active
+   * @param {boolean} [options.updatePosition=true] - Update application
+   * position after changing the tab?
+   * @override
+   */
+  changeTab(
+    tab,
+    group,
+    // eslint-disable-next-line no-unused-vars
+    { event, navElement, force = false, updatePosition = true } = {},
+  ) {
+    if (!tab || !group)
+      throw new Error("You must pass both the tab and tab group identifier")
+    if (this.tabGroups[group] === tab && !force) return // No change necessary
+    const tabElement = this.element.querySelector(
+      `.tabs [data-group="${group}"][data-tab="${tab}"]`,
+    )
+    if (!tabElement)
+      throw new Error(
+        `No matching tab element found for group "${group}" and tab "${tab}"`,
+      )
+
+    this.element
+      .querySelectorAll(`.tabs [data-group="${group}"]`)
+      .forEach((t) => {
+        t.classList.toggle("active", t.dataset.tab === tab)
+        if (t instanceof HTMLButtonElement)
+          // eslint-disable-next-line no-param-reassign
+          t.ariaPressed = `${t.dataset.tab === tab}`
+      })
+
+    this.element
+      .querySelectorAll(`.tab[data-group="${group}"]`)
+      .forEach((section) => {
+        section.classList.toggle("active", section.dataset.tab === tab)
+      })
+
+    this.tabGroups[group] = tab
+
+    // Update automatic width or height
+    if (!updatePosition) return
+    const positionUpdate = {}
+    if (this.options.position.width === "auto") positionUpdate.width = "auto"
+    if (this.options.position.height === "auto") positionUpdate.height = "auto"
+    if (!foundry.utils.isEmpty(positionUpdate)) this.setPosition(positionUpdate)
+  }
+  // --- Header/Title manipulation ---------------------------------------------
+
+  // === Action management =====================================================
+
+  // === Events ================================================================
+
+  static async save(_event, _form, formData) {
+    await this.document.update(formData.object)
+  }
+
+  async close() {
+    await Promise.all(Object.values(this.subApps).map((a) => a.close()))
+    super.close()
   }
 }

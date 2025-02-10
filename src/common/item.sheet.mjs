@@ -78,22 +78,28 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
    * Default tabs that *all* actor sheets should have.
    * @type {SheetNavTab[]}
    */
-  static TABS = [
-    {
-      id: "summary",
-      group: "sheet",
-      icon: "fa-solid fa-square-list",
-      label: "BAGS.CharacterClass.Tabs.Summary",
-      cssClass: "tab--summary",
+  static TABS = {
+    sheet: {
+      tabs: [
+        {
+          id: "summary",
+          group: "sheet",
+          icon: "fa-solid fa-square-list",
+          label: "BAGS.CharacterClass.Tabs.Summary",
+          cssClass: "tab--summary",
+        },
+        {
+          id: "active-effects",
+          group: "sheet",
+          icon: "fa-solid fa-sitemap",
+          label: "BAGS.CharacterClass.Tabs.Effects",
+          cssClass: "tab--effects",
+        },
+      ],
+      initial: "summary",
+      labelPrefix: "BAGS.Actors.Character.Tabs",
     },
-    {
-      id: "active-effects",
-      group: "sheet",
-      icon: "fa-solid fa-sitemap",
-      label: "BAGS.CharacterClass.Tabs.Effects",
-      cssClass: "tab--effects",
-    },
-  ]
+  }
 
   tabGroups = {
     sheet: "summary",
@@ -105,42 +111,19 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     return `${SYSTEM_TEMPLATE_PATH}/${this.DOCUMENT_TYPE}`
   }
 
-  static TAB_PARTS = {
-    summary: {
-      template: `${SYSTEM_TEMPLATE_PATH}/common/summary.hbs`,
-      scrollable: [".scrollable"],
-    },
-    effects: {
-      template: `${SYSTEM_TEMPLATE_PATH}/common/effects.hbs`,
-    },
-  }
+  static TAB_PARTS = {}
 
   static get PARTS() {
     return {
+      summary: {
+        template: `${SYSTEM_TEMPLATE_PATH}/common/summary.hbs`,
+        scrollable: [".scrollable"],
+      },
       ...this.TAB_PARTS,
-      // "tab-navigation": {
-      //   template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
-      // },
+      effects: {
+        template: `${SYSTEM_TEMPLATE_PATH}/common/effects.hbs`,
+      },
     }
-  }
-
-  /**
-   * Prepare an array of form header tabs.
-   * @todo It'd be cool to be able to use Foundry's ApplicationTab type here.
-   * @returns {unknown[]} the list of tabs for this application
-   */
-  #getTabs() {
-    const tabs = this.constructor.TABS
-
-    return tabs.map((t) => {
-      const active = this.tabGroups[t.group] === t.id
-
-      return {
-        ...t,
-        active,
-        cssClass: active ? "active" : "",
-      }
-    })
   }
 
   // === Rendering =============================================================
@@ -148,7 +131,6 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   /** @override */
   async _preparePartContext(partId, context) {
     const doc = this.document
-    context.tab = context.tabs.find((t) => t.id === partId)
     switch (partId) {
       case "summary":
         break
@@ -159,6 +141,7 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       default:
         break
     }
+    context.tab = context.tabs[partId] || null
     return context
   }
 
@@ -168,14 +151,16 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
    * @override
    */
   async _prepareContext() {
+    const context = await super._prepareContext()
+
     const doc = this.document
 
     return {
+      ...context,
       item: doc,
       source: doc.toObject(),
       fields: doc.schema.fields,
       systemFields: doc.system.schema.fields,
-      tabs: this.#getTabs(),
     }
   }
 
@@ -205,12 +190,12 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   // --- Tabs ------------------------------------------------------------------
 
   #addTabsToFrame(frame) {
-    if (!this.constructor.TABS.length) return
+    if (!this.constructor.TABS.sheet.tabs.length) return
     const tabContainer = document.createElement("nav")
     tabContainer.classList.value = "application__tab-navigation sheet-tabs tabs"
     tabContainer.ariaRole = game.i18n.localize("SHEETS.FormNavLabel")
 
-    this.constructor.TABS.forEach((t) => {
+    this.constructor.TABS.sheet.tabs.forEach((t) => {
       const btn = document.createElement("button")
       btn.dataset.action = "tab"
       btn.dataset.group = t.group
@@ -361,9 +346,14 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     await this.document.resolveAction(action)
   }
 
-  // === Saving ================================================================
+  // === Events ================================================================
 
   static async save(_event, _form, formData) {
     await this.document.update(formData.object)
+  }
+
+  async close() {
+    await Promise.all(Object.values(this.subApps).map((a) => a.close()))
+    super.close()
   }
 }
