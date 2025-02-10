@@ -1,51 +1,70 @@
 .application--bags:not(.minimized, .application--character-sheet)
   .window-header {
+  --art-size: 48px;
+
   position: relative;
   display: block;
-  overflow: clip visible;
+  overflow: clip;
+  border-radius: 0 0 6px 6px;
 
-  &:not(:has(.window-content__banner)) {
+  &:not(:has(.window-header__banner)) {
     padding: var(--application-header-padding);
     background-image: var(--application-header-banner);
-
-    &::after {
-      content: "";
-      height: 2px;
-      background-image: linear-gradient(
-        90deg,
-        transparent 0%,
-        var(--border-color) 20%,
-        var(--border-color) 80%,
-        transparent 100%
-      );
-      position: absolute;
-      left: 2rem;
-      right: 2rem;
-      bottom: -1px;
-    }
   }
 
-  &:has(.window-content__banner) {
-    & > section {
+  &:has(.window-header__banner) {
+    .window-header__content {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0.5em;
+      left: 0.5em;
+      right: 0.5em;
 
       article {
         img {
           box-shadow: unset;
         }
       }
+
+      &:has(img) {
+        h1 {
+          translate: calc(var(--art-size) / 2 * -1) 0;
+        }
+      }
+
+      h1 {
+        text-shadow: 1px 1px #000;
+      }
     }
 
-    & > img {
+    .window-header__banner {
+      z-index: -1;
+      object-fit: cover;
+      max-width: 100%;
+      min-height: calc(var(--art-size) + 1em);
       mask-image: linear-gradient(
         to bottom,
-        rgb(0 0 0 / 100%),
-        rgb(0 0 0 / 0%)
+        rgb(0 0 0 / 100%) 0%,
+        rgb(0 0 0 / 100%) calc(100% - 4em),
+        rgb(0 0 0 / 0%) 100%
       );
     }
+  }
+
+  &::after {
+    content: "";
+    height: 1px;
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--border-color) 20%,
+      var(--border-color) 80%,
+      transparent 100%
+    );
+    position: absolute;
+    left: 2rem;
+    right: 2rem;
+    bottom: 0;
+    z-index: 6;
   }
 
   &__content {
@@ -73,6 +92,7 @@
       white-space: nowrap;
       font-size: var(--font-h2-size);
       font-family: var(--font-h1);
+      width: calc(100% - var(--art-size));
     }
   }
 
@@ -88,6 +108,7 @@
     right: 0;
     display: flex;
     justify-content: flex-end;
+    z-index: 4;
   }
 
   .controls-dropdown {

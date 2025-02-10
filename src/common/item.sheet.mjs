@@ -58,8 +58,8 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       performAction: this._onPerformAction,
     },
     position: {
-      width: 480,
-      height: 400,
+      width: 640,
+      height: 520,
     },
   }
 
@@ -161,7 +161,12 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       source: doc.toObject(),
       fields: doc.schema.fields,
       systemFields: doc.system.schema.fields,
+      formattedSystem: await this._prepareFormattedFields(),
     }
+  }
+
+  async _prepareFormattedFields() {
+    return null
   }
 
   /**
@@ -303,6 +308,7 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     if (this.document.system.banner) {
       const banner = document.createElement("img")
       banner.src = this.document.system.banner
+      banner.classList.add("window-header__banner")
       header.appendChild(banner)
     }
 

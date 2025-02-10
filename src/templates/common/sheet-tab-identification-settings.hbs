@@ -1,0 +1,14 @@
+{{#> sheetTab}}
+<h2>{{localize "BAGS.Items.CommonTabs.Identification"}}</h2>
+<div class="scrollable">
+  <div class="standard-form">
+    {{#with systemFields.identification.fields as |fields|}}
+      {{formGroup fields.isIdentified name="system.identification.isIdentified" localize=true}}
+      {{formGroup fields.name name="system.identification.name" localize=true}}
+      {{formGroup fields.xpReward name="system.identification.xpReward" localize=true}}
+      {{formGroup fields.description name="system.identification.description" localize=true}}
+      {{formGroup fields.flavorText name="system.identification.flavorText" localize=true}}
+    {{/with}}
+  </div>
+</div>
+{{/sheetTab}}

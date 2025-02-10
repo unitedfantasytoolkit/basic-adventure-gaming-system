@@ -184,6 +184,101 @@
         "Hint": "A summary of what this action does."
       }
     },
+    "Items": {
+      "CommonTabs": {
+        "Identification": "Identification",
+        "FlavorText": "FlavorText",
+        "Description": "Description",
+        "Details": "Details",
+        "ContainerSettings": "Container Settings"
+      },
+      "Physical": {
+        "Quantity": {
+          "Label": "Quantity",
+          "Hint": "The number of this item in the stack"
+        },
+        "Cost": {
+          "Label": "Cost",
+          "Hint": "The base cost of this item in gold pieces"
+        },
+        "Uses": {
+          "Value": {
+            "Label": "Current Uses",
+            "Hint": "The number of uses remaining for this item"
+          },
+          "Max": {
+            "Label": "Maximum Uses",
+            "Hint": "The maximum number of uses this item can have"
+          }
+        },
+        "Weight": {
+          "Label": "Weight",
+          "Hint": "The weight of a single unit of this item in coins"
+        },
+        "Description": {
+          "Label": "Description",
+          "Hint": "A detailed description of the item's appearance and function"
+        },
+        "FlavorText": {
+          "Label": "Flavor Text",
+          "Hint": "Additional narrative or atmospheric text about the item"
+        },
+        "Banner": {
+          "Label": "Banner Image",
+          "Hint": "An image to represent this item"
+        },
+        "Container": {
+          "IsContainer": {
+            "Label": "Is Container",
+            "Hint": "Whether this item can hold other items"
+          },
+          "WeightMax": {
+            "Label": "Maximum Weight",
+            "Hint": "The maximum weight this container can hold"
+          },
+          "WeightModifier": {
+            "Label": "Weight Modifier",
+            "Hint": "Multiplier applied to contents' weight (e.g., 0.5 for magical bags)"
+          }
+        },
+        "Identification": {
+          "IsIdentified": {
+            "Label": "Identified",
+            "Hint": "Whether this item's true nature is known to players"
+          },
+          "Name": {
+            "Label": "Unidentified Name",
+            "Hint": "What this item is called before identification"
+          },
+          "FlavorText": {
+            "Label": "Unidentified Flavor Text",
+            "Hint": "Flavor text shown before the item is identified"
+          },
+          "Description": {
+            "Label": "Unidentified Description",
+            "Hint": "Description shown before the item is identified"
+          },
+          "XPReward": {
+            "Label": "Identification XP",
+            "Hint": "Experience points awarded when this item is identified"
+          }
+        },
+        "CountsAsTreasure": {
+          "Label": "Counts as Treasure",
+          "Hint": "Whether this item should be counted towards treasure value for XP"
+        }
+      },
+      "Weapon": {
+        "Editor": {
+          "Title": "Editor: {name}"
+        },
+        "Tabs": {
+          "Details": "Details",
+          "Description": "Description",
+          "FlavorText": "Flavor Text"
+        }
+      }
+    },
     "Actors": {
       "Character": {
         "CreationWizard": {

@@ -4,7 +4,6 @@
 import ActionEditor from "../applications/action-editor.mjs"
 import BAGSBaseItemSheet from "../common/item.sheet.mjs"
 import BAGSWeaponEditor from "./item.weapon.editor.mjs"
-import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
 export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
   static DOCUMENT_TYPE = "weapon"
@@ -46,6 +45,15 @@ export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
       handler: this.save,
       submitOnChange: true,
     },
+  }
+
+  async _prepareFormattedFields() {
+    return {
+      flavorText: await TextEditor.enrichHTML(this.document.system.flavorText),
+      description: await TextEditor.enrichHTML(
+        this.document.system.description,
+      ),
+    }
   }
 
   // --- Sub apps --------------------------------------------------------------

@@ -1,8 +1,7 @@
 .tab {
   &--item-summary.active {
     display: grid !important;
-    grid-template-areas: "details description";
-    grid-template-columns: 1fr 2fr;
+    grid-template: "details description" min-content / 1fr 2fr;
 
     &:has(.flavor-text) {
       grid-template-areas: "flavor flavor" "details description";
@@ -50,11 +49,29 @@
     }
   }
 
+  &--details {
+    figure img {
+      max-height: 100px;
+    }
+  }
+
   &--item-description.active {
     flex: 1 0;
 
     prose-mirror {
       flex: 1;
+    }
+  }
+
+  :is(&--flavor-text, &--description) {
+    & > h2 {
+      margin: 0;
+    }
+
+    .form-group,
+    .form-fields,
+    prose-mirror {
+      height: 100%;
     }
   }
 }

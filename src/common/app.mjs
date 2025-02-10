@@ -65,7 +65,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
       source: doc.toObject(),
       fields: doc.schema.fields,
       systemFields: doc.system.schema.fields,
-      formattedSystem: this.#prepareFormattedFields(),
+      formattedSystem: await this._prepareFormattedFields(),
     }
   }
 
@@ -75,7 +75,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
     return context
   }
 
-  #prepareFormattedFields() {
+  async _prepareFormattedFields() {
     return null
   }
 
@@ -127,6 +127,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
     if (this.document.system.banner) {
       const banner = document.createElement("img")
       banner.src = this.document.system.banner
+      banner.classList.add("window-header__banner")
       header.appendChild(banner)
     }
 
@@ -136,12 +137,13 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
   // --- Tabs ------------------------------------------------------------------
 
   #addTabsToFrame(frame) {
-    if (!this.constructor.TABS.length) return
+    const tabs = this.constructor.TABS?.sheet?.tabs
+    if (!tabs?.length) return
     const tabContainer = document.createElement("nav")
     tabContainer.classList.value = "application__tab-navigation sheet-tabs tabs"
     tabContainer.ariaRole = game.i18n.localize("SHEETS.FormNavLabel")
 
-    this.constructor.TABS.forEach((t) => {
+    tabs.forEach((t) => {
       const btn = document.createElement("button")
       btn.dataset.action = "tab"
       btn.dataset.group = t.group
@@ -159,6 +161,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
 
     frame.appendChild(tabContainer)
   }
+
   /**
    * Change the active tab within a tab group in this Application instance.
    * @param {string} tab - The name of the tab which should become active

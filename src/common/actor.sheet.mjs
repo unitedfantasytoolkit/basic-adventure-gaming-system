@@ -173,6 +173,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
       actor: doc,
       source: doc.toObject(),
       fields: doc.schema.fields,
+      formattedSystem: await this._prepareFormattedFields(),
     }
   }
 
@@ -186,28 +187,28 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
       )
 
     switch (partId) {
-      case "left-rail":
-        context.classes = doc.itemTypes.class.map((cls) => ({
-          ...cls,
-          xpBar: {
-            current: cls.system.xp,
-            max: cls.system.xpTable[cls.system.level - 1].value,
-          },
-        }))
-        context.hp = doc.system.hp
-        context.savingThrowLocaleStrings =
-          CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
-            CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
-          )?.savingThrows
-        context.usesDescendingAC =
-          CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
-            CONFIG.BAGS.SystemRegistry.categories.COMBAT,
-          )?.descending
+      // case "left-rail":
+      //   context.classes = doc.itemTypes.class.map((cls) => ({
+      //     ...cls,
+      //     xpBar: {
+      //       current: cls.system.xp,
+      //       max: cls.system.xpTable[cls.system.level - 1].value,
+      //     },
+      //   }))
+      //   context.hp = doc.system.hp
+      //   context.savingThrowLocaleStrings =
+      //     CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+      //       CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
+      //     )?.savingThrows
+      //   context.usesDescendingAC =
+      //     CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+      //       CONFIG.BAGS.SystemRegistry.categories.COMBAT,
+      //     )?.descending
 
-        context.encumbranceMeter = encumbranceSettings.encumbranceMeter(
-          doc.system,
-        )
-        break
+      //   context.encumbranceMeter = encumbranceSettings.encumbranceMeter(
+      //     doc.system,
+      //   )
+      //   break
       case "summary":
         break
       case "abilities":
@@ -240,6 +241,10 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
     // context.tab = this.#getTabs()[partId]
     return context
+  }
+
+  async _prepareFormattedFields() {
+    return null
   }
 
   /**

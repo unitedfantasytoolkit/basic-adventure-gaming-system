@@ -1,51 +1,53 @@
 <article
-  class="tab tab--item-{{tab.id}} {{tab.cssClass}}{{ifThen tab.active ' active' ''}}"
+  class="tab tab--item-{{tab.id}}
+    {{tab.cssClass}}{{ifThen tab.active ' active' ''}}"
   data-tab="{{tab.id}}"
   data-group="{{tab.group}}"
 >
   {{#if item.system.flavorText}}
-  <div class="flavor-text">{{{item.system.flavorText}}}</div>
+    <div class="flavor-text">{{{formattedSystem.flavorText}}}</div>
   {{/if}}
 
   <main class="scrollable">
     <div class="scrollable">
-      {{#if item.system.description}} {{{item.system.description}}} {{else}}
-      <p class="empty">No description</p>
+      {{#if item.system.description}} {{{formattedSystem.description}}} {{else}}
+        <p class="empty">No description</p>
       {{/if}}
     </div>
   </main>
 
   <aside>
     <div class="standard-form">
-      {{formGroup systemFields.quantity value=item.system.quantity label="Qty."
-      }} {{#if item.system.uses.max}}
-      <div class="form-group">
-        <label for="">Uses</label>
-        <div class="form-fields">
-          {{formInput systemFields.uses.fields.value
-          value=item.system.uses.value}} / {{item.system.uses.max}}
+      {{formGroup
+        systemFields.quantity
+        value=item.system.quantity
+        label="Qty."
+      }}
+      {{#if item.system.uses.max}}
+        <div class="form-group">
+          <label for="">Uses</label>
+          <div class="form-fields">
+            {{formInput
+              systemFields.uses.fields.value
+              value=item.system.uses.value
+            }}
+            /
+            {{item.system.uses.max}}
+          </div>
         </div>
-      </div>
       {{/if}}
     </div>
 
     {{#if item.system.actions.length}}
-    <h2>Actions</h2>
-    <menu class="action-menu">
-      {{#each item.system.actions}}
-      <li
-        data-action-id="{{id}}"
-        data-action="use-action"
-      >
-        <img
-          src="{{img}}"
-          alt=""
-          role="presentation"
-        />
-        <span>{{name}}</span>
-      </li>
-      {{/each}}
-    </menu>
+      <h2>Actions</h2>
+      <menu class="action-menu">
+        {{#each item.system.actions}}
+          <li data-action-id="{{id}}" data-action="use-action">
+            <img src="{{img}}" alt="" role="presentation" />
+            <span>{{name}}</span>
+          </li>
+        {{/each}}
+      </menu>
     {{/if}}
   </aside>
 </article>
