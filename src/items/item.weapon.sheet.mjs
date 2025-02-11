@@ -4,6 +4,7 @@
 import ActionEditor from "../applications/action-editor.mjs"
 import BAGSBaseItemSheet from "../common/item.sheet.mjs"
 import BAGSWeaponEditor from "./item.weapon.editor.mjs"
+import signNumber from "../utils/sign-number.mjs"
 
 export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
   static DOCUMENT_TYPE = "weapon"
@@ -12,7 +13,7 @@ export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
     super(options)
 
     // setTimeout(() => this.subApps.actionEditor.render(true), 2000)
-    setTimeout(() => this.subApps.itemEditor.render(true), 2000)
+    // setTimeout(() => this.subApps.itemEditor.render(true), 2000)
   }
 
   // === App config ============================================================
@@ -40,12 +41,26 @@ export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
     actions: {
       "edit-item": this.editItem,
       "edit-actions": this.editActions,
+      "edit-effect": this._onEditEffect,
+      "toggle-effect": this._onToggleEffect,
+      "delete-effect": this._onDeleteEffect,
     },
     form: {
       handler: this.save,
       submitOnChange: true,
     },
   }
+
+  get title() {
+    const {
+      name,
+      system: { weaponBonus },
+    } = this.document
+    const bonusString = weaponBonus ? `, ${signNumber(weaponBonus)}` : ""
+    return `${name}${bonusString}`
+  }
+
+  // === Rendering =============================================================
 
   async _prepareFormattedFields() {
     return {

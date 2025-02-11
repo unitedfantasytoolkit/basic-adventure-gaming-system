@@ -55,7 +55,11 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       submitOnChange: true,
     },
     actions: {
-      performAction: this._onPerformAction,
+      "perform-action": this._onPerformAction,
+      "add-effect": this._onAddEffect,
+      "edit-effect": this._onEditEffect,
+      "toggle-effect": this._onToggleEffect,
+      "delete-effect": this._onDeleteEffect,
     },
     position: {
       width: 640,
@@ -96,13 +100,15 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
           cssClass: "tab--effects",
         },
       ],
-      initial: "summary",
+      // initial: "summary",
+      initial: "active-effects",
       labelPrefix: "BAGS.Actors.Character.Tabs",
     },
   }
 
   tabGroups = {
-    sheet: "summary",
+    sheet: "active-effects",
+    // sheet: "summary",
   }
 
   // --- App parts -------------------------------------------------------------
@@ -120,8 +126,8 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
         scrollable: [".scrollable"],
       },
       ...this.TAB_PARTS,
-      effects: {
-        template: `${SYSTEM_TEMPLATE_PATH}/common/effects.hbs`,
+      "active-effects": {
+        template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-effects.hbs`,
       },
     }
   }
@@ -277,6 +283,16 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     if (!foundry.utils.isEmpty(positionUpdate)) this.setPosition(positionUpdate)
   }
 
+  _replaceHTML(...args) {
+    super._replaceHTML(...args)
+    this.element.querySelector(".window-title").textContent = this.title
+    if (this.document.system.banner)
+      this.element.querySelector(".window-header__banner").src =
+        this.document.system.banner
+    this.element.querySelector(".window-header__content > img").src =
+      this.document.img
+  }
+
   // --- Header/Title manipulation ---------------------------------------------
 
   /**
@@ -361,5 +377,30 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   async close() {
     await Promise.all(Object.values(this.subApps).map((a) => a.close()))
     super.close()
+  }
+
+  static async _onAddEffect(e) {
+    await this.document.createEmbeddedDocuments("ActiveEffect", [
+      this.document.effects.createDocument({
+        name: game.i18n.localize("BAGS.ActiveEffects.DefaultName"),
+        img: "icons/svg/aura.svg",
+      }),
+    ])
+  }
+
+  static async _onEditEffect(e) {
+    const { effectId } = e.target.closest("[data-effect-id]").dataset
+    this.document.effects.get(effectId).sheet.render(true)
+  }
+
+  static async _onToggleEffect(e) {
+    const { effectId } = e.target.closest("[data-effect-id]").dataset
+    const effect = this.document.effects.get(effectId)
+    effect.update({ disabled: !effect.disabled })
+  }
+
+  static async _onDeleteEffect(e) {
+    const { effectId } = e.target.closest("[data-effect-id]").dataset
+    this.document.effects.get(effectId).deleteDialog()
   }
 }

@@ -25,11 +25,10 @@ import "./hooks/bags.register-systems.bx.mjs"
 import "./hooks/init.system-registration.mjs"
 import "./hooks/init.settings.mjs"
 import "./hooks/init.handlebars.mjs"
+import "./hooks/init.actors.mjs"
 import "./hooks/init.items.mjs"
 import "./hooks/init.combat.mjs"
 import "./hooks/init.chat.mjs"
-
-import "./hooks/bags.register-actors.mjs"
 
 /* --- Setup -------------------------------------------------------------------
  * - Make our Party sidebar tab available.

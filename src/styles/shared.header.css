@@ -32,7 +32,12 @@
       }
 
       h1 {
-        text-shadow: 1px 1px #000;
+        text-shadow: 1px 1px var(--color-cool-5);
+
+        .theme-light & {
+          color: var(--color-cool-4);
+          text-shadow: 1px 1px var(--color-cool-3);
+        }
       }
     }
 

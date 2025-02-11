@@ -58,14 +58,10 @@ export default defineConfig([
     input: "./src/index.mjs",
     output: [
       {
-        file: "./dist/bags.js",
-        sourcemap: true,
-      },
-      {
-        file: "./dist/bags.min.js",
+        dir: "./dist",
         plugins: [terser()],
         sourcemap: true,
-        format: "iife",
+        format: "esm",
       },
     ],
     plugins: [

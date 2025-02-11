@@ -6,6 +6,7 @@ import getActionFlavorText from "../utils/get-action-flavor-text.mjs"
 import getBlindFlavorText from "../utils/get-blind-flavor-text.mjs"
 import numberToOrdinal from "../utils/number-to-ordinal.mjs"
 import signNumber from "../utils/sign-number.mjs"
+import secondsToFriendlyTime from "../utils/seconds-to-friendly-time.mjs"
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
 Hooks.once("init", async () => {
@@ -13,10 +14,19 @@ Hooks.once("init", async () => {
     add: (a, b) => a + b,
     repeat: (length) => new Array(length).fill(null),
     ordinal: (value) => numberToOrdinal(value || 0),
+    toArray: (obj) => {
+      try {
+        return Array.from(obj)
+      } catch {
+        return []
+      }
+    },
+    statusEffect: (key) => CONFIG.statusEffects.find((s) => s.id === key),
     signNumber,
     formatRoll,
     getActionFlavorText,
     getBlindFlavorText,
+    secondsToFriendlyTime,
   })
 
   await loadTemplates({

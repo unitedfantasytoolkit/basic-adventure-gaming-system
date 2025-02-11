@@ -16,7 +16,7 @@
       "url": ""
     }
   ],
-  "esmodules": ["components.js", "bags.js"],
+  "esmodules": ["components.js", "index.js"],
   "styles": ["bags.css"],
   "languages": [
     {

@@ -247,6 +247,19 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     return null
   }
 
+  _replaceHTML(...args) {
+    super._replaceHTML(...args)
+    if (
+      this.element.querySelector(".window-header__banner") &&
+      this.document.system.banner
+    )
+      this.element.querySelector(".window-header__banner").src =
+        this.document.system.banner
+    if (this.element.querySelector(".window-header__content > img"))
+      this.element.querySelector(".window-header__content > img").src =
+        this.document.img
+  }
+
   /**
    * Render the outer framing HTMLElement which wraps the inner HTML of
    * the Application.

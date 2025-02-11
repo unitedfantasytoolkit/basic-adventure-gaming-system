@@ -3,22 +3,11 @@
  * attacks less likely.
  */
 
-import PhysicalItemDataMixin from "./item-physical-data-model.mjs"
-import { actionsFactory } from "../common/action.fields.mjs"
+import PhysicalItemDataModel from "./item.physical.datamodel.mjs"
 
-const {
-  StringField,
-  DocumentUUIDField,
-  HTMLField,
-  FilePathField,
-  BooleanField,
-  NumberField,
-  SchemaField,
-} = foundry.data.fields
+const { BooleanField, NumberField } = foundry.data.fields
 
-export default class BAGSItemArmorDataModel extends PhysicalItemDataMixin({
-  actions: actionsFactory(),
-}) {
+export default class BAGSItemArmorDataModel extends PhysicalItemDataModel {
   static defineSchema() {
     return {
       ...super.defineSchema(),

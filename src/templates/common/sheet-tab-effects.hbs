@@ -1,0 +1,82 @@
+{{#> sheetTab}}
+<header>
+  <h2>{{localize "DOCUMENT.ActiveEffects"}}</h2>
+  <button data-action="add-effect" data-tooltip="BAGS.ActiveEffects.Add"><i class="fa fa-plus" role="presentation"></i></button>
+</header>
+{{#if document.effects.size}}
+<ul class="effects scrollable">
+{{#each document.effects}}
+  <li class="effects__card{{ifThen disabled " effects__card--disabled" ""}}" data-effect-id="{{id}}" style="--effect-tint: {{tint}}">    
+      <img class="effects__card__icon" src="{{img}}" role="presentation" />
+      <div class="effects__card__summary">
+        <span class="effects__card__name">
+          {{name}}
+
+          {{#if (or duration.seconds duration.rounds duration.turns)}}
+            <span class="effects__card__duration">
+              {{#if duration.seconds}}
+                {{!--
+                  TODO: I think it'd be cool to use duration.remaining here
+                  though I have no clue how that'll interact with round- and
+                  turn-based durations
+                --}}
+                <span class="effects__card__duration-unit effects__card__duration-unit--seconds"><i class="fa fa-clock" role="presentation"></i>{{secondsToFriendlyTime duration.seconds}}</span>
+              {{/if}}
+              {{#if duration.rounds}}
+                <span class="effects__card__duration-unit effects__card__duration-unit--rounds"><i class="fa fa-dice-d20" role="presentation"></i>{{duration.rounds}}</span>
+              {{/if}}
+              {{#if duration.turns}}
+                <span class="effects__card__duration-unit effects__card__duration-unit--turns"><i class="fa fa-user-clock" role="presentation"></i>{{duration.turns}}</span>
+              {{/if}}
+            </span>
+          {{/if}}          
+        </span>
+
+        <ul class="effects__card__effect-list">
+          {{#with (toArray statuses)}}
+            {{#if this.length}}
+              {{#each this}}
+                <li>
+                  {{#with (statusEffect this)}}
+                    <img src="{{img}}" role="presentation" />
+                    {{localize name}}
+                  {{/with}}
+                </li>
+              {{/each}}
+            {{/if}}
+          {{/with}}
+
+          {{#each changes}}
+            <li>
+              {{localize (concat "BAGS.ActiveEffects.ModifierKeyLabels." key)
+                mod = (signNumber value)
+              }}
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+      <menu class="effects__card__controls">
+        <li>
+          <button data-action="toggle-effect" data-tooltip="BAGS.ActiveEffects.Toggle" aria-label="{{localize "BAGS.ActiveEffects.Toggle"}}">
+            <i class="fa {{ifThen disabled "fa-times" "fa-check"}}"></i>
+          </button>
+        </li>
+        <li>
+          <button data-action="edit-effect" data-tooltip="BAGS.ActiveEffects.Edit" aria-label="{{localize "BAGS.ActiveEffects.Edit"}}">
+            <i class="fa fa-pencil"></i>
+          </button>
+        </li>
+        <li>
+          <button data-action="delete-effect" data-tooltip="BAGS.ActiveEffects.Delete" aria-label="{{localize "BAGS.ActiveEffects.Delete"}}">
+            <i class="fa fa-trash"></i>
+          </button>
+        </li>
+      </menu>
+  </li>
+{{/each}}
+</ul>
+{{else}}
+  <p class="no-effects">No Active Effects</p>
+{{/if}}
+
+{{/sheetTab}}

@@ -1,33 +1,15 @@
 import { ABILITY_TYPES } from "../config/constants.mjs"
 import { actionsFactory } from "../common/action.fields.mjs"
+import BaseItemDataModel from "./item.datamodel.mjs"
 
-const { StringField, DocumentUUIDField, HTMLField, FilePathField } =
-  foundry.data.fields
+const { StringField, DocumentUUIDField } = foundry.data.fields
 
-export default class BAGSAbilityDataModel extends foundry.abstract
-  .TypeDataModel {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      tabs: [{ navSelector: ".tabs", contentSelector: "form", initial: "xp" }],
-    })
-  }
-
+export default class BAGSAbilityDataModel extends BaseItemDataModel {
   static LOCALIZATION_PREFIXES = ["BAGS.Ability"]
 
   static defineSchema() {
     return {
-      flavorText: new HTMLField({
-        required: false,
-        blank: true,
-      }),
-      description: new HTMLField({
-        required: false,
-        blank: true,
-      }),
-      banner: new FilePathField({
-        required: false,
-        categories: ["IMAGE"],
-      }),
+      ...super.defineSchema(),
       type: new StringField({
         choices: ABILITY_TYPES,
       }),

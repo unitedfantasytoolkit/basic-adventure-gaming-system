@@ -1,8 +1,4 @@
 import { SYSTEM_NAME } from "../config/constants.mjs"
-import {
-  CLASS_OVERRIDE_COMBAT,
-  CLASS_OVERRIDE_SIDEBAR_COMBAT_CONFIG,
-} from "../config/overrides.mjs"
 import SystemRegistry from "../config/system-registry"
 import CharacterCreationSourcesConfig from "../applications/character-creation-source-config.mjs"
 
@@ -14,6 +10,8 @@ Hooks.once("init", async () => {
   await Hooks.callAll("BAGS.RegisterSystems", CONFIG.BAGS.SystemRegistry)
 
   const systemRegistry = CONFIG.BAGS.SystemRegistry
+
+  CONFIG.ActiveEffect.legacyTransferral = false
 
   Object.entries(CONFIG.BAGS.SystemRegistry.categories).forEach(
     ([_, category]) => {
@@ -34,36 +32,6 @@ Hooks.once("init", async () => {
       })
     },
   )
-
-  // Combat Tracker Configuration
-  game.settings.registerMenu(
-    SYSTEM_NAME,
-    CLASS_OVERRIDE_COMBAT.CONFIG_SETTING,
-    {
-      name: "SETTINGS.CombatConfigN",
-      label: "SETTINGS.CombatConfigL",
-      hint: "SETTINGS.CombatConfigH",
-      icon: "fa-solid fa-swords",
-      type: CLASS_OVERRIDE_SIDEBAR_COMBAT_CONFIG,
-    },
-  )
-
-  game.settings.register(SYSTEM_NAME, CLASS_OVERRIDE_COMBAT.CONFIG_SETTING, {
-    name: "Combat Tracker Configuration",
-    scope: "world",
-    config: false,
-    default: {
-      usesGroupInitiative: true,
-      rerollInitiative: "reroll",
-    },
-    type: Object,
-    onChange: () => {
-      if (game.combat) {
-        game.combat.reset()
-        game.combats.render()
-      }
-    },
-  })
 
   game.settings.register(SYSTEM_NAME, "characterCreationSources", {
     name: "BAGS.Settings.CharacterCreation.Sources.Name",

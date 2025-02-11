@@ -134,6 +134,7 @@ export default class BAGSWeaponEditor extends BAGSApplication {
   // === Events ================================================================
   static async save(_event, _form, formData) {
     await this.document.update(formData.object)
-    this.render()
+    this.render(true)
+    this.document.sheet.render(true)
   }
 }

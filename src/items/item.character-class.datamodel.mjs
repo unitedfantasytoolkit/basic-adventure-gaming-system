@@ -1,9 +1,9 @@
 /**
  * @file Data model for a character's class.
  */
-import { SYSTEM_NAME } from "../config/constants.mjs"
 import filterFalsyKeyVals from "../utils/filter-falsy-key-vals.mjs"
 import mapToNumberField from "../utils/map-to-number-field.mjs"
+import BaseItemDataModel from "./item.datamodel.mjs"
 
 const {
   StringField,
@@ -13,17 +13,9 @@ const {
   SchemaField,
   DocumentUUIDField,
   HTMLField,
-  FilePathField,
 } = foundry.data.fields
 
-export default class BAGSCharacterClassDataModel extends foundry.abstract
-  .TypeDataModel {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      tabs: [{ navSelector: ".tabs", contentSelector: "form", initial: "xp" }],
-    })
-  }
-
+export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
   static LOCALIZATION_PREFIXES = ["BAGS.CharacterClass"]
 
   /**
@@ -75,21 +67,10 @@ export default class BAGSCharacterClassDataModel extends foundry.abstract
     )
 
     return {
-      flavorText: new HTMLField({
-        required: false,
-        blank: true,
-      }),
-      description: new HTMLField({
-        required: false,
-        blank: true,
-      }),
+      ...super.defineSchema(),
       restrictions: new HTMLField({
         required: false,
         blank: true,
-      }),
-      banner: new FilePathField({
-        required: false,
-        categories: ["IMAGE"],
       }),
 
       prerequisites: new SchemaField(prerequisiteFields),

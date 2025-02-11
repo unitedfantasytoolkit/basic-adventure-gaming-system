@@ -2,28 +2,12 @@
 <h2>{{localize "BAGS.Items.Weapon.Tabs.Details"}}</h2>
 <div class="scrollable">
   <div class="standard-form">
-    {{formGroup fields.name value=document.name}}
-    
-    {{formGroup fields.img value=document.img}}
-    <figure>
-      <img src="{{document.img}}" alt="">
-      <figcaption>Preview</figcaption>
-    </figure>
-
-    {{formGroup systemFields.banner value=document.system.banner localize=true}}
-    {{#if document.system.banner}}
-    <figure>
-      <img src="{{document.system.banner}}" alt="">
-      <figcaption>Preview</figcaption>
-    </figure>
-    {{/if}}
-    
+    {{formGroup fields.name value=document.name hint=""}}
     {{formGroup systemFields.cost value=document.system.cost localize=true}}
-    {{formGroup systemFields.countsAsTreasure value=document.system.countsAsTreasure localize=true}}
-    
     {{formGroup systemFields.quantity value=document.system.quantity localize=true}}
-    
     {{formGroup systemFields.weight value=document.system.weight localize=true}}
+    {{formGroup systemFields.weaponBonus value=document.system.weaponBonus localize=true}}
+    {{formGroup systemFields.countsAsTreasure value=document.system.countsAsTreasure localize=true}}
   </div>
 </div>
 {{/sheetTab}}

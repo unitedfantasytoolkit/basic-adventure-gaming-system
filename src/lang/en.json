@@ -570,6 +570,37 @@
           }
         }
       }
+    },
+    "ActiveEffects": {
+      "Add": "Add new effect",
+      "Edit": "Edit effect",
+      "Delete": "Delete effect",
+      "Toggle": "Toggle effect",
+      "DefaultName": "New Effect",
+      "ModifierKeyLabels": {
+        "system.base.speed": "Speed: {mod}",
+        "system.base.attackRollOffset": "",
+        "system.base.acOffset": "Armor Class: {mod}",
+        "system.base.abilityScores.str": "Strength {mod}",
+        "system.base.abilityScores.int": "Intelligence: {mod}",
+        "system.base.abilityScores.wis": "Wisdom: {mod}",
+        "system.base.abilityScores.dex": "Dexterity: {mod}",
+        "system.base.abilityScores.con": "Constitution: {mod}",
+        "system.base.abilityScores.cha": "Charisma: {mod}",
+        "system.hp.value": "Current HP: {mod}",
+        "system.hp.max": "Max HP: {mod}",
+        "system.hp.temporary": "Temporary HP: {mod}",
+        "system.modifiers.melee.attack": "Melee attack rolls: {mod}",
+        "system.modifiers.melee.damage": "Melee damage rolls: {mod}",
+        "system.modifiers.missile.attack": "Missile attack rolls: {mod}",
+        "system.modifiers.missile.damage": "Missile damage rolls: {mod}",
+        "system.modifiers.initiative": "Initiative: {mod}",
+        "system.modifiers.loyalty": "Loyalty: {mod}",
+        "system.modifiers.xp.bonus": "XP Bonus: {mod}",
+        "system.modifiers.encumbrance": "Encumbrance Max: {mod}",
+        "system.modifiers.speed": "Speed: {mod}",
+        "system.biographicalDetails.alignment": "Alignment Change: {mod}"
+      }
     }
   },
   "COMBAT": {
@@ -597,5 +628,12 @@
       "ability": "Ability",
       "spell": "Spell"
     }
+  },
+  "TIME": {
+    "Days": "Days",
+    "Months": "Months",
+    "MonthsAbbreviation": "mo",
+    "Years": "Years",
+    "YearsAbbreviation": "yr"
   }
 }

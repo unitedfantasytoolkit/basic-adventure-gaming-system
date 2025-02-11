@@ -1,31 +1,35 @@
 import { SYSTEM_NAME } from "../config/constants.mjs"
-import {
-  CLASS_OVERRIDE_ITEM,
-  DATA_MODEL_ITEM_CHARACTER_CLASS,
-  DATA_MODEL_ITEM_ABILITY,
-  DATA_MODEL_ITEM_ARMOR,
-  DATA_MODEL_ITEM_MISCELLANEOUS,
-  DATA_MODEL_ITEM_SPELL,
-  DATA_MODEL_ITEM_WEAPON,
-} from "../config/overrides.mjs"
+
+import BAGSItem from "../items/item.document.mjs"
 
 import BAGSAbilitySheet from "../items/item.ability.sheet.mjs"
+import BAGSAbilityDataModel from "../items/item.ability.datamodel.mjs"
+
 import BAGSArmorSheet from "../items/item.armor.sheet.mjs"
+import BAGSItemArmorDataModel from "../items/item.armor.datamodel.mjs"
+
 import BAGSCharacterClassSheet from "../items/item.character-class.sheet.mjs"
+import BAGSCharacterClassDataModel from "../items/item.character-class.datamodel.mjs"
+
 import BAGSMiscellaneousItemSheet from "../items/item.miscellaneous.sheet.mjs"
+import BAGSItemMiscellaneousDataModel from "../items/item.miscellaneous.datamodel.mjs"
+
 import BAGSSpellSheet from "../items/item.spell.sheet.mjs"
+import BAGSSpellDataModel from "../items/item.spell.datamodel.mjs"
+
 import BAGSWeaponSheet from "../items/item.weapon.sheet.mjs"
+import BAGSItemWeaponDataModel from "../items/item.weapon.datamodel.mjs"
 
 Hooks.once("init", async () => {
-  CONFIG.Item.documentClass = CLASS_OVERRIDE_ITEM
+  CONFIG.Item.documentClass = BAGSItem
 
   CONFIG.Item.dataModels = {
-    class: DATA_MODEL_ITEM_CHARACTER_CLASS,
-    item: DATA_MODEL_ITEM_MISCELLANEOUS,
-    ability: DATA_MODEL_ITEM_ABILITY,
-    armor: DATA_MODEL_ITEM_ARMOR,
-    spell: DATA_MODEL_ITEM_SPELL,
-    weapon: DATA_MODEL_ITEM_WEAPON,
+    class: BAGSCharacterClassDataModel,
+    item: BAGSItemMiscellaneousDataModel,
+    ability: BAGSAbilityDataModel,
+    armor: BAGSItemArmorDataModel,
+    spell: BAGSSpellDataModel,
+    weapon: BAGSItemWeaponDataModel,
   }
 
   // Register data models and sheets for items
