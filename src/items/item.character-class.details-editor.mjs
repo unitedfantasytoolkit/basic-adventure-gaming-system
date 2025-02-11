@@ -3,9 +3,7 @@
  */
 
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
-import BAGSApplication from "../common/app.mjs"
-
-const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api
+import BAGSApplication from "../applications/application.mjs"
 
 export default class BAGSCharacterClassDetailsEditor extends BAGSApplication {
   document

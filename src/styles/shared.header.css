@@ -5,7 +5,7 @@
   position: relative;
   display: block;
   overflow: clip;
-  border-radius: 0 0 6px 6px;
+  border-radius: 5px 5px 0 0;
 
   &:not(:has(.window-header__banner)) {
     padding: var(--application-header-padding);

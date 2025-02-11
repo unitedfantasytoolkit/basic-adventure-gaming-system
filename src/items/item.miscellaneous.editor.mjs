@@ -1,15 +1,15 @@
 import BAGSBaseItemEditor from "./item.editor.mjs"
 
-export default class BAGSWeaponEditor extends BAGSBaseItemEditor {
+export default class BAGSMiscellaneousItemEditor extends BAGSBaseItemEditor {
   // === App config ============================================================
 
   static get DEFAULT_OPTIONS() {
     return {
-      classes: ["application--weapon-editor"],
+      classes: ["application--item-editor"],
     }
   }
 
-  static DOCUMENT_TYPE = "weapon"
+  static DOCUMENT_TYPE = "item"
 
   // --- Tabs ------------------------------------------------------------------
 

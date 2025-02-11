@@ -1,7 +1,7 @@
 /**
  * @file The UI for viewing and editiing an ability Item.
  */
-import BAGSBaseItemSheet from "../common/item.sheet.mjs"
+import BAGSBaseItemSheet from "./item.sheet.mjs"
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
 /**

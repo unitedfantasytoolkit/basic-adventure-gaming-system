@@ -1,10 +1,9 @@
 /**
  * @file The UI for viewing and editiing an ability Item.
  */
-import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import BAGSCharacterClassXPTableEditor from "./item.character-class.xp-table-editor.mjs"
 import BAGSCharacterClassDetailsEditor from "./item.character-class.details-editor.mjs"
-import BAGSBaseItemSheet from "../common/item.sheet.mjs"
+import BAGSBaseItemSheet from "./item.sheet.mjs"
 
 /**
  * @typedef {import('../types.mjs').SheetNavTab} SheetNavTab

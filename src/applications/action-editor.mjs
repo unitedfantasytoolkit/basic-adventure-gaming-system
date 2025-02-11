@@ -1,6 +1,6 @@
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
-import BAGSApplication from "../common/app.mjs"
+import BAGSApplication from "../applications/application.mjs"
 
 /**
  * @typedef {object} ActionEditor
@@ -12,7 +12,7 @@ export default class ActionEditor extends BAGSApplication {
   constructor(options = {}) {
     super(options)
 
-    this.#activeAction = this.document.system.actions?.[0].id
+    this.#activeAction = this.document.system.actions?.[0]?.id
   }
 
   // === App config ============================================================

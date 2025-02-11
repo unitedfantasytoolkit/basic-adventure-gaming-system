@@ -1,7 +1,7 @@
 /**
  * @file The character sheet -- the primary UI for a player character.
  */
-import BAGSActorSheet from "../common/actor.sheet.mjs"
+import BAGSActorSheet from "./actor.sheet.mjs"
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
 export default class BAGSCharacterSheet extends BAGSActorSheet {

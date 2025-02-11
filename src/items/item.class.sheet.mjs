@@ -1,7 +1,7 @@
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import BAGSCharacterClassXPTableEditor from "./item.character-class.xp-table-editor.mjs"
 import BAGSCharacterClassDetailsEditor from "./item.character-class.details-editor.mjs"
-import BAGSBaseItemSheet from "../common/item.sheet.mjs"
+import BAGSBaseItemSheet from "./item.sheet.mjs"
 
 export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
   static SUB_APPS = {

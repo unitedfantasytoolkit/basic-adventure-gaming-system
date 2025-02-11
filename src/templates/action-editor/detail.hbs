@@ -1,15 +1,28 @@
 <article class="application__master-detail__detail">
   <h2>{{action.name}}</h2>
-  <div class="scrollable">
-    <div class="standard-form">
-      {{> actionEditorDetailsBasic action=action fields=fields }} {{#if
-      action.flags.usesAttempt}} {{> actionEditorDetailsAttempt action=action
-      fields=fields }} {{/if}} {{#if action.flags.usesEffect}} {{>
-      actionEditorDetailsEffects action=action fields=fields }} {{/if}} {{#if
-      action.flags.usesConsumption}} {{> actionEditorDetailsConsumption
-      action=action fields=fields }} {{/if}} {{#if
-      action.flags.usesRestrictions}} {{> actionEditorDetailsRestrictions
-      action=action fields=fields }} {{/if}}
+  {{#if action}}
+    <div class="scrollable">
+      <div class="standard-form">
+        {{> actionEditorDetailsBasic action=action fields=fields }}
+
+        {{#if action.flags.usesAttempt}}
+          {{> actionEditorDetailsAttempt action=action fields=fields }}
+        {{/if}}
+        
+        {{#if action.flags.usesEffect}}
+          {{> actionEditorDetailsEffects action=action fields=fields }}
+        {{/if}}
+
+        {{#if action.flags.usesConsumption}}
+          {{> actionEditorDetailsConsumption action=action fields=fields }}
+        {{/if}}
+
+        {{#if action.flags.usesRestrictions}}
+          {{> actionEditorDetailsRestrictions action=action fields=fields }}
+        {{/if}}
+      </div>
     </div>
-  </div>
+  {{else}}
+    <p class="empty">Select an action to edit, or create a new one.</p>
+  {{/if}}
 </article>

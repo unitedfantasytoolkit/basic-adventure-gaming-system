@@ -1,15 +1,15 @@
 import BAGSBaseItemEditor from "./item.editor.mjs"
 
-export default class BAGSWeaponEditor extends BAGSBaseItemEditor {
+export default class BAGSAbilityEditor extends BAGSBaseItemEditor {
   // === App config ============================================================
 
   static get DEFAULT_OPTIONS() {
     return {
-      classes: ["application--weapon-editor"],
+      classes: ["application--spell-editor"],
     }
   }
 
-  static DOCUMENT_TYPE = "weapon"
+  static DOCUMENT_TYPE = "spell"
 
   // --- Tabs ------------------------------------------------------------------
 
@@ -23,7 +23,8 @@ export default class BAGSWeaponEditor extends BAGSBaseItemEditor {
           label: "BAGS.CharacterClass.Tabs.Summary",
           cssClass: "tab--summary",
         },
-        ...super.TABS.sheet.tabs,
+        super.TABS.sheet.tabs["flavor-text"],
+        super.TABS.sheet.tabs.description,
       ],
       initial: "details",
       labelPrefix: "BAGS.Actors.Character.Tabs",

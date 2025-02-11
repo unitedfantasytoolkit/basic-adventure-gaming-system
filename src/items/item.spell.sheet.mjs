@@ -1,4 +1,4 @@
-import BAGSBaseItemSheet from "../common/item.sheet.mjs"
+import BAGSBaseItemSheet from "./item.sheet.mjs"
 
 export default class BAGSSpellItemSheet extends BAGSBaseItemSheet {
   static SUB_APPS = []

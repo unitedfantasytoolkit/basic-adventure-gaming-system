@@ -1,7 +1,39 @@
-import BAGSBaseItemSheet from "../common/item.sheet.mjs"
+import BAGSItemEditor from "./item.miscellaneous.editor.mjs"
+import BAGSBaseItemSheet from "./item.sheet.mjs"
+import ActionEditor from "../applications/action-editor.mjs"
 
 export default class BAGSMiscellaneousItemSheet extends BAGSBaseItemSheet {
-  static SUB_APPS = []
+  // === App config ============================================================
+
+  static DEFAULT_OPTIONS = {
+    classes: ["application--item-sheet"],
+    window: {
+      controls: [
+        {
+          action: "edit-item",
+          icon: "fa-solid fa-pencil",
+          label: "Edit Item",
+          ownership: "OWNER",
+        },
+        {
+          action: "edit-actions",
+          icon: "fa-solid fa-sparkles",
+          label: "Edit Actions",
+          ownership: "OWNER",
+        },
+      ],
+    },
+  }
 
   static DOCUMENT_TYPE = "item"
+
+  get title() {
+    return this.document.name
+  }
+
+  // --- Sub apps --------------------------------------------------------------
+  static SUB_APPS = {
+    actionEditor: ActionEditor,
+    itemEditor: BAGSItemEditor,
+  }
 }

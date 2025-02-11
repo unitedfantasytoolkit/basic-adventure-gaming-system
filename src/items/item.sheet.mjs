@@ -46,6 +46,8 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       "application--item-sheet",
     ],
     window: {
+      frame: true,
+      positioned: true,
       minimizable: true,
       resizable: true,
       contentTag: "section",
@@ -55,11 +57,16 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       submitOnChange: true,
     },
     actions: {
+      // Item management
+      "edit-item": this.editItem,
+      // Action management
+      "edit-actions": this.editActions,
       "perform-action": this._onPerformAction,
-      "add-effect": this._onAddEffect,
-      "edit-effect": this._onEditEffect,
-      "toggle-effect": this._onToggleEffect,
-      "delete-effect": this._onDeleteEffect,
+      // Active Effect management
+      "add-effect": this.addEffect,
+      "edit-effect": this.editEffect,
+      "toggle-effect": this.toggleEffect,
+      "delete-effect": this.deleteEffect,
     },
     position: {
       width: 640,
@@ -100,15 +107,13 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
           cssClass: "tab--effects",
         },
       ],
-      // initial: "summary",
-      initial: "active-effects",
+      initial: "summary",
       labelPrefix: "BAGS.Actors.Character.Tabs",
     },
   }
 
   tabGroups = {
-    sheet: "active-effects",
-    // sheet: "summary",
+    sheet: "summary",
   }
 
   // --- App parts -------------------------------------------------------------
@@ -172,7 +177,12 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   }
 
   async _prepareFormattedFields() {
-    return null
+    return {
+      flavorText: await TextEditor.enrichHTML(this.document.system.flavorText),
+      description: await TextEditor.enrichHTML(
+        this.document.system.description,
+      ),
+    }
   }
 
   /**
@@ -379,7 +389,7 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     super.close()
   }
 
-  static async _onAddEffect(e) {
+  static async addEffect() {
     await this.document.createEmbeddedDocuments("ActiveEffect", [
       this.document.effects.createDocument({
         name: game.i18n.localize("BAGS.ActiveEffects.DefaultName"),
@@ -388,19 +398,27 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     ])
   }
 
-  static async _onEditEffect(e) {
+  static async editEffect(e) {
     const { effectId } = e.target.closest("[data-effect-id]").dataset
     this.document.effects.get(effectId).sheet.render(true)
   }
 
-  static async _onToggleEffect(e) {
+  static async toggleEffect(e) {
     const { effectId } = e.target.closest("[data-effect-id]").dataset
     const effect = this.document.effects.get(effectId)
     effect.update({ disabled: !effect.disabled })
   }
 
-  static async _onDeleteEffect(e) {
+  static async deleteEffect(e) {
     const { effectId } = e.target.closest("[data-effect-id]").dataset
     this.document.effects.get(effectId).deleteDialog()
+  }
+
+  static editItem() {
+    this.subApps.itemEditor?.render(true)
+  }
+
+  static editActions() {
+    this.subApps.actionEditor?.render(true)
   }
 }

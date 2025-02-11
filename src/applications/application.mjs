@@ -124,22 +124,12 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
 
     header.appendChild(buttonContainer)
 
-    if (this.document.system.banner) {
-      const banner = document.createElement("img")
-      banner.src = this.document.system.banner
-      banner.classList.add("window-header__banner")
-      header.appendChild(banner)
-    }
-
     header.appendChild(titleAreaContainer)
   }
 
   _replaceHTML(...args) {
     super._replaceHTML(...args)
     this.element.querySelector(".window-title").textContent = this.title
-    if (this.document.system.banner)
-      this.element.querySelector(".window-header__banner").src =
-        this.document.system.banner
     if (this.element.querySelector(".window-header__content > img"))
       this.element.querySelector(".window-header__content > img").src =
         this.document.img

@@ -185,6 +185,9 @@
       }
     },
     "Items": {
+      "Editor": {
+        "Title": "Editor: {name}"
+      },
       "CommonTabs": {
         "Identification": "Identification",
         "FlavorText": "FlavorText",
@@ -269,13 +272,8 @@
         }
       },
       "Weapon": {
-        "Editor": {
-          "Title": "Editor: {name}"
-        },
         "Tabs": {
-          "Details": "Details",
-          "Description": "Description",
-          "FlavorText": "Flavor Text"
+          "Details": "Details"
         }
       }
     },
