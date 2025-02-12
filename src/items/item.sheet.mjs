@@ -296,7 +296,10 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   _replaceHTML(...args) {
     super._replaceHTML(...args)
     this.element.querySelector(".window-title").textContent = this.title
-    if (this.document.system.banner)
+    if (
+      this.document.system.banner &&
+      this.element.querySelector(".window-header__banner")
+    )
       this.element.querySelector(".window-header__banner").src =
         this.document.system.banner
     this.element.querySelector(".window-header__content > img").src =

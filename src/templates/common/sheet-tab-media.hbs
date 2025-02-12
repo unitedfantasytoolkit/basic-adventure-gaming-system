@@ -1,18 +1,21 @@
 {{#> sheetTab}}
-<h2>{{localize "BAGS.Items.CommonTabs.Media"}}</h2>
-    {{formGroup fields.img value=document.img}}
-    <figure>
-      <img src="{{document.img}}" alt="">
-      <figcaption>Preview</figcaption>
-    </figure>
+  <div class="standard-form">
+    <div class="scrollable">
+      <h2>{{localize "BAGS.Items.CommonTabs.Media"}}</h2>
 
-    {{formGroup systemFields.banner value=document.system.banner localize=true}}
-    {{#if document.system.banner}}
-    <figure>
-      <img src="{{document.system.banner}}" alt="">
-      <figcaption>Preview</figcaption>
-    </figure>
-    {{/if}}
+      {{formGroup fields.img value=document.img}}
+      <figure>
+        <img src="{{document.img}}" alt="">
+        <figcaption>Preview</figcaption>
+      </figure>
 
+      {{formGroup systemFields.banner value=document.system.banner localize=true}}
+      {{#if document.system.banner}}
+        <figure>
+          <img src="{{document.system.banner}}" alt="">
+          <figcaption>Preview</figcaption>
+        </figure>
+      {{/if}}
+    </div>
+  </div>
 {{/sheetTab}}
-

@@ -12,6 +12,7 @@ import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 Hooks.once("init", async () => {
   Handlebars.registerHelper({
     add: (a, b) => a + b,
+    divide: (a, b) => Math.floor((a / b) * 100),
     repeat: (length) => new Array(length).fill(null),
     ordinal: (value) => numberToOrdinal(value || 0),
     toArray: (obj) => {

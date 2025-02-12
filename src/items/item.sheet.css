@@ -1,0 +1,141 @@
+.application--bags.application--item-sheet {
+  max-width: 80ch;
+
+  .item-stats {
+    container-type: inline-size;
+    container-name: item-stats;
+    position: relative;
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    margin: 0 auto 1rem;
+    padding: 0;
+    list-style: none;
+    width: 100%;
+    max-width: 400px;
+
+    li {
+      margin: 0;
+      display: flex;
+      gap: 0.5em;
+      align-items: center;
+
+      &:has(uft-character-info-meter) {
+        flex: 1 0;
+      }
+    }
+
+    uft-character-info-meter {
+      flex: 1;
+    }
+  }
+}
+
+.application--bags.application--item-sheet .tab--item-summary.active {
+  .item-details {
+    display: flex;
+    gap: 1em;
+    flex: 1;
+    min-height: 0;
+    margin: 0 auto;
+    flex-direction: column;
+
+    :is(h1, h2, h3, h4, h5, h6) {
+      text-align: left;
+    }
+
+    p {
+      text-align: justify;
+
+      &:first-of-type {
+        margin-top: 0;
+      }
+    }
+
+    > main {
+      order: 2;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    > aside {
+      order: 1;
+
+      h2 {
+        font-size: var(--font-h3-size);
+        text-align: left;
+        margin-bottom: 0.25rem;
+      }
+
+      .action-menu {
+        li {
+          display: grid;
+          grid-template-columns: 32px 1fr;
+          align-items: center;
+          gap: 0.5rem;
+        }
+      }
+    }
+  }
+
+  > .flavor-text {
+    grid-area: flavor;
+    text-align: center;
+    color: var(--color-text-subtle);
+    max-width: 70ch;
+  }
+}
+
+@container application (min-width: 60ch) {
+  .application--bags.application--item-sheet .tab--item-summary.active {
+    .item-details {
+      flex-direction: row;
+
+      > main {
+        max-width: 60ch;
+      }
+
+      &:has(aside) {
+        > main {
+          order: 1;
+          flex: 1 1 70%;
+        }
+
+        > aside {
+          order: 2;
+          flex: 1 1 30%;
+        }
+      }
+    }
+  }
+}
+
+@container application (max-width: 60ch) {
+  .item-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+@container application (max-width: 360px) {
+  .application--bags.application--item-sheet .item-stats {
+    gap: 0.25rem 0.5rem;
+  }
+}
+
+@container item-stats (max-width: 360px) {
+  .application--bags.application--item-sheet .item-stats {
+    gap: 0 0.5rem;
+
+    li:has(.uses) {
+      flex-basis: 100%;
+
+      .uses {
+        max-width: 200px;
+        margin: 0 auto;
+      }
+    }
+  }
+}

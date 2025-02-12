@@ -1,9 +1,14 @@
 :host {
   display: flex;
   gap: 0.5em;
-  height: 1em;
+  height: fit-content;
   width: 100%;
+  align-items: center;
 
+  --meter-color-shadow: hsl(var(--info-meter-base-hue, 210) 60% 19%);
+  --meter-color-midtone: hsl(var(--info-meter-base-hue, 210) 59% 28%);
+  --meter-color-highlight: hsl(var(--info-meter-base-hue, 210) 59% 47%);
+  --meter-color-edge-highlight: hsl(var(--info-meter-base-hue, 210) 93% 61%);
   --meter-fill-pct: 80%;
   --meter-padding: 0.125em;
   --meter-radius: 0.4em;
@@ -12,8 +17,11 @@
   --meter-height: calc(1em - var(--meter-padding) * 2);
 }
 
+::slotted(i) {
+  width: 2.5ch;
+}
+
 .icon {
-  width: 3ch;
   text-align: center;
   font-size: 0.9em;
   line-height: 1;
@@ -34,6 +42,7 @@
   width: 100%;
   position: relative;
   z-index: 3;
+  height: calc(var(--meter-height) + var(--meter-padding) * 2 + 0.0625em * 2);
 }
 
 .meter::before,

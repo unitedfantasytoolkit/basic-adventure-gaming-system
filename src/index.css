@@ -15,6 +15,9 @@
 @import url("./actors/actor.character.sheet.css");
 @import url("./actors/actor.character.creation-wizard.css");
 
+/* --- Items: Common styles ------------------------------------------------- */
+@import url("./items/item.sheet.css");
+
 /* --- Items: Character Class ----------------------------------------------- */
 @import url("./items/item.character-class.sheet.css");
 @import url("./items/item.character-class.details-editor.css");

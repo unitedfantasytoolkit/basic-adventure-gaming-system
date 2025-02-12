@@ -53,7 +53,13 @@ export default class BAGSBaseItemEditor extends BAGSApplication {
           label: "Container Settings",
           cssClass: "tab--container",
         },
-
+        {
+          id: "media",
+          group: "sheet",
+          icon: "fa-solid fa-image",
+          label: "Media Settings",
+          cssClass: "tab--media",
+        },
         {
           id: "flavor-text",
           group: "sheet",
@@ -90,6 +96,9 @@ export default class BAGSBaseItemEditor extends BAGSApplication {
       },
       container: {
         template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-container-settings.hbs`,
+      },
+      media: {
+        template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-media.hbs`,
       },
       description: {
         template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-text-editor.hbs`,

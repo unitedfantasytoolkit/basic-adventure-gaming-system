@@ -1,0 +1,42 @@
+<ul class="item-stats">
+  {{#if (gt item.system.quantity 1)}}
+    <li>
+      <i class="fa fa-sack"></i>
+      {{item.system.quantity}}
+    </li>
+  {{/if}}
+
+  <li>
+    <i class="fa fa-coins"></i>
+    {{ifThen item.system.cost item.system.cost "&ndash;"}}
+  </li>
+
+  <li>
+    <i class="fa fa-weight-hanging"></i>
+    {{ifThen item.system.weight item.system.weight "&ndash;"}}
+  </li>
+
+  {{#if item.system.armorClass}}
+    <li>
+      <i class="fa fa-shield"></i>
+      {{item.system.armorClass}}
+    </li>
+  {{/if}}
+
+  {{#if item.system.uses.max}}
+    <li>
+      <uft-character-info-meter
+        value="{{item.system.uses.value}}"
+        max="{{item.system.uses.max}}"
+        class="uses"
+        style="--info-meter-base-hue: {{divide
+          item.system.uses.value
+          item.system.uses.max
+        }}"
+      >
+        <i slot="icon" class="fa fa-square-bolt"></i>
+      </uft-character-info-meter>
+
+    </li>
+  {{/if}}
+</ul>

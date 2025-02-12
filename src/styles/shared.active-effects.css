@@ -11,25 +11,32 @@
       display: grid;
       gap: 0.5em;
       grid-template-columns: 32px 1fr min-content;
+      grid-template-areas:
+        "icon name controls"
+        "effects effects effects";
 
       &__icon {
         background: var(--background);
         border: 1px solid var(--border-color);
         border-radius: 0.25rem;
+        grid-area: icon;
       }
 
       &__name {
         display: inline-block;
         font-weight: 600;
         margin-bottom: 0.2em;
+        grid-area: name;
       }
 
       &__controls {
         display: flex;
         gap: 0.5em;
+        grid-area: controls;
       }
 
       &__effect-list {
+        grid-area: effects;
         display: flex;
         margin: 0;
         padding: 0;
@@ -56,7 +63,7 @@
       }
 
       &__duration {
-        display: inline-flex;
+        display: flex;
         gap: 0.25em;
         font-size: var(--font-size-12);
 

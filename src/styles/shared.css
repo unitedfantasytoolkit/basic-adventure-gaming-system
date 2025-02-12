@@ -5,6 +5,9 @@
 @import url("./shared.enhanced-tooltip.css");
 
 .application--bags:not(.minimized) {
+  container-name: application;
+  container-type: inline-size;
+
   &.animate {
     &--error {
       animation: shake 1s cubic-bezier(0.45, 0, 0.55, 1) 0s 1 normal none;

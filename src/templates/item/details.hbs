@@ -1,5 +1,5 @@
 {{#> sheetTab}}
-<h2>{{localize "BAGS.Items.Weapon.Tabs.Details"}}</h2>
+<h2>{{localize "BAGS.Items.Miscellaneous.Tabs.Details"}}</h2>
 <div class="scrollable">
   <div class="standard-form">
     {{formGroup fields.name value=document.name hint=""}}
@@ -8,7 +8,6 @@
     {{formGroup systemFields.weight value=document.system.weight localize=true}}
     {{formGroup systemFields.uses.fields.value value=document.system.uses.value localize=true}}
     {{formGroup systemFields.uses.fields.max value=document.system.uses.max localize=true}}
-    {{formGroup systemFields.weaponBonus value=document.system.weaponBonus localize=true}}
     {{formGroup systemFields.countsAsTreasure value=document.system.countsAsTreasure localize=true}}
   </div>
 </div>

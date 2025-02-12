@@ -1,6 +1,7 @@
 import BAGSItemEditor from "./item.miscellaneous.editor.mjs"
 import BAGSBaseItemSheet from "./item.sheet.mjs"
 import ActionEditor from "../applications/action-editor.mjs"
+import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
 export default class BAGSMiscellaneousItemSheet extends BAGSBaseItemSheet {
   // === App config ============================================================
@@ -35,5 +36,12 @@ export default class BAGSMiscellaneousItemSheet extends BAGSBaseItemSheet {
   static SUB_APPS = {
     actionEditor: ActionEditor,
     itemEditor: BAGSItemEditor,
+  }
+
+  static PARTS = {
+    stats: {
+      template: `${SYSTEM_TEMPLATE_PATH}/common/item.stats.hbs`,
+    },
+    ...super.PARTS,
   }
 }

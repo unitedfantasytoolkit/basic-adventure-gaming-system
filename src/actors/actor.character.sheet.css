@@ -1,74 +1,15 @@
 .application--character-sheet {
-  /* .window-header { */
-
-  /* background: transparent; */
-
-  /* overflow: visible; */
-
-  /* z-index: 1; */
-
-  /* position: relative; */
-
-  /* justify-content: space-between; */
-
-  /* border-bottom: 1px solid var(--border-color) !important; */
-
-  /* h1, */
-
-  /* .window-buttons { */
-
-  /* flex: 1; */
-
-  /* } */
-
-  /* img { */
-
-  /* width: 4em; */
-
-  /* height: 4em; */
-
-  /* object-fit: cover; */
-
-  /* position: absolute; */
-
-  /* left: 50%; */
-
-  /* translate: -50% -1em; */
-
-  /* } */
-
-  /* .window-buttons { */
-
-  /* display: flex; */
-
-  /* gap: 0.5em; */
-
-  /* justify-content: flex-end; */
-
-  /* } */
-
-  /* } */
-
   uft-character-info-meter {
     &.hp {
-      --meter-color-midtone: #702a1d;
-      --meter-color-shadow: #4e1d14;
-      --meter-color-edge-highlight: #f85c41;
-      --meter-color-highlight: #bd4631;
+      --info-meter-base-hue: 9;
     }
 
     &.xp {
-      --meter-color-midtone: #8a7c00;
-      --meter-color-shadow: #463f00;
-      --meter-color-edge-highlight: #d7c201;
-      --meter-color-highlight: #ceb900;
+      --info-meter-base-hue: 54;
     }
 
     &.encumbrance {
-      --meter-color-midtone: #34438a;
-      --meter-color-shadow: #252f61;
-      --meter-color-edge-highlight: #617bff;
-      --meter-color-highlight: #536adb;
+      --info-meter-base-hue: 52;
     }
   }
 

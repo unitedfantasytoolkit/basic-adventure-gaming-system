@@ -8,46 +8,27 @@
     <div class="flavor-text">{{{formattedSystem.flavorText}}}</div>
   {{/if}}
 
-  <main class="scrollable">
-    <div class="scrollable">
-      {{#if item.system.description}} {{{formattedSystem.description}}} {{else}}
+  <article class="item-details">
+    <main class="scrollable">
+      {{#if item.system.description}}
+        {{{formattedSystem.description}}}
+      {{else}}
         <p class="empty">No description</p>
       {{/if}}
-    </div>
-  </main>
-
-  <aside>
-    <div class="standard-form">
-      {{formGroup
-        systemFields.quantity
-        value=item.system.quantity
-        label="Qty."
-      }}
-      {{#if item.system.uses.max}}
-        <div class="form-group">
-          <label for="">Uses</label>
-          <div class="form-fields">
-            {{formInput
-              systemFields.uses.fields.value
-              value=item.system.uses.value
-            }}
-            /
-            {{item.system.uses.max}}
-          </div>
-        </div>
-      {{/if}}
-    </div>
+    </main>
 
     {{#if item.system.actions.length}}
-      <h2>Actions</h2>
-      <menu class="action-menu">
-        {{#each item.system.actions}}
-          <li data-action-id="{{id}}" data-action="use-action">
-            <img src="{{img}}" alt="" role="presentation" />
-            <span>{{name}}</span>
-          </li>
-        {{/each}}
-      </menu>
+      <aside>
+        <h2>Actions</h2>
+        <menu class="action-menu">
+          {{#each item.system.actions}}
+            <li data-action-id="{{id}}" data-action="use-action">
+              <img src="{{img}}" alt="" role="presentation" />
+              <span>{{name}}</span>
+            </li>
+          {{/each}}
+        </menu>
+      </aside>
     {{/if}}
-  </aside>
+  </article>
 </article>

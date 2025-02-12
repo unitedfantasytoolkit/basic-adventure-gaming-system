@@ -140,3 +140,15 @@
     }
   }
 }
+
+@container application (max-width: 360px) {
+  .application--bags .window-header__content {
+    img {
+      display: none !important;
+    }
+
+    h1 {
+      translate: 0 !important;
+    }
+  }
+}

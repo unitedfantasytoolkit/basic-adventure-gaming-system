@@ -7,12 +7,12 @@ import BAGSApplication from "../applications/application.mjs"
  * @class
  */
 export default class ActionEditor extends BAGSApplication {
-  #activeAction
+  _activeAction
 
   constructor(options = {}) {
     super(options)
 
-    this.#activeAction = this.document.system.actions?.[0]?.id
+    this._activeAction = this.document.system.actions?.[0]?.id
   }
 
   // === App config ============================================================
@@ -83,12 +83,12 @@ export default class ActionEditor extends BAGSApplication {
       case "master":
         context.actions = doc.system.actions.map((a) => ({
           ...a,
-          active: a.id === this.#activeAction,
+          active: a.id === this._activeAction,
         }))
         break
       case "detail":
-        context.action = this.#activeAction
-          ? doc.system.actions.find((a) => a.id === this.#activeAction)
+        context.action = this._activeAction
+          ? doc.system.actions.find((a) => a.id === this._activeAction)
           : doc.system.actions[0]
         break
       default:
@@ -103,13 +103,15 @@ export default class ActionEditor extends BAGSApplication {
     const actionElement = e.target.closest("[data-action-id]")
     const { actionId } = actionElement.dataset
     if (actionId) {
-      this.#activeAction = actionId
+      this._activeAction = actionId
       this.render()
     }
   }
 
   static async addAction(e) {
     await this.document.createAction()
+    if (!this._activeAction)
+      this._activeAction = this.document.system.actions[0].id
     this.render()
   }
 
@@ -144,14 +146,22 @@ export default class ActionEditor extends BAGSApplication {
   static async save(_event, _form, formData) {
     try {
       const updatedActionIndex = this.document.system.actions.findIndex(
-        (a) => a.id === this.#activeAction,
+        (a) => a.id === this._activeAction,
       )
 
       if (updatedActionIndex < 0)
         throw new Error("Failed to update action: action not found")
 
+      const updatedActions = this.document.system.actions.map((a) => {
+        if (a.id !== this._activeAction) return a
+        return {
+          ...a,
+          ...formData.object,
+        }
+      })
+
       await this.document.update({
-        [`system.actions.${updatedActionIndex}`]: formData.object,
+        "system.actions": updatedActions,
       })
       this.render()
     } catch (e) {
