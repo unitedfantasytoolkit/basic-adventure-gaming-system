@@ -1,0 +1,106 @@
+name: Task
+description: Internal development tasks, developer-facing documentation, tooling improvements, or technical debt
+type: Task
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Task Category
+      description: What type of development task is this?
+      options:
+        - Development Tooling
+        - Documentation
+        - Code Refactoring
+        - Build Process
+        - Testing Infrastructure
+        - Dependencies/Package Management
+        - Performance Optimization
+        - Code Quality
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-state
+    attributes:
+      label: Current State
+      description: Describe the current situation or problem
+      placeholder: |
+        Example:
+        - Our test coverage is currently at 60%
+        - Build process takes 3 minutes
+        - Documentation is outdated
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-changes
+    attributes:
+      label: Proposed Changes
+      description: What changes or improvements do you want to make?
+      placeholder: |
+        Example:
+        1. Add configuration for unit testing
+        2. Implement parallel processing in build pipeline
+        3. Update documentation to match v2.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-benefits
+    attributes:
+      label: Expected Benefits
+      description: What benefits will this bring to the development process or project?
+      placeholder: |
+        Example:
+        - Faster build times
+        - Better code quality
+        - Easier onboarding for new contributors
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation-notes
+    attributes:
+      label: Implementation Notes
+      description: Any technical details, dependencies, or considerations for implementing this task
+      placeholder: |
+        Example:
+        - Requires Node.js 18+
+        - Will need to update CI pipeline
+        - Should be done before next major release
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Development Impact
+      description: How will this affect development workflow?
+      options:
+        - Minor (localized changes)
+        - Moderate (affects multiple components)
+        - Major (significant workflow changes)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Estimated Effort
+      description: How much work is involved?
+      options:
+        - Small (few hours)
+        - Medium (few days)
+        - Large (week+)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: considerations
+    attributes:
+      label: Additional Considerations
+      description: Please verify the following
+      options:
+        - label: This change won't break existing development workflows
+        - label: This change is backward compatible (if applicable)
+        - label: Documentation will be updated accordingly
+        - label: Other developers have been consulted (if necessary)

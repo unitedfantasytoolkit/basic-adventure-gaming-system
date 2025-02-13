@@ -1,6 +1,6 @@
 name: Compatibility Report
 description: Report compatibility issues with other modules or systems
-title: "[Compatibility]: "
+type: Compatibility Issue
 labels: ["compatibility", "needs triage"]
 assignees:
   - wyrmisis
