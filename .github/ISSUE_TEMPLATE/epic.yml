@@ -1,0 +1,160 @@
+
+name: Epic
+description: A large initiative requiring multiple features or changes
+type: Epic
+body:
+  - type: markdown
+    attributes:
+      value: |
+        An epic represents a large body of work that can be broken down into multiple features, tasks, and bug fixes.
+
+  - type: textarea
+    id: overview
+    attributes:
+      label: Epic Overview
+      description: High-level description of this initiative
+      placeholder: |
+        Provide a comprehensive overview of what this epic aims to achieve.
+        What's the big picture goal?
+    validations:
+      required: true
+
+  - type: textarea
+    id: objectives
+    attributes:
+      label: Key Objectives
+      description: What are the main objectives this epic needs to accomplish?
+      placeholder: |
+        - Objective 1: Implement new character sheet framework
+        - Objective 2: Migrate existing character types to new framework
+        - Objective 3: Ensure backward compatibility
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-value
+    attributes:
+      label: User Value
+      description: How will this epic benefit end users?
+      placeholder: |
+        Describe the value proposition for:
+        - GMs
+        - Players
+        - Module developers
+        - System developers
+    validations:
+      required: true
+
+  - type: textarea
+    id: components
+    attributes:
+      label: Major Components/Features
+      description: List the major components or features that need to be implemented
+      placeholder: |
+        1. [ ] Component A
+           - [ ] Sub-feature 1
+           - [ ] Sub-feature 2
+        2. [ ] Component B
+           - [ ] Sub-feature 1
+           - [ ] Sub-feature 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List any dependencies or prerequisites
+      placeholder: |
+        - Requires Foundry VTT v13+
+        - Needs completion of Epic #123
+
+  - type: textarea
+    id: technical-considerations
+    attributes:
+      label: Technical Considerations
+      description: Key technical aspects that need to be considered
+      placeholder: |
+        - Architecture changes
+        - Migration strategies
+        - Performance implications
+        - Compatibility concerns
+
+  - type: dropdown
+    id: scope-size
+    attributes:
+      label: Scope Size
+      description: Rough estimate of the epic's scope
+      options:
+        - Small (1-2 weeks)
+        - Medium (2-4 weeks)
+        - Large (1-2 months)
+        - Extra Large (2+ months)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this epic to the project's goals?
+      options:
+        - Must Have
+        - Should Have
+        - Nice to Have
+    validations:
+      required: true
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and Mitigation
+      description: What are the potential risks and how will they be mitigated?
+      placeholder: |
+        Risk 1:
+        - Description:
+        - Mitigation:
+
+        Risk 2:
+        - Description:
+        - Mitigation:
+
+  - type: textarea
+    id: success-criteria
+    attributes:
+      label: Success Criteria
+      description: How will we know when this epic is successfully completed?
+      placeholder: |
+        1. All character types successfully migrated
+        2. No performance degradation
+        3. All automated tests passing
+    validations:
+      required: true
+
+  - type: textarea
+    id: rollout-strategy
+    attributes:
+      label: Rollout Strategy
+      description: How will this be rolled out to users?
+      placeholder: |
+        - Beta testing phase
+        - Migration process
+        - Communication plan
+        - Rollback plan
+
+  - type: checkboxes
+    id: verification
+    attributes:
+      label: Epic Checklist
+      description: Verify that this epic is ready for planning
+      options:
+        - label: Objectives are clear and measurable
+          required: true
+        - label: Major components are identified
+          required: true
+        - label: Dependencies are documented
+          required: true
+        - label: Success criteria are defined
+          required: true
+        - label: Technical considerations are documented
+          required: true
