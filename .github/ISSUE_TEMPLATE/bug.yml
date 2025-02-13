@@ -53,7 +53,7 @@ body:
     id: terms
     attributes:
       label: Verification
-      description: Before submitting, please verify:
+      description: Before submitting, please verify...
       options:
         - label: I have checked that this issue hasn't already been reported
           required: true
