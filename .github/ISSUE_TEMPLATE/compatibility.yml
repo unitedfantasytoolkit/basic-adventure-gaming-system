@@ -1,0 +1,43 @@
+name: Compatibility Report
+description: Report compatibility issues with other modules or systems
+title: "[Compatibility]: "
+labels: ["compatibility", "needs triage"]
+assignees:
+  - wyrmisis
+body:
+  - type: input
+    id: foundry-version
+    attributes:
+      label: Foundry VTT Version
+      placeholder: "e.g., 10.291"
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: BAGS version
+      placeholder: "e.g., dnd5e 2.1.5"
+    validations:
+      required: true
+  - type: textarea
+    id: modules
+    attributes:
+      label: Affected Modules
+      description: List the modules involved and their versions
+      placeholder: |
+        - Module A v1.2.3
+        - Module B v2.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description
+      description: Describe the compatibility issue
+    validations:
+      required: true
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Current Workaround
+      description: If you've found a workaround, please describe it

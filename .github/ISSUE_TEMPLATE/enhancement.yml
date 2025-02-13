@@ -1,0 +1,36 @@
+name: Enhancement Request
+description: Suggest an improvement to an existing feature
+title: "[Enhancement]: "
+labels: ["enhancement", "needs triage"]
+assignees:
+  - wyrmisis
+body:
+  - type: input
+    id: feature
+    attributes:
+      label: Existing Feature
+      description: Which existing feature would you like to enhance?
+      placeholder: "e.g., Dice Roller, Character Sheet, etc."
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current Behavior
+      description: How does the feature currently work?
+    validations:
+      required: true
+  - type: textarea
+    id: desired
+    attributes:
+      label: Desired Behavior
+      description: How would you like it to work?
+    validations:
+      required: true
+  - type: textarea
+    id: benefit
+    attributes:
+      label: Benefit
+      description: How would this enhancement improve the user experience?
+    validations:
+      required: true

@@ -1,0 +1,61 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug", "needs triage"]
+assignees:
+  - wyrmisis
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: input
+    id: foundry-version
+    attributes:
+      label: Foundry VTT Version
+      placeholder: "e.g., 10.291"
+    validations:
+      required: true
+  - type: input
+    id: module-version
+    attributes:
+      label: Module Version
+      placeholder: "e.g., 1.2.3"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+      placeholder: "Describe the bug here..."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Console Logs
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code.
+      render: shell
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Verification
+      description: Before submitting, please verify:
+      options:
+        - label: I have checked that this issue hasn't already been reported
+          required: true
+        - label: I have tested this with all other modules disabled
+          required: true
