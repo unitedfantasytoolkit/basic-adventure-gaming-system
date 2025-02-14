@@ -1,4 +1,4 @@
 {{#> sheetTab}}
 <h2>{{localize headingText}}</h2>
-{{formGroup field value=fieldValue label="" hint=""}}
+<prose-mirror name="{{field.fieldPath}}" value="{{fieldValue}}"></prose-mirror>
 {{/sheetTab}}

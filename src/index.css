@@ -17,6 +17,7 @@
 
 /* --- Items: Common styles ------------------------------------------------- */
 @import url("./items/item.sheet.css");
+@import url("./items/item.editor.css");
 
 /* --- Items: Character Class ----------------------------------------------- */
 @import url("./items/item.character-class.sheet.css");

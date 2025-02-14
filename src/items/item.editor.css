@@ -1,0 +1,22 @@
+.application--bags.application--editor {
+  min-height: 50ch;
+  max-height: 65ch;
+
+  .standard-form {
+    &__field-group {
+      display: flex;
+      flex-direction: row;
+      gap: 1em;
+
+      .form-group {
+        flex-direction: column;
+        text-align: left;
+        align-items: start;
+
+        .hint {
+          display: none;
+        }
+      }
+    }
+  }
+}

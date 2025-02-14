@@ -193,6 +193,7 @@
         "FlavorText": "FlavorText",
         "Description": "Description",
         "Details": "Details",
+        "Media": "Media",
         "ContainerSettings": "Container Settings"
       },
       "Physical": {
@@ -206,7 +207,7 @@
         },
         "Uses": {
           "Value": {
-            "Label": "Current Uses",
+            "Label": "Remaining Uses",
             "Hint": "The number of uses remaining for this item"
           },
           "Max": {
@@ -274,6 +275,40 @@
       "Weapon": {
         "Tabs": {
           "Details": "Details"
+        },
+        "Fields": {
+          "WeaponBonus": {
+            "Label": "Weapon Bonus",
+            "Hint": "A modifier applied to attack and damage rolls."
+          },
+          "IsSlow": {
+            "Label": "Slow Weapon",
+            "Hint": "This weapon's wielder will go last in combat in some initiative schemes."
+          }
+        }
+      },
+      "Armor": {
+        "Fields": {
+          "ArmorClass": {
+            "Label": "Armor Class",
+            "Hint": "How difficult it is for an attacker to hit a target in this armor. Note: if \"Should Treat As Bonus\" is enabled, consider this field to be a modifier."
+          },
+          "ArmorClassOffset": {
+            "Label": "Armor Class Offset",
+            "Hint": "How far from the chosen combat scheme's base armor class this system falls."
+          },
+          "ArmorBonus": {
+            "Label": "Armor Bonus",
+            "Hint": "A modifier to the armor class of this armor, compared to similar suits."
+          },
+          "ShouldTreatAsBonus": {
+            "Label": "Treat as Bonus",
+            "Hint": "This piece of armor modifies, rather than sets, a user's base armor class. A common example of this is a shield."
+          },
+          "IsHeavy": {
+            "Label": "Heavy Armor",
+            "Hint": "This armor's wearer will have their speed reduced in some encumbrance schemes."
+          }
         }
       }
     },

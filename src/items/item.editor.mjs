@@ -21,7 +21,7 @@ export default class BAGSBaseItemEditor extends BAGSApplication {
       },
       position: {
         width: 540,
-        height: 600,
+        height: "auto",
       },
       form: {
         handler: this.save,
@@ -118,12 +118,12 @@ export default class BAGSBaseItemEditor extends BAGSApplication {
     const doc = this.document
     switch (partId) {
       case "description":
-        context.headingText = "BAGS.Items.Weapon.Tabs.Description"
+        context.headingText = "BAGS.Items.CommonTabs.Description"
         context.field = context.systemFields.description
         context.fieldValue = doc.system.description
         break
       case "flavor-text":
-        context.headingText = "BAGS.Items.Weapon.Tabs.FlavorText"
+        context.headingText = "BAGS.Items.CommonTabs.FlavorText"
         context.field = context.systemFields.flavorText
         context.fieldValue = doc.system.flavorText
         break
@@ -135,8 +135,11 @@ export default class BAGSBaseItemEditor extends BAGSApplication {
 
   // === Events ================================================================
   static async save(_event, _form, formData) {
-    await this.document.update(formData.object)
-    this.render(true)
-    this.document.sheet.render(true)
+    if (this._onSave) this._onSave(_event, _form, formData)
+    else {
+      await this.document.update(formData.object)
+      this.render(true)
+      this.document.sheet.render(true)
+    }
   }
 }

@@ -87,8 +87,12 @@
       overflow: hidden;
       width: var(--art-size);
     }
+  }
 
-    .window-title {
+  &__text {
+    width: calc(100% - var(--art-size));
+
+    h1 {
       margin: 0;
       text-align: center;
       line-height: 1.1;
@@ -97,7 +101,12 @@
       white-space: nowrap;
       font-size: var(--font-h2-size);
       font-family: var(--font-h1);
-      width: calc(100% - var(--art-size));
+    }
+  }
+
+  &__tags {
+    li {
+      /* TODO */
     }
   }
 
@@ -141,7 +150,7 @@
   }
 }
 
-@container application (max-width: 360px) {
+@container application (max-width: 40ch) {
   .application--bags .window-header__content {
     img {
       display: none !important;

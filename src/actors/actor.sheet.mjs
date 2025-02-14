@@ -462,7 +462,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   }
 
   async #onDropCharacterClass(doc) {
-    if (!this.document.type === "character")
+    if (this.document.type !== "character")
       animatedSheetError(this.element, "Only characters may have classes.")
     if (this.document.itemTypes.class.length)
       animatedSheetError(this.element, "A character may only have one class.")

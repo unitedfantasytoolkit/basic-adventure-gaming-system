@@ -4,6 +4,7 @@
 import ActionEditor from "../applications/action-editor.mjs"
 import BAGSBaseItemSheet from "./item.sheet.mjs"
 import BAGSArmorEditor from "./item.armor.editor.mjs"
+import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import signNumber from "../utils/sign-number.mjs"
 
 export default class BAGSArmorSheet extends BAGSBaseItemSheet {
@@ -51,5 +52,12 @@ export default class BAGSArmorSheet extends BAGSBaseItemSheet {
   static SUB_APPS = {
     actionEditor: ActionEditor,
     itemEditor: BAGSArmorEditor,
+  }
+
+  static PARTS = {
+    stats: {
+      template: `${SYSTEM_TEMPLATE_PATH}/common/item.stats.hbs`,
+    },
+    ...super.PARTS,
   }
 }

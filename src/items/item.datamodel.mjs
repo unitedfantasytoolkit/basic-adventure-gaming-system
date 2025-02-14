@@ -2,11 +2,13 @@
  * @file A data model mixin for all items.
  */
 
-const { HTMLField, FilePathField } = foundry.data.fields
+const { ArrayField, StringField, HTMLField, FilePathField } =
+  foundry.data.fields
 
 class BaseItemDataModel extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
+      tags: new ArrayField(new StringField(), { initial: [] }),
       description: new HTMLField({
         label: "BAGS.Items.Physical.Description.Label",
         hint: "BAGS.Items.Physical.Description.Hint",

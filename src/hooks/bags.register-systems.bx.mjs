@@ -62,7 +62,7 @@ const registerBX = (registry) => {
     name: "BX, Descending AC",
     default: true,
     baseTHAC0: 19,
-    baseAC: 9,
+    baseAC: 10,
     descending: true,
     async resolveAttackRoll(actor, target, options) {
       try {
@@ -124,7 +124,7 @@ const registerBX = (registry) => {
     id: "bx-ascending",
     name: "BX, Ascending AC",
     baseTHAC0: 19,
-    baseAC: 10,
+    baseAC: 9,
     descending: false,
     async resolveAttackRoll(actor, target, options) {
       try {

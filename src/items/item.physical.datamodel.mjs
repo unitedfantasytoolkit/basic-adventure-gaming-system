@@ -33,13 +33,13 @@ class PhysicalItemDataModel extends BaseItemDataModel {
       uses: new SchemaField({
         value: new NumberField({
           min: 0,
-          initial: 1,
+          initial: 0,
           label: "BAGS.Items.Physical.Uses.Value.Label",
           hint: "BAGS.Items.Physical.Uses.Value.Hint",
         }),
         max: new NumberField({
           min: 0,
-          initial: 1,
+          initial: 0,
           label: "BAGS.Items.Physical.Uses.Max.Label",
           hint: "BAGS.Items.Physical.Uses.Max.Hint",
         }),

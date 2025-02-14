@@ -1,6 +1,7 @@
 import { SYSTEM_NAME } from "../config/constants.mjs"
 import SystemRegistry from "../config/system-registry"
 import CharacterCreationSourcesConfig from "../applications/character-creation-source-config.mjs"
+import TagManager from "../applications/settings.tag-config.mjs"
 
 Hooks.once("init", async () => {
   if (!CONFIG.BAGS) CONFIG.BAGS = {}
@@ -46,6 +47,22 @@ Hooks.once("init", async () => {
     },
   })
 
+  game.settings.register(SYSTEM_NAME, "itemTags", {
+    name: "BAGS.Settings.ItemTags.Name",
+    hint: "BAGS.Settings.ItemTags.Hint",
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {
+      weapon: [],
+      armor: [],
+      item: [],
+      class: [],
+      spell: [],
+      ability: [],
+    },
+  })
+
   game.settings.register(SYSTEM_NAME, "characterCreationStartingGold", {
     name: "BAGS.Settings.CharacterCreation.StartingGold.Name",
     hint: "BAGS.Settings.CharacterCreation.StartingGold.Hint",
@@ -61,6 +78,14 @@ Hooks.once("init", async () => {
     hint: "BAGS.Settings.CharacterCreation.Sources.Hint",
     icon: "fas fa-scroll",
     type: CharacterCreationSourcesConfig,
+    restricted: true,
+  })
+
+  game.settings.registerMenu(SYSTEM_NAME, "tagManager", {
+    name: "BAGS.Settings.TagManager.Name",
+    label: "BAGS.Settings.TagManager.Label",
+    icon: "fas fa-tags",
+    type: TagManager,
     restricted: true,
   })
 

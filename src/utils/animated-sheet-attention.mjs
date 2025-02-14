@@ -6,7 +6,7 @@
  * The CSS class that marks an app as in an error state.
  * @constant
  */
-export const ANIMATE_ERROR_CLASS = "animate--error"
+export const ANIMATE_GET_ATTENTION_CLASS = "animate--attention"
 
 /**
  * Given a form and an error, report the error and shake the offending UI
@@ -17,12 +17,12 @@ export const ANIMATE_ERROR_CLASS = "animate--error"
 export default (element, msg) => {
   try {
     element.addEventListener("animationend", () => {
-      element.classList.remove(ANIMATE_ERROR_CLASS)
+      element.classList.remove(ANIMATE_GET_ATTENTION_CLASS)
     })
-    element.classList.add(ANIMATE_ERROR_CLASS)
+    element.classList.add(ANIMATE_GET_ATTENTION_CLASS)
 
-    if (msg) ui.notifications.error(msg)
+    if (msg) ui.notifications.info(msg)
   } catch {
-    // noop; don't break anything if our fancy error message fails.
+    // noop; don't break anything if our fancy message fails.
   }
 }

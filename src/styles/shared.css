@@ -10,7 +10,12 @@
 
   &.animate {
     &--error {
-      animation: shake 1s cubic-bezier(0.45, 0, 0.55, 1) 0s 1 normal none;
+      animation: shake 0.75s cubic-bezier(0.45, 0, 0.55, 1) 0s 1 normal none;
+    }
+
+    &--attention {
+      transform-origin: center;
+      animation: pulse 0.2s cubic-bezier(0.45, 0, 0.55, 1) 0s 1 normal none;
     }
   }
 
@@ -125,7 +130,7 @@
           overflow: hidden;
           gap: 1em;
           padding: 0 0.5em 0.5em;
-          flex-basis: 100%;
+          flex: 1;
 
           .tab {
             &__header,

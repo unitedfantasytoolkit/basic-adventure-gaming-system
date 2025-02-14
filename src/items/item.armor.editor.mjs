@@ -1,3 +1,4 @@
+import BAGSItemArmorDataModel from "./item.armor.datamodel.mjs"
 import BAGSBaseItemEditor from "./item.editor.mjs"
 
 export default class BAGSArmorEditor extends BAGSBaseItemEditor {
@@ -34,5 +35,26 @@ export default class BAGSArmorEditor extends BAGSBaseItemEditor {
     details: {
       template: `${this.TEMPLATE_ROOT}/details.hbs`,
     },
+  }
+
+  // === Rendering =============================================================
+
+  async _prepareFormattedFields() {
+    return {
+      armorClass: BAGSItemArmorDataModel.offsetToAC(
+        this.document.system.armorClassOffset,
+      ),
+    }
+  }
+
+  // === Events ================================================================
+  async _onSave(_event, _form, formData) {
+    const { tempAC, ...updates } = formData.object
+    await this.document.update({
+      ...updates,
+      "system.armorClassOffset": BAGSItemArmorDataModel.acToOffset(tempAC),
+    })
+    this.render(true)
+    this.document.sheet.render(true)
   }
 }

@@ -4,17 +4,35 @@
   <div class="standard-form">
     {{formGroup fields.name value=document.name hint=""}}
 
+    {{formGroup systemFields.armorClassOffset
+      name="tempAC"
+      value=formattedSystem.armorClass
+      label="BAGS.Items.Armor.Fields.ArmorClass.Label"
+      hint="BAGS.Items.Armor.Fields.ArmorClass.Hint"
+      localize=true
+    }}
+
     {{formGroup systemFields.cost value=document.system.cost localize=true}}
     {{formGroup systemFields.weight value=document.system.weight hint="" localize=true}}
-    {{formGroup systemFields.weaponBonus value=document.system.weaponBonus localize=true}}
+    {{formGroup systemFields.armorBonus
+      value=document.system.armorBonus
+      localize=true
+    }}
 
     <div class="standard-form__field-group">
       {{formGroup systemFields.quantity value=document.system.quantity localize=true}}
       {{formGroup systemFields.uses.fields.value value=document.system.uses.value localize=true}}
       {{formGroup systemFields.uses.fields.max value=document.system.uses.max localize=true}}
     </div>
-
-    {{formGroup systemFields.countsAsTreasure value=document.system.countsAsTreasure localize=true}}
+    
+    {{formGroup systemFields.shouldTreatAsBonus
+      value=document.system.shouldTreatAsBonus
+      localize=true
+    }}
+    {{formGroup systemFields.isHeavy
+      value=document.system.isHeavy
+      localize=true
+    }}
   </div>
 </div>
 {{/sheetTab}}

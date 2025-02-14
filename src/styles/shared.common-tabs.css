@@ -18,10 +18,8 @@
       margin: 0;
     }
 
-    .form-group,
-    .form-fields,
-    prose-mirror {
-      height: 100%;
+    :is(.form-group, .form-fields, prose-mirror) {
+      flex: 1;
     }
   }
 }

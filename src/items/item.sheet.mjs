@@ -2,6 +2,7 @@
  * @file The base class for Item sheets in this system.
  */
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
+import animatedSheetAttention from "../utils/animated-sheet-attention.mjs"
 
 const { HandlebarsApplicationMixin } = foundry.applications.api
 
@@ -9,6 +10,10 @@ const { HandlebarsApplicationMixin } = foundry.applications.api
  * @typedef {import('../types.mjs').SheetNavTab} SheetNavTab
  */
 
+/**
+ * @todo Should items be able to render smaller initially if they don't have
+ * much content to display?
+ */
 export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   foundry.applications.sheets.ItemSheetV2,
 ) {
@@ -69,7 +74,7 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       "delete-effect": this.deleteEffect,
     },
     position: {
-      width: 640,
+      width: 490,
       height: 520,
     },
   }
@@ -313,42 +318,49 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
    * @param {HTMLElement} frame - The window frame
    */
   #reorganizeHeaderElements(frame) {
+    // --- Get the useful elements from the existing frame ---------------------
     const header = frame.querySelector(".window-header")
     const title = frame.querySelector(".window-title")
-
     const buttons = header.querySelectorAll("button")
 
+    // --- The button container, where we'll put the app controls. -------------
     const buttonContainer = document.createElement("div")
     buttonContainer.classList.add("window-buttons")
-
-    const titleAreaContainer = document.createElement("div")
-    titleAreaContainer.classList.add("window-header__content")
-
-    const actorArt = document.createElement("img")
-    actorArt.src = this.document.img
-
     buttons.forEach((b) => buttonContainer.appendChild(b))
 
-    titleAreaContainer.appendChild(actorArt)
-    titleAreaContainer.appendChild(title)
-
-    header.appendChild(buttonContainer)
-
-    if (this.document.system.banner) {
-      const banner = document.createElement("img")
-      banner.src = this.document.system.banner
-      banner.classList.add("window-header__banner")
-      header.appendChild(banner)
+    // --- The wrapper for title and tags. ------------------------------------
+    const titleAndTagsContainer = document.createElement("div")
+    titleAndTagsContainer.classList.add("window-header__text")
+    titleAndTagsContainer.appendChild(title)
+    if (this.document.system.tags?.length) {
+      titleAndTagsContainer.appendChild(this.#buildHeaderTagList())
     }
 
-    // TODO: Is this worth doing? Keeping it around until we know how to lay
-    // actions out.
-    // titleAreaContainer.appendChild(this.#buildActionMenu())
+    // --- The item's icon. ----------------------------------------------------
+    const documentArt = document.createElement("img")
+    documentArt.src = this.document.img
 
+    // --- The wrapper for the non-interactive header elements. ----------------
+    const titleAreaContainer = document.createElement("div")
+    titleAreaContainer.classList.add("window-header__content")
+    titleAreaContainer.appendChild(documentArt)
+    titleAreaContainer.appendChild(titleAndTagsContainer)
+
+    // --- Put everything together ---------------------------------------------
+    if (this.document.system.banner) {
+      header.appendChild(this.#buildHeaderBanner())
+    }
+    header.appendChild(buttonContainer)
     header.appendChild(titleAreaContainer)
   }
 
-  #buildActionMenu() {
+  /**
+   * Build an HTML element to display the available actions in the sheet header.
+   * @todo Keeping this around until we're happy with how we've chosen to
+   * display items.
+   * @returns {HTMLULElement | null} Whatever we plan to render for actions.
+   */
+  #buildHeaderActionMenu() {
     if (this.document.system.actions) {
       const actionMenu = document.createElement("menu")
       actionMenu.classList.add("window-header__actions")
@@ -365,6 +377,22 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       return actionMenu
     }
     return null
+  }
+
+  #buildHeaderBanner() {
+    const banner = document.createElement("img")
+    banner.src = this.document.system.banner
+    banner.classList.add("window-header__banner")
+    return banner
+  }
+
+  #buildHeaderTagList() {
+    const list = document.createElement("ul")
+    this.document.system.tags.forEach((t) => {
+      const listItem = document.createElement("li")
+      list.appendChild(listItem)
+    })
+    return list
   }
 
   // === Action management =====================================================
@@ -418,10 +446,22 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   }
 
   static editItem() {
-    this.subApps.itemEditor?.render(true)
+    const subApp = this.subApps.itemEditor
+    if (!subApp) return
+    if (subApp.rendered) {
+      subApp.bringToFront()
+      animatedSheetAttention(subApp.element)
+    }
+    subApp.render(true)
   }
 
   static editActions() {
-    this.subApps.actionEditor?.render(true)
+    const subApp = this.subApps.actionEditor
+    if (!subApp) return
+    if (subApp.rendered) {
+      subApp.bringToFront()
+      animatedSheetAttention(subApp.element)
+    }
+    subApp.render(true)
   }
 }

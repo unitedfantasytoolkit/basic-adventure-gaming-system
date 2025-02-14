@@ -4,10 +4,10 @@
   <div class="standard-form">
     {{#with systemFields.identification.fields as |fields|}}
       {{formGroup fields.isIdentified name="system.identification.isIdentified" localize=true}}
-      {{formGroup fields.name name="system.identification.name" localize=true}}
-      {{formGroup fields.xpReward name="system.identification.xpReward" localize=true}}
-      {{formGroup fields.description name="system.identification.description" localize=true}}
-      {{formGroup fields.flavorText name="system.identification.flavorText" localize=true}}
+      {{formGroup fields.name value=../document.system.identification.name  localize=true}}
+      {{formGroup fields.xpReward value=../document.system.identification.xpReward  localize=true}}
+      {{formGroup fields.description value=../document.system.identification.description  localize=true}}
+      {{formGroup fields.flavorText value=../document.system.identification.flavorText  localize=true}}
     {{/with}}
   </div>
 </div>

@@ -62,15 +62,16 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
     return {
       ...context,
       document: doc,
-      source: doc.toObject(),
-      fields: doc.schema.fields,
-      systemFields: doc.system.schema.fields,
+      source: doc?.toObject(),
+      fields: doc?.schema.fields,
+      systemFields: doc?.system.schema.fields,
       formattedSystem: await this._prepareFormattedFields(),
     }
   }
 
   /** @override */
   async _preparePartContext(partId, context) {
+    super._preparePartContext(partId, context)
     context.tab = context.tabs[partId] || null
     return context
   }
@@ -106,25 +107,55 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
    * Given the window's frame, mutate its header to make it easier to style.
    * @param {HTMLElement} frame - The window frame
    */
-  async #reorganizeHeaderElements(frame) {
+  #reorganizeHeaderElements(frame) {
+    // --- Get the useful elements from the existing frame ---------------------
     const header = frame.querySelector(".window-header")
     const title = frame.querySelector(".window-title")
-
     const buttons = header.querySelectorAll("button")
 
+    // --- The button container, where we'll put the app controls. -------------
     const buttonContainer = document.createElement("div")
     buttonContainer.classList.add("window-buttons")
-
-    const titleAreaContainer = document.createElement("div")
-    titleAreaContainer.classList.add("window-header__content")
-
     buttons.forEach((b) => buttonContainer.appendChild(b))
 
-    titleAreaContainer.appendChild(title)
+    // --- The wrapper for title and tags. ------------------------------------
+    const titleAndTagsContainer = document.createElement("div")
+    titleAndTagsContainer.classList.add("window-header__text")
+    titleAndTagsContainer.appendChild(title)
 
+    // --- The wrapper for the non-interactive header elements. ----------------
+    const titleAreaContainer = document.createElement("div")
+    titleAreaContainer.classList.add("window-header__content")
+    titleAreaContainer.appendChild(titleAndTagsContainer)
+
+    // --- Put everything together ---------------------------------------------
     header.appendChild(buttonContainer)
-
     header.appendChild(titleAreaContainer)
+  }
+
+  /**
+   * Build an HTML element to display the available actions in the sheet header.
+   * @todo Keeping this around until we're happy with how we've chosen to
+   * display items.
+   * @returns {HTMLULElement | null} Whatever we plan to render for actions.
+   */
+  #buildHeaderActionMenu() {
+    if (this.document.system.actions) {
+      const actionMenu = document.createElement("menu")
+      actionMenu.classList.add("window-header__actions")
+      this.document.system.actions.forEach((a) => {
+        const actionArt = document.createElement("img")
+        actionArt.src = a.img
+        const listItem = document.createElement("li")
+        listItem.dataset.actionId = a.id
+        listItem.dataset.tooltip = a.name
+
+        listItem.appendChild(actionArt)
+        actionMenu.appendChild(listItem)
+      })
+      return actionMenu
+    }
+    return null
   }
 
   _replaceHTML(...args) {
