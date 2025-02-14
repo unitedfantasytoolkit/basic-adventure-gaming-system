@@ -2,7 +2,7 @@
   --application-height: 620px;
 
   article {
-    max-width: calc(100% - var(--window-content-padding));
+    max-width: calc(100% - var(--application-content-padding));
   }
 
   table {

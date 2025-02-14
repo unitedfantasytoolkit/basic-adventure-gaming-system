@@ -14,6 +14,7 @@ Hooks.once("init", async () => {
     add: (a, b) => a + b,
     divide: (a, b) => Math.floor((a / b) * 100),
     repeat: (length) => new Array(length).fill(null),
+    replace: (str, from, to) => str.replace(from, to),
     ordinal: (value) => numberToOrdinal(value || 0),
     toArray: (obj) => {
       try {

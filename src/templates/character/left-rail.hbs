@@ -34,6 +34,20 @@
     {{{ encumbranceMeter }}}
   </article>
   <div class="character-tiles scrollable">
+
+    <div class="ability-scores">
+      <h3>Ability Scores</h3>
+
+      <ul class="ability-scores__list">
+         {{#each actor.system.schema.fields.base.fields.abilityScores}}
+        <li>
+          <span class="ability-scores__label">{{localize (replace this.label "Label" "Short") }}</span>
+          <span class="ability-scores__score">{{lookup ../this.actor.system.base.abilityScores name}}</span>
+        </li>
+         {{/each}}
+      </ul>
+    </div>
+
     <dl>
       {{#if usesDescendingAC}}
       <dt>THAC0</dt>
@@ -66,16 +80,6 @@
         <dt>Missile</dt>
         <dd>{{signNumber actor.system.missileAttackBonus forceSign=true}}</dd>
         <dd>{{signNumber actor.system.missileDamageBonus forceSign=true}}</dd>
-      </dl>
-    </div>
-
-    <div class="ability-scores">
-      <h3>Ability Scores</h3>
-      <dl>
-        {{#each actor.system.schema.fields.base.fields.abilityScores}}
-        <dt>{{localize this.label }}</dt>
-        <dd>{{lookup ../this.actor.system.base.abilityScores name}}</dd>
-        {{/each}}
       </dl>
     </div>
 
