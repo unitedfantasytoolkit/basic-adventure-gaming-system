@@ -4,70 +4,83 @@
   data-group="{{tab.group}}"
 >
 
-
-{{#*inline "action-source-header"}}
-  {{!--
-  <div class="action-source__header">
-    <img class="action-source__icon" src="{{img}}" alt="{{name}}" />
-    <h3 class="action-source__title">{{localize name}}</h3>
-  </div>
-  --}}
-{{/inline}}
-
 {{#*inline "action-card"}}
-  {{!--
-  <div class="action-card" 
-       data-action-id="{{id}}" 
-       data-tooltip="{{localize description}}"
-       {{#if flags.isBlind}}data-blind{{/if}}>
-    <img class="action-card__icon" src="{{img}}" alt="{{localize name}}" />
-    <h4 class="action-card__title">{{localize name}}</h4>
-  </div>
-  --}}
+<button 
+  class="action-card" 
+  data-action-id="{{id}}"
+  data-tooltip="{{localize description}}"
+  {{#if flags.isBlind}}data-blind{{/if}}
+  aria-label="{{localize name}}"
+>
+  <img class="action-card__icon" src="{{img}}" alt="" />
+  <span class="action-card__title">{{localize name}}</span>
+</button>
 {{/inline}}
 
-{{#*inline "action-source"}}
-  {{!--
-  <div class="action-source" 
-       data-uuid="{{uuid}}" 
-       data-{{idType}}-id="{{id}}"
-       {{#if type}}data-source-type="{{type}}"{{/if}}>
-    {{> action-source-header}}
-    <div class="action-source__grid">
-      {{#each actions}}
-        {{> action-card}}
-      {{/each}}
+{{#*inline "action-group"}}
+{{#if items.length}}
+<section class="action-group" data-group-type="{{type}}">
+  <header class="action-group__header">
+    <h3 class="action-group__title">{{localize title}}</h3>
+  </header>
+  
+  <div class="action-group__grid" role="list">
+    {{#each items}}
+    <div class="action-source" data-uuid="{{uuid}}" data-item-id="{{id}}" role="listitem">
+      {{#if actions.length}}
+        {{#each actions}}
+          {{> action-card}}
+        {{/each}}
+      {{/if}}
     </div>
+    {{/each}}
   </div>
-  --}}
+</section>
+{{/if}}
 {{/inline}}
 
 <div class="action-dashboard">
   {{#with actor.actions}}
+    
+    {{#if builtins.length}}
+    {{> action-group 
+      type="builtin"
+      title="BAGS.Actions.Builtin"
+      items=builtins
+    }}
+    {{/if}}
 
-  {{#each builtins}}
-    {{> action-source idType="actor" type="builtin"}}
-  {{/each}}
+    {{#if weapon.length}}
+    {{> action-group
+      type="weapon"
+      title="BAGS.Actions.Weapons"
+      items=weapon
+    }}
+    {{/if}}
 
-  {{#each weapon}}
-    {{> action-source idType="item" type=@key}}
-  {{/each}}
+    {{#if armor.length}}
+    {{> action-group
+      type="armor" 
+      title="BAGS.Actions.Armor"
+      items=armor
+    }}
+    {{/if}}
 
-  {{#each  armor}}
-    {{> action-source idType="item" type=@key}}
-  {{/each}}
-  
-  {{#each item}}
-    {{> action-source idType="item" type=@key}}
-  {{/each}}
+    {{#if item.length}}
+    {{> action-group
+      type="item"
+      title="BAGS.Actions.Items"
+      items=item
+    }}
+    {{/if}}
 
-  {{#each class}}
-    {{> action-source idType="item" type=@key}}
-  {{/each}}
-  
-  {{#each ability}}
-    {{> action-source idType="item" type=@key}}
-  {{/each}}
+    {{#if ability.length}}
+    {{> action-group
+      type="ability"
+      title="BAGS.Actions.Abilities" 
+      items=ability
+    }}
+    {{/if}}
 
   {{/with}}
 </div>
