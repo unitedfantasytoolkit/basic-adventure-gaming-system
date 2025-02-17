@@ -45,7 +45,7 @@ export const baseFactory = (fields) =>
      * Encompasses ascending and descending AC by being an offset from
      * the settings-defined THAC0 base *or* 0
      */
-    acOffset: new NumberField({
+    armorClassOffset: new NumberField({
       initial: 0,
       nullable: false,
       label: "",
@@ -54,8 +54,24 @@ export const baseFactory = (fields) =>
     ...fields,
   })
 
-export const modifiersFactory = (fields) =>
-  new SchemaField({
+export const modifiersFactory = (fields) => {
+  const savingThrowSettings = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+    CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
+  )
+  return new SchemaField({
+    savingThrows: new SchemaField({
+      ...Object.keys(savingThrowSettings?.savingThrows || {}).reduce(
+        (obj, s) => ({
+          ...obj,
+          [s]: new NumberField({
+            initial: 0,
+            label: "",
+            hint: "",
+          }),
+        }),
+        {},
+      ),
+    }),
     melee: new SchemaField({
       attack: new NumberField({
         initial: 0,
@@ -99,6 +115,7 @@ export const modifiersFactory = (fields) =>
     }),
     ...fields,
   })
+}
 
 export const retainerFactory = (fields) =>
   new SchemaField({

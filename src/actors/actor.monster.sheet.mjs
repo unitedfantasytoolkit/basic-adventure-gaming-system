@@ -10,7 +10,7 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
   static get DEFAULT_OPTIONS() {
     return {
       id: "character-{id}",
-      classes: ["application--character-sheet"],
+      classes: ["application--monster-sheet"],
       form: {
         handler: undefined,
         submitOnChange: true,
@@ -144,17 +144,6 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
           CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
             CONFIG.BAGS.SystemRegistry.categories.COMBAT,
           )?.descending
-        context.abilityScoreTooltips = Object.entries(
-          this.document.system.schema.fields.base.fields.abilityScores.fields,
-        ).reduce(
-          (obj, [key, field]) => ({
-            ...obj,
-            [key]: effectListToTooltip(
-              this.document.appliedEffectsByAffectedKey.get(field.fieldPath),
-            ),
-          }),
-          {},
-        )
         context.savingThrowTooltips = Object.keys(
           savingThrowSettings.savingThrows,
         ).reduce(

@@ -3,6 +3,75 @@
   data-tab="{{tab.id}}"
   data-group="{{tab.group}}"
 >
+
+
+{{#*inline "action-source-header"}}
+  {{!--
+  <div class="action-source__header">
+    <img class="action-source__icon" src="{{img}}" alt="{{name}}" />
+    <h3 class="action-source__title">{{localize name}}</h3>
+  </div>
+  --}}
+{{/inline}}
+
+{{#*inline "action-card"}}
+  {{!--
+  <div class="action-card" 
+       data-action-id="{{id}}" 
+       data-tooltip="{{localize description}}"
+       {{#if flags.isBlind}}data-blind{{/if}}>
+    <img class="action-card__icon" src="{{img}}" alt="{{localize name}}" />
+    <h4 class="action-card__title">{{localize name}}</h4>
+  </div>
+  --}}
+{{/inline}}
+
+{{#*inline "action-source"}}
+  {{!--
+  <div class="action-source" 
+       data-uuid="{{uuid}}" 
+       data-{{idType}}-id="{{id}}"
+       {{#if type}}data-source-type="{{type}}"{{/if}}>
+    {{> action-source-header}}
+    <div class="action-source__grid">
+      {{#each actions}}
+        {{> action-card}}
+      {{/each}}
+    </div>
+  </div>
+  --}}
+{{/inline}}
+
+<div class="action-dashboard">
+  {{#with actor.actions}}
+
+  {{#each builtins}}
+    {{> action-source idType="actor" type="builtin"}}
+  {{/each}}
+
+  {{#each weapon}}
+    {{> action-source idType="item" type=@key}}
+  {{/each}}
+
+  {{#each  armor}}
+    {{> action-source idType="item" type=@key}}
+  {{/each}}
+  
+  {{#each item}}
+    {{> action-source idType="item" type=@key}}
+  {{/each}}
+
+  {{#each class}}
+    {{> action-source idType="item" type=@key}}
+  {{/each}}
+  
+  {{#each ability}}
+    {{> action-source idType="item" type=@key}}
+  {{/each}}
+
+  {{/with}}
+</div>
+
   {{#if actor.items.documentsByType.spell.length}}
   <div class="spell-slots">
     <h3>Prepared Spells</h3>

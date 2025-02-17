@@ -159,6 +159,43 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   // === Rendering =============================================================
 
   /**
+   * @todo Implement this!
+   */
+  getFieldModificationState(key, forcedDirection) {
+    const modifications =
+      this.document.appliedEffectsByAffectedKey().get(key) ?? []
+    if (!modifications.length) return null
+
+    // Get the direction where positive is "better"
+    // const direction =
+    // this.constructor.FIELD_IMPROVEMENT_DIRECTION[key] ?? 'ascending'
+    const direction = forcedDirection ? forcedDirection : "ascending"
+
+    // Calculate total numerical modification
+    const totalMod = modifications.reduce((sum, mod) => {
+      const value = Number(mod.modification.value) || 0
+
+      // Handle different modification modes
+      switch (mod.modification.mode) {
+        case 2: // ADD
+          return sum + value
+        case 1: // MULTIPLY
+          return sum * value
+        // Add other cases as needed
+        default:
+          return sum
+      }
+    }, 0)
+
+    // Determine if this is an improvement based on direction
+    if (totalMod === 0) return null
+    if (direction === "ascending") {
+      return totalMod > 0 ? "improved" : "impaired"
+    } else {
+      return totalMod < 0 ? "improved" : "impaired"
+    }
+  }
+  /**
    * Provide context to the templating engine.
    * @override
    */
@@ -238,8 +275,6 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     }
 
     context.tab = context.tabs[partId] || null
-
-    // context.tab = this.#getTabs()[partId]
     return context
   }
 
@@ -268,7 +303,6 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
    * - an alternative header: the existing elements in the header are moved
    *   around into a format tha makes more sense for our design.
    * - tab navigation: if the sheet has tabs, to enforce consistency.
-   * - an effects pane: a common UI for managing active effects on
    *   actors and items
    * @param {unknown} options - Options which configure application rendering
    * behavior. See {RenderOptions} in Foundry's types.
@@ -281,6 +315,38 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     this.#reorganizeHeaderElements(frame)
     this.#addTabsToFrame(frame)
     return frame
+  }
+
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options)
+    ContextMenu.create(
+      this,
+      this.element,
+      ".character-sheet-inventory uft-item-tile",
+      {
+        hookName: "InventoryContext",
+        jQuery: false,
+        fixed: true,
+      },
+    )
+    // ContextMenu.create(this, this.element, ".directory-item[data-pack]", {
+    //   jQuery: false,
+    //   fixed: true,
+    // })
+    // new ContextMenu(
+    //   this.element,
+    //   "button.filter",
+    //   this._getFilterContextOptions(),
+    //   {
+    //     jQuery: false,
+    //     fixed: true,
+    //     eventName: "click",
+    //   },
+    // )
+  }
+
+  _getInventoryContextOptions() {
+    return {}
   }
 
   _onRender(context, options) {
@@ -314,8 +380,11 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
     buttons.forEach((b) => buttonContainer.appendChild(b))
 
+    const gripIcon = document.createElement("i")
+    gripIcon.classList.value = "fa fa-grip-lines-vertical"
+
+    header.appendChild(gripIcon)
     header.appendChild(title)
-    header.appendChild(actorArt)
     header.appendChild(buttonContainer)
   }
 

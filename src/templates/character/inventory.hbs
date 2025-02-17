@@ -1,7 +1,7 @@
 <article class="tab character-sheet-{{tab.id}} {{tab.cssClass}}{{ifThen tab.active " active" ""}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
   <h3>Inventory</h3>
-
-    {{!-- Search & Sort --}}
+      {{!-- Search & Sort --}}
+  
   <search>
     <i class="fa fa-search"></i>
     <input type="search" name="search" autocomplete="off" placeholder="{{ searchMode.placeholder }}"
@@ -10,6 +10,11 @@
     TODO: Sort types (asc/desc for gold value, encumbrance, and name)
     <button type="button" class="inline-control toggle-sort icon {{ sortMode.icon }}" data-action="toggleSort"
             data-tooltip="{{ sortMode.label }}" aria-label="{{ localize sortMode.label }}"></button>
+    --}}
+    {{!--
+    TODO: Filter types (weapon, armor, item, has actions, has effects, counts as treasure)
+    <button type="button" class="inline-control toggle-filter icon {{ filterMode.icon }}" data-action="toggleFilter"
+            data-tooltip="{{ filterMode.label }}" aria-label="{{ localize filterMode.label }}"></button>
     --}}
   </search>
 

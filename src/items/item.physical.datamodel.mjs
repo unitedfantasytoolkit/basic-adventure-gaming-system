@@ -16,6 +16,8 @@ const {
 } = foundry.data.fields
 
 class PhysicalItemDataModel extends BaseItemDataModel {
+  isPhysicalItem = true
+
   static defineSchema() {
     return {
       ...super.defineSchema(),
@@ -98,6 +100,8 @@ class PhysicalItemDataModel extends BaseItemDataModel {
         label: "BAGS.Items.Physical.CountsAsTreasure.Label",
         hint: "BAGS.Items.Physical.CountsAsTreasure.Hint",
       }),
+      isEquipped: new BooleanField({ initial: false }),
+      areEffectsAppliedWhenUnequipped: new BooleanField({ initial: false }),
     }
   }
 }

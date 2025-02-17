@@ -1,5 +1,4 @@
-.application--bags:not(.minimized, .application--character-sheet)
-  .window-header {
+.application--bags:not(.minimized, .application--actor-sheet) .window-header {
   --art-size: 48px;
 
   position: relative;

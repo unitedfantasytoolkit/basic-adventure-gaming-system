@@ -36,6 +36,74 @@ export default class BAGSActor extends Actor {
     }
   }
 
+  // get appliedEffects() {
+  //   const effects = super.appliedEffects.map((e) => {
+  //     if (e.parent instanceof CONFIG.Actor.documentClass) return true
+  //     if (e.parent.type === "weapon" || e.parent.type === "armor")
+  //       return e.system.isEquipped
+  //     return false
+  //   })
+
+  //   console.info(effects.map((e) => e.parent))
+
+  //   return effects
+  // }
+
+  get appliedEffectsByAffectedKey() {
+    const attributeModifications = new Map()
+
+    this.appliedEffects.forEach((effect) => {
+      if (!effect.changes?.length) return
+
+      effect.changes.forEach((change) => {
+        const { key, ...modification } = change
+
+        if (!attributeModifications.has(key))
+          attributeModifications.set(key, [])
+
+        attributeModifications.get(key).push({
+          name: effect.name,
+          id: effect.id,
+          img: effect.img,
+          parent: effect.parent,
+          modification,
+          statuses: effect.statuses,
+        })
+      })
+    })
+
+    return attributeModifications
+  }
+
+  get actions() {
+    const documentToActions = ({ id, uuid, name, img, ...i }) => ({
+      id,
+      uuid,
+      name,
+      img,
+      actions: i.system?.actions || [],
+    })
+
+    const itemActions = Object.entries(this.items.documentsByType).reduce(
+      (obj, [key, items]) => ({
+        ...obj,
+        [key]: items
+          .filter((i) => i.system?.actions?.length)
+          .map(documentToActions),
+      }),
+      {},
+    )
+
+    return {
+      builtins: [documentToActions(this)],
+      ...itemActions,
+    }
+  }
+
+  get flattenedOverrides() {
+    return foundry.utils.flattenObject(this.overrides)
+  }
+
   async resolveAction(action, item = null) {
     const resolver = new ActionResolver(action, item, this, game.user.targets)
 

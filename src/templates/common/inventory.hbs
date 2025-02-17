@@ -1,7 +1,31 @@
-<article class="tab character-class-sheet-{{tab.id}} {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+<article
+  class="tab character-class-sheet-{{tab.id}} {{tab.cssClass}}"
+  data-tab="{{tab.id}}"
+  data-group="{{tab.group}}"
+>
+  <div class="equipped-items">
+    <div class="equipped-items__category equipped-items__category--primary">
+      <div class="equipped-items__item">
+        <img src="https://placehold.it/64/64" />
+      </div>
+      {{! Weapon 1 }}
+      {{! Weapon 2 }}
+      {{! Weapon 3 }}
+      {{! Armor }}
+      {{! Shield }}
+    </div>
+
+    <div class="equipped-items__category equipped-items__category--secondary">
+      <ol class="item-grid" style="--item-grid-minimum-rows: 2">
+      </ol>
+    </div>
+  </div>
+
   <ol class="item-grid" style="--item-grid-minimum-rows: 5">
-{{#each inventory}}
-    <li class="item-grid__item"><uft-item-tile uuid="{{uuid}}"></uft-item-tile></li>
-{{/each}}
+    {{#each inventory}}
+      <li class="item-grid__item"><uft-item-tile
+          uuid="{{uuid}}"
+        ></uft-item-tile></li>
+    {{/each}}
   </ol>
 </article>

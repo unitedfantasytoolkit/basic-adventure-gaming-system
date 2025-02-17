@@ -1,0 +1,7 @@
+.application--monster-sheet {
+  --application-filler-gradient: linear-gradient(
+    15deg,
+    #230d0d 20%,
+    #633c3c 100%
+  );
+}

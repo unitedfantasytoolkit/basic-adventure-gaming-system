@@ -148,7 +148,7 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
     const saves = savingThrowSettings?.savingThrows || {}
     const worstPossibleSave = savingThrowSettings?.worstPossible || 19
 
-    return (
+    const basePreparedSaves =
       this.parent.itemTypes.class[0]?.system.currentLevelDetails.saves ||
       Object.keys(saves).reduce(
         (obj, key) => ({
@@ -157,7 +157,16 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
         }),
         {},
       )
-    )
+
+    return Object.entries(basePreparedSaves)
+      .map(([key, val]) => [key, val + (this.modifiers.savingThrows[key] || 0)])
+      .reduce(
+        (obj, [key, val]) => ({
+          ...obj,
+          [key]: val,
+        }),
+        {},
+      )
   }
 
   /**
@@ -195,7 +204,7 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
 
   #getBaseArmorClass(fallbackAC) {
     const wornArmor = this.parent.items.documentsByType.armor.find(
-      (armor) => !armor.system.shouldTreatAsBonus,
+      (armor) => armor.system.isEquipped && !armor.system.shouldTreatAsBonus,
     )
 
     return wornArmor?.system?.armorClass ?? fallbackAC
@@ -203,7 +212,9 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
 
   #calculateArmorBonuses() {
     return this.parent.items.documentsByType.armor
-      .filter((armor) => armor.system.shouldTreatAsBonus)
+      .filter(
+        (armor) => armor.system.isEquipped && armor.system.shouldTreatAsBonus,
+      )
       .reduce((total, armor) => total + armor.system.armorClass, 0)
   }
 
