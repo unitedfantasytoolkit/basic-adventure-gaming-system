@@ -302,48 +302,52 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   }
 
   static INVENTORY_SORT_MODES = {
-    DEFAULT: { icon: "fa fa-arrow-up-arrow-down", id: 0, label: "Default" },
+    DEFAULT: {
+      icon: "fa fa-arrow-up-arrow-down",
+      id: 0,
+      label: "BAGS.Actors.Common.Inventory.Sort.Default",
+    },
     NAME_ASCENDING: {
       icon: "fa fa-arrow-down-a-z",
       id: 1,
       key: "name",
       isDescending: false,
-      label: "Name (ascending)",
+      label: "BAGS.Actors.Common.Inventory.Sort.NameAscending",
     },
     NAME_DESCENDING: {
       icon: "fa fa-arrow-up-z-a",
       id: 2,
       key: "name",
       isDescending: true,
-      label: "Name (descending)",
+      label: "BAGS.Actors.Common.Inventory.Sort.NameDescending",
     },
     ENCUMBRANCE_ASCENDING: {
       icon: "fa fa-arrow-up-big-small",
       id: 3,
       key: "system.weight",
       isDescending: false,
-      label: "Encumbrance (ascending)",
+      label: "BAGS.Actors.Common.Inventory.Sort.EncumbranceAscending",
     },
     ENCUMBRANCE_DESCENDING: {
       icon: "fa fa-arrow-down-big-small",
       id: 4,
       key: "system.weight",
       isDescending: true,
-      label: "Encumbrance (descending)",
+      label: "BAGS.Actors.Common.Inventory.Sort.EncumbranceDescending",
     },
     VALUE_ASCENDING: {
       icon: "fa fa-arrow-up-1-9",
       id: 5,
       key: "system.cost",
       isDescending: false,
-      label: "Coin value (ascending)",
+      label: "BAGS.Actors.Common.Inventory.Sort.ValueAscending",
     },
     VALUE_DESCENDING: {
       icon: "fa fa-arrow-down-9-1",
       id: 6,
       key: "system.cost",
       isDescending: true,
-      label: "Coin value (descending)",
+      label: "BAGS.Actors.Common.Inventory.Sort.ValueDescending",
     },
   }
 
@@ -351,43 +355,43 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     DEFAULT: {
       icon: "fa-regular fa-filter",
       id: 0,
-      label: "Default",
+      label: "BAGS.Actors.Common.Inventory.Filter.Default",
       predicate: () => true,
     },
     TYPE_WEAPON: {
       icon: "fa fa-sword",
       id: 1,
-      label: "Weapons",
+      label: "BAGS.Actors.Common.Inventory.Filter.Weapons",
       predicate: (i) => i.type === "weapon",
     },
     TYPE_ARMOR: {
       icon: "fa fa-shield",
       id: 2,
-      label: "Armor",
+      label: "BAGS.Actors.Common.Inventory.Filter.Armor",
       predicate: (i) => i.type === "armor",
     },
     TYPE_MISCELLANEOUS: {
       icon: "fa fa-suitcase",
       id: 3,
-      label: "Miscellaneous Items",
+      label: "BAGS.Actors.Common.Inventory.Filter.Miscellaneous",
       predicate: (i) => i.type === "item",
     },
     CONTAINER: {
       icon: "fa fa-sack",
       id: 4,
-      label: "Containers",
+      label: "BAGS.Actors.Common.Inventory.Filter.Containers",
       predicate: (i) => i.system.container.isContainer,
     },
     TREASURE: {
       icon: "fa fa-coin",
       id: 5,
-      label: "Treasure",
+      label: "BAGS.Actors.Common.Inventory.Filter.Treasure",
       predicate: (i) => i.system.countsAsTreasure,
     },
     WORTH_XP: {
       icon: "fa fa-trophy",
       id: 6,
-      label: "Items with unclaimed XP",
+      label: "BAGS.Actors.Common.Inventory.Filter.WorthXP",
       predicate: (i) =>
         i.system.countsAsTreasure && !i.system.hasBeenCountedAsTreasure,
     },
@@ -436,7 +440,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   _getInventoryContextOptions() {
     return [
       {
-        name: "Use",
+        name: "BAGS.Actors.Common.Actions.Use",
         icon: "<i class='fa fa-bolt' />",
         condition: (element) => {
           const item = this.document.items.get(element.dataset.itemId)
@@ -448,7 +452,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         },
       },
       {
-        name: "View",
+        name: "BAGS.Actors.Common.Actions.View",
         icon: "<i class='fa fa-book-open' />",
         callback: (element) => {
           const item = this.document.items.get(element.dataset.itemId)
@@ -456,7 +460,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         },
       },
       {
-        name: "Edit",
+        name: "BAGS.Actors.Common.Actions.Edit",
         icon: "<i class='fa fa-pencil' />",
         condition: (element) => {
           const item = this.document.items.get(element.dataset.itemId)
@@ -468,7 +472,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         },
       },
       {
-        name: "Un-identify",
+        name: "BAGS.Actors.Common.Actions.Unidentify",
         icon: "<i class='fa fa-eye-slash' />",
         condition: (element) => {
           const item = this.document.items.get(element.dataset.itemId)
@@ -480,7 +484,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         },
       },
       {
-        name: "Identify",
+        name: "BAGS.Actors.Common.Actions.Identify",
         icon: "<i class='fa fa-eye' />",
         condition: (element) => {
           const item = this.document.items.get(element.dataset.itemId)
@@ -494,7 +498,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         },
       },
       {
-        name: "Equip",
+        name: "BAGS.Actors.Common.Actions.Equip",
         icon: "<i class='fa fa-hand-fist' />",
         condition: (element) => {
           const item = this.document.items.get(element.dataset.itemId)
@@ -506,7 +510,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         },
       },
       {
-        name: "Unequip",
+        name: "BAGS.Actors.Common.Actions.Unequip",
         icon: "<i class='fa fa-hand' />",
         condition: (element) => {
           const item = this.document.items.get(element.dataset.itemId)
@@ -518,7 +522,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         },
       },
       {
-        name: "Delete",
+        name: "BAGS.Actors.Common.Actions.Delete",
         icon: "<i class='fa fa-trash' />",
         condition: (element) => {
           const item = this.document.items.get(element.dataset.itemId)
@@ -719,9 +723,17 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
   async #onDropCharacterClass(doc) {
     if (this.document.type !== "character")
-      animatedSheetError(this.element, "Only characters may have classes.")
+      animatedSheetError(
+        this.element,
+        game.i18n.localize(
+          "BAGS.Actors.Common.Errors.ClassesOnlyForCharacters",
+        ),
+      )
     if (this.document.itemTypes.class.length)
-      animatedSheetError(this.element, "A character may only have one class.")
+      animatedSheetError(
+        this.element,
+        game.i18n.localize("BAGS.Actors.Common.Errors.OneClassOnly"),
+      )
     else this.document.createEmbeddedDocuments("Item", [doc])
   }
 

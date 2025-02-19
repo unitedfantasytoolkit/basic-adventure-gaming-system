@@ -334,6 +334,43 @@
             "RemainingGold": "Gold Remaining"
           }
         }
+      },
+      "Common": {
+        "Inventory": {
+          "Label": "Inventory",
+          "Sort": {
+            "Default": "Default",
+            "NameAscending": "Name (ascending)",
+            "NameDescending": "Name (descending)",
+            "EncumbranceAscending": "Encumbrance (ascending)",
+            "EncumbranceDescending": "Encumbrance (descending)",
+            "ValueAscending": "Coin value (ascending)",
+            "ValueDescending": "Coin value (descending)"
+          },
+          "Filter": {
+            "Default": "Default",
+            "Weapons": "Weapons",
+            "Armor": "Armor",
+            "Miscellaneous": "Miscellaneous Items",
+            "Containers": "Containers",
+            "Treasure": "Treasure",
+            "WorthXP": "Items with unclaimed XP"
+          }
+        },
+        "Actions": {
+          "Use": "Use",
+          "View": "View",
+          "Edit": "Edit",
+          "Unidentify": "Un-identify",
+          "Identify": "Identify",
+          "Equip": "Equip",
+          "Unequip": "Unequip",
+          "Delete": "Delete"
+        },
+        "Errors": {
+          "ClassesOnlyForCharacters": "Only characters may have classes.",
+          "OneClassOnly": "A character may only have one class."
+        }
       }
     },
     "ChatCards": {
