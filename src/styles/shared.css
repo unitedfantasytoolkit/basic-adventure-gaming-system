@@ -24,7 +24,7 @@
     text-align: center;
   }
 
-  .tab {
+  .tab.tab--sheet {
     &__header {
       :is(h1, h2, h3, h4, h5, h6) {
         margin: 0;
@@ -123,7 +123,7 @@
         background-image: var(--header-banner);
       }
 
-      .tab {
+      .tab--sheet {
         &.active {
           display: flex;
           flex-direction: column;

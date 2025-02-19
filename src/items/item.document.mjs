@@ -4,6 +4,8 @@
 import ActionResolver from "../rules-engines/action-resolver.mjs"
 
 export default class BAGSItem extends Item {
+  static PHYSICAL_TYPES = ["weapon", "armor", "item"]
+
   async resolveAction(action) {
     const resolver = new ActionResolver(
       action,
@@ -38,5 +40,26 @@ export default class BAGSItem extends Item {
 
   async onConsumption(attempt, target) {
     console.info(this, this.parent, attempt, target)
+  }
+
+  equip() {
+    return this.#toggleEquipState(true)
+  }
+
+  unequip() {
+    return this.#toggleEquipState(false)
+  }
+
+  #toggleEquipState(setState) {
+    if (!this.isPhysical) return
+
+    const newState =
+      typeof setState === "boolean" ? setState : !this.system.isEquipped
+
+    return this.update({ "system.isEquipped": newState })
+  }
+
+  get isPhysical() {
+    return BAGSItem.PHYSICAL_TYPES.includes(this.type)
   }
 }

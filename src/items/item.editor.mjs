@@ -139,7 +139,7 @@ export default class BAGSBaseItemEditor extends BAGSApplication {
     else {
       await this.document.update(formData.object)
       this.render(true)
-      this.document.sheet.render(true)
+      if (this.document.sheet.visible) this.document.sheet.render(true)
     }
   }
 }

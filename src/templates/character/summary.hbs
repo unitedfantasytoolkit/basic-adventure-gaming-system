@@ -1,8 +1,4 @@
-<article
-  class="tab character-class-sheet-{{tab.id}} {{tab.cssClass}}{{ifThen tab.active " active" ""}}"
-  data-tab="{{tab.id}}"
-  data-group="{{tab.group}}"
->
+{{#> sheetTab}}
 
 {{#*inline "action-card"}}
 <button 
@@ -12,15 +8,14 @@
   {{#if flags.isBlind}}data-blind{{/if}}
   aria-label="{{localize name}}"
 >
-  <img class="action-card__icon" src="{{img}}" alt="" />
-  <span class="action-card__title">{{localize name}}</span>
+  <img class="action-card__icon" src="{{img}}" alt="" role="presentation" />
 </button>
 {{/inline}}
 
 {{#*inline "item-with-actions"}}
 <div class="action-source" data-uuid="{{uuid}}" data-item-id="{{id}}" role="listitem">
   {{#if (eq actions.length 1)}}
-    {{!-- Single action item gets a combined display --}}
+    {{!-- Single action item just displays the item --}}
     <button 
       class="action-card action-card--with-item" 
       data-action-id="{{actions.0.id}}"
@@ -32,16 +27,12 @@
         <img class="action-card__item-icon" src="{{img}}" alt="" />
         <span class="action-card__item-name">{{name}}</span>
       </div>
-      <div class="action-card__action">
-        <img class="action-card__action-icon" src="{{actions.0.img}}" alt="" />
-        <span class="action-card__action-name">{{localize actions.0.name}}</span>
-      </div>
     </button>
   {{else}}
     {{!-- Multiple actions show item header + action list --}}
     <div class="action-source__header">
       <img class="action-source__icon" src="{{img}}" alt="" />
-      <h4 class="action-source__name">{{name}}</h4>
+      <span class="action-source__name">{{name}}</span>
     </div>
     <div class="action-source__actions">
       {{#each actions}}
@@ -55,9 +46,11 @@
 {{#*inline "action-group"}}
 {{#if items.length}}
 <section class="action-group" data-group-type="{{type}}">
-  <header class="action-group__header">
-    <h3 class="action-group__title">{{localize title}}</h3>
-  </header>
+  {{#if title}}
+    <header class="action-group__header">
+      <h3 class="action-group__title">{{localize title}}</h3>
+    </header>
+  {{/if}}
   
   <div class="action-group__grid" role="list">
     {{#each items}}
@@ -74,7 +67,7 @@
     {{#if builtins.length}}
     {{> action-group 
       type="builtin"
-      title="BAGS.Actions.Builtin"
+      title=""
       items=builtins
     }}
     {{/if}}
@@ -139,4 +132,4 @@
     <ul class="item-grid item-grid--favorites">
     </ul>
   </div>
-</article>
+{{/sheetTab}}

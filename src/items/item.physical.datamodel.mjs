@@ -95,6 +95,11 @@ class PhysicalItemDataModel extends BaseItemDataModel {
           hint: "BAGS.Items.Physical.Identification.XPReward.Hint",
         }),
       }),
+      hasBeenCountedAsTreasure: new BooleanField({
+        initial: false,
+        label: "BAGS.Items.Physical.HasBeenCountedAsTreasure.Label",
+        hint: "BAGS.Items.Physical.HasBeenCountedAsTreasure.Hint",
+      }),
       countsAsTreasure: new BooleanField({
         initial: false,
         label: "BAGS.Items.Physical.CountsAsTreasure.Label",

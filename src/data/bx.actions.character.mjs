@@ -32,7 +32,7 @@ const characterActions = [
   createExplorationSkillAction("open-stuck-door", {
     name: "BAGS.Systems.BX.Exploration.OpenDoors.Label",
     description: "BAGS.Systems.BX.Exploration.OpenDoors.Description",
-    img: "systems/basic-adventure-gaming-system/assets/icons/default-action.svg",
+    img: "systems/basic-adventure-gaming-system/assets/icons/bx.actions.open-stuck-door.svg",
     isBlind: false,
     flavorText: {
       attempt: "BAGS.Systems.BX.Exploration.OpenDoors.AttemptText",
@@ -45,7 +45,7 @@ const characterActions = [
   createExplorationSkillAction("listen-at-doors", {
     name: "BAGS.Systems.BX.Exploration.ListenAtDoors.Label",
     description: "BAGS.Systems.BX.Exploration.ListenAtDoors.Description",
-    img: "systems/basic-adventure-gaming-system/assets/icons/default-action.svg",
+    img: "systems/basic-adventure-gaming-system/assets/icons/bx.actions.listen-at-door.svg",
     isBlind: true,
     flavorText: {
       attempt: "BAGS.Systems.BX.Exploration.ListenAtDoors.AttemptText",
@@ -58,7 +58,7 @@ const characterActions = [
   createExplorationSkillAction("find-secret-doors", {
     name: "BAGS.Systems.BX.Exploration.FindSecretDoors.Label",
     description: "BAGS.Systems.BX.Exploration.FindSecretDoors.Description",
-    img: "systems/basic-adventure-gaming-system/assets/icons/default-action.svg",
+    img: "systems/basic-adventure-gaming-system/assets/icons/bx.actions.find-secret-door.svg",
     isBlind: true,
     flavorText: {
       attempt: "BAGS.Systems.BX.Exploration.FindSecretDoors.AttemptText",
@@ -71,7 +71,7 @@ const characterActions = [
   createExplorationSkillAction("find-traps", {
     name: "BAGS.Systems.BX.Exploration.FindTraps.Label",
     description: "BAGS.Systems.BX.Exploration.FindTraps.Description",
-    img: "systems/basic-adventure-gaming-system/assets/icons/default-action.svg",
+    img: "systems/basic-adventure-gaming-system/assets/icons/bx.actions.find-trap.svg",
     isBlind: true,
     flavorText: {
       attempt: "BAGS.Systems.BX.Exploration.FindTraps.AttemptText",

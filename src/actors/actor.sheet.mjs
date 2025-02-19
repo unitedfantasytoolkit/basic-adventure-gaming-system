@@ -15,17 +15,6 @@ const { HandlebarsApplicationMixin } = foundry.applications.api
 export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   foundry.applications.sheets.ActorSheetV2,
 ) {
-  static INVENTORY_SORT_MODES = {
-    NAME_ASCENDING: 0,
-    NAME_DESCENDING: 1,
-    ENCUMBRANCE_DESCENDING: 2,
-    ENCUMBRANCE_ASCENDING: 3,
-    VALUE_DESCENDING: 4,
-    VALUE_ASCENDING: 5,
-  }
-
-  #inventorySortMode = BAGSActorSheet.INVENTORY_SORT_MODES.NAME_ASCENDING
-
   constructor(options = {}) {
     super(options)
 
@@ -75,6 +64,10 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
       actions: {
         "use-character-action": this.#onCharacterAction,
       },
+      position: {
+        width: 575,
+        height: 530,
+      },
     }
   }
 
@@ -91,46 +84,30 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   // --- Tabs ------------------------------------------------------------------
 
   tabGroups = {
-    sheet: "summary",
+    sheet: "inventory",
+    leftRail: "summary",
   }
 
   static TABS = {
     sheet: {
       tabs: [
         {
-          id: "summary",
-          group: "sheet",
-          icon: "fa-solid fa-square-list",
-          label: "BAGS.CharacterClass.Tabs.Summary",
-          cssClass: "tab--summary",
-        },
-        {
-          id: "abilities",
-          group: "sheet",
-          icon: "fa-solid fa-tag",
-          label: "Abilities",
-          cssClass: "tab--advancement",
-        },
-        {
           id: "inventory",
           group: "sheet",
           icon: "fa-solid fa-backpack",
           label: "Inventory",
-          cssClass: "tab--effects",
         },
         {
           id: "spells",
           group: "sheet",
           icon: "fa-solid fa-sparkle",
-          label: "Spell List",
-          cssClass: "tab--effects",
+          label: "Spellcasting",
         },
         {
           id: "description",
           group: "sheet",
           icon: "fa-solid fa-scroll-old",
           label: "Character Identity",
-          cssClass: "tab--effects",
         },
       ],
       initial: "summary",
@@ -169,7 +146,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     // Get the direction where positive is "better"
     // const direction =
     // this.constructor.FIELD_IMPROVEMENT_DIRECTION[key] ?? 'ascending'
-    const direction = forcedDirection ? forcedDirection : "ascending"
+    const direction = forcedDirection || "ascending"
 
     // Calculate total numerical modification
     const totalMod = modifications.reduce((sum, mod) => {
@@ -187,65 +164,37 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
       }
     }, 0)
 
-    // Determine if this is an improvement based on direction
     if (totalMod === 0) return null
-    if (direction === "ascending") {
-      return totalMod > 0 ? "improved" : "impaired"
-    } else {
-      return totalMod < 0 ? "improved" : "impaired"
-    }
+
+    if (direction === "ascending") return totalMod > 0 ? "improved" : "impaired"
+    return totalMod < 0 ? "improved" : "impaired"
   }
+
   /**
    * Provide context to the templating engine.
    * @override
    */
-  async _prepareContext() {
-    const context = await super._prepareContext()
-    if (!this.actor.items.documentsByType.spell.length)
-      delete context.tabs.spells
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options)
 
-    const doc = this.document
+    if (!this.document.items.documentsByType.spell.length)
+      delete context?.tabs?.spells
+
     return {
       ...context,
-      actor: doc,
-      source: doc.toObject(),
-      fields: doc.schema.fields,
       formattedSystem: await this._prepareFormattedFields(),
     }
   }
 
   /** @override */
-  async _preparePartContext(partId, context) {
-    const doc = this.document
+  async _preparePartContext(partId, context, options) {
+    super._preparePartContext(partId, context, options)
 
-    const encumbranceSettings =
-      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
-        CONFIG.BAGS.SystemRegistry.categories.ENCUMBRANCE,
-      )
+    context.tabs = this._prepareTabs(
+      partId !== "left-rail" ? "sheet" : "leftRail",
+    )
 
     switch (partId) {
-      // case "left-rail":
-      //   context.classes = doc.itemTypes.class.map((cls) => ({
-      //     ...cls,
-      //     xpBar: {
-      //       current: cls.system.xp,
-      //       max: cls.system.xpTable[cls.system.level - 1].value,
-      //     },
-      //   }))
-      //   context.hp = doc.system.hp
-      //   context.savingThrowLocaleStrings =
-      //     CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
-      //       CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
-      //     )?.savingThrows
-      //   context.usesDescendingAC =
-      //     CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
-      //       CONFIG.BAGS.SystemRegistry.categories.COMBAT,
-      //     )?.descending
-
-      //   context.encumbranceMeter = encumbranceSettings.encumbranceMeter(
-      //     doc.system,
-      //   )
-      //   break
       case "summary":
         break
       case "abilities":
@@ -265,8 +214,16 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
           ...context.weapons,
           ...context.armor,
           ...context.items,
-        ].sort(sortDocuments())
-        context.sortMode = this.#inventorySortMode
+        ]
+          .filter(this.inventoryFilterMode.predicate)
+          .sort(
+            sortDocuments(
+              this.inventorySortMode.key,
+              this.inventorySortMode.isDescending,
+            ),
+          )
+        context.sortMode = this.inventorySortMode
+        context.filterMode = this.inventoryFilterMode
         break
       case "description":
         break
@@ -276,6 +233,10 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
     context.tab = context.tabs[partId] || null
     return context
+  }
+
+  sortInventory(sortType, items) {
+    if (!sortType) return items.sort(sortDocuments())
   }
 
   async _prepareFormattedFields() {
@@ -319,34 +280,253 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
   async _onFirstRender(context, options) {
     await super._onFirstRender(context, options)
-    ContextMenu.create(
-      this,
-      this.element,
-      ".character-sheet-inventory uft-item-tile",
-      {
-        hookName: "InventoryContext",
-        jQuery: false,
-        fixed: true,
+
+    const { ContextMenu } = foundry.applications.ui
+
+    ContextMenu.create(this, this.element, ".tab--inventory uft-item-tile", {
+      hookName: "InventoryContext",
+      fixed: true,
+      jQuery: false,
+    })
+
+    ContextMenu.create(this, this.element, ".tab--inventory button.filter", {
+      hookName: "InventoryFilter",
+      jQuery: false,
+      fixed: true,
+      eventName: "click",
+    })
+
+    ContextMenu.create(this, this.element, ".tab--inventory button.sort", {
+      hookName: "InventorySort",
+      jQuery: false,
+      fixed: true,
+      eventName: "click",
+    })
+  }
+
+  static INVENTORY_SORT_MODES = {
+    DEFAULT: { icon: "fa fa-arrow-up-arrow-down", id: 0, label: "Default" },
+    NAME_ASCENDING: {
+      icon: "fa fa-arrow-down-a-z",
+      id: 1,
+      key: "name",
+      isDescending: false,
+      label: "Name (ascending)",
+    },
+    NAME_DESCENDING: {
+      icon: "fa fa-arrow-up-z-a",
+      id: 2,
+      key: "name",
+      isDescending: true,
+      label: "Name (descending)",
+    },
+    ENCUMBRANCE_ASCENDING: {
+      icon: "fa fa-arrow-up-big-small",
+      id: 3,
+      key: "system.weight",
+      isDescending: false,
+      label: "Encumbrance (ascending)",
+    },
+    ENCUMBRANCE_DESCENDING: {
+      icon: "fa fa-arrow-down-big-small",
+      id: 4,
+      key: "system.weight",
+      isDescending: true,
+      label: "Encumbrance (descending)",
+    },
+    VALUE_ASCENDING: {
+      icon: "fa fa-arrow-up-1-9",
+      id: 5,
+      key: "system.cost",
+      isDescending: false,
+      label: "Coin value (ascending)",
+    },
+    VALUE_DESCENDING: {
+      icon: "fa fa-arrow-down-9-1",
+      id: 6,
+      key: "system.cost",
+      isDescending: true,
+      label: "Coin value (descending)",
+    },
+  }
+
+  static INVENTORY_FILTER_MODES = {
+    DEFAULT: {
+      icon: "fa-regular fa-filter",
+      id: 0,
+      label: "Default",
+      predicate: () => true,
+    },
+    TYPE_WEAPON: {
+      icon: "fa fa-sword",
+      id: 1,
+      label: "Weapons",
+      predicate: (i) => i.type === "weapon",
+    },
+    TYPE_ARMOR: {
+      icon: "fa fa-shield",
+      id: 2,
+      label: "Armor",
+      predicate: (i) => i.type === "armor",
+    },
+    TYPE_MISCELLANEOUS: {
+      icon: "fa fa-suitcase",
+      id: 3,
+      label: "Miscellaneous Items",
+      predicate: (i) => i.type === "item",
+    },
+    CONTAINER: {
+      icon: "fa fa-sack",
+      id: 4,
+      label: "Containers",
+      predicate: (i) => i.system.container.isContainer,
+    },
+    TREASURE: {
+      icon: "fa fa-coin",
+      id: 5,
+      label: "Treasure",
+      predicate: (i) => i.system.countsAsTreasure,
+    },
+    WORTH_XP: {
+      icon: "fa fa-trophy",
+      id: 6,
+      label: "Items with unclaimed XP",
+      predicate: (i) =>
+        i.system.countsAsTreasure && !i.system.hasBeenCountedAsTreasure,
+    },
+  }
+
+  #inventorySortMode = BAGSActorSheet.INVENTORY_SORT_MODES.DEFAULT
+
+  #inventoryFilterMode = BAGSActorSheet.INVENTORY_FILTER_MODES.DEFAULT
+
+  get inventorySortMode() {
+    return this.#inventorySortMode
+  }
+
+  get inventoryFilterMode() {
+    return this.#inventoryFilterMode
+  }
+
+  _getInventorySortOptions() {
+    return Object.values(this.constructor.INVENTORY_SORT_MODES).map((f) => ({
+      name: f.label,
+      icon: `<i class="${f.icon}" role="presentation"></i>`,
+      callback: () => {
+        this.#inventorySortMode = f
+        this.render()
       },
-    )
-    // ContextMenu.create(this, this.element, ".directory-item[data-pack]", {
-    //   jQuery: false,
-    //   fixed: true,
-    // })
-    // new ContextMenu(
-    //   this.element,
-    //   "button.filter",
-    //   this._getFilterContextOptions(),
-    //   {
-    //     jQuery: false,
-    //     fixed: true,
-    //     eventName: "click",
-    //   },
-    // )
+    }))
+  }
+
+  _getInventoryFilterOptions() {
+    return Object.values(this.constructor.INVENTORY_FILTER_MODES).map((f) => ({
+      name: f.label,
+      icon: `<i class="${f.icon}" role="presentation"></i>`,
+      callback: () => {
+        this.#inventoryFilterMode = f
+        this.render()
+      },
+    }))
   }
 
   _getInventoryContextOptions() {
-    return {}
+    return [
+      {
+        name: "Use",
+        icon: "<i class='fa fa-bolt' />",
+        condition: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          return item.isOwner && item.system.actions.length
+        },
+        callback: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          item?.deleteDialog()
+        },
+      },
+      {
+        name: "View",
+        icon: "<i class='fa fa-book-open' />",
+        callback: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          item?.deleteDialog()
+        },
+      },
+      {
+        name: "Edit",
+        icon: "<i class='fa fa-pencil' />",
+        condition: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          return item.isOwner
+        },
+        callback: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          item?.sheet.subApps.itemEditor.render(true)
+        },
+      },
+      {
+        name: "Un-identify",
+        icon: "<i class='fa fa-eye-slash' />",
+        condition: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          return item.system.identification.isIdentified && game.user.isActiveGM
+        },
+        callback: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          item?.identify()
+        },
+      },
+      {
+        name: "Identify",
+        icon: "<i class='fa fa-eye' />",
+        condition: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          return (
+            !item.system.identification.isIdentified && game.user.isActiveGM
+          )
+        },
+        callback: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          item?.identify()
+        },
+      },
+      {
+        name: "Equip",
+        icon: "<i class='fa fa-hand-fist' />",
+        condition: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          return item.isOwner && !item.system.isEquipped
+        },
+        callback: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          if (item) item.equip()
+        },
+      },
+      {
+        name: "Unequip",
+        icon: "<i class='fa fa-hand' />",
+        condition: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          return item.isOwner && item.system.isEquipped
+        },
+        callback: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          if (item) item.unequip()
+        },
+      },
+      {
+        name: "Delete",
+        icon: "<i class='fa fa-trash' />",
+        condition: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          return item.isOwner
+        },
+        callback: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          item?.deleteDialog()
+        },
+      },
+    ]
   }
 
   _onRender(context, options) {
@@ -355,8 +535,8 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     if (options.parts.includes("inventory")) {
       new SearchFilter({
         inputSelector: "search input",
-        contentSelector: ".character-sheet-inventory .item-grid",
-        callback: this._onFilterInventory.bind(this),
+        contentSelector: ".item-grid--inventory",
+        callback: (...args) => this._onFilterInventory(...args),
         initial: this.element.querySelector("search input").value,
       }).bind(this.element)
     }
@@ -392,17 +572,21 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
   #addTabsToFrame(frame) {
     if (!this.constructor.TABS.sheet.tabs.length) return
+    const hasSpells = !!this.document.items.documentsByType.spell.length
     const tabContainer = document.createElement("nav")
     tabContainer.classList.value = "application__tab-navigation sheet-tabs tabs"
     tabContainer.ariaRole = game.i18n.localize("SHEETS.FormNavLabel")
 
     this.constructor.TABS.sheet.tabs.forEach((t) => {
+      if (t.id === "spells" && !hasSpells) return
+
       const btn = document.createElement("button")
       btn.dataset.action = "tab"
       btn.dataset.group = t.group
       btn.dataset.tab = t.id
       btn.dataset.tooltip = game.i18n.localize(t.label)
       btn.ariaLabel = game.i18n.localize(t.label)
+      if (t.id === this.tabGroups.sheet) btn.classList.add("active")
       if (t.disabled) btn.disabled = true
 
       const icon = document.createElement("i")
@@ -588,6 +772,8 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   // === Filtering and sorting =================================================
 
   _onFilterInventory(event, query, rgx, html) {
+    // if (!html) return
+
     const ids = new Set()
     const options = {}
 

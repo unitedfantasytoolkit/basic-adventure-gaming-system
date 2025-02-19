@@ -1,27 +1,55 @@
-<article class="tab character-sheet-{{tab.id}} {{tab.cssClass}}{{ifThen tab.active " active" ""}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+{{#> sheetTab}}
   <h3>Inventory</h3>
-      {{!-- Search & Sort --}}
   
   <search>
-    <i class="fa fa-search"></i>
-    <input type="search" name="search" autocomplete="off" placeholder="{{ searchMode.placeholder }}"
-            aria-label="{{ searchMode.placeholder }}">
+    <i class="fa fa-search" role="presentation"></i>
+    <input
+      type="search"
+      name="search"
+      autocomplete="off"
+      placeholder="Search items"
+      aria-label="Search items" />
+
     {{!--
-    TODO: Sort types (asc/desc for gold value, encumbrance, and name)
-    <button type="button" class="inline-control toggle-sort icon {{ sortMode.icon }}" data-action="toggleSort"
-            data-tooltip="{{ sortMode.label }}" aria-label="{{ localize sortMode.label }}"></button>
+      TODO: Sort types (asc/desc for gold value, encumbrance, and name)
     --}}
+    <button
+      type="button"
+      class="inline-control sort icon {{ sortMode.icon }}"
+      data-action="toggleSort"
+      data-tooltip="{{ sortMode.label }}"
+      aria-label="{{ localize sortMode.label }}"
+    ></button>
+
     {{!--
-    TODO: Filter types (weapon, armor, item, has actions, has effects, counts as treasure)
-    <button type="button" class="inline-control toggle-filter icon {{ filterMode.icon }}" data-action="toggleFilter"
-            data-tooltip="{{ filterMode.label }}" aria-label="{{ localize filterMode.label }}"></button>
+      TODO: Filter types (weapon, armor, item, has actions, has effects, counts as treasure)
     --}}
+    <button
+      type="button"
+      class="inline-control filter icon {{ filterMode.icon }}"
+      data-tooltip="{{ filterMode.label }}"
+      aria-label="{{ localize filterMode.label }}"
+    ></button>
+
+    <button
+      type="button"
+      class="inline-control toggle-filter icon fa fa-arrow-rotate-left"
+      data-action="resetFilters"
+      data-tooltip="Reset filters"
+      aria-label="{{ localize "Reset filters" }}"
+    ></button>
   </search>
 
-
-  <div class="item-grid item-grid--inventory" style="--item-grid-minimum-rows: 5">
+  <div
+    class="item-grid item-grid--inventory"
+    style="--item-grid-minimum-rows: 5">
     {{#each inventory}}
-      <uft-item-tile class="item-grid__item draggable" data-item-id="{{id}}" uuid="{{uuid}}"></uft-item-tile>
+      <uft-item-tile
+        class="item-grid__item draggable"
+        data-item-id="{{id}}"
+        uuid="{{uuid}}"
+      ></uft-item-tile>
     {{/each}}
   </div>
-</search>
+
+{{/sheetTab}}

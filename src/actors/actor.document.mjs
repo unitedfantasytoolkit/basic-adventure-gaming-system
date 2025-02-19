@@ -36,15 +36,36 @@ export default class BAGSActor extends Actor {
     }
   }
 
+  /**
+   * Get all ActiveEffects that may apply to this Actor.
+   * If CONFIG.ActiveEffect.legacyTransferral is true, this is equivalent to actor.effects.contents.
+   * If CONFIG.ActiveEffect.legacyTransferral is false, this will also return all the transferred ActiveEffects on any
+   * of the Actor's owned Items.
+   * @yields {ActiveEffect}
+   * @returns {Generator<ActiveEffect, void, void>}
+   */
+  *allApplicableEffects() {
+    for (const effect of this.effects) {
+      yield effect
+    }
+    if (CONFIG.ActiveEffect.legacyTransferral) return
+    for (const item of this.items) {
+      for (const effect of item.effects) {
+        if (item.isPhysical && !item.system.isEquipped) continue
+        if (effect.transfer) yield effect
+      }
+    }
+  }
+
   // get appliedEffects() {
-  //   const effects = super.appliedEffects.map((e) => {
+  //   const effects = super.appliedEffects.filter((e) => {
   //     if (e.parent instanceof CONFIG.Actor.documentClass) return true
-  //     if (e.parent.type === "weapon" || e.parent.type === "armor")
-  //       return e.system.isEquipped
+  //     if (e.parent.isPhysical) {
+  //       console.info(e.parent.system)
+  //       return e.parent.system.isEquipped
+  //     }
   //     return false
   //   })
-
-  //   console.info(effects.map((e) => e.parent))
 
   //   return effects
   // }
@@ -75,6 +96,29 @@ export default class BAGSActor extends Actor {
     return attributeModifications
   }
 
+  get appliedEffectsBySource() {
+    const sources = new Map()
+
+    this.appliedEffects.forEach((effect) => {
+      const { uuid } = effect.parent
+      if (!sources.has(uuid)) sources.set(uuid, [])
+      sources.get(uuid).push(effect)
+    })
+
+    return Array.from(sources.entries()).map(([uuid, effects]) => ({
+      parent: fromUuidSync(uuid),
+      effects,
+    }))
+  }
+
+  get temporaryAppliedEffects() {
+    return this.appliedEffects.filter((e) => e.isTemporary)
+  }
+
+  get lastingAppliedEffects() {
+    return this.appliedEffects.filter((e) => !e.isTemporary)
+  }
+
   get actions() {
     const documentToActions = ({ id, uuid, name, img, ...i }) => ({
       id,
@@ -98,6 +142,18 @@ export default class BAGSActor extends Actor {
       builtins: [documentToActions(this)],
       ...itemActions,
     }
+  }
+
+  get equipped() {
+    const equipped = {
+      weapon: [],
+      armor: [],
+      item: [],
+    }
+    this.items
+      .filter((i) => i.system.isEquipped)
+      .forEach((i) => equipped[i.type].push(i))
+    return equipped
   }
 
   get flattenedOverrides() {

@@ -30,8 +30,6 @@ class ItemTile extends BaseElement {
         />`
       : ""
 
-    console.info(tooltip)
-
     template.innerHTML = html`<div>
       <header>
         ${banner}
@@ -47,7 +45,7 @@ class ItemTile extends BaseElement {
     this.addEventListener("mouseover", this.#onMouseOver.bind(this))
     this.addEventListener("mouseout", this.#onMouseOut.bind(this))
     this.addEventListener("click", this.#onClick.bind(this))
-    this.addEventListener("contextmenu", this.#onContextMenu.bind(this))
+    // this.addEventListener("contextmenu", this.#onContextMenu.bind(this))
   }
 
   get uuid() {
@@ -67,7 +65,6 @@ class ItemTile extends BaseElement {
       alt="${this.document.name}"
     />`
     const { quantity } = this.document.system
-    console.info(quantity)
     const quantityLabel =
       typeof quantity === "number" && quantity > 1
         ? html`<span class="quantity">${quantity}</span>`
@@ -81,7 +78,7 @@ class ItemTile extends BaseElement {
   }
 
   async #onContextMenu(e) {
-    console.info(e)
+    console.info(this.document.system.constructor.TILE_CONTEXT_OPTIONS)
   }
 
   async #onMouseOver(e) {

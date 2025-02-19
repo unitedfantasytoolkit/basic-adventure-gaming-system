@@ -1,5 +1,4 @@
-<section class="left-rail">
-  {{#each classes}}
+{{#*inline "character-class"}}
   <article
     class="character-class"
     aria-label="Level {{system.level}} {{name}}"
@@ -20,11 +19,175 @@
       <i slot="icon" class="fa fa-trophy"></i>
     </uft-character-info-meter>
   </article>
+{{/inline}}
+
+{{#*inline "tab-navigation"}}
+
+{{/inline}}
+
+{{#*inline "ability-scores"}}
+  <div class="left-rail__section number-showcase">
+    <ul class="number-showcase__list">
+      {{#each document.system.schema.fields.base.fields.abilityScores}}
+      <li data-tooltip="{{lookup ../abilityScoreTooltips name}}">
+        <span class="number-showcase__label">{{localize (replace label "Label" "Short") }}</span>
+        <span class="number-showcase__value">{{lookup ../document.system.base.abilityScores name}}</span>
+      </li>
+       {{/each}}
+    </ul>
+  </div>
+{{/inline}}
+
+{{#*inline "combat-modifiers"}}
+  <div class="left-rail__section">
+    <dl>
+      {{#if (eq document.type "monster")}}
+        {{#with document.system.hp.hitDice}}
+          {{#if usesHitDice}}
+            <dt>Hit Dice</dt>
+            <dd>{{count}}d{{size}}{{ifThen modifier (signNumber modifier) ""}}</dd>
+          {{/if}}
+        {{/with}}
+      {{/if}}
+      {{#if usesDescendingAC}}
+      <dt>THAC0</dt>
+      <dd>{{document.system.thac0}}</dd>
+      {{else}}
+      <dt>Attack Bonus</dt>
+      <dd>{{signNumber document.system.baseAttackBonus forceSign=true}}</dd>
+      {{/if}}
+
+      <dt>Armor Class</dt>
+      <dd>{{document.system.armorClass}}</dd>
+
+      <dt class="movement">Movement</dt>
+      {{#if (eq document.type "character")}}
+        <dd>
+          {{#with document.system.speed}}
+            {{exploration}}/{{encounter}}/{{overland}}
+          {{/with}}
+        </dd>
+      {{else}}
+        <dd>
+          {{#with document.system.speed}}
+            {{exploration}} ({{encounter}})
+          {{/with}}
+        </dd>  
+      {{/if}}
+    </dl>
+  </div>
+
+  {{#if (eq document.type "character")}}
+  <div class="left-rail__section left-rail__section--combat">
+    <header>
+      <h3>Modifiers</h3>
+      <span>Atk</span>
+      <span>Dmg</span>
+    </header>
+
+    <dl>
+      <dt>Melee</dt>
+      <dd>{{signNumber document.system.meleeAttackBonus forceSign=true}}</dd>
+      <dd>{{signNumber document.system.meleeDamageBonus forceSign=true}}</dd>
+      <dt>Missile</dt>
+      <dd>{{signNumber document.system.missileAttackBonus forceSign=true}}</dd>
+      <dd>{{signNumber document.system.missileDamageBonus forceSign=true}}</dd>
+    </dl>
+  </div>
+  {{/if}}
+
+  <div class="left-rail__section left-rail__section--saving-throws">
+    <h3 class="decorated">Saving Throws</h3>
+    <dl>
+      {{#each savingThrowLocaleStrings as |save key|}}
+        <dt data-tooltip="{{lookup ../savingThrowTooltips key}}">{{localize save.short}}</dt>
+        <dd>{{lookup ../document.system.savingThrows key}}</dd>
+      {{/each}}
+      {{#if (eq document.type "character")}}
+        <dt>Bonus vs. Magic</dt>
+        <dd>
+          {{signNumber document.system.abilityScores.wis.magicSave forceSign=true}}
+        </dd>
+      {{/if}}
+
+      {{#if (and (eq document.type "monster") document.system.magicResistance) }}
+        <dt>Magic Resistance</dt>
+        <dd>75%</dd>      
+      {{/if}}
+    </dl>
+  </div>
+{{/inline}}
+
+{{#*inline "monster-details"}}
+  <div class="left-rail__section">
+    <dl>
+      <dt>Alignment</dt>
+      <dd>{{ifThen document.system.biographicalDetails.alignment document.system.biographicalDetails.alignment "Unaligned"}}</dd>
+
+      <dt>Intelligence</dt>
+      <dd>Superhuman</dd>       
+
+      <dt>No. Appearing</dt>
+      <dd>1d6 (3d6)</dd>
+
+      <dt>Morale Rating</dt>
+      <dd>{{document.system.morale.value}}</dd>
+    </dl>
+  </div>
+{{/inline}}
+
+
+{{#*inline "employment-details"}}
+  <dl>
+    <dt>Employed by</dt>
+    <dd>{{document.system.retainer.employer}}</dd>
+
+    {{#if document.system.retainer.wage.quantity}}
+      <dt>Wage</dt>
+      <dd>{{document.system.retainer.wage.quantity}}/month</dd>
+    {{/if}}
+  </dl>
+{{/inline}}
+
+{{#*inline "action-list-item"}}
+  <button class="action-list-item action-list-item--single-action"
+    role="listitem"
+    data-action="use-action"
+    data-item-id="{{parent.id}}"
+    data-action-id="{{id}}">
+    <img class="action-list-item__icon" src="{{img}}" alt="" role="presentation" />
+    <span class="action-list-item__identity">
+      <span class="action-list-item__title">{{name}}</span>
+      <span class="action-list-item__parent">{{parent.name}}</span>
+    </span>
+  </button>
+{{/inline}}
+
+{{#*inline "effect-list-item"}}
+  <button class="action-list-item action-list-item--single-action"
+    role="listitem"
+    data-action="view-effect"
+    data-parent-type="{{parent.type}}"
+    data-parent-id="{{parent.id}}"
+    data-effect-id="{{id}}">
+    <img class="action-list-item__icon" src="{{img}}" alt="" role="presentation" />
+    <span class="action-list-item__identity">
+      <span class="action-list-item__title">{{name}}</span>
+      <span class="action-list-item__parent">{{parent.name}}</span>
+    </span>
+  </button>
+{{/inline}}
+
+
+<section class="left-rail theme-dark">
+  {{#each classes}}
+    {{> character-class this}}
   {{/each}}
+
   <article class="meters">
     <uft-character-info-meter
-      value="{{actor.system.hp.value}}"
-      max="{{actor.system.hp.max}}"
+      value="{{document.system.hp.value}}"
+      max="{{document.system.hp.max}}"
       class="hp"
     >
       <i
@@ -35,142 +198,106 @@
 
     {{{ encumbranceMeter }}}
   </article>
-  <div class="character-tiles">
-    {{#if (eq actor.type "character")}}
-      <div class="number-showcase">
-        <ul class="number-showcase__list">
-          {{#each actor.system.schema.fields.base.fields.abilityScores}}
-          <li data-tooltip="{{lookup ../abilityScoreTooltips name}}">
-            <span class="number-showcase__label">{{localize (replace this.label "Label" "Short") }}</span>
-            <span class="number-showcase__value">{{lookup ../this.actor.system.base.abilityScores name}}</span>
+
+  <nav class="tabs tabs--left-rail">
+    {{#each tabs}}
+      <button class="{{ifThen active "active" ""}}" data-tooltip="{{localize label}}" data-action="tab" data-group="{{group}}" data-tab="{{id}}" aria-label="{{localize label}}"><i class="{{icon}}"></i></button>
+    {{/each}}
+  </nav>
+
+  {{#> sheetTab tab=tabs.summary}}
+    {{#if (eq document.type "character")}}
+      {{> ability-scores}}
+    {{/if}}
+
+    {{> combat-modifiers }}
+
+    {{#if (eq document.type "monster")}}
+      {{> monster-details}}
+    {{/if}}
+
+    {{#if document.system.retainer.isRetainer}}
+      {{> employment-details}}
+    {{/if}}
+  {{/sheetTab}}
+
+  {{#> sheetTab tab=tabs.actions}}
+    {{#if (eq document.type "character")}}
+      <div class="left-rail__section">
+        <h3 class="decorated">Exploration Skills</h3>
+        <ul class="action-grid action-grid--exploration-skills">
+          {{#each document.system.actions}}
+          <li
+            class="action-grid-item"
+            data-tooltip="{{name}}"
+            data-action="use-character-action"
+            data-action-id="{{id}}"
+          >
+            <img
+              src="{{img}}"
+              alt="{{localize name}}"
+            />
           </li>
-           {{/each}}
+          {{/each}}
         </ul>
       </div>
     {{/if}}
 
-    <dl>
-      {{#if (eq actor.type "monster")}}
-        {{#with actor.system.hp.hitDice}}
-          {{#if usesHitDice}}
-            <dt>Hit Dice</dt>
-            <dd>{{count}}d{{size}}{{ifThen modifier (signNumber modifier) ""}}</dd>
-          {{/if}}
-        {{/with}}
-      {{/if}}
-      {{#if usesDescendingAC}}
-      <dt>THAC0</dt>
-      <dd>{{actor.system.thac0}}</dd>
-      {{else}}
-      <dt>Attack Bonus</dt>
-      <dd>{{signNumber actor.system.baseAttackBonus forceSign=true}}</dd>
-      {{/if}}
-
-      <dt>Armor Class</dt>
-      <dd>{{actor.system.armorClass}}</dd>
-
-      <dt class="movement">Movement</dt>
-      {{#if (eq actor.type "character")}}
-        <dd>
-          {{actor.system.speed.exploration}}/{{actor.system.speed.encounter}}/{{actor.system.speed.overland}}
-        </dd>
-      {{else}}
-        <dd>
-          {{actor.system.speed.exploration}} ({{actor.system.speed.encounter}})
-        </dd>  
-      {{/if}}
-    </dl>
-
-    {{#if (eq actor.type "character")}}
-    <div class="combat">
-      <header>
-        <h3>Modifiers</h3>
-        <span>Atk</span>
-        <span>Dmg</span>
-      </header>
-
-      <dl>
-        <dt>Melee</dt>
-        <dd>{{signNumber actor.system.meleeAttackBonus forceSign=true}}</dd>
-        <dd>{{signNumber actor.system.meleeDamageBonus forceSign=true}}</dd>
-        <dt>Missile</dt>
-        <dd>{{signNumber actor.system.missileAttackBonus forceSign=true}}</dd>
-        <dd>{{signNumber actor.system.missileDamageBonus forceSign=true}}</dd>
-      </dl>
-    </div>
-    {{/if}}
-
-    <div class="defenses">
-      <h3>Saving Throws</h3>
-      <dl>
-        {{#each savingThrowLocaleStrings as |save key|}}
-          <dt data-tooltip="{{lookup ../savingThrowTooltips key}}">{{localize save.short}}</dt>
-          <dd>{{lookup ../actor.system.savingThrows key}}</dd>
+    <div class="left-rail__section">
+      <h3 class="decorated">Equipment</h3>
+      <ul class="action-list action-list--equipment">
+        {{#each document.equipped.weapon}}
+          {{#each system.actions}}
+            {{> action-list-item parent=..}}
+          {{/each}}
+        {{else}}
+          <p class="empty">None of your weapons have actions.</p>
         {{/each}}
-        {{#if (eq actor.type "character")}}
-          <dt>Bonus vs. Magic</dt>
-          <dd>
-            {{signNumber actor.system.abilityScores.wis.magicSave forceSign=true}}
-          </dd>
-        {{/if}}
-
-
-        {{#if (eq actor.type "monster")}}
-          <dt>Magic Resistance</dt>
-          <dd>75%</dd>      
-        {{/if}}
-      </dl>
+      </ul>
     </div>
 
-    
-    {{#if (eq actor.type "monster")}}
-      <dl>
-          <dt>Alignment</dt>
-          <dd>{{ifThen actor.system.biographicalDetails.alignment actor.system.biographicalDetails.alignment "Unaligned"}}</dd>
+    {{#if document.items.documentsByType.class.length}}
+      <div class="left-rail__section">
+        {{#each document.items.documentsByType.class}}
+          {{#if system.actions.length}}
+            <h3 class="decorated">{{name}} Abilities</h3>
+            <ul class="equipment">
 
-          <dt>Intelligence</dt>
-          <dd>Superhuman</dd>       
-        
-          <dt>No. Appearing</dt>
-          <dd>1d6 (3d6)</dd>
-
-          <dt>Morale Rating</dt>
-          <dd>{{actor.system.morale.value}}</dd>
-
-
-      </dl>
+            </ul>
+          {{/if}}
+        {{/each}}
+      </div>
     {{/if}}
 
-    {{#if actor.system.retainer.isRetainer}}
-      <dl>
-        <dt>Employed by</dt>
-        <dd>{{actor.system.retainer.employer}}</dd>
-        
-        {{#if actor.system.retainer.wage.quantity}}
-          <dt>Wage</dt>
-          <dd>{{actor.system.retainer.wage.quantity}}/month</dd>
-        {{/if}}
-      </dl>
+    {{#if document.items.documentsByType.ability.length}}
+    <div class="left-rail__section">
+      <h3 class="decorated">Other Abilities</h3>
+      <ul class="equipment">
+      </ul>
+    </div>
     {{/if}}
-  </div>
+  {{/sheetTab}}
 
-  {{#if (eq actor.type "character")}}
-  <div class="character-tiles">
-    <h3>Actions</h3>
-    <ul class="character-actions">
-      {{#each actor.system.actions}}
-      <li
-        data-tooltip="{{name}}"
-        data-action="use-character-action"
-        data-action-id="{{id}}"
-      >
-        <img
-          src="{{img}}"
-          alt="{{localize name}}"
-        />
-      </li>
-      {{/each}}
-    </ul>
-  </div>
-  {{/if}}
+  {{#> sheetTab tab=tabs.effects}}
+    <div class="left-rail__section">
+      <h3 class="decorated">Temporary Effects</h3>
+      {{#if document.temporaryAppliedEffects.length}}
+        <div class="action-list action-list--effects" role="list">
+          {{#each document.temporaryAppliedEffects}}
+            {{> effect-list-item}}
+          {{/each}}
+        </div>
+      {{/if}}
+
+      <h3 class="decorated">Lingering Effects</h3>
+
+      {{#if document.lastingAppliedEffects.length}}
+        <div class="action-list action-list--effects" role="list">
+          {{#each document.lastingAppliedEffects}}
+            {{> effect-list-item}}
+          {{/each}}
+        </div>
+      {{/if}}
+    </div>
+  {{/sheetTab}}
 </section>

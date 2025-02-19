@@ -23,51 +23,34 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
 
   // --- Tabs ------------------------------------------------------------------
 
-  tabGroups = {
-    sheet: "summary",
-  }
-
   static TABS = {
-    sheet: {
+    sheet: super.TABS.sheet,
+    leftRail: {
       tabs: [
         {
+          id: "actions",
+          group: "leftRail",
+          icon: "fa-solid fa-sparkles",
+          label: "Actions",
+          cssClass: "tab--actions",
+        },
+        {
           id: "summary",
-          group: "sheet",
+          group: "leftRail",
           icon: "fa-solid fa-square-list",
-          label: "BAGS.CharacterClass.Tabs.Summary",
+          label: "Summary",
           cssClass: "tab--summary",
         },
         {
-          id: "abilities",
-          group: "sheet",
-          icon: "fa-solid fa-tag",
-          label: "Abilities",
-          cssClass: "tab--advancement",
-        },
-        {
-          id: "inventory",
-          group: "sheet",
-          icon: "fa-solid fa-backpack",
-          label: "Inventory",
-          cssClass: "tab--effects",
-        },
-        {
-          id: "spells",
-          group: "sheet",
-          icon: "fa-solid fa-sparkle",
-          label: "Spell List",
-          cssClass: "tab--effects",
-        },
-        {
-          id: "description",
-          group: "sheet",
-          icon: "fa-solid fa-scroll-old",
-          label: "Character Identity",
+          id: "effects",
+          group: "leftRail",
+          icon: "fa-solid fa-sitemap",
+          label: "Effects",
           cssClass: "tab--effects",
         },
       ],
       initial: "summary",
-      labelPrefix: "BAGS.Actors.Character.Tabs",
+      labelPrefix: "BAGS.Actors.Common.LeftRail.Tabs",
     },
   }
 
@@ -96,24 +79,17 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
    * Provide context to the templating engine.
    * @override
    */
-  async _prepareContext() {
-    const context = await super._prepareContext()
-    if (!this.actor.items.documentsByType.spell.length)
-      delete context.tabs.spells
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options)
 
-    const doc = this.document
     return {
       ...context,
-      actor: doc,
-      source: doc.toObject(),
-      fields: doc.schema.fields,
-      // tabs: this.#getTabs(),
     }
   }
 
   /** @override */
-  async _preparePartContext(partId, context) {
-    super._preparePartContext(partId, context)
+  async _preparePartContext(partId, context, options) {
+    super._preparePartContext(partId, context, options)
 
     const doc = this.document
 
