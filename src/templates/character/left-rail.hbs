@@ -80,16 +80,16 @@
   {{#if (eq document.type "character")}}
   <div class="left-rail__section left-rail__section--combat">
     <header>
-      <h3>Modifiers</h3>
-      <span>Atk</span>
-      <span>Dmg</span>
+      <h3>{{localize "BAGS.Actors.Common.Combat.Modifiers"}}</h3>
+      <span>{{localize "BAGS.Actors.Common.Combat.Attack"}}</span>
+      <span>{{localize "BAGS.Actors.Common.Combat.Damage"}}</span>
     </header>
 
     <dl>
-      <dt>Melee</dt>
+      <dt>{{localize "BAGS.Actors.Common.Combat.Melee"}}</dt>
       <dd>{{signNumber document.system.meleeAttackBonus forceSign=true}}</dd>
       <dd>{{signNumber document.system.meleeDamageBonus forceSign=true}}</dd>
-      <dt>Missile</dt>
+      <dt>{{localize "BAGS.Actors.Common.Combat.Missile"}}</dt>
       <dd>{{signNumber document.system.missileAttackBonus forceSign=true}}</dd>
       <dd>{{signNumber document.system.missileDamageBonus forceSign=true}}</dd>
     </dl>
@@ -121,16 +121,16 @@
 {{#*inline "monster-details"}}
   <div class="left-rail__section">
     <dl>
-      <dt>Alignment</dt>
-      <dd>{{ifThen document.system.biographicalDetails.alignment document.system.biographicalDetails.alignment "Unaligned"}}</dd>
+      <dt>{{localize "BAGS.Actors.Monster.Details.Alignment"}}</dt>
+      <dd>{{ifThen document.system.biographicalDetails.alignment document.system.biographicalDetails.alignment (localize "BAGS.Actors.Monster.Details.Unaligned")}}</dd>
 
-      <dt>Intelligence</dt>
-      <dd>Superhuman</dd>       
+      <dt>{{localize "BAGS.Actors.Monster.Details.Intelligence"}}</dt>
+      <dd>{{localize "BAGS.Actors.Monster.Details.Superhuman"}}</dd>       
 
-      <dt>No. Appearing</dt>
-      <dd>1d6 (3d6)</dd>
+      <dt>{{localize "BAGS.Actors.Monster.Details.NumberAppearing"}}</dt>
+      <dd>{{localize "BAGS.Actors.Monster.Details.NumberRange"}}</dd>
 
-      <dt>Morale Rating</dt>
+      <dt>{{localize "BAGS.Actors.Monster.Details.MoraleRating"}}</dt>
       <dd>{{document.system.morale.value}}</dd>
     </dl>
   </div>
@@ -224,7 +224,7 @@
   {{#> sheetTab tab=tabs.actions}}
     {{#if (eq document.type "character")}}
       <div class="left-rail__section">
-        <h3 class="decorated">Exploration Skills</h3>
+        <h3 class="decorated">{{localize "BAGS.Actors.Character.ExplorationSkills"}}</h3>
         <ul class="action-grid action-grid--exploration-skills">
           {{#each document.system.actions}}
           <li
@@ -244,14 +244,14 @@
     {{/if}}
 
     <div class="left-rail__section">
-      <h3 class="decorated">Equipment</h3>
+      <h3 class="decorated">{{localize "BAGS.Actors.Character.Equipment.Title"}}</h3>
       <ul class="action-list action-list--equipment">
         {{#each document.equipped.weapon}}
           {{#each system.actions}}
             {{> action-list-item parent=..}}
           {{/each}}
         {{else}}
-          <p class="empty">None of your weapons have actions.</p>
+          <p class="empty">{{localize "BAGS.Actors.Character.Equipment.NoWeaponActions"}}</p>
         {{/each}}
       </ul>
     </div>
@@ -260,7 +260,7 @@
       <div class="left-rail__section">
         {{#each document.items.documentsByType.class}}
           {{#if system.actions.length}}
-            <h3 class="decorated">{{name}} Abilities</h3>
+            <h3 class="decorated">{{localize "BAGS.Actors.Character.Abilities.ClassAbilities" className=name}}</h3>
             <ul class="equipment">
 
             </ul>
@@ -271,7 +271,7 @@
 
     {{#if document.items.documentsByType.ability.length}}
     <div class="left-rail__section">
-      <h3 class="decorated">Other Abilities</h3>
+      <h3 class="decorated">{{localize "BAGS.Actors.Character.Abilities.OtherAbilities"}}</h3>
       <ul class="equipment">
       </ul>
     </div>
@@ -280,7 +280,7 @@
 
   {{#> sheetTab tab=tabs.effects}}
     <div class="left-rail__section">
-      <h3 class="decorated">Temporary Effects</h3>
+      <h3 class="decorated">{{localize "BAGS.Actors.Common.Effects.Temporary"}}</h3>
       {{#if document.temporaryAppliedEffects.length}}
         <div class="action-list action-list--effects" role="list">
           {{#each document.temporaryAppliedEffects}}
@@ -289,7 +289,7 @@
         </div>
       {{/if}}
 
-      <h3 class="decorated">Lingering Effects</h3>
+      <h3 class="decorated">{{localize "BAGS.Actors.Common.Effects.Lingering"}}</h3>
 
       {{#if document.lastingAppliedEffects.length}}
         <div class="action-list action-list--effects" role="list">
