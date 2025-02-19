@@ -63,6 +63,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
       },
       actions: {
         "use-character-action": this.#onCharacterAction,
+        "reset-filters": this.resetFilters,
       },
       position: {
         width: 575,
@@ -233,10 +234,6 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
     context.tab = context.tabs[partId] || null
     return context
-  }
-
-  sortInventory(sortType, items) {
-    if (!sortType) return items.sort(sortDocuments())
   }
 
   async _prepareFormattedFields() {
@@ -428,6 +425,12 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         this.render()
       },
     }))
+  }
+
+  static resetFilters() {
+    this.#inventorySortMode = BAGSActorSheet.INVENTORY_SORT_MODES.DEFAULT
+    this.#inventoryFilterMode = BAGSActorSheet.INVENTORY_FILTER_MODES.DEFAULT
+    this.render()
   }
 
   _getInventoryContextOptions() {

@@ -16,7 +16,6 @@
     <button
       type="button"
       class="inline-control sort icon {{ sortMode.icon }}"
-      data-action="toggleSort"
       data-tooltip="{{ sortMode.label }}"
       aria-label="{{ localize sortMode.label }}"
     ></button>
@@ -34,7 +33,7 @@
     <button
       type="button"
       class="inline-control toggle-filter icon fa fa-arrow-rotate-left"
-      data-action="resetFilters"
+      data-action="reset-filters"
       data-tooltip="Reset filters"
       aria-label="{{ localize "Reset filters" }}"
     ></button>
