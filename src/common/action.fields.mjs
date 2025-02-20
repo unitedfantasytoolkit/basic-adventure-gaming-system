@@ -413,10 +413,19 @@ export const actionsFactory = (fields) => {
     }),
     // ActiveEffect configuration for this effect.
     condition: new SchemaField({
-      active: new BooleanField({
-        initial: false,
-        label: "BAGS.Actions.Effects.Condition.Active.Label",
-        hint: "BAGS.Actions.Effects.Condition.Active.Hint",
+      name: new StringField({
+        label: "BAGS.Actions.Effects.Condition.Name.Label",
+        hint: "BAGS.Actions.Effects.Condition.Name.Hint",
+        initial: "New Condition",
+      }),
+      img: new FilePathField({
+        categories: ["IMAGE"],
+        label: "BAGS.Actions.Effects.Condition.Img.Label",
+        hint: "BAGS.Actions.Effects.Condition.Img.Hint",
+      }),
+      description: new HTMLField({
+        label: "BAGS.Actions.Effects.Condition.Description.Label",
+        hint: "BAGS.Actions.Effects.Condition.Description.Hint",
       }),
       changes: new ArrayField(
         new SchemaField({
@@ -432,13 +441,29 @@ export const actionsFactory = (fields) => {
             initial: "ADD",
             label: "BAGS.Actions.Effects.Condition.Change.Mode",
           }),
+          priority: new NumberField({
+            min: 0,
+            label: "BAGS.Actions.Effects.Condition.Change.Priority",
+          }),
         }),
         { initial: [] }
       ),
-      duration: new NumberField({
-        min: 0,
-        label: "BAGS.Actions.Effects.Condition.Duration.Label",
-        hint: "BAGS.Actions.Effects.Condition.Duration.Hint",
+      duration: new SchemaField({
+        rounds: new NumberField({
+          min: 0,
+          label: "BAGS.Actions.Effects.Condition.Duration.Rounds.Label",
+          hint: "BAGS.Actions.Effects.Condition.Duration.Rounds.Hint",
+        }),
+        seconds: new NumberField({
+          min: 0,
+          label: "BAGS.Actions.Effects.Condition.Duration.Seconds.Label",
+          hint: "BAGS.Actions.Effects.Condition.Duration.Seconds.Hint",
+        }),
+        turns: new NumberField({
+          min: 0,
+          label: "BAGS.Actions.Effects.Condition.Duration.Turns.Label",
+          hint: "BAGS.Actions.Effects.Condition.Duration.Turns.Hint",
+        }),
       }),
     }),
   })
