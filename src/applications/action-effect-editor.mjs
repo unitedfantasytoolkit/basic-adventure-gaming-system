@@ -95,6 +95,36 @@ export default class ActionEffectEditor extends BAGSApplication {
     return context
   }
 
+  /** @override */
+  activateListeners(html) {
+    super.activateListeners(html);
+    html.find("button.add-change").click(ev => this.addConditionChange(ev));
+  }
+
+  addConditionChange(ev) {
+    const newChange = {
+      key: "",
+      value: "",
+      mode: "ADD",
+      priority: 0,
+    };
+    if (!this.#effect.condition) {
+      this.#effect.condition = {
+        name: "New Condition",
+        img: "",
+        description: "",
+        changes: [],
+        duration: { rounds: 0, seconds: 0, turns: 0 },
+      };
+    }
+    if (!Array.isArray(this.#effect.condition.changes)) {
+      this.#effect.condition.changes = [];
+    }
+    this.#effect.condition.changes.push(newChange);
+    this.document.updateEffect(this.#action.id, this.#effect.id, { condition: this.#effect.condition })
+      .then(() => this.render());
+  }
+
   // === Saving ================================================================
 
   /**
