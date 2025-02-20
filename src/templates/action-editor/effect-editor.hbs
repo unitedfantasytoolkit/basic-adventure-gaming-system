@@ -125,9 +125,19 @@
       }}
     {{/if}}
 
-    {{#if (eq effect.type "condition")}}
+    {{#if (eq effect.type "effect")}}
       <fieldset>
         <legend>{{localize "BAGS.Actions.Effects.Condition.Heading"}}</legend>
+        {{formGroup fields.condition.fields.name name="condition.name" value=effect.condition.name localize=true}}
+        {{formGroup fields.condition.fields.img name="condition.img" value=effect.condition.img localize=true}}
+        {{formGroup fields.condition.fields.description name="condition.description" value=effect.condition.description localize=true}}
+        {{formInput fields.condition.fields.changes value=effect.condition.changes name="condition.changes" localize=true}}
+        <fieldset>
+          <legend>{{localize "BAGS.Actions.Effects.Condition.Duration.Label"}}</legend>
+          {{formGroup fields.condition.fields.duration.fields.rounds name="condition.duration.rounds" value=effect.condition.duration.rounds localize=true}}
+          {{formGroup fields.condition.fields.duration.fields.seconds name="condition.duration.seconds" value=effect.condition.duration.seconds localize=true}}
+          {{formGroup fields.condition.fields.duration.fields.turns name="condition.duration.turns" value=effect.condition.duration.turns localize=true}}
+        </fieldset>
       </fieldset>
     {{/if}}
 
