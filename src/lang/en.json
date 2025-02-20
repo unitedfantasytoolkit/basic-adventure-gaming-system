@@ -151,8 +151,39 @@
         },
         "Condition": {
           "Heading": "Active Effect",
-          "Label": "",
-          "Hint": ""
+          "Name": {
+            "Label": "Condition Name",
+            "Hint": "The name of the active effect."
+          },
+          "Img": {
+            "Label": "Condition Image",
+            "Hint": "The image representing the active effect."
+          },
+          "Description": {
+            "Label": "Condition Description",
+            "Hint": "A description of the active effect."
+          },
+          "Hint": "",
+          "Changes": {
+            "Heading": "Effect Modifications",
+            "AddButton": "Add Change",
+            "EmptyState": "No changes have been added."
+          },
+          "Duration": {
+            "Label": "Duration",
+            "Rounds": {
+              "Label": "Rounds",
+              "Hint": "Number of rounds the effect lasts."
+            },
+            "Seconds": {
+              "Label": "Seconds",
+              "Hint": "Number of seconds the effect lasts."
+            },
+            "Turns": {
+              "Label": "Turns",
+              "Hint": "Number of turns the effect lasts."
+            }
+          }
         },
         "AreaOfEffect": {
           "Heading": "Area of Effect",
