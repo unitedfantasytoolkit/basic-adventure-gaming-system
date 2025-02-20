@@ -411,8 +411,36 @@ export const actionsFactory = (fields) => {
       label: "BAGS.Actions.Effects.Formula.Label",
       hint: "BAGS.Actions.Effects.Formula.Hint",
     }),
-    // @todo provide means to create active effects from here
-    condition: new StringField(),
+    // ActiveEffect configuration for this effect.
+    condition: new SchemaField({
+      active: new BooleanField({
+        initial: false,
+        label: "BAGS.Actions.Effects.Condition.Active.Label",
+        hint: "BAGS.Actions.Effects.Condition.Active.Hint",
+      }),
+      changes: new ArrayField(
+        new SchemaField({
+          key: new StringField({
+            blank: false,
+            label: "BAGS.Actions.Effects.Condition.Change.Key",
+          }),
+          value: new StringField({
+            label: "BAGS.Actions.Effects.Condition.Change.Value",
+          }),
+          mode: new StringField({
+            choices: { ADD: "ADD", MULTIPLY: "MULTIPLY", OVERRIDE: "OVERRIDE" },
+            initial: "ADD",
+            label: "BAGS.Actions.Effects.Condition.Change.Mode",
+          }),
+        }),
+        { initial: [] }
+      ),
+      duration: new NumberField({
+        min: 0,
+        label: "BAGS.Actions.Effects.Condition.Duration.Label",
+        hint: "BAGS.Actions.Effects.Condition.Duration.Hint",
+      }),
+    }),
   })
 
   /**
