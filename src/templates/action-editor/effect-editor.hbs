@@ -131,7 +131,22 @@
         {{formGroup fields.condition.fields.name name="condition.name" value=effect.condition.name localize=true}}
         {{formGroup fields.condition.fields.img name="condition.img" value=effect.condition.img localize=true}}
         {{formGroup fields.condition.fields.description name="condition.description" value=effect.condition.description localize=true}}
-        {{formInput fields.condition.fields.changes value=effect.condition.changes name="condition.changes" localize=true}}
+        <div class="subheading">
+          <h3>{{localize "BAGS.Actions.Effects.Condition.Changes.Heading"}}</h3>
+          <button type="button" class="add-change">{{localize "BAGS.Actions.Effects.Condition.Changes.AddButton"}}</button>
+        </div>
+        {{#if effect.condition.changes.length}}
+          {{#for effect.condition.changes}}
+            <fieldset class="change-entry">
+              {{formGroup ../fields.condition.fields.changes.fields.key name="condition.changes.[{{@index}}].key" value=this.key localize=true}}
+              {{formGroup ../fields.condition.fields.changes.fields.value name="condition.changes.[{{@index}}].value" value=this.value localize=true}}
+              {{formGroup ../fields.condition.fields.changes.fields.mode name="condition.changes.[{{@index}}].mode" value=this.mode localize=true}}
+              {{formGroup ../fields.condition.fields.changes.fields.priority name="condition.changes.[{{@index}}].priority" value=this.priority localize=true}}
+            </fieldset>
+          {{/for}}
+        {{else}}
+          <p>{{localize "BAGS.Actions.Effects.Condition.Changes.EmptyState"}}</p>
+        {{/if}}
         <fieldset>
           <legend>{{localize "BAGS.Actions.Effects.Condition.Duration.Label"}}</legend>
           {{formGroup fields.condition.fields.duration.fields.rounds name="condition.duration.rounds" value=effect.condition.duration.rounds localize=true}}
