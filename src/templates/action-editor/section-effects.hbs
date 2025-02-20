@@ -1,155 +1,17 @@
-<article
-  class=""
->
+{{#> sheetTab tab=tabs.effects}}
   <header class="action-header">
     <h2>Effects</h2>
-    <button data-action="add-effect" aria-label="Add Effect"><i class="fa
-      fa-plus"></i></button>
+    <button data-action="add-action-effect" aria-label="Add Effect"><i class="icon inline-control fa fa-plus"></i></button>
   </header>
 
-  {{#each action.effects}}
-    <fieldset {{#unless ../action.flags.usesEffect}}disabled{{/unless}}>
-      {{formGroup ../fields.effects.element.fields.type
-        name=(concat "effects." @index ".type")
-        value=type
-        localize=true
-      }}
-
-      {{formGroup ../fields.effects.element.fields.flags.fields.isMagical
-        name=(concat "effects." @index ".flags.isMagical")
-        value=flags.isMagical
-        localize=true
-      }}
-
-      {{formGroup ../fields.effects.element.fields.flags.fields.isLikeAttack
-        name=(concat "effects." @index ".flags.isLikeAttack")
-        value=flags.isLikeAttack
-        localize=true
-      }}
-
-
-      {{#if (eq type "macro")}}
-        <fieldset>
-          <legend>Macro settings</legend>
-
-        {{formGroup ../fields.effects.element.fields.macro
-          value=macro
-          name=(concat "effects." @index ".macro")
-          localize=true
-        }}
-        </fieldset>
-      {{/if}}
-
-      {{#if (eq type "script")}}
-        <fieldset>
-          <legend>Script settings</legend>
-          {{formInput ../fields.effects.element.fields.script
-          value=script
-            name=(concat "effects." @index ".script")
-            localize=true
-          }}
-        </fieldset>
-       {{/if}}
-
-
-        <fieldset>
-          <legend>{{localize "BAGS.Actions.Effects.Resistance.Heading"}}</legend>
-
-          {{formGroup ../fields.effects.element.fields.flags.fields.canBeResisted
-            value=flags.canBeResisted
-            name=(concat "effects." @index ".flags.canBeResisted")
-            localize=true
-          }}
-
-          {{#if flags.canBeResisted}}
-            {{formGroup ../fields.effects.element.fields.resistance.fields.type
-              value=resistance.type
-              name=(concat "effects." @index ".resistance.type")
-              localize=true
-            }}
-            {{#if (eq resistance.type "savingThrow") }}
-              {{formGroup
-                ../fields.effects.element.fields.resistance.fields.savingThrow
-                value=resistance.savingThrow
-                name=(concat "effects." @index ".resistance.savingThrow")
-                localize=true
-              }}
-            {{else}}
-              <fieldset class="attempt-roll">
-                <legend>Roll</legend>
-
-                {{formGroup
-                  ../fields.effects.element.fields.resistance.fields.formula
-                  value=resistance.formula
-                  name=(concat "effects." @index ".resistance.formula")
-                  localize=true
-                }}
-                {{formGroup
-                  ../fields.effects.element.fields.resistance.fields.operator
-                  value=resistance.operator
-                  name=(concat "effects." @index ".resistance.operator")
-                  localize=true
-                }}
-
-                {{#if (eq resistance.type "abilityScore") }}
-                  {{formGroup
-                    ../fields.effects.element.fields.resistance.fields.abilityScore
-                    value=resistance.abilityScore
-                    name=(concat "effects." @index ".resistance.abilityScore")
-                    localize=true
-                  }}
-                {{/if}}
-
-                {{#if (eq resistance.type "number") }}
-                  {{formGroup
-                    ../fields.effects.element.fields.resistance.fields.staticTarget
-                    value=resistance.staticTarget
-                    name=(concat "effects." @index ".resistance.staticTarget")
-                    localize=true
-                  }}
-                </fieldset>
-              {{/if}}
-            {{/if}}
-          {{/if}}
-        </fieldset>
-
-      {{#if (eq type "attack")}}
-        {{formGroup ../fields.effects.element.fields.formula
-          value=formula
-          name=(concat "effects." @index ".formula")
-          localize=true
-        }}
-        {{formGroup ../fields.effects.element.fields.note
-          value=note
-          name=(concat "effects." @index ".note")
-          localize=true
-        }}
-      {{/if}}
-
-      {{#if (eq type "healing")}}
-        {{formGroup ../fields.effects.element.fields.formula
-          value=formula
-          name=(concat "effects." @index ".formula")
-          localize=true
-        }}
-      {{/if}}
-
-
-      {{!-- Condition effects: effects that apply an Active Effect to the target --}}
-      {{#if (eq type "condition")}}
-        <fieldset>
-          <legend>{{localize "BAGS.Actions.Effects.Condition.Heading"}}</legend>
-        </fieldset>
-      {{/if}}
-
-      {{!-- Misc effects: effects that aren't easily modeled by the system --}}
-      {{#if (eq type "misc")}}
-        {{formInput ../fields.effects.element.fields.description
-          value=description
-          name=(concat "effects." @index ".description")
-          localize=true
-        }}
-      {{/if}}
-    </fieldset>
-  {{/each}}
-</article>
+  <ul class="action-effects">
+    {{#each action.effects}}
+      <li class="action-effects__effect">
+        <i class="fa fa-grip-dots-vertical"></i>
+        <span class="action-effects__effect-name">{{name}}</span>
+        <button type="button" class="icon inline-control fa fa-pencil" data-tooltip="Edit effect" data-effect-id="{{id}}" data-action-id="{{@root.action.id}}" data-action="edit-action-effect" ></button>
+        <button class="icon inline-control fa fa-trash" data-tooltip="Delete effect" data-effect-id="{{id}}" data-action-id="{{@root.action.id}}" data-action="delete-action-effect" ></button>
+      </li>
+    {{/each}}
+  </ul>
+{{/sheetTab}}

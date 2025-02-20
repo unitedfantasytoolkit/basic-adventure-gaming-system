@@ -1,0 +1,143 @@
+<section class="scrollable">
+  <article class="standard-form">
+
+    {{log this}}
+
+    {{formGroup fields.name name="name" value=effect.name localize=true}}
+
+    {{formGroup fields.type name="type" value=effect.type localize=true}}
+
+    {{formGroup
+      fields.flags.fields.isMagical
+      name="flags.isMagical"
+      value=effect.flags.isMagical
+      localize=true
+    }}
+
+    {{formGroup
+      fields.flags.fields.isLikeAttack
+      name="flags.isLikeAttack"
+      value=effect.flags.isLikeAttack
+      localize=true
+    }}
+
+    {{#if (eq effect.type "macro")}}
+      <fieldset>
+        <legend>Macro settings</legend>
+
+        {{formGroup fields.macro value=effect.macro name="macro" localize=true}}
+      </fieldset>
+    {{/if}}
+
+    {{#if (eq effect.type "script")}}
+      <fieldset>
+        <legend>Script settings</legend>
+
+        {{formInput
+          fields.script
+          value=effect.script
+          name="script"
+          localize=true
+        }}
+      </fieldset>
+    {{/if}}
+
+    {{formGroup
+      fields.flags.fields.canBeResisted
+      value=effect.flags.canBeResisted
+      name="flags.canBeResisted"
+      localize=true
+    }}
+
+    {{#if effect.flags.canBeResisted}}
+      <fieldset>
+        <legend>{{localize "BAGS.Actions.Effects.Resistance.Heading"}}</legend>
+
+        {{formGroup
+          fields.resistance.fields.type
+          value=effect.resistance.type
+          name="resistance.type"
+          localize=true
+        }}
+
+        {{#if (eq effect.resistance.type "savingThrow")}}
+          {{formGroup
+            fields.resistance.fields.savingThrow
+            value=effect.resistance.savingThrow
+            name="resistance.savingThrow"
+            localize=true
+          }}
+        {{else}}
+          <fieldset class="roll-fields">
+            <legend>Roll</legend>
+
+            {{formGroup
+              fields.resistance.fields.roll.fields.formula
+              value=effect.resistance.roll.formula
+              name="resistance.formula"
+              localize=true
+            }}
+            {{formGroup
+              fields.resistance.fields.roll.fields.operator
+              value=effect.resistance.roll.operator
+              name="resistance.operator"
+              localize=true
+            }}
+
+            {{#if (eq resistance.type "abilityScore")}}
+              {{formGroup
+                fields.resistance.fields.abilityScore
+                value=effect.resistance.abilityScore
+                name="resistance.abilityScore"
+                localize=true
+              }}
+            {{/if}}
+            {{log effect.resistance.type}}
+            {{#if (eq effect.resistance.type "number")}}
+              {{formGroup
+                fields.resistance.fields.roll.fields.target
+                value=effect.resistance.roll.target
+                name="resistance.staticTarget"
+                localize=true
+              }}
+            {{/if}}
+          </fieldset>
+        {{/if}}
+      </fieldset>
+    {{/if}}
+
+    {{#if (eq effect.type "attack")}}
+      {{formGroup
+        fields.formula
+        value=effect.formula
+        name="formula"
+        localize=true
+      }}
+      {{formGroup fields.note value=effect.note name="note" localize=true}}
+    {{/if}}
+
+    {{#if (eq effect.type "healing")}}
+      {{formGroup
+        fields.formula
+        value=effect.formula
+        name="formula"
+        localize=true
+      }}
+    {{/if}}
+
+    {{#if (eq effect.type "condition")}}
+      <fieldset>
+        <legend>{{localize "BAGS.Actions.Effects.Condition.Heading"}}</legend>
+      </fieldset>
+    {{/if}}
+
+    {{#if (eq effect.type "misc")}}
+      {{formInput
+        fields.description
+        value=effect.description
+        name="description"
+        localize=true
+      }}
+    {{/if}}
+  </article>
+</section>

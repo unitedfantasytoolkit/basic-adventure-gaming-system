@@ -1,55 +1,5 @@
 {
   "BAGS": {
-    "Actors": {
-      "Common": {
-        "Tabs": {
-          "Summary": "Summary",
-          "Actions": "Actions",
-          "Effects": "Effects"
-        },
-        "Stats": {
-          "HP": "HP",
-          "THAC0": "THAC0",
-          "AttackBonus": "Attack Bonus",
-          "ArmorClass": "Armor Class",
-          "Movement": "Movement"
-        },
-        "Combat": {
-          "Modifiers": "Modifiers",
-          "Attack": "Atk",
-          "Damage": "Dmg",
-          "Melee": "Melee",
-          "Missile": "Missile",
-          "MagicResistance": "Magic Resistance"
-        },
-        "Effects": {
-          "Temporary": "Temporary Effects",
-          "Lingering": "Lingering Effects"
-        }
-      },
-      "Character": {
-        "Equipment": {
-          "Title": "Equipment",
-          "NoWeaponActions": "None of your weapons have actions."
-        },
-        "Abilities": {
-          "ClassAbilities": "{className} Abilities",
-          "OtherAbilities": "Other Abilities"
-        },
-        "ExplorationSkills": "Exploration Skills"
-      },
-      "Monster": {
-        "Details": {
-          "Alignment": "Alignment",
-          "Intelligence": "Intelligence",
-          "NumberAppearing": "No. Appearing",
-          "MoraleRating": "Morale Rating",
-          "Unaligned": "Unaligned",
-          "Superhuman": "Superhuman",
-          "NumberRange": "1d6 (3d6)"
-        }
-      }
-    },
     "Ordinal": {
       "one": "st",
       "two": "nd",
@@ -148,14 +98,23 @@
         }
       },
       "Effects": {
+        "Name": {
+          "Label": "Effect Name"
+        },
+        "IsLikeAttack": {
+          "Label": "This is an attack",
+          "Hint": "This action represents damage inflicted with a melee or ranged weapon."
+        },
         "Type": {
           "Label": "Effect Type",
           "Hint": "How does this effect interact with targets?",
-          "Attack": "Damage",
-          "Healing": "Healing",
-          "Effect": "Apply Active Effect",
-          "Macro": "Macro",
-          "Miscellaneous": "Other"
+          "Attack": "Inflict damage",
+          "Healing": "Apply healing",
+          "Effect": "Apply an active effect",
+          "Macro": "Execute a macro",
+          "Script": "Run a custom script",
+          "RollTable": "Roll on a table",
+          "Miscellaneous": "Display a message"
         },
         "Resistance": {
           "Heading": "Resistance",
@@ -383,9 +342,51 @@
             "StartingGold": "Starting Gold",
             "RemainingGold": "Gold Remaining"
           }
+        },
+        "Equipment": {
+          "Title": "Equipment",
+          "NoWeaponActions": "None of your weapons have actions."
+        },
+        "Abilities": {
+          "ClassAbilities": "{className} Abilities",
+          "OtherAbilities": "Other Abilities"
+        },
+        "ExplorationSkills": "Exploration Skills"
+      },
+      "Monster": {
+        "Details": {
+          "Alignment": "Alignment",
+          "Intelligence": "Intelligence",
+          "NumberAppearing": "No. Appearing",
+          "MoraleRating": "Morale Rating"
         }
       },
+
       "Common": {
+        "Tabs": {
+          "Summary": "Summary",
+          "Actions": "Actions",
+          "Effects": "Effects"
+        },
+        "Stats": {
+          "HP": "HP",
+          "THAC0": "THAC0",
+          "AttackBonus": "Attack Bonus",
+          "ArmorClass": "Armor Class",
+          "Movement": "Movement"
+        },
+        "Combat": {
+          "Modifiers": "Modifiers",
+          "Attack": "Atk",
+          "Damage": "Dmg",
+          "Melee": "Melee",
+          "Missile": "Missile",
+          "MagicResistance": "Magic Resistance"
+        },
+        "Effects": {
+          "Temporary": "Temporary Effects",
+          "Lingering": "Lingering Effects"
+        },
         "Inventory": {
           "Label": "Inventory",
           "Sort": {

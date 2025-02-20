@@ -149,7 +149,35 @@
   </dl>
 {{/inline}}
 
-{{#*inline "action-list-item"}}
+{{#*inline "action-item"}}
+  <div class="action-source">
+    <div class="action-source__header">
+      <img class="action-source__icon" src="{{img}}" alt="">
+      <h4 class="action-source__name">{{name}}</h4>
+    </div>
+    <div class="action-source__actions">
+      {{#each system.actions}}
+        {{> action-button parent=parent}}
+      {{/each}}
+    </div>
+  </div>
+{{/inline}}
+
+{{#*inline "action-item-collapsible"}}
+  <details class="action-source" open>
+    <summary class="action-source__header">
+      <img class="action-source__icon" src="{{img}}" alt="">
+      <h4 class="action-source__name">{{name}}</h4>
+    </summary>
+    <div class="action-source__actions" role="list">
+      {{#each system.actions}}
+        {{> action-button parent=parent}}
+      {{/each}}
+    </div>
+  </details>
+{{/inline}}
+
+{{#*inline "action-button"}}
   <button class="action-list-item action-list-item--single-action"
     role="listitem"
     data-action="use-action"
@@ -244,16 +272,21 @@
     {{/if}}
 
     <div class="left-rail__section">
-      <h3 class="decorated">{{localize "BAGS.Actors.Character.Equipment.Title"}}</h3>
-      <ul class="action-list action-list--equipment">
-        {{#each document.equipped.weapon}}
-          {{#each system.actions}}
-            {{> action-list-item parent=..}}
+      <div class="action-list">
+        <div class="action-category">
+          <h3 class="action-category__header decorated">{{localize "BAGS.Actors.Character.Equipment.Title"}}</h3>
+          {{#each document.equipped.weapon}}
+            {{#if (eq @index 0)}}
+              {{> action-item parent=..}}
+            {{else}}
+              {{> action-item-collapsible parent=..}}
+            {{/if}}
+          {{else}}
+            <p class="empty">{{localize "BAGS.Actors.Character.Equipment.NoWeaponActions"}}</p>
           {{/each}}
-        {{else}}
-          <p class="empty">{{localize "BAGS.Actors.Character.Equipment.NoWeaponActions"}}</p>
-        {{/each}}
-      </ul>
+      
+        </div>
+      </div>
     </div>
 
     {{#if document.items.documentsByType.class.length}}

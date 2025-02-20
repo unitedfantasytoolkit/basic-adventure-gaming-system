@@ -44,9 +44,9 @@ Hooks.once("init", async () => {
     // === Action Editor =======================================================
 
     // --- Detail pane ---------------------------------------------------------
-    actionEditorDetailsBasic: `${SYSTEM_TEMPLATE_PATH}/action-editor/section-details.hbs`,
-    actionEditorDetailsFlags: `${SYSTEM_TEMPLATE_PATH}/action-editor/section-flags.hbs`,
+    actionEditorDetailsSettings: `${SYSTEM_TEMPLATE_PATH}/action-editor/section-settings.hbs`,
     actionEditorDetailsAttempt: `${SYSTEM_TEMPLATE_PATH}/action-editor/section-attempt.hbs`,
+    actionEditorDetailsAttemptMessages: `${SYSTEM_TEMPLATE_PATH}/action-editor/section-attempt-messages.hbs`,
     actionEditorDetailsEffects: `${SYSTEM_TEMPLATE_PATH}/action-editor/section-effects.hbs`,
     actionEditorDetailsConsumption: `${SYSTEM_TEMPLATE_PATH}/action-editor/section-consumption.hbs`,
     actionEditorDetailsRestrictions: `${SYSTEM_TEMPLATE_PATH}/action-editor/section-restrictions.hbs`,

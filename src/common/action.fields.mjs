@@ -283,6 +283,10 @@ export const actionsFactory = (fields) => {
       label: "BAGS.Actions.Effects.Name.Label",
       initial: "New Effect",
     }),
+    id: new StringField({
+      blank: false,
+      nullable: false,
+    }),
     flags: new SchemaField({
       canBeResisted: new BooleanField({
         initial: false,
@@ -327,6 +331,10 @@ export const actionsFactory = (fields) => {
         label: "BAGS.Actions.Effects.Resistance.SavingThrow.Label",
         hint: "BAGS.Actions.Effects.Resistance.SavingThrow.Hint",
       }),
+      abilityScore: new StringField({
+        label: "BAGS.Actions.Effects.Resistance.AbilityScore.Label",
+        hint: "BAGS.Actions.Effects.Resistance.AbilityScore.Hint",
+      }),
       roll: new SchemaField({
         /**
          * Formula and operator should only be available when the
@@ -349,18 +357,14 @@ export const actionsFactory = (fields) => {
           label: "BAGS.Actions.Effects.Resistance.Operator.Label",
           hint: "BAGS.Actions.Effects.Resistance.Operator.Hint",
         }),
-        abilityScore: new StringField({
-          label: "BAGS.Actions.Effects.Resistance.AbilityScore.Label",
-          hint: "BAGS.Actions.Effects.Resistance.AbilityScore.Hint",
+        /**
+         * Static target number should only be available when the resistance's
+         * type is "number."
+         */
+        target: new NumberField({
+          label: "BAGS.Actions.Effects.Resistance.StaticTarget.Label",
+          hint: "BAGS.Actions.Effects.Resistance.StaticTarget.Hint",
         }),
-      }),
-      /**
-       * Static target number should only be available when the resistance's
-       * type is "number."
-       */
-      staticTarget: new NumberField({
-        label: "BAGS.Actions.Effects.Resistance.StaticTarget.Label",
-        hint: "BAGS.Actions.Effects.Resistance.StaticTarget.Hint",
       }),
     }),
     macro: new DocumentUUIDField({
@@ -533,7 +537,7 @@ export const actionsFactory = (fields) => {
     level,
     consumption,
     uses,
-    effects: new ArrayField(effect, { initial: [effect.getInitialValue()] }),
+    effects: new ArrayField(effect, { initial: [] }),
     attempt,
     ...fields,
   })

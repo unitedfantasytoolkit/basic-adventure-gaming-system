@@ -11,11 +11,16 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
 
     this.document = options?.document
 
-    this.#subApps = this.constructor.SUB_APPS.reduce(
-      (obj, App) => ({
-        ...obj,
-        [App.constructor.name]: new App(this.document),
-      }),
+    this.#subApps = Object.keys(this.constructor.SUB_APPS).reduce(
+      (obj, key) => {
+        const App = this.constructor.SUB_APPS[key]
+        return {
+          ...obj,
+          [key]: new App({
+            document: this.document,
+          }),
+        }
+      },
       {},
     )
   }

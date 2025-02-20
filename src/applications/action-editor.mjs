@@ -1,12 +1,17 @@
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
 import BAGSApplication from "../applications/application.mjs"
+import ActionEffectEditor from "./action-effect-editor.mjs"
 
 /**
  * @typedef {object} ActionEditor
  * @class
  */
 export default class ActionEditor extends BAGSApplication {
+  static SUB_APPS = {
+    effectEditor: ActionEffectEditor,
+  }
+
   _activeAction
 
   constructor(options = {}) {
@@ -23,11 +28,14 @@ export default class ActionEditor extends BAGSApplication {
       contentClasses: ["application__master-detail"],
     },
     actions: {
+      // Action management
       "select-action": this.selectAction,
       "add-action": this.addAction,
       "delete-action": this.deleteAction,
-      "add-effect": this.addEffect,
-      "delete-effect": this.deleteEffect,
+      // Effect management
+      "add-action-effect": this.addActionEffect,
+      "delete-action-effect": this.deleteActionEffect,
+      "edit-action-effect": this.editActionEffect,
     },
     position: {
       width: 720,
@@ -55,6 +63,57 @@ export default class ActionEditor extends BAGSApplication {
 
   get title() {
     return `Action Editor: ${this.document.name}`
+  }
+
+  // --- Tabs ------------------------------------------------------------------
+
+  tabGroups = {
+    sheet: "effects",
+  }
+
+  static TABS = {
+    sheet: {
+      tabs: [
+        {
+          id: "settings",
+          group: "sheet",
+          icon: "fa-solid fa-gear",
+          label: "Settings",
+        },
+        {
+          id: "attempt",
+          group: "sheet",
+          icon: "fa-solid fa-bullseye-arrow",
+          label: "Attempt",
+        },
+        {
+          id: "attempt-messages",
+          group: "sheet",
+          icon: "fa-solid fa-note",
+          label: "Attempt Messages",
+        },
+        {
+          id: "effects",
+          group: "sheet",
+          icon: "fa-solid fa-sparkle",
+          label: "Effects",
+        },
+        {
+          id: "consumption",
+          group: "sheet",
+          icon: "fa-solid fa-star-half",
+          label: "Consumption",
+        },
+        {
+          id: "restrictions",
+          group: "sheet",
+          icon: "fa-solid fa-unlock",
+          label: "Restrictions",
+        },
+      ],
+      initial: "attempt",
+      labelPrefix: "BAGS.Actions.Tabs",
+    },
   }
 
   // === Rendering =============================================================
@@ -88,8 +147,11 @@ export default class ActionEditor extends BAGSApplication {
         break
       case "detail":
         context.action = this._activeAction
-          ? doc.system.actions.find((a) => a.id === this._activeAction)
+          ? doc.getAction(this._activeAction)
           : doc.system.actions[0]
+        context.tab = this.constructor.TABS.sheet.tabs.find(
+          ({ id }) => id === this.tabGroups.sheet,
+        )
         break
       default:
         return super._preparePartContext(partId, context)
@@ -130,9 +192,32 @@ export default class ActionEditor extends BAGSApplication {
 
   // === Effect management =====================================================
 
-  static async addEffect() {}
+  /**
+   * Add a new Effect to the currently editable action.
+   * @todo This function updates `this.document.actions`. Since it's triggered
+   * in response to a click, it ends up submitting the updated object right
+   * after. Is this desirable? How might this break?
+   */
+  static async addActionEffect() {
+    this.document.createEffect(this._activeAction)
+  }
 
-  static async deleteEffect() {}
+  static async deleteActionEffect(_event, button) {
+    await this.document.deleteEffect(
+      this._activeAction,
+      button.dataset.effectId,
+    )
+  }
+
+  static async editActionEffect(_event, button) {
+    const action = this.document.getAction(this._activeAction)
+    const effect = this.document.getEffect(
+      this._activeAction,
+      button.dataset.effectId,
+    )
+    this.subApps.effectEditor.prepareToEdit(action, effect)
+    this.subApps.effectEditor.render(true)
+  }
 
   // === Saving ================================================================
 
@@ -145,24 +230,7 @@ export default class ActionEditor extends BAGSApplication {
    */
   static async save(_event, _form, formData) {
     try {
-      const updatedActionIndex = this.document.system.actions.findIndex(
-        (a) => a.id === this._activeAction,
-      )
-
-      if (updatedActionIndex < 0)
-        throw new Error("Failed to update action: action not found")
-
-      const updatedActions = this.document.system.actions.map((a) => {
-        if (a.id !== this._activeAction) return a
-        return {
-          ...a,
-          ...formData.object,
-        }
-      })
-
-      await this.document.update({
-        "system.actions": updatedActions,
-      })
+      await this.document.updateAction(this._activeAction, formData.object)
       this.render()
     } catch (e) {
       this.render()

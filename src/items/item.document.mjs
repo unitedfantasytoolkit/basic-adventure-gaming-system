@@ -4,9 +4,10 @@
 import ActionResolver from "../rules-engines/action-resolver.mjs"
 
 /**
- * Extends the base Foundry VTT Item document class with BAGS-specific functionality.
+ * Extends the base Foundry VTT Item document class with BAGS-specific
+ * functionality.
  * Handles actions, effects, equipment state, and other item-related features.
- * @extends {Item}
+ * @augments {Item}
  */
 export default class BAGSItem extends Item {
   /** @type {string[]} Types of items that are considered physical objects */
@@ -58,7 +59,9 @@ export default class BAGSItem extends Item {
 
   /**
    * Resolves an action using the ActionResolver
-   * @param {string|Object} action - Either an action ID or the action object itself
+   * @see {@link ../rules-engines/action-resolver.mjs}
+   * @param {string|Object} action - Either an action ID or the action object
+   * itself
    * @returns {Promise<Object>} The result of the action resolution
    */
   async resolveAction(action) {
@@ -118,7 +121,8 @@ export default class BAGSItem extends Item {
 
   /**
    * Creates a new effect for a specific action
-   * @param {string} actionId - The unique identifier of the action to add the effect to
+   * @param {string} actionId - The unique identifier of the action to add the
+   * effect to
    * @returns {Promise<void>} A Promise that resolves when the effect is created
    */
   async createEffect(actionId) {
@@ -208,7 +212,8 @@ export default class BAGSItem extends Item {
    * @param {string} actionId - The unique identifier of the action being used
    * @param {Object} attempt - The attempt object containing roll results
    * @param {Actor} target - The target of the action
-   * @returns {Promise<void>} A Promise that resolves when consumption is handled
+   * @returns {Promise<void>} A Promise that resolves when consumption is
+   * handled
    */
   async onConsumption(actionId, attempt, target) {
     console.info(this, this.parent, attempt, target)

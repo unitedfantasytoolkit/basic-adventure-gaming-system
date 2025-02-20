@@ -43,7 +43,19 @@ import "./hooks/setup.ui.mjs"
  */
 Hooks.once("ready", async () => {
   try {
-    fromUuidSync("Actor.A81XqzmshDo9D55H").sheet.render(true)
+    // fromUuidSync(
+    //   "Actor.A81XqzmshDo9D55H.Item.Z2WUBXQlqDJV2m14",
+    // ).sheet.subApps.actionEditor.render(true)
+    fromUuidSync(
+      "Actor.A81XqzmshDo9D55H.Item.Z2WUBXQlqDJV2m14",
+    ).sheet.subApps.actionEditor.subApps.effectEditor.prepareToEdit(
+      "KnA1hXmlZZrYpB9L",
+      "DT5QUwSaRid33DaW",
+    )
+    fromUuidSync(
+      "Actor.A81XqzmshDo9D55H.Item.Z2WUBXQlqDJV2m14",
+    ).sheet.subApps.actionEditor.subApps.effectEditor.render(true)
+    // fromUuidSync("Actor.A81XqzmshDo9D55H").sheet.render(true)
     // fromUuidSync("Actor.KT24QxIqGbFu9mZq").sheet.render(true)
     // fromUuidSync("Item.aRxw6uspU4Ipf9xN").sheet.render(true)
     // fromUuidSync("Actor.A81XqzmshDo9D55H.Item.Hg1akbcfs01x33LR").sheet.render(

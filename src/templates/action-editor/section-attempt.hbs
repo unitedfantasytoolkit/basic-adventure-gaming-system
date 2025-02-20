@@ -1,33 +1,45 @@
-<article class="standard-form">
+{{#> sheetTab tab=tabs.attempt}}
   <header class="tab__header">
     <h3>{{localize "BAGS.Actions.Editor.Attempt.Heading"}}</h3>
   </header>
 
-  {{formGroup fields.attempt.fields.flags.fields.isLikeAttack
-  value=action.attempt.flags.isLikeAttack localize=true
-  name="attempt.flags.isLikeAttack" localize=true }} {{#if
-  action.attempt.flags.isLikeAttack}} {{formGroup
-  fields.attempt.fields.attack.fields.type value=action.attempt.attack.type
-  name="attempt.attack.type" localize=true }} {{else}}
-  <div class="roll-fields">
-    {{formGroup fields.attempt.fields.roll.fields.formula
-    value=action.attempt.roll.formula name="attempt.roll.formula" localize=true
-    }} {{formGroup fields.attempt.fields.roll.fields.operator
-    value=action.attempt.roll.operator name="attempt.roll.operator ``"
-    localize=true }} {{formGroup fields.attempt.fields.roll.fields.target
-    value=action.attempt.roll.target name="attempt.roll.target" localize=true }}
-  </div>
-  {{/if}}
+  <article class="standard-form">
+    {{formGroup
+      fields.attempt.fields.flags.fields.isLikeAttack
+      value=action.attempt.flags.isLikeAttack
+      localize=true
+      name="attempt.flags.isLikeAttack"
+      localize=true
+    }}
+    {{#if action.attempt.flags.isLikeAttack}}
+      {{formGroup
+        fields.attempt.fields.attack.fields.type
+        value=action.attempt.attack.type
+        name="attempt.attack.type"
+        localize=true
+      }}
+    {{else}}
+      <div class="roll-fields">
+        {{formGroup
+          fields.attempt.fields.roll.fields.formula
+          value=action.attempt.roll.formula
+          name="attempt.roll.formula"
+          localize=true
+        }}
+        {{formGroup
+          fields.attempt.fields.roll.fields.operator
+          value=action.attempt.roll.operator
+          name="attempt.roll.operator ``"
+          localize=true
+        }}
+        {{formGroup
+          fields.attempt.fields.roll.fields.target
+          value=action.attempt.roll.target
+          name="attempt.roll.target"
+          localize=true
+        }}
+      </div>
+    {{/if}}
+  </article>
+{{/sheetTab}}
 
-  <h4>{{localize "BAGS.Actions.Editor.Attempt.ResultText"}}</h4>
-
-  {{formGroup fields.attempt.fields.flavorText.fields.attempt
-  value=action.attempt.flavorText.attempt name="attempt.flavorText.attempt"
-  localize=true }} {{formGroup fields.attempt.fields.flavorText.fields.success
-  value=action.attempt.flavorText.success name="attempt.flavorText.success"
-  localize=true }} {{formGroup fields.attempt.fields.flavorText.fields.fail
-  value=action.attempt.flavorText.fail name="attempt.flavorText.fail"
-  localize=true }} {{formGroup fields.attempt.fields.flavorText.fields.blind
-  value=action.attempt.flavorText.blind name="attempt.flavorText.blind"
-  localize=true }}
-</article>

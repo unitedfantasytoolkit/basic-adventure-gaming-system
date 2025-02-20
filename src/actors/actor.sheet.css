@@ -353,36 +353,6 @@
     }
   }
 
-  .action-source {
-    &__header {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.25rem 0.5rem;
-      background: var(--color-bg-field-darker);
-      border-radius: 3px;
-      margin-bottom: 0.25rem;
-    }
-
-    &__icon {
-      width: 24px;
-      height: 24px;
-      border: none;
-    }
-
-    &__name {
-      margin: 0;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-
-    &__actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.25rem;
-    }
-  }
-
   .action-card {
     align-items: center;
     cursor: pointer;
@@ -438,6 +408,80 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+    }
+  }
+
+  .action-category {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+
+    &__header {
+      &.decorated {
+        margin-bottom: 0.25em;
+      }
+    }
+  }
+
+  .action-source {
+    &__header {
+      cursor: pointer;
+      transition: background-color 150ms ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      background: var(--color-bg-field-darker);
+      border-radius: 3px;
+      margin-bottom: 0.25rem;
+
+      &:hover {
+        background: var(--color-cool-5-40);
+      }
+    }
+
+    &__actions {
+      margin-top: 0.25em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25em;
+    }
+
+    &__icon {
+      width: 24px;
+      height: 24px;
+      border: none;
+    }
+
+    &__name {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+  }
+
+  details.action-source {
+    &[open] {
+      > summary {
+        margin-bottom: 0.25em;
+      }
+    }
+
+    > summary {
+      list-style: none;
+
+      &::after {
+        content: "▼";
+        float: right;
+        font-size: 0.8em;
+        transform: translateY(25%);
+        opacity: 0.6;
+        transition: transform 150ms ease;
+      }
+    }
+
+    &[open] > summary::after {
+      transform: translateY(25%) rotate(180deg);
     }
   }
 

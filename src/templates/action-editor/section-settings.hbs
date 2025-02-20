@@ -1,0 +1,37 @@
+{{#> sheetTab tab=tabs.settings}}
+  <section class="scrollable">
+    <article class="standard-form">
+      {{formGroup
+        fields.name
+        value=action.name
+        name="name"
+        localize=true
+      }}
+      {{formGroup
+        fields.flags.fields.usesAttempt
+        value=action.flags.usesAttempt
+        name="flags.usesAttempt"
+        localize=true
+      }}
+      {{formGroup fields.flags.fields.usesEffect value=action.flags.usesEffect name="flags.usesEffect" localize=true }}
+      {{formGroup
+        fields.flags.fields.usesRestrictions
+        value=action.flags.usesRestrictions
+        name="flags.usesRestrictions"
+        localize=true
+      }}
+      {{formGroup
+        fields.flags.fields.usesConsumption
+        value=action.flags.usesConsumption
+        name="flags.usesConsumption"
+        localize=true
+      }}
+      {{formGroup
+        fields.flags.fields.isBlind
+        value=action.flags.isBlind
+        name="flags.isBlind"
+        localize=true
+      }}
+    </article>
+  </section>
+{{/sheetTab}}
