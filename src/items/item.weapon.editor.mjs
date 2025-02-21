@@ -20,8 +20,15 @@ export default class BAGSWeaponEditor extends BAGSBaseItemEditor {
           id: "details",
           group: "sheet",
           icon: "fa-solid fa-square-list",
-          label: "BAGS.CharacterClass.Tabs.Summary",
+          label: "BAGS.Items.Weapon.Tabs.Details",
           cssClass: "tab--summary",
+        },
+        {
+          id: "attack",
+          group: "sheet",
+          icon: "fa-solid fa-swords",
+          label: "BAGS.Items.Weapon.Tabs.Attack",
+          cssClass: "tab--attack",
         },
         ...super.TABS.sheet.tabs,
       ],
@@ -33,6 +40,9 @@ export default class BAGSWeaponEditor extends BAGSBaseItemEditor {
   static TAB_PARTS = {
     details: {
       template: `${this.TEMPLATE_ROOT}/details.hbs`,
+    },
+    attack: {
+      template: `${this.TEMPLATE_ROOT}/attack.hbs`,
     },
   }
 }

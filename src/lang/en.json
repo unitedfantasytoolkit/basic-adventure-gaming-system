@@ -6,6 +6,7 @@
       "few": "rd",
       "other": "th"
     },
+    "Operators": {},
     "Party": {
       "Title": "Party",
       "XP": "Distribute XP",
@@ -31,6 +32,13 @@
             "Hint": "Text displayed with the rolled effect (e.g: \"X hit dice turned\", \"Fire damage\""
           }
         }
+      },
+      "Range": {
+        "Label": "Range",
+        "Note": "Leave all fields at zero to ignore range on this action. Set the medium range and leave short or long ranges at zero for ranged actions that don't gain bonuses or penalties from range.",
+        "Short": "Short",
+        "Medium": "Medium",
+        "Long": "Long"
       },
       "Flags": {
         "UsesAttempt": {
@@ -65,6 +73,9 @@
           "Melee": "Melee",
           "Missile": "Missile",
           "None": "Unmodified"
+        },
+        "AttackBonus": {
+          "Label": "Bonus to attack rolls"
         },
         "Roll": {
           "Formula": {
@@ -314,7 +325,8 @@
       },
       "Weapon": {
         "Tabs": {
-          "Details": "Details"
+          "Details": "Details",
+          "Attack": "Default Attack"
         },
         "Fields": {
           "WeaponBonus": {
@@ -324,7 +336,13 @@
           "IsSlow": {
             "Label": "Slow Weapon",
             "Hint": "This weapon's wielder will go last in combat in some initiative schemes."
+          },
+          "DamageFormula": {
+            "Label": "Damage Roll Formula"
           }
+        },
+        "Actions": {
+          "DefaultName": "Attack"
         }
       },
       "Armor": {

@@ -161,7 +161,7 @@ export const actionRechargeOptions = {
  * work?
  */
 
-export const actionsFactory = (fields) => {
+export const actionFactory = (fields, options) => {
   /**
    * @typedef ActionFlags
    * Flags that enable or disable features of the Action.
@@ -515,10 +515,10 @@ export const actionsFactory = (fields) => {
         hint: "BAGS.Actions.Attempt.AttackType.Hint",
       }),
       bonus: new NumberField({
-        min: 1,
+        min: 0,
+        integer: true,
         initial: ACTION_DEFAULT_EFFECT_TARGET,
-        label: "BAGS.Actions.Attempt.Attack.Bonus.Attack.Label",
-        // hint: "BAGS.Actions.Attempt.Roll.Target.Hint",
+        label: "BAGS.Actions.Attempt.AttackBonus.Label",
       }),
     }),
     roll: new SchemaField({
@@ -569,41 +569,65 @@ export const actionsFactory = (fields) => {
     }),
   })
 
-  const schema = new SchemaField({
-    id: new StringField({
-      blank: false,
-      nullable: false,
-    }),
-
-    name: new StringField({
-      blank: false,
-      initial: "New Action",
-      label: "BAGS.Actions.Name.Label",
-      hint: "BAGS.Actions.Name.Hint",
-    }),
-    img: new FilePathField({
-      categories: ["IMAGE"],
-      initial: `${SYSTEM_ASSET_PATH}/icons/default-action.svg`,
-    }),
-    description: new HTMLField({
-      label: "BAGS.Actions.Description.Label",
-      hint: "BAGS.Actions.Description.Hint",
-    }),
-    flags,
-    level,
-    consumption,
-    uses,
-    effects: new ArrayField(effect, { initial: [] }),
-    attempt,
-    ...fields,
-  })
+  return new SchemaField(
+    {
+      id: new StringField({
+        blank: false,
+        nullable: false,
+      }),
+      name: new StringField({
+        blank: false,
+        initial: "New Action",
+        label: "BAGS.Actions.Name.Label",
+        hint: "BAGS.Actions.Name.Hint",
+      }),
+      img: new FilePathField({
+        categories: ["IMAGE"],
+        initial: `${SYSTEM_ASSET_PATH}/icons/default-action.svg`,
+      }),
+      range: new SchemaField({
+        short: new NumberField({
+          initial: 0,
+          min: 0,
+          integer: true,
+          label: "BAGS.Actions.Range.Short",
+        }),
+        medium: new NumberField({
+          initial: 0,
+          min: 0,
+          integer: true,
+          label: "BAGS.Actions.Range.Medium",
+        }),
+        long: new NumberField({
+          initial: 0,
+          min: 0,
+          integer: true,
+          label: "BAGS.Actions.Range.Long",
+        }),
+      }),
+      description: new HTMLField({
+        label: "BAGS.Actions.Description.Label",
+        hint: "BAGS.Actions.Description.Hint",
+      }),
+      flags,
+      level,
+      consumption,
+      uses,
+      effects: new ArrayField(effect, { initial: [] }),
+      attempt,
+      ...fields,
+    },
+    options,
+  )
 
   // @TODO: Figure out a way to get `id` to autofill
   // return new ArrayField(schema, {
   //   initial: [schema.getInitialValue()],
   // })
+  //
+}
 
-  return new ArrayField(schema, {
+export const actionsFactory = (fields) =>
+  new ArrayField(actionFactory(fields), {
     initial: [],
   })
-}

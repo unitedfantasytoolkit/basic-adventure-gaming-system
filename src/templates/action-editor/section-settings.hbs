@@ -32,6 +32,26 @@
         name="flags.isBlind"
         localize=true
       }}
+      
+      <fieldset>
+        <legend>{{localize "BAGS.Actions.Range.Label"}}</legend>
+        {{formGroup
+          systemFields.attack.fields.range.fields.short
+          value=document.system.attack.range.short
+          localize=true
+        }}
+        {{formGroup
+          systemFields.attack.fields.range.fields.medium
+          value=document.system.attack.range.medium
+          localize=true
+        }}
+        {{formGroup
+          systemFields.attack.fields.range.fields.long
+          value=document.system.attack.range.long
+          localize=true
+        }}
+      </fieldset>
+      <p>{{localize "BAGS.Actions.Range.Note"}}</p>
     </article>
   </section>
 {{/sheetTab}}
