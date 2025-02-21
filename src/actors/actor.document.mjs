@@ -160,12 +160,6 @@ export default class BAGSActor extends Actor {
     return foundry.utils.flattenObject(this.overrides)
   }
 
-  async resolveAction(action, item = null) {
-    const resolver = new ActionResolver(action, item, this, game.user.targets)
-
-    return resolver.resolve()
-  }
-
   async rollSave(save, modifier) {
     const roll = new Roll(
       `1d20+${modifier}cs<=${this.system.savingThrows[save]}`,
@@ -184,5 +178,190 @@ export default class BAGSActor extends Actor {
 
   getRollData() {
     return this.system
+  }
+
+  // === Action management =====================================================
+
+  /**
+   * Creates a new action for this item
+   * @returns {Promise<Item>} A Promise that resolves to the updated Item
+   */
+  async createAction() {
+    const actions = [
+      ...this.system.actions,
+      {
+        ...this.system.schema.fields.actions.element.getInitialValue(),
+        id: foundry.utils.randomID(),
+      },
+    ]
+    return this.update({ "system.actions": actions })
+  }
+
+  /**
+   * Retrieves an action by its ID
+   * @param {string} actionId - The unique identifier of the action
+   * @returns {Object|undefined} The action object if found, undefined otherwise
+   */
+  getAction(actionId, itemId) {
+    const actionSource = !itemId ? this.system : this.items.get(itemId)?.system
+    return actionSource?.actions.find(({ id }) => id === actionId)
+  }
+
+  /**
+   * Gets the index of an action in the actions array
+   * @param {string} actionId - The unique identifier of the action
+   * @returns {number} The index of the action, or -1 if not found
+   */
+  getActionIndex(actionId, itemId) {
+    const actionSource = !itemId ? this.system : this.items.get(itemId)?.system
+    return actionSource?.actions.findIndex(({ id }) => id === actionId)
+  }
+
+  /**
+   * Resolves an action using the ActionResolver
+   * @see {@link ../rules-engines/action-resolver.mjs}
+   * @param {string|object} action - Either an action ID or the action object
+   * itself
+   * @param {string} itemId - The parent item of the action, if any.
+   * @returns {Promise<object>} The result of the action resolution
+   */
+  async resolveAction(action, itemId = "") {
+    const fetchedAction =
+      typeof action === "string" ? this.getAction(action, itemId) : action
+    const item = itemId ? this.items.get(itemId) : null
+    const resolver = new ActionResolver(
+      fetchedAction,
+      item,
+      this,
+      game.user.targets,
+    )
+    return resolver.resolve()
+  }
+
+  /**
+   * Updates an existing action with new data
+   * @param {string} actionId - The unique identifier of the action to update
+   * @param {object} updates - The properties to update on the action
+   * @returns {Promise<Item>} A Promise that resolves to the updated Item
+   * @throws {Error} If the action is not found
+   */
+  async updateAction(actionId, updates) {
+    const updatedActionIndex = this.getActionIndex(actionId)
+
+    if (updatedActionIndex < 0)
+      throw new Error("Failed to update action: action not found")
+
+    const updatedActions = this.system.actions.map((a) => {
+      if (a.id !== actionId) return a
+      return {
+        ...a,
+        ...updates,
+      }
+    })
+
+    return this.update({
+      "system.actions": updatedActions,
+    })
+  }
+
+  /**
+   * Deletes an action from this item
+   * @param {string} actionId - The unique identifier of the action to delete
+   * @returns {Promise<Item>} A Promise that resolves to the updated Item
+   */
+  async deleteAction(actionId) {
+    return this.update({
+      "system.actions": this.system.actions.filter(({ id }) => id !== actionId),
+    })
+  }
+
+  // === Action effect management ==============================================
+  // Note: Action effects are different from *active effects*, which are a
+  // document type in Foundry.
+
+  /**
+   * Creates a new effect for a specific action
+   * @param {string} actionId - The unique identifier of the action to add the
+   * effect to
+   * @returns {Promise<void>} A Promise that resolves when the effect is created
+   */
+  async createEffect(actionId) {
+    const { actions: actionSchema } = this.system.schema.fields
+    const effect = foundry.utils.mergeObject(
+      actionSchema.element.fields.effects.element.getInitialValue(),
+      {
+        id: foundry.utils.randomID(),
+      },
+    )
+    const { actions } = this.system
+    const actionIndex = actions.findIndex((a) => a.id === actionId)
+
+    return this.system.actions.forEach((a, index) => {
+      if (index === actionIndex) a.effects.push(effect)
+    })
+  }
+
+  /**
+   * Retrieves an effect from an action
+   * @param {string} actionId - The unique identifier of the action
+   * @param {string} effectId - The unique identifier of the effect
+   * @returns {Object|undefined} The effect object if found, undefined otherwise
+   */
+  getEffect(actionId, effectId) {
+    return this.getAction(actionId).effects.find(({ id }) => id === effectId)
+  }
+
+  /**
+   * Gets the index of an effect within an action's effects array
+   * @param {string} actionId - The unique identifier of the action
+   * @param {string} effectId - The unique identifier of the effect
+   * @returns {number} The index of the effect, or -1 if not found
+   */
+  getEffectIndex(actionId, effectId) {
+    return this.getAction(actionId).effects.findIndex(
+      ({ id }) => id === effectId,
+    )
+  }
+
+  /**
+   * Updates an existing effect with new data
+   * @param {string} actionId - The unique identifier of the action
+   * @param {string} effectId - The unique identifier of the effect
+   * @param {Object} updates - The properties to update on the effect
+   * @returns {Promise<Item>} A Promise that resolves to the updated Item
+   * @throws {Error} If the effect is not found
+   */
+  updateEffect(actionId, effectId, updates) {
+    const updatedEffectIndex = this.getEffectIndex(actionId, effectId)
+
+    if (updatedEffectIndex < 0)
+      throw new Error("Failed to update effect: effect not found")
+
+    const action = this.getAction(actionId)
+    action.effects[updatedEffectIndex] = {
+      ...action.effects[updatedEffectIndex],
+      ...updates,
+    }
+
+    return this.updateAction(actionId, action)
+  }
+
+  /**
+   * Deletes an effect from an action
+   * @param {string} actionId - The unique identifier of the action
+   * @param {string} effectId - The unique identifier of the effect to delete
+   * @returns {Promise<Item>} A Promise that resolves to the updated Item
+   * @throws {Error} If the effect is not found
+   */
+  deleteEffect(actionId, effectId) {
+    const deletedEffectIndex = this.getEffectIndex(actionId, effectId)
+
+    if (deletedEffectIndex < 0)
+      throw new Error("Failed to update effect: effect not found")
+
+    const action = this.getAction(actionId)
+    action.effects.splice(deletedEffectIndex, 1)
+
+    return this.updateAction(actionId, action)
   }
 }

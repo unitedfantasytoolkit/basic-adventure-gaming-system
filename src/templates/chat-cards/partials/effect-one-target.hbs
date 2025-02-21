@@ -1,24 +1,42 @@
-{{#with (lookup action.outcome 0)}} {{!-- Show attempt result message if no
-effects --}} {{#if (or (not ../action.details.flags.usesEffect) (eq
-effects.length 0) )}}
-<p
-  class="action__result__flavor action__result__flavor--{{#if attempt.success}}success{{else}}fail{{/if}}"
->
-  {{> chatActionEffectMessage actor=../action.actor target=../action.target
-  item=../action.item type=(ifThen attempt.success "success" "fail")
-  flavorText=../action.details.attempt.flavorText }}
-</p>
-{{/if}} {{!-- Show single effect --}} {{#if (eq effects.length 1)}} {{#with
-(lookup effects 0)}} {{#if (eq type "attack")}} {{> chatActionEffectDamage}}
-{{else}} {{> chatActionEffectGeneric actor=../action.actor
-target=../action.target item=../action.item effect=effect }} {{/if}} {{/with}}
-{{/if}} {{!-- Show multiple effects --}} {{#if (gt effects.length 1)}}
-<ul class="action__effects">
-  {{#each effects}}
-  <li>
-    {{#if (eq type "attack")}} {{> chatActionEffectDamage}} {{else}} {{>
-    chatActionEffectGeneric}} {{/if}}
-  </li>
-  {{/each}}
-</ul>
-{{/if}} {{/with}}
+{{#with (lookup action.outcome 0)}}
+  {{!-- Show attempt result message if no effects --}}
+  {{#if (or (not ../action.details.flags.usesEffect) (eq effects.length 0) )}}
+    <p
+      class="action__result__flavor action__result__flavor--{{ifThen attempt.success "success" "fail"}}"
+    >
+      {{> chatActionEffectMessage
+        actor=../action.actor
+        target=../action.target
+        item=../action.item
+        type=(ifThen attempt.success "success" "fail")
+        flavorText=../action.details.attempt.flavorText
+      }}
+    </p>
+  {{/if}}
+
+  {{!-- Show single effect --}}
+  {{#if (eq effects.length 1)}}
+    {{#with (lookup effects 0)}}
+      {{#if (eq type "attack")}}
+        {{> chatActionEffectDamage}}
+      {{else}}
+        {{> chatActionEffectGeneric actor=../action.actor target=../action.target item=../action.item effect=effect }}
+      {{/if}}
+    {{/with}}
+  {{/if}}
+
+  {{!-- Show multiple effects --}}
+  {{#if (gt effects.length 1)}}
+    <ul class="action__effects">
+      {{#each effects}}
+      <li>
+        {{#if (eq type "attack")}}
+          {{> chatActionEffectDamage}}
+        {{else}}
+          {{> chatActionEffectGeneric}}
+        {{/if}}
+      </li>
+      {{/each}}
+    </ul>
+  {{/if}}
+{{/with}}

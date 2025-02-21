@@ -335,6 +335,11 @@ export const actionsFactory = (fields) => {
         label: "BAGS.Actions.Effects.Resistance.AbilityScore.Label",
         hint: "BAGS.Actions.Effects.Resistance.AbilityScore.Hint",
       }),
+      targetRollModifier: new NumberField({
+        label: "BAGS.Actions.Effects.Resistance.TargetRollModifier.Label",
+        hint: "BAGS.Actions.Effects.Resistance.TargetRollModifier.Hint",
+        integer: true,
+      }),
       roll: new SchemaField({
         /**
          * Formula and operator should only be available when the
@@ -364,6 +369,7 @@ export const actionsFactory = (fields) => {
         target: new NumberField({
           label: "BAGS.Actions.Effects.Resistance.StaticTarget.Label",
           hint: "BAGS.Actions.Effects.Resistance.StaticTarget.Hint",
+          integer: true,
         }),
       }),
     }),
@@ -390,7 +396,6 @@ export const actionsFactory = (fields) => {
       modifier: new NumberField({
         label: "BAGS.Actions.Effects.RollTable.Editor.Label",
         hint: "BAGS.Actions.Effects.RollTable.Editor.Hint",
-        async: true,
       }),
     }),
 
@@ -411,58 +416,56 @@ export const actionsFactory = (fields) => {
       label: "BAGS.Actions.Effects.Formula.Label",
       hint: "BAGS.Actions.Effects.Formula.Hint",
     }),
-    // ActiveEffect configuration for this effect.
     condition: new SchemaField({
       name: new StringField({
         label: "BAGS.Actions.Effects.Condition.Name.Label",
-        hint: "BAGS.Actions.Effects.Condition.Name.Hint",
         initial: "New Condition",
       }),
       img: new FilePathField({
         categories: ["IMAGE"],
-        label: "BAGS.Actions.Effects.Condition.Img.Label",
-        hint: "BAGS.Actions.Effects.Condition.Img.Hint",
+        label: "EFFECT.FIELDS.img.label",
       }),
       description: new HTMLField({
-        label: "BAGS.Actions.Effects.Condition.Description.Label",
-        hint: "BAGS.Actions.Effects.Condition.Description.Hint",
+        label: "EFFECT.FIELDS.description.label",
       }),
       changes: new ArrayField(
         new SchemaField({
           key: new StringField({
             blank: false,
-            label: "BAGS.Actions.Effects.Condition.Change.Key",
+            label: "EFFECT.ChangeKey",
           }),
           value: new StringField({
-            label: "BAGS.Actions.Effects.Condition.Change.Value",
+            label: "EFFECT.ChangeValue",
           }),
-          mode: new StringField({
-            choices: { ADD: "ADD", MULTIPLY: "MULTIPLY", OVERRIDE: "OVERRIDE" },
-            initial: "ADD",
-            label: "BAGS.Actions.Effects.Condition.Change.Mode",
+          mode: new NumberField({
+            required: true,
+            nullable: false,
+            integer: true,
+            initial: CONST.ACTIVE_EFFECT_MODES.ADD,
+            label: "EFFECT.ChangeMode",
           }),
           priority: new NumberField({
             min: 0,
-            label: "BAGS.Actions.Effects.Condition.Change.Priority",
+            label: "EFFECT.ChangePriority",
           }),
         }),
-        { initial: [] }
+        { initial: [] },
       ),
       duration: new SchemaField({
         rounds: new NumberField({
           min: 0,
-          label: "BAGS.Actions.Effects.Condition.Duration.Rounds.Label",
-          hint: "BAGS.Actions.Effects.Condition.Duration.Rounds.Hint",
+          initial: 0,
+          label: "COMBAT.Rounds",
         }),
         seconds: new NumberField({
           min: 0,
-          label: "BAGS.Actions.Effects.Condition.Duration.Seconds.Label",
-          hint: "BAGS.Actions.Effects.Condition.Duration.Seconds.Hint",
+          initial: 0,
+          label: "Seconds",
         }),
         turns: new NumberField({
           min: 0,
-          label: "BAGS.Actions.Effects.Condition.Duration.Turns.Label",
-          hint: "BAGS.Actions.Effects.Condition.Duration.Turns.Hint",
+          initial: 0,
+          label: "COMBAT.Turns",
         }),
       }),
     }),

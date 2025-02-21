@@ -157,7 +157,7 @@
     </div>
     <div class="action-source__actions">
       {{#each system.actions}}
-        {{> action-button parent=parent}}
+        {{> action-button parent=../parent}}
       {{/each}}
     </div>
   </div>
@@ -171,7 +171,7 @@
     </summary>
     <div class="action-source__actions" role="list">
       {{#each system.actions}}
-        {{> action-button parent=parent}}
+        {{> action-button parent=../parent}}
       {{/each}}
     </div>
   </details>
@@ -186,7 +186,6 @@
     <img class="action-list-item__icon" src="{{img}}" alt="" role="presentation" />
     <span class="action-list-item__identity">
       <span class="action-list-item__title">{{name}}</span>
-      <span class="action-list-item__parent">{{parent.name}}</span>
     </span>
   </button>
 {{/inline}}
@@ -201,7 +200,6 @@
     <img class="action-list-item__icon" src="{{img}}" alt="" role="presentation" />
     <span class="action-list-item__identity">
       <span class="action-list-item__title">{{name}}</span>
-      <span class="action-list-item__parent">{{parent.name}}</span>
     </span>
   </button>
 {{/inline}}
@@ -253,19 +251,19 @@
     {{#if (eq document.type "character")}}
       <div class="left-rail__section">
         <h3 class="decorated">{{localize "BAGS.Actors.Character.ExplorationSkills"}}</h3>
-        <ul class="action-grid action-grid--exploration-skills">
+        <div class="action-grid action-grid--exploration-skills">
           {{#each document.system.actions}}
-          <li
+          <button
             class="action-grid-item"
             data-tooltip="{{name}}"
-            data-action="use-character-action"
+            data-action="use-action"
             data-action-id="{{id}}"
           >
             <img
               src="{{img}}"
               alt="{{localize name}}"
             />
-          </li>
+          </button>
           {{/each}}
         </ul>
       </div>
@@ -275,11 +273,11 @@
       <div class="action-list">
         <div class="action-category">
           <h3 class="action-category__header decorated">{{localize "BAGS.Actors.Character.Equipment.Title"}}</h3>
-          {{#each document.equipped.weapon}}
+          {{#each document.equipped.weapon as |weapon index|}}
             {{#if (eq @index 0)}}
-              {{> action-item parent=..}}
+              {{> action-item parent=weapon}}
             {{else}}
-              {{> action-item-collapsible parent=..}}
+              {{> action-item-collapsible parent=weapon}}
             {{/if}}
           {{else}}
             <p class="empty">{{localize "BAGS.Actors.Character.Equipment.NoWeaponActions"}}</p>

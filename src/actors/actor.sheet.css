@@ -212,11 +212,12 @@
       border-radius: 6px;
       height: min-content;
       padding: 0.25em;
+      width: 100%;
 
       &__icon {
         display: block;
-        width: var(--size, 32px);
-        height: var(--size, 32px);
+        width: var(--size, 24px);
+        height: var(--size, 24px);
         border: 1px solid var(--border-color);
         border-radius: 4px;
         overflow: hidden;
@@ -266,6 +267,7 @@
       display: block;
       width: var(--size, 32px);
       height: var(--size, 32px);
+      padding: 2px;
       border: 1px solid var(--border-color);
       border-radius: 4px;
       overflow: hidden;

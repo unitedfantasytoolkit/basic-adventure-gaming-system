@@ -30,6 +30,7 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
           ...obj,
           [key]: new App({
             document: this.document,
+            parent: this,
           }),
         }
       },

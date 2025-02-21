@@ -1,8 +1,6 @@
 <section class="scrollable">
+  <div class="scrollable">
   <article class="standard-form">
-
-    {{log this}}
-
     {{formGroup fields.name name="name" value=effect.name localize=true}}
 
     {{formGroup fields.type name="type" value=effect.type localize=true}}
@@ -21,38 +19,18 @@
       localize=true
     }}
 
-    {{#if (eq effect.type "macro")}}
-      <fieldset>
-        <legend>Macro settings</legend>
 
-        {{formGroup fields.macro value=effect.macro name="macro" localize=true}}
-      </fieldset>
-    {{/if}}
+    <fieldset>
+      <legend>{{localize "BAGS.Actions.Effects.Resistance.Heading"}}</legend>
 
-    {{#if (eq effect.type "script")}}
-      <fieldset>
-        <legend>Script settings</legend>
+      {{formGroup
+        fields.flags.fields.canBeResisted
+        value=effect.flags.canBeResisted
+        name="flags.canBeResisted"
+        localize=true
+      }}
 
-        {{formInput
-          fields.script
-          value=effect.script
-          name="script"
-          localize=true
-        }}
-      </fieldset>
-    {{/if}}
-
-    {{formGroup
-      fields.flags.fields.canBeResisted
-      value=effect.flags.canBeResisted
-      name="flags.canBeResisted"
-      localize=true
-    }}
-
-    {{#if effect.flags.canBeResisted}}
-      <fieldset>
-        <legend>{{localize "BAGS.Actions.Effects.Resistance.Heading"}}</legend>
-
+      {{#if effect.flags.canBeResisted}}
         {{formGroup
           fields.resistance.fields.type
           value=effect.resistance.type
@@ -66,11 +44,13 @@
             value=effect.resistance.savingThrow
             name="resistance.savingThrow"
             localize=true
+                choices=savingThrowChoices
           }}
         {{else}}
-          <fieldset class="roll-fields">
+          <fieldset class="field-grid">
             <legend>Roll</legend>
 
+            <div class="field-grid__row">
             {{formGroup
               fields.resistance.fields.roll.fields.formula
               value=effect.resistance.roll.formula
@@ -84,15 +64,16 @@
               localize=true
             }}
 
-            {{#if (eq resistance.type "abilityScore")}}
+            {{#if (eq effect.resistance.type "abilityScore")}}
               {{formGroup
                 fields.resistance.fields.abilityScore
                 value=effect.resistance.abilityScore
                 name="resistance.abilityScore"
                 localize=true
+                choices=abilityScoreChoices
               }}
             {{/if}}
-            {{log effect.resistance.type}}
+
             {{#if (eq effect.resistance.type "number")}}
               {{formGroup
                 fields.resistance.fields.roll.fields.target
@@ -101,10 +82,22 @@
                 localize=true
               }}
             {{/if}}
+            </div>
           </fieldset>
+          {{#if (or
+            (eq effect.resistance.type "savingThrow")
+            (eq effect.resistance.type "abilityScore")
+          )}}
+            {{formGroup
+              fields.resistance.fields.targetRollModifier
+              value=effect.resistance.targetRollModifier
+              name="resistance.targetRollModifier"
+              localize=true
+            }}
+          {{/if}}
         {{/if}}
-      </fieldset>
-    {{/if}}
+      {{/if}}
+    </fieldset>
 
     {{#if (eq effect.type "attack")}}
       {{formGroup
@@ -124,35 +117,95 @@
         localize=true
       }}
     {{/if}}
+    </article>
+
+    {{#if (eq effect.type "macro")}}
+      <fieldset>
+        <legend>Macro settings</legend>
+
+        {{formGroup fields.macro value=effect.macro name="macro" localize=true}}
+      </fieldset>
+    {{/if}}
+
+    {{#if (eq effect.type "table")}}
+      <fieldset>
+        <legend>Table settings</legend>
+
+        {{formInput
+          fields.rollTable.fields.document
+          value=effect.rollTable.document
+          name="rollTable.document"
+          localize=true
+        }}
+
+        {{formInput
+          fields.rollTable.fields.modifier
+          value=effect.rollTable.modifier
+          name="rollTable.modifier"
+          localize=true
+        }}
+      </fieldset>
+    {{/if}}
+    
+    {{#if (eq effect.type "script")}}
+      <fieldset>
+        <legend>Script settings</legend>
+
+        {{formInput
+          fields.script
+          value=effect.script
+          name="script"
+          localize=true
+        }}
+      </fieldset>
+    {{/if}}
 
     {{#if (eq effect.type "effect")}}
       <fieldset>
         <legend>{{localize "BAGS.Actions.Effects.Condition.Heading"}}</legend>
-        {{formGroup fields.condition.fields.name name="condition.name" value=effect.condition.name localize=true}}
-        {{formGroup fields.condition.fields.img name="condition.img" value=effect.condition.img localize=true}}
-        {{formGroup fields.condition.fields.description name="condition.description" value=effect.condition.description localize=true}}
-        <div class="subheading">
-          <h3>{{localize "BAGS.Actions.Effects.Condition.Changes.Heading"}}</h3>
-          <button type="button" class="add-change">{{localize "BAGS.Actions.Effects.Condition.Changes.AddButton"}}</button>
-        </div>
-        {{#if effect.condition.changes.length}}
-          {{#for effect.condition.changes}}
-            <fieldset class="change-entry">
-              {{formGroup ../fields.condition.fields.changes.fields.key name="condition.changes.[{{@index}}].key" value=this.key localize=true}}
-              {{formGroup ../fields.condition.fields.changes.fields.value name="condition.changes.[{{@index}}].value" value=this.value localize=true}}
-              {{formGroup ../fields.condition.fields.changes.fields.mode name="condition.changes.[{{@index}}].mode" value=this.mode localize=true}}
-              {{formGroup ../fields.condition.fields.changes.fields.priority name="condition.changes.[{{@index}}].priority" value=this.priority localize=true}}
-            </fieldset>
-          {{/for}}
-        {{else}}
-          <p>{{localize "BAGS.Actions.Effects.Condition.Changes.EmptyState"}}</p>
-        {{/if}}
-        <fieldset>
-          <legend>{{localize "BAGS.Actions.Effects.Condition.Duration.Label"}}</legend>
-          {{formGroup fields.condition.fields.duration.fields.rounds name="condition.duration.rounds" value=effect.condition.duration.rounds localize=true}}
-          {{formGroup fields.condition.fields.duration.fields.seconds name="condition.duration.seconds" value=effect.condition.duration.seconds localize=true}}
-          {{formGroup fields.condition.fields.duration.fields.turns name="condition.duration.turns" value=effect.condition.duration.turns localize=true}}
+        <article class="standard-form">
+          {{formGroup fields.condition.fields.name name="condition.name" value=effect.condition.name localize=true}}
+          {{formGroup fields.condition.fields.img name="condition.img" value=effect.condition.img localize=true}}
+          {{formGroup fields.condition.fields.description name="condition.description" value=effect.condition.description localize=true}}
+        </article>
+
+
+        <fieldset class="standard-form field-grid" style="--field-grid-columns: 4">
+          <legend>{{localize "BAGS.Actions.Effects.Condition.Changes.Heading"}}</legend>
+          <header class="field-grid__row field-grid-row--header">
+            <span>{{localize fields.condition.fields.changes.element.fields.key.label}}</span>
+            <span>{{localize fields.condition.fields.changes.element.fields.mode.label}}</span>
+            <span>{{localize fields.condition.fields.changes.element.fields.value.label}}</span>
+            <span>{{localize fields.condition.fields.changes.element.fields.priority.label}}</span>
+            <button type="button" class="inline-control icon" data-action="add-condition-change" data-tooltip="{{localize "BAGS.Actions.Effects.Condition.Changes.AddButton"}}">
+              <i class="fa fa-plus"></i>
+            </button>
+          </header>
+          {{#if effect.condition.changes.length}}
+            <div class="field-grid__row">
+              {{#each effect.condition.changes}}
+                {{formInput ../fields.condition.fields.changes.element.fields.key name=(concat "condition.changes." @index ".key") value=key localize=true}}
+                {{formInput ../fields.condition.fields.changes.element.fields.mode name=(concat "condition.changes." @index ".mode") value=mode localize=true choices=@root.changeModes}}
+                {{formInput ../fields.condition.fields.changes.element.fields.value name=(concat "condition.changes." @index ".value") value=value localize=true}}
+                {{formInput ../fields.condition.fields.changes.element.fields.priority name=(concat "condition.changes." @index ".priority") value=priority localize=true}}
+                <button type="button" data-action="delete-condition-change" data-condition-change-index="{{@index}}" class="icon inline-control">
+                  <i class="fa fa-trash"></i>
+                </button>
+              {{/each}}
+            </div>
+          {{else}}
+            <p>{{localize "BAGS.Actions.Effects.Condition.Changes.EmptyState"}}</p>
+          {{/if}}
         </fieldset>
+        
+        <article class="standard-form field-grid">
+          <fieldset class="field-grid__row" style="--field-grid-columns: 3">
+            <legend>{{localize "BAGS.Actions.Effects.Condition.Duration.Label"}}</legend>
+            {{formGroup fields.condition.fields.duration.fields.rounds name="condition.duration.rounds" value=effect.condition.duration.rounds localize=true}}
+            {{formGroup fields.condition.fields.duration.fields.seconds name="condition.duration.seconds" value=effect.condition.duration.seconds localize=true}}
+            {{formGroup fields.condition.fields.duration.fields.turns name="condition.duration.turns" value=effect.condition.duration.turns localize=true}}
+          </fieldset>
+        </article>
       </fieldset>
     {{/if}}
 
@@ -164,5 +217,5 @@
         localize=true
       }}
     {{/if}}
-  </article>
+  </div>
 </section>

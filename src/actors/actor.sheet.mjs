@@ -28,6 +28,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
           ...obj,
           [key]: new App({
             document: this.document,
+            parent: this,
           }),
         }
       },
@@ -62,7 +63,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         submitOnChange: true,
       },
       actions: {
-        "use-character-action": this.#onCharacterAction,
+        "use-action": this.#doAction,
         "reset-filters": this.resetFilters,
       },
       position: {
@@ -668,12 +669,11 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
   // === Action management =====================================================
 
-  static async #onCharacterAction(e) {
+  static async #doAction(e) {
     const el = e.target.closest("[data-action-id]")
     if (!el) return
-    const { actionId } = el.dataset
-    const action = this.actor.system.actions.find((a) => a.id === actionId)
-    await this.actor.resolveAction(action)
+    const { actionId, itemId } = el.dataset
+    await this.actor.resolveAction(actionId, itemId)
   }
 
   // === Events ================================================================

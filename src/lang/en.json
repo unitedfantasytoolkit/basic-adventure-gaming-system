@@ -477,6 +477,9 @@
               "WithoutItem": "{actor} uses something on {target}!",
               "WithoutItemOrTarget": "{actor} uses something!"
             }
+          },
+          "Result": {
+            "fail": "... but they fail!"
           }
         },
         "Effect": {

@@ -1,9 +1,13 @@
+/**
+ * @file A subapp for {@link ./action-editor.mjs} that allows a user to edit an
+ * action's effect.
+ */
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
 import BAGSApplication from "../applications/application.mjs"
 
 /**
- * @typedef {object} ActionEffectEditor
+ * @type {object} ActionEffectEditor
  * @class
  */
 export default class ActionEffectEditor extends BAGSApplication {
@@ -11,7 +15,7 @@ export default class ActionEffectEditor extends BAGSApplication {
 
   constructor(options = {}) {
     super(options)
-
+    this.parent = options.parent
     this._activeAction = this.document.system.actions?.[0]?.id
   }
 
@@ -22,6 +26,11 @@ export default class ActionEffectEditor extends BAGSApplication {
     position: {
       width: 520,
       height: 480,
+    },
+    actions: {
+      // Condition management
+      "add-condition-change": this.addConditionChange,
+      "delete-condition-change": this.deleteConditionChange,
     },
     form: {
       handler: this.save,
@@ -83,11 +92,48 @@ export default class ActionEffectEditor extends BAGSApplication {
     }
   }
 
+  static get #abilityScoreChoices() {
+    const abilityScoreSettings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.ABILITY_SCORES,
+      )
+    return (abilityScoreSettings?.abilityScores || new Map())
+      .entries()
+      .reduce((obj, [key, score]) => ({ ...obj, [key]: score.label }), {})
+  }
+
+  static get #savingThrowChoices() {
+    const savingThrowSettings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
+      )
+    return Object.entries(savingThrowSettings?.savingThrows || {}).reduce(
+      (obj, [key, value]) => ({ ...obj, [key]: value.label }),
+      {},
+    )
+  }
+
   /** @override */
   async _preparePartContext(partId, context) {
     switch (partId) {
       case "effect":
         context.effect = this.#effect
+
+        context.changeModes = Object.entries(CONST.ACTIVE_EFFECT_MODES).reduce(
+          (modes, [key, value]) => {
+            // eslint-disable-next-line no-param-reassign
+            modes[value] = game.i18n.localize(`EFFECT.MODE_${key}`)
+            return modes
+          },
+          {},
+        )
+
+        context.priorities =
+          foundry.applications.sheets.ActiveEffectConfig.DEFAULT_PRIORITIES
+
+        context.abilityScoreChoices = ActionEffectEditor.#abilityScoreChoices
+        context.savingThrowChoices = ActionEffectEditor.#savingThrowChoices
+
         break
       default:
         return super._preparePartContext(partId, context)
@@ -95,34 +141,31 @@ export default class ActionEffectEditor extends BAGSApplication {
     return context
   }
 
-  /** @override */
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find("button.add-change").click(ev => this.addConditionChange(ev));
+  static async deleteConditionChange(_event, button) {
+    this.#effect.condition.changes.splice(
+      button.dataset.conditionChangeIndex,
+      1,
+    )
+    console.info(this.#effect.condition.changes)
+    await this.document.updateEffect(this.#action.id, this.#effect.id, {
+      condition: this.#effect.condition,
+    })
+    this.render(true)
   }
 
-  addConditionChange(ev) {
-    const newChange = {
-      key: "",
-      value: "",
-      mode: "ADD",
-      priority: 0,
-    };
-    if (!this.#effect.condition) {
-      this.#effect.condition = {
-        name: "New Condition",
-        img: "",
-        description: "",
-        changes: [],
-        duration: { rounds: 0, seconds: 0, turns: 0 },
-      };
-    }
+  static async addConditionChange() {
+    const newChange =
+      // eslint-disable-next-line max-len
+      this.document.system.schema.fields.actions.element.fields.effects.element.fields.condition.fields.changes.element.getInitialValue()
+
     if (!Array.isArray(this.#effect.condition.changes)) {
-      this.#effect.condition.changes = [];
+      this.#effect.condition.changes = []
     }
-    this.#effect.condition.changes.push(newChange);
-    this.document.updateEffect(this.#action.id, this.#effect.id, { condition: this.#effect.condition })
-      .then(() => this.render());
+    this.#effect.condition.changes.push(newChange)
+    await this.document.updateEffect(this.#action.id, this.#effect.id, {
+      condition: this.#effect.condition,
+    })
+    this.render(true)
   }
 
   // === Saving ================================================================
@@ -141,30 +184,6 @@ export default class ActionEffectEditor extends BAGSApplication {
       formData.object,
     )
     this.prepareToEdit(this.#action.id, this.#effect.id)
-    this.render()
-    // try {
-    //   const updatedActionIndex = this.document.system.actions.findIndex(
-    //     (a) => a.id === this._activeAction,
-    //   )
-
-    //   if (updatedActionIndex < 0)
-    //     throw new Error("Failed to update action: action not found")
-
-    //   const updatedActions = this.document.system.actions.map((a) => {
-    //     if (a.id !== this._activeAction) return a
-    //     return {
-    //       ...a,
-    //       ...formData.object,
-    //     }
-    //   })
-
-    //   await this.document.update({
-    //     "system.actions": updatedActions,
-    //   })
-    //   this.render()
-    // } catch (e) {
-    //   this.render()
-    //   throw new Error(e)
-    // }
+    this.render(true)
   }
 }

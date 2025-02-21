@@ -111,7 +111,7 @@ export default class BAGSItem extends Item {
    */
   async deleteAction(actionId) {
     return this.update({
-      "system.actions": this.system.actions.filter(({ id }) => id === actionId),
+      "system.actions": this.system.actions.filter(({ id }) => id !== actionId),
     })
   }
 
@@ -126,17 +126,17 @@ export default class BAGSItem extends Item {
    * @returns {Promise<void>} A Promise that resolves when the effect is created
    */
   async createEffect(actionId) {
-    const { actions: actionSchema } = this.document.system.schema.fields
+    const { actions: actionSchema } = this.system.schema.fields
     const effect = foundry.utils.mergeObject(
       actionSchema.element.fields.effects.element.getInitialValue(),
       {
         id: foundry.utils.randomID(),
       },
     )
-    const { actions } = this.document.system
+    const { actions } = this.system
     const actionIndex = actions.findIndex((a) => a.id === actionId)
 
-    return this.document.system.actions.forEach((a, index) => {
+    return this.system.actions.forEach((a, index) => {
       if (index === actionIndex) a.effects.push(effect)
     })
   }

@@ -18,6 +18,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
           ...obj,
           [key]: new App({
             document: this.document,
+            parent: this,
           }),
         }
       },
@@ -169,6 +170,11 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
     if (this.element.querySelector(".window-header__content > img"))
       this.element.querySelector(".window-header__content > img").src =
         this.document.img
+  }
+
+  render(...args) {
+    if (this.parent?.rendered) this.parent.render(true)
+    super.render(...args)
   }
 
   // --- Tabs ------------------------------------------------------------------
