@@ -4,79 +4,67 @@
 import BAGSCharacterClassXPTableEditor from "./item.character-class.xp-table-editor.mjs"
 import BAGSCharacterClassDetailsEditor from "./item.character-class.details-editor.mjs"
 import BAGSBaseItemSheet from "./item.sheet.mjs"
+import ActionEditor from "../applications/action-editor.mjs"
 
 /**
  * @typedef {import('../types.mjs').SheetNavTab} SheetNavTab
  */
 
 export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
-  static SUB_APPS = []
-
-  static DOCUMENT_TYPE = "class"
-
-  #xpTableEditor
-
-  #detailsEditor
-
-  constructor(options = {}) {
-    super(options)
-
-    this.#xpTableEditor = new BAGSCharacterClassXPTableEditor({
-      document: this.document,
-    })
-    this.#detailsEditor = new BAGSCharacterClassDetailsEditor({
-      document: this.document,
-    })
-  }
-
   static DEFAULT_OPTIONS = {
+    classes: ["application--character-class-sheet"],
     window: {
       controls: [
         {
-          action: "edit-xp-table",
+          action: "edit-item",
+          icon: "fa-solid fa-pencil",
+          label: "BAGS.CharacterClass.Information.ActionLabel",
+          ownership: "OWNER",
+        },
+        {
+          action: "edit-advancement",
           icon: "fa-solid fa-table",
           label: "BAGS.CharacterClass.XPTable.ActionLabel",
           ownership: "OWNER",
         },
         {
-          action: "edit-details",
-          icon: "fa-solid fa-pencil",
-          label: "BAGS.CharacterClass.Information.ActionLabel",
+          action: "edit-actions",
+          icon: "fa-solid fa-sparkles",
+          label: "Edit Actions",
           ownership: "OWNER",
         },
       ],
     },
     actions: {
-      "edit-xp-table": this.renderXPTable,
-      "edit-details": this.renderClassDetails,
+      "edit-advancement": this.editAdvancement,
     },
   }
 
-  static get TAB_PARTS() {
+  static DOCUMENT_TYPE = "class"
+
+  // --- Sub apps --------------------------------------------------------------
+  static SUB_APPS = {
+    actionEditor: ActionEditor,
+    itemEditor: BAGSCharacterClassDetailsEditor,
+    advancementEditor: BAGSCharacterClassXPTableEditor,
+  }
+
+  static get PARTS() {
     return {
-      ...BAGSBaseItemSheet.TAB_PARTS,
       summary: {
         template: `${this.TEMPLATE_ROOT}/main.hbs`,
       },
       advancement: {
         template: `${this.TEMPLATE_ROOT}/xp-table.view.hbs`,
       },
+      ...super.TAB_PARTS,
     }
   }
 
-  tabGroups = {
-    sheet: "summary",
-  }
-
   /** @override */
-  async _preparePartContext(partId, context) {
+  async _preparePartContext(partId, context, options) {
+    super._preparePartContext(partId, context, options)
     const doc = this.document
-    context.tab = context.tabs.find((t) => t.id === partId)
-    const gearTable = doc.system.gearTable
-      ? await TextEditor.enrichHTML(
-          fromUuidSync(doc.system.gearTable)._createDocumentLink(),
-        )
-      : ""
 
     const savingThrowSettings =
       CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
@@ -85,7 +73,11 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
 
     switch (partId) {
       case "summary":
-        context.gearTable = gearTable
+        context.gearTable = doc.system.gearTable
+          ? await TextEditor.enrichHTML(
+              fromUuidSync(doc.system.gearTable)._createDocumentLink(),
+            )
+          : ""
         break
       case "advancement":
         context.savingThrowTypeCount = Object.keys(
@@ -99,35 +91,27 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
     return context
   }
 
-  /**
-   * Tabs for the Ability sheet.
-   * @returns {SheetNavTab[]} The tabs to display, in the order they should be
-   * displayed.
-   */
-  static get TABS() {
-    return [
-      ...BAGSBaseItemSheet.TABS,
-      {
-        id: "advancement",
-        group: "sheet",
-        icon: "fa-solid fa-tag",
-        label: "BAGS.CharacterClass.Tabs.Advancement",
-        cssClass: "tab--advancement",
-      },
-    ]
+  tabGroups = {
+    sheet: "summary",
   }
 
-  static renderXPTable() {
-    this.#xpTableEditor.render(true)
+  static TABS = {
+    sheet: {
+      ...super.TABS.sheet,
+      tabs: [
+        ...super.TABS.sheet.tabs,
+        {
+          id: "advancement",
+          group: "sheet",
+          icon: "fa-solid fa-tag",
+          label: "BAGS.CharacterClass.Tabs.Advancement",
+          cssClass: "tab--advancement",
+        },
+      ],
+    },
   }
 
-  static renderClassDetails() {
-    this.#detailsEditor.render(true)
-  }
-
-  close() {
-    this.#detailsEditor.close()
-    this.#xpTableEditor.close()
-    return super.close()
+  static editAdvancement() {
+    this.subApps.advancementEditor.render(true)
   }
 }

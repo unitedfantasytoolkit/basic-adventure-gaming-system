@@ -4,6 +4,7 @@
 import filterFalsyKeyVals from "../utils/filter-falsy-key-vals.mjs"
 import mapToNumberField from "../utils/map-to-number-field.mjs"
 import BaseItemDataModel from "./item.datamodel.mjs"
+import { actionsFactory } from "../common/action.fields.mjs"
 
 const {
   StringField,
@@ -140,6 +141,8 @@ export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
         }),
       ),
 
+      actions: actionsFactory(),
+
       // --- Advancement -------------------------------------------------------
       xp: new NumberField({
         min: 0,
@@ -199,6 +202,7 @@ export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
           ),
         }),
       ),
+
       // --- Spell slots -------------------------------------------------------
       spellSlots: new ArrayField(
         new ArrayField(new NumberField({ blank: true, nullable: true })),
@@ -282,6 +286,13 @@ export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
 
   get maxLevel() {
     return this.xpTable.length || 1
+  }
+
+  get xpToNext() {
+    if (this.level >= this.xpTable.length)
+      return this.xpTable[this.xpTable.length - 1].value
+
+    return this.xpTable[this.level].value
   }
 
   get currentLevelDetails() {

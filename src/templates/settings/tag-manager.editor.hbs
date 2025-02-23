@@ -1,5 +1,51 @@
-{{#> sheetTab}}
+{{#*inline "tag-item"}}
+  <li class="tag-list__item" data-tag-index="{{@index}}">
+    {{log tag}}
+    <img name="{{concat "tags.[" @index "].img"}}" action="edit-image" src="{{tag.img}}" data-action="edit-image" alt="{{localize "BAGS.Settings.TagManager.TagIcon" tag=tag.name}}" />
+    <span name="{{concat "tags.[" @index "].id"}}" class="tag-list__item__id">{{tag.id}}</span>
+    <span name="{{concat "tags.[" @index "].name"}}" class="tag-list__item__name">{{tag.name}}</span>
+    <button
+      class="inline-control icon"
+      data-action="delete-tag"
+      data-tooltip="{{localize "Delete"}}"
+      aria-label="{{localize "Delete"}}"
+    ><i class="fa fa-xmark" role="presentation"></i></button>
+    <prose-mirror
+      name="{{concat "tags.[" @index "].description"}}"
+      value="{{tag.description}}"
+    ></prose-mirror>
+  </li>
+{{/inline}}
 
-  {{log this}}
-  <p>Works</p>
-{{/sheetTab}}
+<article class="tag-list-container">
+  <header class="tag-list-header">
+    <span>Icon</span>
+    <span>Tag</span>
+    <span>Friendly name</span>
+    <button
+      data-action="add-tag"
+      data-category="{{tab.id}}"
+      class="inline-control icon"
+      aria-label="{{localize "Add"}}"
+      data-tooltip="{{localize "Add"}}"
+    ><i class="fa fa-plus" role="presentation"></i></button>
+  </header>
+
+  {{#if tags.length}}
+    <ul class="tag-list" data-tag-group="{{tagGroupId}}">
+      {{#each tags as |tag|}}
+        {{> tag-item tag=tag}}
+      {{/each}}
+    </ul>
+  {{else}}
+    <div class="empty">
+    <p>{{localize "BAGS.Settings.TagManager.Empty"}}</p>
+    <button
+      data-action="add-tag"
+      data-category="{{tab.id}}"
+      aria-label="{{localize "Add"}}"
+      data-tooltip="{{localize "Add"}}"
+    ><i class="fa fa-plus" role="presentation"></i>{{localize "BAGS.Settings.TagManager.Add"}}</button>
+    </div>
+  {{/if}}
+</article>

@@ -633,6 +633,10 @@
           "Hint": "The encumbrance scheme to use"
         }
       },
+      "TagManager": {
+        "Empty": "No custom tags have been defined.",
+        "Add": "Add a new tag"
+      },
       "CharacterCreation": {
         "Sources": {
           "Name": "Data Sources for Character Creation",

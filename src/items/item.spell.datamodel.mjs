@@ -18,4 +18,6 @@ export default class BAGSSpellDataModel extends BaseItemDataModel {
   get castingClass() {
     return fromUuidSync(this.classUUID)
   }
+
+  cast() {}
 }

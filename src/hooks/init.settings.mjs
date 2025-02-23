@@ -47,20 +47,13 @@ Hooks.once("init", async () => {
     },
   })
 
-  game.settings.register(SYSTEM_NAME, "itemTags", {
-    name: "BAGS.Settings.ItemTags.Name",
-    hint: "BAGS.Settings.ItemTags.Hint",
+  game.settings.register(SYSTEM_NAME, "tags", {
+    name: "BAGS.Settings.Tags.Name",
+    hint: "BAGS.Settings.Tags.Hint",
     scope: "world",
     config: false,
-    type: Object,
-    default: {
-      weapon: [],
-      armor: [],
-      item: [],
-      class: [],
-      spell: [],
-      ability: [],
-    },
+    type: Array,
+    default: [],
   })
 
   game.settings.register(SYSTEM_NAME, "characterCreationStartingGold", {

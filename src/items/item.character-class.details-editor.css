@@ -1,4 +1,4 @@
-.application--class-details-editor {
+.application--class-editor {
   .control {
     &:is(.control--details, .control--requisite-grid) {
       display: grid;

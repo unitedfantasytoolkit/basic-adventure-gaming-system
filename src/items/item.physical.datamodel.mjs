@@ -3,7 +3,6 @@
  */
 
 import BaseItemDataModel from "./item.datamodel.mjs"
-import { actionsFactory } from "../common/action.fields.mjs"
 
 const {
   ArrayField,
@@ -21,7 +20,6 @@ class PhysicalItemDataModel extends BaseItemDataModel {
   static defineSchema() {
     return {
       ...super.defineSchema(),
-      actions: actionsFactory(),
       quantity: new NumberField({
         min: 0,
         initial: 1,
@@ -106,8 +104,17 @@ class PhysicalItemDataModel extends BaseItemDataModel {
         hint: "BAGS.Items.Physical.CountsAsTreasure.Hint",
       }),
       isEquipped: new BooleanField({ initial: false }),
+      areActionsAvailableWhenUnequipped: new BooleanField({ initial: false }),
       areEffectsAppliedWhenUnequipped: new BooleanField({ initial: false }),
     }
+  }
+
+  get canUseEffects() {
+    return this.areEffectsAppliedWhenUnequipped || this.isEquipped
+  }
+
+  get canUseActions() {
+    return this.areActionsAvailableWhenUnequipped || this.isEquipped
   }
 }
 

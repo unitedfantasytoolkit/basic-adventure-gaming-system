@@ -63,7 +63,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
 
   /** @override */
   async _prepareContext(_options) {
-    const context = await super._prepareContext()
+    const context = await super._prepareContext(_options)
     const doc = this.document
     return {
       ...context,
@@ -76,9 +76,9 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
   }
 
   /** @override */
-  async _preparePartContext(partId, context) {
-    super._preparePartContext(partId, context)
-    context.tab = context.tabs[partId] || null
+  async _preparePartContext(partId, context, options) {
+    super._preparePartContext(partId, context, options)
+    context.tab = context.tabs?.[partId] || null
     return context
   }
 
