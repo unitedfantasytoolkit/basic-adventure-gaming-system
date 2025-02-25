@@ -11,6 +11,7 @@ import {
   modifiersFactory,
   retainerFactory,
 } from "./actor.fields.mjs"
+import { actionsFactory } from "../common/action.fields.mjs"
 
 const {
   StringField,
@@ -31,7 +32,6 @@ const buildSchema = () => {
   const saves = savingThrowSettings?.savingThrows || {}
   const worstPossibleSave = savingThrowSettings?.worstPossible || 19
 
-  console.info(saves)
   const savingThrowFields = Object.keys(saves).reduce(
     (obj, key) => ({
       ...obj,
@@ -40,7 +40,7 @@ const buildSchema = () => {
         nullable: false,
         blank: false,
         initial: worstPossibleSave,
-        label: saves[key].label,
+        label: saves[key].short,
       }),
     }),
     {},
@@ -59,10 +59,10 @@ const buildSchema = () => {
     }),
     hp: hpFactory({
       hitDice: new SchemaField({
-        usesHitDice: new BooleanField({ 
-          initial: true, 
-          hint: "BAGS.Actors.Monster.Fields.HP.HitDice.UsesHitDice.Hint", 
-          label: "BAGS.Actors.Monster.Fields.HP.HitDice.UsesHitDice.Label" 
+        usesHitDice: new BooleanField({
+          initial: true,
+          hint: "BAGS.Actors.Monster.Fields.HP.HitDice.UsesHitDice.Hint",
+          label: "BAGS.Actors.Monster.Fields.HP.HitDice.UsesHitDice.Label",
         }),
         count: new NumberField({
           integer: true,
@@ -86,10 +86,10 @@ const buildSchema = () => {
           label: "BAGS.Actors.Monster.Fields.HP.HitDice.Size.Label",
           hint: "BAGS.Actors.Monster.Fields.HP.HitDice.Size.Hint",
         }),
-        modifier: new NumberField({ 
-          initial: 0, 
-          label: "BAGS.Actors.Monster.Fields.HP.HitDice.Modifier.Label", 
-          hint: "BAGS.Actors.Monster.Fields.HP.HitDice.Modifier.Hint" 
+        modifier: new NumberField({
+          initial: 0,
+          label: "BAGS.Actors.Monster.Fields.HP.HitDice.Modifier.Label",
+          hint: "BAGS.Actors.Monster.Fields.HP.HitDice.Modifier.Hint",
         }),
       }),
     }),
@@ -119,7 +119,8 @@ const buildSchema = () => {
         hint: "BAGS.Actors.Monster.Fields.BiographicalDetails.Lair.Hint",
       }),
       intelligence: new StringField({
-        label: "BAGS.Actors.Monster.Fields.BiographicalDetails.Intelligence.Label",
+        label:
+          "BAGS.Actors.Monster.Fields.BiographicalDetails.Intelligence.Label",
         hint: "BAGS.Actors.Monster.Fields.BiographicalDetails.Intelligence.Hint",
       }),
     }),
@@ -132,10 +133,12 @@ const buildSchema = () => {
       }),
       isWorthPanickingOverDying: new BooleanField({
         initial: false,
-        label: "BAGS.Actors.Monster.Fields.Morale.IsWorthPanickingOverDying.Label",
+        label:
+          "BAGS.Actors.Monster.Fields.Morale.IsWorthPanickingOverDying.Label",
         hint: "BAGS.Actors.Monster.Fields.Morale.IsWorthPanickingOverDying.Hint",
       }),
     }),
+    actions: actionsFactory(),
   }
 }
 const cumulativeModifiers = (...modifiers) => {
@@ -267,7 +270,7 @@ export default class BAGSMonsterDataModel extends BaseActorDataMixin(
    */
   get meleeAttackBonus() {
     return cumulativeModifiers(
-      this.baseAttackBonus,
+      this.baseAttackBonus || 0,
       this.modifiers.melee.attack,
     )
   }
@@ -281,7 +284,7 @@ export default class BAGSMonsterDataModel extends BaseActorDataMixin(
    */
   get missileAttackBonus() {
     return cumulativeModifiers(
-      this.baseAttackBonus,
+      this.baseAttackBonus || 0,
       this.modifiers.missile.attack,
     )
   }

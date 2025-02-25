@@ -5,25 +5,51 @@
   <div class="standard-form">
     {{formGroup fields.name value=document.name hint=""}}
 
-    {{formGroup systemFields.xp value=document.system.xp localize=true}}
-
-    <fieldset>
+    
+    <fieldset class="standard-form__field-group">
       <legend>Hit Dice</legend>
 
-      {{formGroup systemFields.hp.fields.hitDice.fields.usesHitDice value=document.system.hp.hitDice.usesHitDice localize=true}}
+      {{formGroup systemFields.hp.fields.hitDice.fields.count value=document.system.hp.hitDice.count hint="" localize=true}}
+      {{formGroup systemFields.hp.fields.hitDice.fields.size value=document.system.hp.hitDice.size hint="" localize=true}}
+      {{formGroup systemFields.hp.fields.hitDice.fields.modifier value=document.system.hp.hitDice.modifier hint="" localize=true}}
 
-      {{#if document.system.hp.hitDice.usesHitDice}}
-        {{formGroup systemFields.hp.fields.hitDice.fields.count value=document.system.hp.hitDice.count localize=true}}
-        {{formGroup systemFields.hp.fields.hitDice.fields.size value=document.system.hp.hitDice.size localize=true}}
-        {{formGroup systemFields.hp.fields.hitDice.fields.modifier value=document.system.hp.hitDice.modifier localize=true}}
-      {{/if}}
+      <button class="icon inline-control" data-tooltip="Update Stats to Match Hit Dice" data-action="update-stats-via-hit-dice"><i class="fa fa-dice-d20"></i></button>
     </fieldset>
 
-    <fieldset>
+    {{formGroup systemFields.base.fields.speed value=document.system.base.speed localize=true}}
+
+    {{formGroup systemFields.xp value=document.system.xp localize=true}}
+
+    <div class="form-group">
+      {{#if (ne document.system.baseAttackBonus null)}}
+        <label>Attack Bonus</label>
+        <div class="form-fields">
+          <input type="number" name="baseAttackBonus" value="{{document.system.baseAttackBonus}}" />
+        </div>
+        <p class="hint">This creature's bonus to attack rolls</p>
+      {{else if (ne document.system.thac0 null)}}
+        <label>THAC0</label>
+        <div class="form-fields">
+          <input type="number" name="thac0" value="{{document.system.thac0}}" />
+        </div>
+        <p class="hint">The result on a d20 necessary for this creature to hit an armor class of zero</p>
+      {{else}}
+        <p class="empty">Error finding your attack modifier scheme; please report a bug!</p>
+      {{/if}}
+    </div>
+
+    <fieldset class="standard-form__field-group">
       <legend>Hit Points</legend>
       {{formGroup systemFields.hp.fields.value value=document.system.hp.value localize=true}}
       {{formGroup systemFields.hp.fields.max value=document.system.hp.max localize=true}}
       {{formGroup systemFields.hp.fields.temporary value=document.system.hp.temporary localize=true}}
+    </fieldset>
+
+    <fieldset class="standard-form__field-group">
+      <legend>Saving Throws</legend>
+      {{#each systemFields.base.fields.savingThrows.fields}}
+        {{formGroup this value=(lookup ../document.system.base.savingThrows this.name) localize=true}}
+      {{/each}}
     </fieldset>
     
     <fieldset>
@@ -33,12 +59,6 @@
       {{formGroup systemFields.morale.fields.isWorthPanickingOverDying value=document.system.morale.isWorthPanickingOverDying localize=true}}
     </fieldset>
 
-    <fieldset>
-    <legend>Saving throws</legend>
-    {{#each systemFields.base.fields.savingThrows.fields}}
-      {{formGroup this value=(lookup ../document.system.base.savingThrows this.name) localize=true}}
-    {{/each}}
-    </fieldset>
   {{!--
     {{formGroup systemFields.quantity value=document.system.quantity localize=true}}
     {{formGroup systemFields.weight value=document.system.weight localize=true}}

@@ -12,10 +12,16 @@
         flex-direction: column;
         text-align: left;
         align-items: start;
+        flex: 1;
 
         .hint {
           display: none;
         }
+      }
+
+      .inline-control {
+        align-self: end;
+        margin-bottom: 0.25em;
       }
     }
   }

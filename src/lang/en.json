@@ -467,8 +467,8 @@
               "Hint": "How likely the monster is to remain in combat (2-12 scale, higher is braver)"
             },
             "IsWorthPanickingOverDying": {
-              "Label": "Checks Morale When Dying",
-              "Hint": "Whether this monster makes morale checks when its allies are killed"
+              "Label": "Causes morale checks on death",
+              "Hint": "Whether this monster's allies should make morale checks when it is killed"
             }
           }
         }
