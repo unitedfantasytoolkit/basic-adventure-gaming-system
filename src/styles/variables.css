@@ -26,8 +26,13 @@
     --application-header-padding: 0.5rem 1rem;
     --application-filler-gradient: linear-gradient(
       15deg,
-      #0d0e23 20%,
-      #3c5063 100%
+      hsl(var(--application-filler-gradient-start-hue, 237) 45.8% 9.4%) 20%,
+      hsl(var(--application-filler-gradient-end-hue, 209) 24.5% 31.2%) 100%
+    );
+    --application-filler-gradient-highlight: linear-gradient(
+      15deg,
+      hsl(var(--application-filler-gradient-start-hue, 237) 51.8% 20%) 20%,
+      hsl(var(--application-filler-gradient-end-hue, 209) 30.5% 43%) 100%
     );
     --application-header-banner: var(--application-filler-gradient);
 

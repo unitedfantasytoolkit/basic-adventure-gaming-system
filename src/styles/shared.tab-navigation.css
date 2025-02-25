@@ -16,7 +16,7 @@
     border: 1px solid var(--border-color);
     border-left: 0;
     background: var(--application-filler-gradient);
-    border-radius: 3px;
+    border-radius: 0 3px 3px 0;
     padding: 0.25em;
     width: 2rem;
     height: 1.5rem;
@@ -25,9 +25,9 @@
     transform-origin: center left;
 
     &.active {
-      padding-left: 0.25em;
       box-shadow: unset;
       outline: unset;
+      background: var(--application-filler-gradient-highlight);
     }
 
     &[disabled] {

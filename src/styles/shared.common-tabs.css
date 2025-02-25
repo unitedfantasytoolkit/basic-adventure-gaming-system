@@ -13,7 +13,7 @@
     }
   }
 
-  :is(&--flavor-text, &--description) {
+  &--with-text-editor {
     & > h2 {
       margin: 0;
     }

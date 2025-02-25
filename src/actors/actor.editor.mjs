@@ -63,7 +63,7 @@ export default class BAGSBaseActorEditor extends BAGSApplication {
           group: "sheet",
           icon: "fa-solid fa-scroll-old",
           label: "Description",
-          cssClass: "tab--description",
+          cssClass: "tab--with-text-editor",
         },
       ],
       initial: "details",
@@ -86,7 +86,7 @@ export default class BAGSBaseActorEditor extends BAGSApplication {
         template: `${SYSTEM_TEMPLATE_PATH}/common/editor-tab-spell-list.hbs`,
       },
       "active-effects": {
-        template: `${SYSTEM_TEMPLATE_PATH}/common/editor-tab-active-effects.hbs`,
+        template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-effects.hbs`,
       },
       "class-and-abilities": {
         template: `${SYSTEM_TEMPLATE_PATH}/common/editor-tab-class-and-abilities.hbs`,
@@ -110,13 +110,9 @@ export default class BAGSBaseActorEditor extends BAGSApplication {
     switch (partId) {
       case "description":
         context.headingText = "BAGS.Items.CommonTabs.Description"
-        context.field = context.systemFields.description
-        context.fieldValue = doc.system.description
-        break
-      case "flavor-text":
-        context.headingText = "BAGS.Items.CommonTabs.FlavorText"
-        context.field = context.systemFields.flavorText
-        context.fieldValue = doc.system.flavorText
+        context.field =
+          context.systemFields.biographicalDetails.fields.description
+        context.fieldValue = doc.system.biographicalDetails.description
         break
       default:
         break
