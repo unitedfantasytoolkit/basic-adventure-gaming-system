@@ -49,21 +49,24 @@ const buildSchema = () => {
   return {
     base: baseFactory({
       savingThrows: new SchemaField(savingThrowFields),
-      attackRollOffset: new NumberField({ initial: 0 }),
     }),
     xp: new NumberField({
       integer: true,
       min: 0,
       initial: 0,
+      label: "",
+      hint: "",
     }),
     hp: hpFactory({
       hitDice: new SchemaField({
-        usesHitDice: new BooleanField({ initial: true }),
+        usesHitDice: new BooleanField({ initial: true, hint: "", label: "" }),
         count: new NumberField({
           integer: true,
           positive: true,
           min: 1,
           initial: 1,
+          label: "",
+          hint: "",
         }),
         size: new NumberField({
           min: 4,
@@ -76,8 +79,10 @@ const buildSchema = () => {
           ),
           initial: 8,
           integer: true,
+          label: "",
+          hint: "",
         }),
-        modifier: new NumberField({ initial: 0 }),
+        modifier: new NumberField({ initial: 0, label: "", hint: "" }),
       }),
     }),
     banner: bannerFactory(),
@@ -97,9 +102,18 @@ const buildSchema = () => {
       }),
     }),
     biographicalDetails: biographicalDetailsFactory({
-      tactics: new HTMLField(),
-      lair: new HTMLField(),
-      intelligence: new StringField(),
+      tactics: new HTMLField({
+        label: "",
+        hint: "",
+      }),
+      lair: new HTMLField({
+        label: "",
+        hint: "",
+      }),
+      intelligence: new StringField({
+        label: "",
+        hint: "",
+      }),
     }),
     morale: new SchemaField({
       value: new NumberField({
