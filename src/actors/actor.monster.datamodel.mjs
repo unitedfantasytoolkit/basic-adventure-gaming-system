@@ -31,6 +31,7 @@ const buildSchema = () => {
   const saves = savingThrowSettings?.savingThrows || {}
   const worstPossibleSave = savingThrowSettings?.worstPossible || 19
 
+  console.info(saves)
   const savingThrowFields = Object.keys(saves).reduce(
     (obj, key) => ({
       ...obj,
@@ -39,6 +40,7 @@ const buildSchema = () => {
         nullable: false,
         blank: false,
         initial: worstPossibleSave,
+        label: saves[key].label,
       }),
     }),
     {},
@@ -47,6 +49,7 @@ const buildSchema = () => {
   return {
     base: baseFactory({
       savingThrows: new SchemaField(savingThrowFields),
+      attackRollOffset: new NumberField({ initial: 0 }),
     }),
     xp: new NumberField({
       integer: true,
@@ -96,6 +99,7 @@ const buildSchema = () => {
     biographicalDetails: biographicalDetailsFactory({
       tactics: new HTMLField(),
       lair: new HTMLField(),
+      intelligence: new StringField(),
     }),
     morale: new SchemaField({
       value: new NumberField({
@@ -203,23 +207,37 @@ export default class BAGSMonsterDataModel extends BaseActorDataMixin(
   }
 
   // === Attack Bonuses ========================================================
-
-  get thac0() {
+  get attackRollOffset() {
+    const monsterSettings = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+      CONFIG.BAGS.SystemRegistry.categories.BASE_MONSTER_STATS,
+    )
     return (
-      this.parent.itemTypes.class[0]?.system.currentLevelDetails.thac0 || 19
+      monsterSettings.stats.get(this.hp.hitDice.count)?.attackRollOffset || 0
     )
   }
 
+  get thac0() {
+    const { baseTHAC0, descending } =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.COMBAT,
+      )
+    if (!descending) return null
+
+    return baseTHAC0 - this.attackRollOffset
+  }
+
   get baseAttackBonus() {
-    const { descending } = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+    const combatSettings = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
       CONFIG.BAGS.SystemRegistry.categories.COMBAT,
     )
-    if (descending) return 0
+    // Rollup keeps overwriting combatSettings.baseAttackBonus when we try to
+    // get it via destructuring.
+    const bonus = combatSettings.baseAttackBonus
+    const { descending } = combatSettings
 
-    return (
-      this.parent.itemTypes.class[0]?.system.currentLevelDetails.attackBonus ||
-      0
-    )
+    if (descending) return null
+
+    return bonus + this.attackRollOffset
   }
 
   /**

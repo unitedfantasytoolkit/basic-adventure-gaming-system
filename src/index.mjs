@@ -43,11 +43,6 @@ import "./hooks/setup.ui.mjs"
  */
 Hooks.once("ready", async () => {
   try {
-    const Tags = game.settings.menus.get(
-      "basic-adventure-gaming-system.tagManager",
-    ).type
-
-    new Tags().render(true)
     // fromUuidSync(
     //   "Actor.A81XqzmshDo9D55H.Item.Z2WUBXQlqDJV2m14",
     // ).sheet.subApps.actionEditor.render(true)
@@ -62,7 +57,11 @@ Hooks.once("ready", async () => {
     // ).sheet.subApps.actionEditor.subApps.effectEditor.render(true)
     // fromUuidSync("Actor.A81XqzmshDo9D55H").sheet.render(true)
     // fromUuidSync("Item.aRxw6uspU4Ipf9xN").sheet.render(true)
-    // fromUuidSync("Actor.KT24QxIqGbFu9mZq").sheet.render(true)
+    await fromUuidSync("Actor.KT24QxIqGbFu9mZq").sheet.render(true)
+
+    await fromUuidSync(
+      "Actor.KT24QxIqGbFu9mZq",
+    ).sheet.subApps.actorEditor.render(true)
     // fromUuidSync("Item.aRxw6uspU4Ipf9xN").sheet.render(true)
     // fromUuidSync("Actor.A81XqzmshDo9D55H.Item.Hg1akbcfs01x33LR").sheet.render(
     //   true,

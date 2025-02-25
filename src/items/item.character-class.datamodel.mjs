@@ -179,6 +179,16 @@ export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
         initial: 1,
       }),
 
+      xpLog: new ArrayField(
+        new SchemaField({
+          date: new NumberField({ integer: true }),
+          xpChange: new NumberField(),
+          levelChange: new NumberField(),
+          note: new HTMLField(),
+        }),
+        { initial: [] },
+      ),
+
       // --- Leveled Resources -------------------------------------------------
       /**
        * Leveled resources are resources that

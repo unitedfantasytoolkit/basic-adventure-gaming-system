@@ -3,6 +3,7 @@
  * @file The base class for actor sheets in this system.
  */
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
+import animatedSheetAttention from "../utils/animated-sheet-attention.mjs"
 import animatedSheetError from "../utils/animated-sheet-error.mjs"
 import sortDocuments from "../utils/sort-documents.mjs"
 
@@ -63,8 +64,12 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         submitOnChange: true,
       },
       actions: {
-        "use-action": this.#doAction,
         "reset-filters": this.resetFilters,
+        // Actor management
+        "edit-actor": this.editActor,
+        // Action management
+        "edit-actions": this.editActions,
+        "use-action": this.#doAction,
       },
       position: {
         width: 575,
@@ -782,6 +787,26 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   async close() {
     await Promise.all(Object.values(this.subApps).map((a) => a.close()))
     super.close()
+  }
+
+  static editActor() {
+    const subApp = this.subApps.actorEditor
+    if (!subApp) return
+    if (subApp.rendered) {
+      subApp.bringToFront()
+      animatedSheetAttention(subApp.element)
+    }
+    subApp.render(true)
+  }
+
+  static editActions() {
+    const subApp = this.subApps.actionEditor
+    if (!subApp) return
+    if (subApp.rendered) {
+      subApp.bringToFront()
+      animatedSheetAttention(subApp.element)
+    }
+    subApp.render(true)
   }
 
   // === Filtering and sorting =================================================

@@ -157,6 +157,10 @@
         --character-info-columns: 1fr 6ch;
       }
 
+      &--monster-details {
+        --character-info-columns: max-content 1fr;
+      }
+
       &:has(header) {
         header {
           display: grid;

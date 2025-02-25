@@ -404,7 +404,10 @@
       },
       "Monster": {
         "Details": {
-          "Alignment": "Alignment",
+          "Alignment": {
+            "Label": "Alignment",
+            "Unaligned": "Unaligned"
+          },
           "Intelligence": "Intelligence",
           "NumberAppearing": "No. Appearing",
           "MoraleRating": "Morale Rating"

@@ -45,7 +45,7 @@
         {{#with document.system.hp.hitDice}}
           {{#if usesHitDice}}
             <dt>Hit Dice</dt>
-            <dd>{{count}}d{{size}}{{ifThen modifier (signNumber modifier) ""}}</dd>
+            <dd class="rollable rollable--before" data-action="roll-hp">{{count}}d{{size}}{{ifThen modifier (signNumber modifier) ""}}</dd>
           {{/if}}
         {{/with}}
       {{/if}}
@@ -95,13 +95,15 @@
     </dl>
   </div>
   {{/if}}
+{{/inline}}
 
+{{#*inline "saving-throws"}}
   <div class="left-rail__section left-rail__section--saving-throws">
     <h3 class="decorated">Saving Throws</h3>
     <dl>
       {{#each savingThrowLocaleStrings as |save key|}}
         <dt data-tooltip="{{lookup ../savingThrowTooltips key}}">{{localize save.short}}</dt>
-        <dd>{{lookup ../document.system.savingThrows key}}</dd>
+        <dd class="rollable" data-action="roll-save" data-save="{{key}}">{{lookup ../document.system.savingThrows key}}</dd>
       {{/each}}
       {{#if (eq document.type "character")}}
         <dt>Bonus vs. Magic</dt>
@@ -119,19 +121,22 @@
 {{/inline}}
 
 {{#*inline "monster-details"}}
-  <div class="left-rail__section">
+  <div class="left-rail__section left-rail__section--monster-details">
+    <h3 class="decorated">Monster Details</h3>
     <dl>
-      <dt>{{localize "BAGS.Actors.Monster.Details.Alignment"}}</dt>
-      <dd>{{ifThen document.system.biographicalDetails.alignment document.system.biographicalDetails.alignment (localize "BAGS.Actors.Monster.Details.Unaligned")}}</dd>
+      <dt>{{localize "BAGS.Actors.Monster.Details.Alignment.Label"}}</dt>
+      <dd>{{ifThen document.system.biographicalDetails.alignment document.system.biographicalDetails.alignment (localize "BAGS.Actors.Monster.Details.Alignment.Unaligned")}}</dd>
 
+      {{#if document.system.biographicalDetails.intelligence}}
       <dt>{{localize "BAGS.Actors.Monster.Details.Intelligence"}}</dt>
-      <dd>{{localize "BAGS.Actors.Monster.Details.Superhuman"}}</dd>       
+      <dd>{{document.system.biogrpahicalDetails.intelligence}}</dd>
+      {{/if}}
 
       <dt>{{localize "BAGS.Actors.Monster.Details.NumberAppearing"}}</dt>
-      <dd>{{localize "BAGS.Actors.Monster.Details.NumberRange"}}</dd>
+      <dd>TODO</dd>
 
       <dt>{{localize "BAGS.Actors.Monster.Details.MoraleRating"}}</dt>
-      <dd>{{document.system.morale.value}}</dd>
+      <dd class="rollable" data-action="roll-morale">{{document.system.morale.value}}</dd>
     </dl>
   </div>
 {{/inline}}
@@ -242,6 +247,8 @@
       {{> monster-details}}
     {{/if}}
 
+    {{> saving-throws}}
+
     {{#if document.system.retainer.isRetainer}}
       {{> employment-details}}
     {{/if}}
@@ -311,24 +318,31 @@
 
   {{#> sheetTab tab=tabs.effects}}
     <div class="left-rail__section">
-      <h3 class="decorated">{{localize "BAGS.Actors.Common.Effects.Temporary"}}</h3>
-      {{#if document.temporaryAppliedEffects.length}}
-        <div class="action-list action-list--effects" role="list">
-          {{#each document.temporaryAppliedEffects}}
-            {{> effect-list-item}}
-          {{/each}}
-        </div>
-      {{/if}}
+      <div class="action-category">
+        <h3 class="decorated">{{localize "BAGS.Actors.Common.Effects.Temporary"}}</h3>
+        {{#if document.temporaryAppliedEffects.length}}
+          <div class="action-list action-list--effects" role="list">
+            {{#each document.temporaryAppliedEffects}}
+              {{> effect-list-item}}
+            {{/each}}
+          </div>
+        {{else}}
+          <p class="empty">You have no temporary effects.</p>
+        {{/if}}
+      </div>
 
-      <h3 class="decorated">{{localize "BAGS.Actors.Common.Effects.Lingering"}}</h3>
-
-      {{#if document.lastingAppliedEffects.length}}
-        <div class="action-list action-list--effects" role="list">
-          {{#each document.lastingAppliedEffects}}
-            {{> effect-list-item}}
-          {{/each}}
-        </div>
-      {{/if}}
+      <div class="action-category">
+        <h3 class="decorated">{{localize "BAGS.Actors.Common.Effects.Lingering"}}</h3>
+        {{#if document.lastingAppliedEffects.length}}
+          <div class="action-list action-list--effects" role="list">
+            {{#each document.lastingAppliedEffects}}
+              {{> effect-list-item}}
+            {{/each}}
+          </div>
+        {{else}}
+          <p class="empty">You have no lingering effects.</p>
+        {{/if}}
+      </div>
     </div>
   {{/sheetTab}}
 </section>

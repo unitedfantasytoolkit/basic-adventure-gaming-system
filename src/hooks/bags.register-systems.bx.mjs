@@ -3,7 +3,13 @@ import savingThrows from "../data/bx.saving-throws.mjs"
 import characterActions from "../data/bx.actions.character.mjs"
 import bxBasicEncumbrance from "../data/bx.encumbrance.basic.mjs"
 import bxDetailedEncumbrance from "../data/bx.encumbrance.detailed.mjs"
+import bxMonsterData from "../data/bx.monster-data.mjs"
 import rollDice from "../utils/roll-dice.mjs"
+
+import {
+  createMeleeAttackAction,
+  createRangedAttackAction,
+} from "../utils/create-attack-actions.mjs"
 
 /**
  * @typedef {import("../config/system-registry.mjs").SystemRegistry} SystemRegistry
@@ -123,7 +129,7 @@ const registerBX = (registry) => {
   registry.register(registry.categories.COMBAT, {
     id: "bx-ascending",
     name: "BX, Ascending AC",
-    baseTHAC0: 19,
+    baseAttackBonus: 0,
     baseAC: 9,
     descending: false,
     async resolveAttackRoll(actor, target, options) {
@@ -207,6 +213,64 @@ const registerBX = (registry) => {
     name: "Basic/Expert",
     default: true,
     actions: characterActions,
+  })
+
+  registry.register(registry.categories.BASE_MONSTER_STATS, {
+    id: "bx",
+    name: "Basic/Expert",
+    default: true,
+    stats: bxMonsterData,
+    usesBonusXPFromHP: false,
+    baseMoveSpeed: 120,
+    baseHDSize: 8,
+    buildABear(
+      name,
+      hdCount = 1,
+      { damage: clawDamage, label: clawLabel } = {
+        damage: "1d4",
+        label: "BAGS.BX.Monsters.BuildABear.Claw.Label",
+      },
+      { damage: biteDamage, label: biteLabel } = {
+        damage: "1d6",
+        label: "BAGS.BX.Monsters.BuildABear.Bite.Label",
+      },
+    ) {
+      let adjustedHDCount = hdCount
+      if (adjustedHDCount >= this.stats.size)
+        adjustedHDCount = this.stats.size - 1
+      if (adjustedHDCount < 0) adjustedHDCount = 0
+
+      const { savingThrows, attackRollOffset, xp } =
+        this.stats.get(adjustedHDCount)
+      const averageHP = (this.baseHDSize * hdCount) / 2
+
+      const actionClaw = createMeleeAttackAction(clawLabel, clawDamage)
+      const actionBite = createMeleeAttackAction(biteLabel, biteDamage)
+
+      return {
+        name,
+        type: "monster",
+        img: "icons/creatures/claws/claw-bear-paw-swipe-red.webp",
+        system: {
+          base: {
+            savingThrows,
+            attackRollOffset,
+            speed: this.baseMoveSpeed,
+          },
+          xp: xp.base,
+          hp: {
+            hitDice: {
+              usesHitDice: true,
+              size: this.baseHDSize,
+              count: hdCount,
+            },
+            value: averageHP,
+            max: averageHP,
+          },
+          actions: [actionClaw, actionBite],
+        },
+      }
+    },
   })
 }
 

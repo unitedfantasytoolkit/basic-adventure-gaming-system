@@ -232,6 +232,60 @@
       font-size: 1.25em;
     }
   }
+
+  .rollable {
+    --rollable-accent-color: var(--color-light-5);
+
+    display: inline-block;
+    vertical-align: middle;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-decoration-color: var(--rollable-accent-color);
+    text-decoration-skip-ink: all;
+    transition: text-decoration-color 115ms ease-in-out;
+
+    &--icon-before {
+      &::before {
+        margin-right: 0.5ch;
+        content: "\f6cf";
+      }
+    }
+
+    &[data-action]:hover {
+      cursor: pointer;
+
+      --rollable-accent-color: var(--color-light-3);
+    }
+
+    &:not(.rollable--icon-before) {
+      &::after {
+        margin-left: 0.5ch;
+        content: "\f6cf";
+      }
+    }
+
+    &::before,
+    &::after {
+      color: var(--rollable-accent-color);
+      -webkit-font-smoothing: antialiased;
+      display: var(--fa-display, inline-block);
+      font-size: 0.9em;
+      font-style: normal;
+      font-variant: normal;
+      line-height: inherit;
+      text-rendering: auto;
+      font-family: var(--fa-style-family, "Font Awesome 6 Pro");
+      font-weight: var(--fa-style, 300);
+      transition: color 115ms ease-in-out;
+    }
+  }
+
+  p.empty {
+    color: var(--color-text-subtle);
+    font-style: italic;
+    text-align: center;
+    margin: 0;
+  }
 }
 
 .application--hide-title {
