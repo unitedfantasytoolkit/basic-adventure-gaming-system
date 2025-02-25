@@ -439,6 +439,112 @@
           "Temporary": "Temporary Effects",
           "Lingering": "Lingering Effects"
         },
+        "Fields": {
+          "Base": {
+            "Speed": {
+              "Label": "Movement Speed",
+              "Hint": "How far the character can move in a turn, measured in feet"
+            },
+            "AttackRollOffset": {
+              "Label": "Attack Roll Bonus",
+              "Hint": "Bonus applied to all attack rolls (represents THAC0 in descending AC systems)"
+            },
+            "ArmorClassOffset": {
+              "Label": "Armor Class Modifier",
+              "Hint": "Modifier to the character's base armor class"
+            }
+          },
+          "Modifiers": {
+            "Melee": {
+              "Attack": {
+                "Label": "Melee Attack Bonus",
+                "Hint": "Bonus applied to melee attack rolls"
+              },
+              "Damage": {
+                "Label": "Melee Damage Bonus",
+                "Hint": "Bonus applied to melee damage rolls"
+              }
+            },
+            "Missile": {
+              "Attack": {
+                "Label": "Missile Attack Bonus",
+                "Hint": "Bonus applied to ranged attack rolls"
+              },
+              "Damage": {
+                "Label": "Missile Damage Bonus",
+                "Hint": "Bonus applied to ranged damage rolls"
+              }
+            },
+            "Initiative": {
+              "Label": "Initiative Modifier",
+              "Hint": "Modifier applied to initiative rolls"
+            },
+            "Loyalty": {
+              "Label": "Loyalty Rating",
+              "Hint": "Determines how loyal retainers and hirelings are to their employer"
+            }
+          },
+          "Retainer": {
+            "IsRetainer": {
+              "Label": "Is Retainer",
+              "Hint": "Whether this character is a hireling or retainer of another character"
+            },
+            "Wage": {
+              "Currency": {
+                "Label": "Wage Currency",
+                "Hint": "The type of currency used to pay this retainer"
+              },
+              "Quantity": {
+                "Label": "Wage Amount",
+                "Hint": "How much the retainer is paid per interval"
+              },
+              "Interval": {
+                "Label": "Payment Interval",
+                "Hint": "How often the retainer must be paid (e.g., daily, weekly, monthly)"
+              }
+            }
+          },
+          "HP": {
+            "Value": {
+              "Label": "Current HP",
+              "Hint": "The character's current hit points"
+            },
+            "Max": {
+              "Label": "Maximum HP",
+              "Hint": "The character's maximum hit points when fully healed"
+            },
+            "Temporary": {
+              "Label": "Temporary HP",
+              "Hint": "Additional hit points that are lost before regular hit points"
+            }
+          },
+          "BiographicalDetails": {
+            "Alignment": {
+              "Label": "Alignment",
+              "Hint": "The character's moral and ethical alignment"
+            },
+            "IdentityPrefix": {
+              "Label": "Title Prefix",
+              "Hint": "A title that appears before the character's name (e.g., Sir, Lady, Dr.)"
+            },
+            "IdentitySuffix": {
+              "Label": "Title Suffix",
+              "Hint": "A title or descriptor that appears after the character's name"
+            },
+            "Description": {
+              "Label": "Physical Description",
+              "Hint": "A description of the character's physical appearance"
+            },
+            "Background": {
+              "Label": "Background",
+              "Hint": "The character's history and background story"
+            }
+          },
+          "Banner": {
+            "Label": "Banner Image",
+            "Hint": "A decorative image displayed on the character sheet"
+          }
+        },
         "Inventory": {
           "Label": "Inventory",
           "Sort": {
