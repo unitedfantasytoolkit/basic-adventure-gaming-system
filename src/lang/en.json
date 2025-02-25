@@ -411,6 +411,66 @@
           "Intelligence": "Intelligence",
           "NumberAppearing": "No. Appearing",
           "MoraleRating": "Morale Rating"
+        },
+        "Fields": {
+          "XP": {
+            "Label": "Experience Value",
+            "Hint": "The amount of XP awarded when this monster is defeated"
+          },
+          "HP": {
+            "HitDice": {
+              "UsesHitDice": {
+                "Label": "Uses Hit Dice",
+                "Hint": "Whether this monster's HP is calculated from hit dice or set manually"
+              },
+              "Count": {
+                "Label": "Hit Dice Count",
+                "Hint": "The number of hit dice this monster has"
+              },
+              "Size": {
+                "Label": "Hit Die Size",
+                "Hint": "The size of die used for this monster's hit dice (d4, d6, d8, etc.)"
+              },
+              "Modifier": {
+                "Label": "Hit Dice Modifier",
+                "Hint": "A modifier added to the monster's hit dice total"
+              }
+            }
+          },
+          "Modifiers": {
+            "Encumbrance": {
+              "Label": "Encumbrance Modifier",
+              "Hint": "Modifier to the monster's maximum encumbrance capacity"
+            },
+            "Speed": {
+              "Label": "Speed Modifier",
+              "Hint": "Modifier to the monster's base movement speed"
+            }
+          },
+          "BiographicalDetails": {
+            "Tactics": {
+              "Label": "Tactics",
+              "Hint": "How this monster typically behaves in combat"
+            },
+            "Lair": {
+              "Label": "Lair",
+              "Hint": "Description of where this monster typically lives"
+            },
+            "Intelligence": {
+              "Label": "Intelligence",
+              "Hint": "The monster's cognitive capabilities (e.g., Animal, Low, Average, High, Genius)"
+            }
+          },
+          "Morale": {
+            "Value": {
+              "Label": "Morale Rating",
+              "Hint": "How likely the monster is to remain in combat (2-12 scale, higher is braver)"
+            },
+            "IsWorthPanickingOverDying": {
+              "Label": "Checks Morale When Dying",
+              "Hint": "Whether this monster makes morale checks when its allies are killed"
+            }
+          }
         }
       },
 

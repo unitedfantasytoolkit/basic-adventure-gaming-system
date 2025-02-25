@@ -54,19 +54,23 @@ const buildSchema = () => {
       integer: true,
       min: 0,
       initial: 0,
-      label: "",
-      hint: "",
+      label: "BAGS.Actors.Monster.Fields.XP.Label",
+      hint: "BAGS.Actors.Monster.Fields.XP.Hint",
     }),
     hp: hpFactory({
       hitDice: new SchemaField({
-        usesHitDice: new BooleanField({ initial: true, hint: "", label: "" }),
+        usesHitDice: new BooleanField({ 
+          initial: true, 
+          hint: "BAGS.Actors.Monster.Fields.HP.HitDice.UsesHitDice.Hint", 
+          label: "BAGS.Actors.Monster.Fields.HP.HitDice.UsesHitDice.Label" 
+        }),
         count: new NumberField({
           integer: true,
           positive: true,
           min: 1,
           initial: 1,
-          label: "",
-          hint: "",
+          label: "BAGS.Actors.Monster.Fields.HP.HitDice.Count.Label",
+          hint: "BAGS.Actors.Monster.Fields.HP.HitDice.Count.Hint",
         }),
         size: new NumberField({
           min: 4,
@@ -79,10 +83,14 @@ const buildSchema = () => {
           ),
           initial: 8,
           integer: true,
-          label: "",
-          hint: "",
+          label: "BAGS.Actors.Monster.Fields.HP.HitDice.Size.Label",
+          hint: "BAGS.Actors.Monster.Fields.HP.HitDice.Size.Hint",
         }),
-        modifier: new NumberField({ initial: 0, label: "", hint: "" }),
+        modifier: new NumberField({ 
+          initial: 0, 
+          label: "BAGS.Actors.Monster.Fields.HP.HitDice.Modifier.Label", 
+          hint: "BAGS.Actors.Monster.Fields.HP.HitDice.Modifier.Hint" 
+        }),
       }),
     }),
     banner: bannerFactory(),
@@ -91,41 +99,41 @@ const buildSchema = () => {
       encumbrance: new NumberField({
         nullable: false,
         initial: 0,
-        label: "",
-        hint: "",
+        label: "BAGS.Actors.Monster.Fields.Modifiers.Encumbrance.Label",
+        hint: "BAGS.Actors.Monster.Fields.Modifiers.Encumbrance.Hint",
       }),
       speed: new NumberField({
         nullable: false,
         initial: 0,
-        label: "",
-        hint: "",
+        label: "BAGS.Actors.Monster.Fields.Modifiers.Speed.Label",
+        hint: "BAGS.Actors.Monster.Fields.Modifiers.Speed.Hint",
       }),
     }),
     biographicalDetails: biographicalDetailsFactory({
       tactics: new HTMLField({
-        label: "",
-        hint: "",
+        label: "BAGS.Actors.Monster.Fields.BiographicalDetails.Tactics.Label",
+        hint: "BAGS.Actors.Monster.Fields.BiographicalDetails.Tactics.Hint",
       }),
       lair: new HTMLField({
-        label: "",
-        hint: "",
+        label: "BAGS.Actors.Monster.Fields.BiographicalDetails.Lair.Label",
+        hint: "BAGS.Actors.Monster.Fields.BiographicalDetails.Lair.Hint",
       }),
       intelligence: new StringField({
-        label: "",
-        hint: "",
+        label: "BAGS.Actors.Monster.Fields.BiographicalDetails.Intelligence.Label",
+        hint: "BAGS.Actors.Monster.Fields.BiographicalDetails.Intelligence.Hint",
       }),
     }),
     morale: new SchemaField({
       value: new NumberField({
         nullable: false,
         initial: 7,
-        label: "",
-        hint: "",
+        label: "BAGS.Actors.Monster.Fields.Morale.Value.Label",
+        hint: "BAGS.Actors.Monster.Fields.Morale.Value.Hint",
       }),
       isWorthPanickingOverDying: new BooleanField({
         initial: false,
-        label: "",
-        hint: "",
+        label: "BAGS.Actors.Monster.Fields.Morale.IsWorthPanickingOverDying.Label",
+        hint: "BAGS.Actors.Monster.Fields.Morale.IsWorthPanickingOverDying.Hint",
       }),
     }),
   }
