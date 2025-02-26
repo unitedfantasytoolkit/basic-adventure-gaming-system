@@ -72,6 +72,8 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         "use-action": this.#doAction,
         // Active effect management
         "edit-active-effects": this.editActiveEffects,
+        // Spell management
+        "manage-spells": this.manageSpells,
       },
       position: {
         width: 575,
@@ -802,6 +804,10 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
   static editActiveEffects() {
     BAGSActorSheet.#useSubApp(this.subApps.activeEffectEditor)
+  }
+
+  static manageSpells() {
+    BAGSActorSheet.#useSubApp(this.subApps.spellManager)
   }
 
   static #useSubApp(subApp) {

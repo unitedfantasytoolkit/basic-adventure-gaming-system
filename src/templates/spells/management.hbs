@@ -1,0 +1,76 @@
+{{#> sheetTab}}
+<div class="spell-management">
+  <div class="spell-management__header">
+    <h2>{{localize "BAGS.SpellManager.ManageSpells"}}</h2>
+    <div class="spell-management__controls">
+      <button data-action="create-spell" class="create-spell-button">
+        <i class="fas fa-plus"></i>
+        {{localize "BAGS.SpellManager.CreateSpell"}}
+      </button>
+    </div>
+  </div>
+
+  <div class="spell-management__content scrollable">
+    <table class="spell-table">
+      <thead>
+        <tr>
+          <th>{{localize "BAGS.SpellManager.SpellName"}}</th>
+          <th>{{localize "BAGS.SpellManager.Level"}}</th>
+          <th>{{localize "BAGS.SpellManager.Class"}}</th>
+          <th>{{localize "BAGS.SpellManager.Actions"}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each availableSpells as |spell|}}
+          <tr class="spell-row" data-item-id="{{spell.id}}">
+            <td class="spell-name">
+              <img
+                src="{{spell.img}}"
+                alt="{{spell.name}}"
+                width="24"
+                height="24"
+              />
+              <span>{{spell.name}}</span>
+            </td>
+            <td class="spell-level">{{spell.system.level}}</td>
+            <td class="spell-class">
+              {{#if spell.system.castingClass}}
+                {{spell.system.castingClass.name}}
+              {{else}}
+                -
+              {{/if}}
+            </td>
+            <td class="spell-actions">
+              <button
+                data-action="edit-spell"
+                data-item-id="{{spell.id}}"
+                title="{{localize 'BAGS.SpellManager.Edit'}}"
+              >
+                <i class="fas fa-edit"></i>
+              </button>
+              <button
+                data-action="delete-spell"
+                data-item-id="{{spell.id}}"
+                title="{{localize 'BAGS.SpellManager.Delete'}}"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+              {{!--
+              {{#if (isPrepared spell.id)}}
+                <button data-action="unprepare-spell" data-item-id="{{spell.id}}" title="{{localize 'BAGS.SpellManager.Unprepare'}}">
+                  <i class="fas fa-book-open"></i>
+                </button>
+              {{else}}
+                <button data-action="prepare-spell" data-item-id="{{spell.id}}" title="{{localize 'BAGS.SpellManager.Prepare'}}">
+                  <i class="fas fa-book"></i>
+                </button>
+              {{/if}}
+              --}}
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{/sheetTab}}

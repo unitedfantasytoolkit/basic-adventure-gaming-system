@@ -4,6 +4,7 @@
 import BAGSActorSheet from "./actor.sheet.mjs"
 import ActionEditor from "../applications/action-editor.mjs"
 import BAGSActiveEffectEditor from "../applications/active-effects.editor.mjs"
+import SpellManager from "../applications/spell-manager.mjs"
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import effectListToTooltip from "../utils/effect-list-to-tooltip.mjs"
 
@@ -37,6 +38,12 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
             label: "Manage Active Effects",
             ownership: "OWNER",
           },
+          {
+            action: "manage-spells",
+            icon: "fa-solid fa-book",
+            label: "BAGS.SpellManager.ManageSpells",
+            ownership: "OWNER",
+          },
         ],
       },
     }
@@ -46,6 +53,7 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
   static SUB_APPS = {
     actionEditor: ActionEditor,
     activeEffectEditor: BAGSActiveEffectEditor,
+    spellManager: SpellManager,
     // actorEditor: BAGSCharacterEditor,
   }
 

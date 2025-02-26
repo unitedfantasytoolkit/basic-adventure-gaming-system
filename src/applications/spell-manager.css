@@ -1,0 +1,143 @@
+.application--spell-manager {
+  .spell-preparation {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &__header {
+      margin-bottom: 1rem;
+    }
+
+    &__content {
+      display: flex;
+      gap: 1rem;
+      flex: 1;
+
+      .spell-preparation__available,
+      .spell-preparation__prepared {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--color-border-light-primary);
+        border-radius: 5px;
+        padding: 0.5rem;
+
+        h3 {
+          margin-top: 0;
+          padding-bottom: 0.5rem;
+          border-bottom: 1px solid var(--color-border-light-secondary);
+        }
+
+        .scrollable {
+          flex: 1;
+          overflow-y: auto;
+          padding-right: 0.5rem;
+        }
+      }
+    }
+  }
+
+  .spell-management {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    &__content {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .spell-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th,
+      td {
+        padding: 0.5rem;
+        text-align: left;
+        border-bottom: 1px solid var(--color-border-light-secondary);
+      }
+
+      th {
+        background-color: var(--color-bg-alt);
+      }
+
+      .spell-name {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .spell-actions {
+        display: flex;
+        gap: 0.5rem;
+
+        button {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: var(--color-text-dark-primary);
+
+          &:hover {
+            color: var(--color-text-hyperlink);
+          }
+        }
+      }
+    }
+  }
+
+  .directory-item {
+    list-style: none;
+    margin-bottom: 0.5rem;
+
+    .spell-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      border: 1px solid var(--color-border-light-secondary);
+      border-radius: 3px;
+      background-color: var(--color-bg-field);
+
+      &.prepared {
+        background-color: var(--color-bg-highlight);
+      }
+
+      .spell-details {
+        flex: 1;
+
+        h4 {
+          margin: 0;
+        }
+
+        .spell-description {
+          margin: 0;
+          font-size: 0.8rem;
+          color: var(--color-text-dark-secondary);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 200px;
+        }
+      }
+
+      .spell-actions button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--color-text-dark-primary);
+
+        &:hover {
+          color: var(--color-text-hyperlink);
+        }
+      }
+    }
+  }
+}

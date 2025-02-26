@@ -13,6 +13,29 @@
       "Treasure": "Distribute Treasure",
       "Empty": "No one has been added to the party."
     },
+    "SpellManager": {
+      "Tabs": {
+        "Preparation": "Preparation",
+        "Management": "Management"
+      },
+      "PrepareSpells": "Prepare Spells",
+      "DragToPrepare": "Drag spells between lists to prepare or unprepare them",
+      "AvailableSpells": "Available Spells",
+      "PreparedSpells": "Prepared Spells",
+      "ManageSpells": "Manage Spells",
+      "CreateSpell": "Create New Spell",
+      "SpellName": "Name",
+      "Level": "Level",
+      "Class": "Class",
+      "Actions": "Actions",
+      "Edit": "Edit Spell",
+      "Delete": "Delete Spell",
+      "Prepare": "Prepare Spell",
+      "Unprepare": "Unprepare Spell",
+      "NewSpell": "New Spell",
+      "DeleteSpellTitle": "Delete Spell",
+      "DeleteSpellContent": "Are you sure you want to delete this spell? This action cannot be undone."
+    },
     "Actions": {
       "TabLabel": "Actions",
       "Editor": {

@@ -1,0 +1,78 @@
+{{#> sheetTab}}
+<div class="spell-preparation">
+  <div class="spell-preparation__header">
+    <h2>{{localize "BAGS.SpellManager.PrepareSpells"}}</h2>
+    <p class="hint">{{localize "BAGS.SpellManager.DragToPrepare"}}</p>
+  </div>
+
+  <div class="spell-preparation__content">
+    <div class="spell-preparation__available">
+      <h3>{{localize "BAGS.SpellManager.AvailableSpells"}}</h3>
+      <div class="directory-list available-spells scrollable">
+        {{#each spellsByLevel as |spells level|}}
+          <div class="spell-level">
+            <h4>{{localize "BAGS.SpellManager.Level"}} {{level}}</h4>
+            <ul class="spell-list">
+              {{#each spells as |spell|}}
+{{!--                {{#unless (isPrepared spell.id)}}
+                  <li class="directory-item" data-item-id="{{spell.id}}">
+                    <div class="spell-item">
+                      <img src="{{spell.img}}" alt="{{spell.name}}" width="36" height="36">
+                      <div class="spell-details">
+                        <h4>{{spell.name}}</h4>
+                        <p class="spell-description">{{spell.system.description}}</p>
+                      </div>
+                      <div class="spell-actions">
+                        <button data-action="prepare-spell" data-item-id="{{spell.id}}" title="{{localize 'BAGS.SpellManager.Prepare'}}">
+                          <i class="fas fa-book"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                {{/unless}}
+                --}}
+              {{/each}}
+            </ul>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="spell-preparation__prepared">
+      <h3>{{localize "BAGS.SpellManager.PreparedSpells"}}</h3>
+      <div class="directory-list prepared-spells scrollable">
+        {{#each availableSpells as |spell|}}
+          {{!--
+          {{#if (isPrepared spell.id)}}
+            <li class="directory-item" data-item-id="{{spell.id}}">
+              <div class="spell-item prepared">
+                <img
+                  src="{{spell.img}}"
+                  alt="{{spell.name}}"
+                  width="36"
+                  height="36"
+                />
+                <div class="spell-details">
+                  <h4>{{spell.name}}</h4>
+                  <p class="spell-level">{{localize "BAGS.SpellManager.Level"}}
+                    {{spell.system.level}}</p>
+                </div>
+                <div class="spell-actions">
+                  <button
+                    data-action="unprepare-spell"
+                    data-item-id="{{spell.id}}"
+                    title="{{localize 'BAGS.SpellManager.Unprepare'}}"
+                  >
+                    <i class="fas fa-book-open"></i>
+                  </button>
+                </div>
+              </div>
+            </li>
+          {{/if}}
+          --}}
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</div>
+{{/sheetTab}}

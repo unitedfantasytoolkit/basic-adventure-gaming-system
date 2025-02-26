@@ -42,4 +42,5 @@
 
 /* --- Applications: Miscellaneous ------------------------------------------ */
 @import url("./applications/character-creation-source-config.css");
+@import url("./applications/spell-manager.css");
 @import url("./applications/action-editor.css");

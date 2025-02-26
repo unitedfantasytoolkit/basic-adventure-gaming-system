@@ -2,10 +2,15 @@
  * @file A mixin that creates a data model that represents living creatures.
  */
 
+const { StringField, ArrayField } = foundry.data.fields
+
 const BaseActorDataMixin = (schema) =>
   class BaseActorDataModel extends foundry.abstract.TypeDataModel {
     static defineSchema() {
-      return schema()
+      return {
+        ...schema(),
+        preparedSpells: new ArrayField(new StringField(), { initial: [] }),
+      }
     }
 
     get spellList() {
