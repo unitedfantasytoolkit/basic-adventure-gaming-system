@@ -19,6 +19,7 @@ import path from "path"
 import { nodeResolve } from "@rollup/plugin-node-resolve"
 import terser from "@rollup/plugin-terser"
 import babel from "@rollup/plugin-babel"
+import replace from "@rollup/plugin-replace"
 // import eslint from "@rollup/plugin-eslint"
 import livereload from "rollup-plugin-livereload"
 
@@ -66,6 +67,10 @@ export default defineConfig([
     ],
     plugins: [
       sourcemaps(),
+      replace({
+        preventAssignment: true,
+        __DEV__: JSON.stringify(isWatchMode),
+      }),
       nodeResolve({ browser: true }),
       commonjs(),
       babel({ babelHelpers: "bundled" }),
@@ -100,6 +105,10 @@ export default defineConfig([
       sourcemap: true,
     },
     plugins: [
+      replace({
+        preventAssignment: true,
+        __DEV__: JSON.stringify(isWatchMode),
+      }),
       nodeResolve(),
       cssImports({
         modules: true,

@@ -5,4 +5,5 @@ export default {
   ...globals.browser,
   ...foundryGlobals,
   process: "readonly",
+  __DEV__: "readonly",
 }

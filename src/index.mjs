@@ -6,6 +6,10 @@
 
 // === Libraries ===============================================================
 
+// === Utils ===================================================================
+
+import { devOnly } from "./utils/dev-helpers.mjs"
+
 // === Hooks ===================================================================
 
 /* --- Rules modules registration ----------------------------------------------
@@ -42,50 +46,23 @@ import "./hooks/setup.ui.mjs"
 import "./hooks/updateActiveEffect.mjs"
 
 /* === DEV HELPERS =============================================================
- * These must be removed before the system is put into user hands.
- *
- * TODO: It would be cool to enable stuff like this for dev envs only
+ * This code will only be included in development builds
  */
-Hooks.once("ready", async () => {
-  try {
-    // fromUuidSync(
-    //   "Actor.A81XqzmshDo9D55H.Item.Z2WUBXQlqDJV2m14",
-    // ).sheet.subApps.actionEditor.render(true)
-    // fromUuidSync(
-    //   "Actor.A81XqzmshDo9D55H.Item.Z2WUBXQlqDJV2m14",
-    // ).sheet.subApps.actionEditor.subApps.effectEditor.prepareToEdit(
-    //   "KnA1hXmlZZrYpB9L",
-    //   "DT5QUwSaRid33DaW",
-    // )
-    // fromUuidSync(
-    //   "Actor.A81XqzmshDo9D55H.Item.Z2WUBXQlqDJV2m14",
-    // ).sheet.subApps.actionEditor.subApps.effectEditor.render(true)
-    // fromUuidSync("Actor.A81XqzmshDo9D55H").sheet.render(true)
-    // fromUuidSync("Item.aRxw6uspU4Ipf9xN").sheet.render(true)
+devOnly(() => {
+  Hooks.once("ready", async () => {
+    try {
+      fromUuidSync("Actor.A81XqzmshDo9D55H").sheet.render(true)
+      // await fromUuidSync("Actor.KT24QxIqGbFu9mZq").sheet.render(true)
+    } catch {
+      // noop -- use your own UUIDs above if this breaks
+    }
 
-    // await fromUuidSync("Actor.KT24QxIqGbFu9mZq").sheet.render(true)
+    // Add livereload script in development mode
+    const src = `http://${(window.location.host || "localhost").split(":")[0]}:9999/livereload.js?snipver=1`
+    const script = document.createElement("script")
+    script.src = src
+    document.body.appendChild(script)
 
-    // await fromUuidSync(
-    //   "Actor.KT24QxIqGbFu9mZq",
-    // ).sheet.subApps.actorEditor.render(true)
-
-    await fromUuidSync(
-      "Actor.KT24QxIqGbFu9mZq",
-    ).sheet.subApps.activeEffectEditor.render(true)
-
-    // fromUuidSync("Item.aRxw6uspU4Ipf9xN").sheet.render(true)
-    // fromUuidSync("Actor.A81XqzmshDo9D55H.Item.Hg1akbcfs01x33LR").sheet.render(
-    //   true,
-    // )
-  } catch {
-    // noop -- use your own UUIDs above if this breaks
-  }
-
-  const src = `http://${(window.location.host || "localhost").split(":")[0]}:9999/livereload.js?snipver=1`
-  const script = document.createElement("script")
-  script.src = src
-
-  document.body.appendChild(script)
-
-  // ui.sidebar.toggleExpanded()
+    // ui.sidebar.toggleExpanded()
+  })
 })
