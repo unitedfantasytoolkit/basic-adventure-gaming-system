@@ -181,7 +181,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
 
   #addTabsToFrame(frame) {
     const tabs = this.constructor.TABS?.sheet?.tabs
-    if (!tabs?.length) return
+    if (!tabs?.length || tabs.length < 2) return
     const tabContainer = document.createElement("nav")
     tabContainer.classList.value = "application__tab-navigation sheet-tabs tabs"
     tabContainer.ariaRole = game.i18n.localize("SHEETS.FormNavLabel")

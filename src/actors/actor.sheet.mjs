@@ -584,13 +584,14 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   // --- Tabs ------------------------------------------------------------------
 
   #addTabsToFrame(frame) {
-    if (!this.constructor.TABS.sheet.tabs.length) return
+    const tabs = this.constructor.TABS?.sheet?.tabs
+    if (!tabs?.length || tabs.length < 2) return
     const hasSpells = !!this.document.items.documentsByType.spell.length
     const tabContainer = document.createElement("nav")
     tabContainer.classList.value = "application__tab-navigation sheet-tabs tabs"
     tabContainer.ariaRole = game.i18n.localize("SHEETS.FormNavLabel")
 
-    this.constructor.TABS.sheet.tabs.forEach((t) => {
+    tabs.forEach((t) => {
       if (t.id === "spells" && !hasSpells) return
 
       const btn = document.createElement("button")

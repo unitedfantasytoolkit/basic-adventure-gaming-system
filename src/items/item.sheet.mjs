@@ -217,12 +217,13 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   // --- Tabs ------------------------------------------------------------------
 
   #addTabsToFrame(frame) {
-    if (!this.constructor.TABS.sheet.tabs.length) return
+    const tabs = this.constructor.TABS?.sheet?.tabs
+    if (!tabs?.length || tabs.length < 2) return
     const tabContainer = document.createElement("nav")
     tabContainer.classList.value = "application__tab-navigation sheet-tabs tabs"
     tabContainer.ariaRole = game.i18n.localize("SHEETS.FormNavLabel")
 
-    this.constructor.TABS.sheet.tabs.forEach((t) => {
+    tabs.forEach((t) => {
       const btn = document.createElement("button")
       btn.dataset.action = "tab"
       btn.dataset.group = t.group

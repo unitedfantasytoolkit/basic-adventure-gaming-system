@@ -1,3 +1,5 @@
+{{log tabs.length}}
+{{#if (gt tabs.length 1)}}
 <nav
   class="application__tab-navigation sheet-tabs tabs"
   aria-role="{{localize 'SHEETS.FormNavLabel'}}"
@@ -16,3 +18,4 @@
     </button>
   {{/each}}
 </nav>
+{{/if}}
