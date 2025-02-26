@@ -68,11 +68,8 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       // Action management
       "edit-actions": this.editActions,
       "perform-action": this._onPerformAction,
-      // Active Effect management
-      "add-effect": this.addEffect,
-      "edit-effect": this.editEffect,
-      "toggle-effect": this.toggleEffect,
-      "delete-effect": this.deleteEffect,
+      // Active effect management
+      "edit-active-effects": this.editActiveEffects,
     },
     position: {
       width: 490,
@@ -105,13 +102,6 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
           label: "BAGS.CharacterClass.Tabs.Summary",
           cssClass: "tab--summary",
         },
-        {
-          id: "active-effects",
-          group: "sheet",
-          icon: "fa-solid fa-sitemap",
-          label: "BAGS.CharacterClass.Tabs.Effects",
-          cssClass: "tab--effects",
-        },
       ],
       initial: "summary",
       labelPrefix: "BAGS.Actors.Character.Tabs",
@@ -137,9 +127,6 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
         scrollable: [".scrollable"],
       },
       ...this.TAB_PARTS,
-      "active-effects": {
-        template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-effects.hbs`,
-      },
     }
   }
 
@@ -406,7 +393,6 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
    */
   static async _onPerformAction(event) {
     const { actionId } = event.target.closest("[data-action-id]").dataset
-
     const action = this.document.system.actions.find((a) => a.id === actionId)
     await this.document.resolveAction(action)
   }
@@ -422,43 +408,19 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     super.close()
   }
 
-  static async addEffect() {
-    await this.document.createEmbeddedDocuments("ActiveEffect", [
-      this.document.effects.createDocument({
-        name: game.i18n.localize("BAGS.ActiveEffects.DefaultName"),
-        img: "icons/svg/aura.svg",
-      }),
-    ])
-  }
-
-  static async editEffect(e) {
-    const { effectId } = e.target.closest("[data-effect-id]").dataset
-    this.document.effects.get(effectId).sheet.render(true)
-  }
-
-  static async toggleEffect(e) {
-    const { effectId } = e.target.closest("[data-effect-id]").dataset
-    const effect = this.document.effects.get(effectId)
-    effect.update({ disabled: !effect.disabled })
-  }
-
-  static async deleteEffect(e) {
-    const { effectId } = e.target.closest("[data-effect-id]").dataset
-    this.document.effects.get(effectId).deleteDialog()
-  }
-
   static editItem() {
-    const subApp = this.subApps.itemEditor
-    if (!subApp) return
-    if (subApp.rendered) {
-      subApp.bringToFront()
-      animatedSheetAttention(subApp.element)
-    }
-    subApp.render(true)
+    BAGSBaseItemSheet.#useSubApp(this.subApps.itemEditor)
   }
 
   static editActions() {
-    const subApp = this.subApps.actionEditor
+    BAGSBaseItemSheet.#useSubApp(this.subApps.actionEditor)
+  }
+
+  static editActiveEffects() {
+    BAGSBaseItemSheet.#useSubApp(this.subApps.activeEffectEditor)
+  }
+
+  static #useSubApp(subApp) {
     if (!subApp) return
     if (subApp.rendered) {
       subApp.bringToFront()

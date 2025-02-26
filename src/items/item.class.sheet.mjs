@@ -1,12 +1,14 @@
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import BAGSCharacterClassXPTableEditor from "./item.character-class.xp-table-editor.mjs"
 import BAGSCharacterClassDetailsEditor from "./item.character-class.details-editor.mjs"
+import BAGSActiveEffectEditor from "../applications/active-effects.editor.mjs"
 import BAGSBaseItemSheet from "./item.sheet.mjs"
 
 export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
   static SUB_APPS = {
     xp: BAGSCharacterClassXPTableEditor,
     details: BAGSCharacterClassDetailsEditor,
+    activeEffectEditor: BAGSActiveEffectEditor,
   }
 
   constructor(options = {}) {
@@ -21,14 +23,9 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
   }
 
   static DEFAULT_OPTIONS = {
-    id: "character-class-{id}",
     classes: ["application--character-class-sheet"],
-    tag: "form",
     window: {
-      frame: true,
-      positioned: true,
       icon: "fa-regular fa-circle-star",
-      // window-icon fa-fw fa-regular fa-game-board
       controls: [
         {
           action: "edit-xp-table",
@@ -42,11 +39,13 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
           label: "BAGS.CharacterClass.Information.ActionLabel",
           ownership: "OWNER",
         },
+        {
+          action: "edit-active-effects",
+          icon: "fa-solid fa-sparkles",
+          label: "Manage Active Effects",
+          ownership: "OWNER",
+        },
       ],
-      minimizable: true,
-      resizable: true,
-      contentTag: "section",
-      contentClasses: [],
     },
     form: {
       handler: this.save,

@@ -70,6 +70,8 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         // Action management
         "edit-actions": this.editActions,
         "use-action": this.#doAction,
+        // Active effect management
+        "edit-active-effects": this.editActiveEffects,
       },
       position: {
         width: 575,
@@ -791,17 +793,18 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   }
 
   static editActor() {
-    const subApp = this.subApps.actorEditor
-    if (!subApp) return
-    if (subApp.rendered) {
-      subApp.bringToFront()
-      animatedSheetAttention(subApp.element)
-    }
-    subApp.render(true)
+    BAGSActorSheet.#useSubApp(this.subApps.actorEditor)
   }
 
   static editActions() {
-    const subApp = this.subApps.actionEditor
+    BAGSActorSheet.#useSubApp(this.subApps.actionEditor)
+  }
+
+  static editActiveEffects() {
+    BAGSActorSheet.#useSubApp(this.subApps.activeEffectEditor)
+  }
+
+  static #useSubApp(subApp) {
     if (!subApp) return
     if (subApp.rendered) {
       subApp.bringToFront()

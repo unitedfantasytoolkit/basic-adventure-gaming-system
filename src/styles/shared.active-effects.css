@@ -1,4 +1,14 @@
-.application--bags:not(.minimized) .tab--effects {
+.application--active-effect-editor:not(.minimized) {
+  .active-effect-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &:not(:has(.empty)) {
+      gap: 1em;
+    }
+  }
+
   .effects {
     list-style: none;
     margin: 0;
@@ -78,9 +88,7 @@
     }
   }
 
-  .no-effects {
-    text-align: center;
-    color: var(--color-text-subtle);
-    font-style: italic;
+  .empty {
+    margin: auto 0;
   }
 }

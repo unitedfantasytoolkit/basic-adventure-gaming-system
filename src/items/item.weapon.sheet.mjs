@@ -4,6 +4,7 @@
 import ActionEditor from "../applications/action-editor.mjs"
 import BAGSBaseItemSheet from "./item.sheet.mjs"
 import BAGSWeaponEditor from "./item.weapon.editor.mjs"
+import BAGSActiveEffectEditor from "../applications/active-effects.editor.mjs"
 import signNumber from "../utils/sign-number.mjs"
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
@@ -37,6 +38,12 @@ export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
           label: "Edit Actions",
           ownership: "OWNER",
         },
+        {
+          action: "edit-active-effects",
+          icon: "fa-solid fa-sparkles",
+          label: "Manage Active Effects",
+          ownership: "OWNER",
+        },
       ],
     },
   }
@@ -63,6 +70,7 @@ export default class BAGSWeaponSheet extends BAGSBaseItemSheet {
   static SUB_APPS = {
     actionEditor: ActionEditor,
     itemEditor: BAGSWeaponEditor,
+    activeEffectEditor: BAGSActiveEffectEditor,
   }
 
   static PARTS = {

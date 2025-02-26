@@ -6,6 +6,7 @@ import BAGSMonsterEditor from "./actor.monster.editor.mjs"
 import ActionEditor from "../applications/action-editor.mjs"
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import effectListToTooltip from "../utils/effect-list-to-tooltip.mjs"
+import BAGSActiveEffectEditor from "../applications/active-effects.editor.mjs"
 
 export default class BAGSCharacterSheet extends BAGSActorSheet {
   // === App config ============================================================
@@ -31,6 +32,12 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
             label: "Edit Actions",
             ownership: "OWNER",
           },
+          {
+            action: "edit-active-effects",
+            icon: "fa-solid fa-sparkles",
+            label: "Manage Active Effects",
+            ownership: "OWNER",
+          },
         ],
       },
     }
@@ -40,6 +47,7 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
   static SUB_APPS = {
     actionEditor: ActionEditor,
     actorEditor: BAGSMonsterEditor,
+    activeEffectEditor: BAGSActiveEffectEditor,
   }
 
   // --- Tabs ------------------------------------------------------------------

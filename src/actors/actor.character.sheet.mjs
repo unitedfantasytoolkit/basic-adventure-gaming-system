@@ -2,6 +2,8 @@
  * @file The character sheet -- the primary UI for a player character.
  */
 import BAGSActorSheet from "./actor.sheet.mjs"
+import ActionEditor from "../applications/action-editor.mjs"
+import BAGSActiveEffectEditor from "../applications/active-effects.editor.mjs"
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import effectListToTooltip from "../utils/effect-list-to-tooltip.mjs"
 
@@ -15,11 +17,37 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
         handler: undefined,
         submitOnChange: true,
       },
+      window: {
+        controls: [
+          {
+            action: "edit-actor",
+            icon: "fa-solid fa-pencil",
+            label: "Edit Character",
+            ownership: "OWNER",
+          },
+          {
+            action: "edit-actions",
+            icon: "fa-solid fa-sparkles",
+            label: "Edit Actions",
+            ownership: "OWNER",
+          },
+          {
+            action: "edit-active-effects",
+            icon: "fa-solid fa-sparkles",
+            label: "Manage Active Effects",
+            ownership: "OWNER",
+          },
+        ],
+      },
     }
   }
 
   // --- Sub apps --------------------------------------------------------------
-  // TODO: Character editor
+  static SUB_APPS = {
+    actionEditor: ActionEditor,
+    activeEffectEditor: BAGSActiveEffectEditor,
+    // actorEditor: BAGSCharacterEditor,
+  }
 
   // --- Tabs ------------------------------------------------------------------
 
