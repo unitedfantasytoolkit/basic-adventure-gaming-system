@@ -5,7 +5,7 @@ export default class BAGSBaseActorEditor extends BAGSApplication {
   // === App config ============================================================
 
   get title() {
-    return game.i18n.format("BAGS.Actors.Editor.Title", {
+    return game.i18n.format("BAGS.Actors.Common.Editor.Title", {
       name: this.document.name,
     })
   }
@@ -36,21 +36,6 @@ export default class BAGSBaseActorEditor extends BAGSApplication {
   static TABS = {
     sheet: {
       tabs: [
-        // @todo Delete this tab if the actor has no spells
-        {
-          id: "spells",
-          group: "sheet",
-          icon: "fa-solid fa-sparkle",
-          label: "BAGS.Actors.Editor.Actions",
-          cssClass: "tab--actions",
-        },
-        {
-          id: "active-effects",
-          group: "sheet",
-          icon: "fa-solid fa-sitemap",
-          label: "BAGS.Actors.Editor.Actions",
-          cssClass: "tab--actions",
-        },
         {
           id: "media",
           group: "sheet",
@@ -82,12 +67,6 @@ export default class BAGSBaseActorEditor extends BAGSApplication {
   static get PARTS() {
     return {
       ...this.TAB_PARTS,
-      spells: {
-        template: `${SYSTEM_TEMPLATE_PATH}/common/editor-tab-spell-list.hbs`,
-      },
-      "active-effects": {
-        template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-effects.hbs`,
-      },
       "class-and-abilities": {
         template: `${SYSTEM_TEMPLATE_PATH}/common/editor-tab-class-and-abilities.hbs`,
       },

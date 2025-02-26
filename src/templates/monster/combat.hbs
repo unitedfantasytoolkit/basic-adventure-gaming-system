@@ -1,0 +1,55 @@
+{{#> sheetTab}}
+<h2>{{localize "BAGS.Actors.Common.Tabs.Combat"}}</h2>
+<div class="scrollable">
+  <div class="standard-form">
+    <div class="field-columns">
+      <div class="form-group">
+        {{#if (ne document.system.baseAttackBonus null)}}
+          <label>Attack Bonus</label>
+          <div class="form-fields">
+            <input type="number" name="baseAttackBonus" value="{{document.system.baseAttackBonus}}" />
+          </div>
+          <p class="hint">This creature's bonus to attack rolls</p>
+        {{else if (ne document.system.thac0 null)}}
+          <label>THAC0</label>
+          <div class="form-fields">
+            <input type="number" name="thac0" value="{{document.system.thac0}}" />
+          </div>
+          <p class="hint">The result on a d20 necessary for this creature to hit an armor class of zero</p>
+        {{else}}
+          <p class="empty">Error finding your attack modifier scheme; please report a bug!</p>
+        {{/if}}
+      </div>
+      {{formGroup systemFields.base.fields.armorClassOffset
+        name="armorClass"
+        value=document.system.armorClass
+        label="Armor Class"
+        hint=""
+      }}
+    </div>
+
+    <fieldset class="standard-form__field-group">
+      <legend>Hit Points</legend>
+      {{formGroup systemFields.hp.fields.value value=document.system.hp.value localize=true}}
+      {{formGroup systemFields.hp.fields.max value=document.system.hp.max localize=true}}
+      {{formGroup systemFields.hp.fields.temporary value=document.system.hp.temporary localize=true}}
+    </fieldset>
+
+    <fieldset class="standard-form__field-group">
+      <legend>Saving Throws</legend>
+      {{#each systemFields.base.fields.savingThrows.fields}}
+        {{formGroup this value=(lookup ../document.system.base.savingThrows this.name) localize=true}}
+      {{/each}}
+    </fieldset>
+    
+    <fieldset>
+      <legend>Morale</legend>
+      <div class="field-columns">
+        {{formGroup systemFields.morale.fields.value value=document.system.morale.value localize=true}}
+        {{formGroup systemFields.morale.fields.isWorthPanickingOverDying value=document.system.morale.isWorthPanickingOverDying localize=true}}
+      </div>
+    </fieldset>
+
+  </div>
+</div>
+{{/sheetTab}}

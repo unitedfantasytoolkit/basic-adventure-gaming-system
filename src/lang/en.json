@@ -403,6 +403,9 @@
         "ExplorationSkills": "Exploration Skills"
       },
       "Monster": {
+        "Editor": {
+          "Title": "Monster Editor: {name}"
+        },
         "Details": {
           "Alignment": {
             "Label": "Alignment",
@@ -476,7 +479,8 @@
 
       "Common": {
         "Tabs": {
-          "Summary": "Summary",
+          "Details": "Details",
+          "Combat": "Combat",
           "Actions": "Actions",
           "Effects": "Effects"
         },

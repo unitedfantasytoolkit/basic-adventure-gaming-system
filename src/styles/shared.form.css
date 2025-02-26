@@ -1,0 +1,23 @@
+.application--bags:not(.minimized) {
+  .field-columns {
+    display: flex;
+    gap: 2em;
+    align-items: start;
+
+    .form-group {
+      flex: 1;
+    }
+  }
+
+  .form-group {
+    &:has([type="checkbox"]) {
+      label {
+        flex: 1;
+      }
+
+      .form-fields {
+        flex: 0;
+      }
+    }
+  }
+}

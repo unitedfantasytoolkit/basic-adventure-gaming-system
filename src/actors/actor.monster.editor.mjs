@@ -10,10 +10,20 @@ export default class BAGSMonsterEditor extends BAGSBaseActorEditor {
   static get DEFAULT_OPTIONS() {
     return {
       classes: ["application--monster-editor"],
+      position: {
+        width: 800,
+        height: 650,
+      },
     }
   }
 
   static DOCUMENT_TYPE = "monster"
+
+  get title() {
+    return game.i18n.format("BAGS.Actors.Monster.Editor.Title", {
+      name: this.document.name,
+    })
+  }
 
   // --- Tabs ------------------------------------------------------------------
 
@@ -25,7 +35,12 @@ export default class BAGSMonsterEditor extends BAGSBaseActorEditor {
           group: "sheet",
           icon: "fa-solid fa-square-list",
           label: "BAGS.Actors.Weapon.Tabs.Details",
-          cssClass: "tab--summary",
+        },
+        {
+          id: "combat",
+          group: "sheet",
+          icon: "fa-solid fa-swords",
+          label: "BAGS.Actors.Weapon.Tabs.Combat",
         },
         ...super.TABS.sheet.tabs,
         {
@@ -51,6 +66,9 @@ export default class BAGSMonsterEditor extends BAGSBaseActorEditor {
   static TAB_PARTS = {
     details: {
       template: `${this.TEMPLATE_ROOT}/details.hbs`,
+    },
+    combat: {
+      template: `${this.TEMPLATE_ROOT}/combat.hbs`,
     },
     lair: {
       template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-text-editor.hbs`,
