@@ -36,6 +36,11 @@ import "./hooks/init.chat.mjs"
  */
 import "./hooks/setup.ui.mjs"
 
+/* --- Document lifecycle ------------------------------------------------------
+ * - Update active effect editors when a Document's effects are altered
+ */
+import "./hooks/updateActiveEffect.mjs"
+
 /* === DEV HELPERS =============================================================
  * These must be removed before the system is put into user hands.
  *
@@ -57,11 +62,17 @@ Hooks.once("ready", async () => {
     // ).sheet.subApps.actionEditor.subApps.effectEditor.render(true)
     // fromUuidSync("Actor.A81XqzmshDo9D55H").sheet.render(true)
     // fromUuidSync("Item.aRxw6uspU4Ipf9xN").sheet.render(true)
-    await fromUuidSync("Actor.KT24QxIqGbFu9mZq").sheet.render(true)
+
+    // await fromUuidSync("Actor.KT24QxIqGbFu9mZq").sheet.render(true)
+
+    // await fromUuidSync(
+    //   "Actor.KT24QxIqGbFu9mZq",
+    // ).sheet.subApps.actorEditor.render(true)
 
     await fromUuidSync(
       "Actor.KT24QxIqGbFu9mZq",
-    ).sheet.subApps.actorEditor.render(true)
+    ).sheet.subApps.activeEffectEditor.render(true)
+
     // fromUuidSync("Item.aRxw6uspU4Ipf9xN").sheet.render(true)
     // fromUuidSync("Actor.A81XqzmshDo9D55H.Item.Hg1akbcfs01x33LR").sheet.render(
     //   true,
