@@ -16,9 +16,9 @@ export const DEFAULT_GOLD_ITEM_UUID =
 // export const DEFAULT_COPPER_ITEM_UUID   = "Compendium.basic-adventure-gaming-system.common-items.Item.DNa9nBcXQ7ZhmXcI";
 
 // --- Actors ------------------------------------------------------------------
-export const DEFAULT_ART_ACTOR_CHARACTER = ""
-export const DEFAULT_ART_ACTOR_MONSTER = ""
-export const DEFAULT_ART_ACTOR_MOUNT = ""
+export const DEFAULT_ART_ACTOR_CHARACTER = `${SYSTEM_ASSET_PATH}/icons/actor.character.img.svg`
+export const DEFAULT_ART_ACTOR_MONSTER = `${SYSTEM_ASSET_PATH}/icons/actor.monster.img.svg`
+export const DEFAULT_ART_ACTOR_VEHICLE = ""
 
 // --- Items -------------------------------------------------------------------
 export const DEFAULT_ART_ITEM = ""
@@ -27,8 +27,6 @@ export const DEFAULT_ART_ARMOR = ""
 export const DEFAULT_ART_SPELL = ""
 export const DEFAULT_ART_ABILITY = ""
 export const DEFAULT_ART_CHARACTER_CLASS = ""
-export const DEFAULT_ART_AMMUNITION = ""
-export const DEFAULT_ART_CONTAINER = ""
 
 // --- Abilities ---------------------------------------------------------------
 export const ABILITY_TYPES = {

@@ -5,7 +5,7 @@
 import {
   DEFAULT_ART_ACTOR_CHARACTER,
   DEFAULT_ART_ACTOR_MONSTER,
-  DEFAULT_ART_ACTOR_MOUNT,
+  DEFAULT_ART_ACTOR_VEHICLE,
 } from "../config/constants.mjs"
 
 import CharacterCreationWizard from "./actor.character.creation-wizard.mjs"
@@ -19,8 +19,8 @@ export default class BAGSActor extends Actor {
       case "character":
         art = DEFAULT_ART_ACTOR_CHARACTER
         break
-      case "mount":
-        art = DEFAULT_ART_ACTOR_MOUNT
+      case "vehicle":
+        art = DEFAULT_ART_ACTOR_VEHICLE
         break
       case "monster":
       default:
@@ -38,19 +38,25 @@ export default class BAGSActor extends Actor {
 
   /**
    * Get all ActiveEffects that may apply to this Actor.
-   * If CONFIG.ActiveEffect.legacyTransferral is true, this is equivalent to actor.effects.contents.
-   * If CONFIG.ActiveEffect.legacyTransferral is false, this will also return all the transferred ActiveEffects on any
+   * If CONFIG.ActiveEffect.legacyTransferral is true, this is equivalent to
+   * actor.effects.contents.
+   * If CONFIG.ActiveEffect.legacyTransferral is false, this will also return
+   * all the transferred ActiveEffects on any
    * of the Actor's owned Items.
    * @yields {ActiveEffect}
    * @returns {Generator<ActiveEffect, void, void>}
    */
   *allApplicableEffects() {
+    // eslint-disable-next-line no-restricted-syntax
     for (const effect of this.effects) {
       yield effect
     }
     if (CONFIG.ActiveEffect.legacyTransferral) return
+    // eslint-disable-next-line no-restricted-syntax
     for (const item of this.items) {
+      // eslint-disable-next-line no-restricted-syntax
       for (const effect of item.effects) {
+        // eslint-disable-next-line no-continue
         if (item.isPhysical && !item.system.isEquipped) continue
         if (effect.transfer) yield effect
       }

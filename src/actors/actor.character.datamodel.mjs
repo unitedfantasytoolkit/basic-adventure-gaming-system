@@ -149,7 +149,7 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
     const worstPossibleSave = savingThrowSettings?.worstPossible || 19
 
     const basePreparedSaves =
-      this.class.savingThrows ||
+      this.class?.savingThrows ||
       Object.keys(saves).reduce(
         (obj, key) => ({
           ...obj,
@@ -246,7 +246,7 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
       this.baseAttackBonus,
       this.abilityScores?.str?.meleeAttack || 0,
       this.modifiers.melee.attack,
-      descending ? 0 : this.class.attackBonus,
+      descending || !this.class ? 0 : this.class.attackBonus,
     )
   }
 
@@ -265,7 +265,7 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
       this.baseAttackBonus,
       this.abilityScores?.dex?.missileAttack,
       this.modifiers.missile.attack,
-      descending ? 0 : this.class.attackBonus,
+      descending || !this.class ? 0 : this.class.attackBonus,
     )
   }
 
@@ -280,12 +280,17 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
    * Character class
    */
   get class() {
-    return this.parent.items.documentsByType.class[0].system.currentLevelDetails
+    return (
+      this.parent.items.documentsByType.class?.[0]?.system
+        .currentLevelDetails || null
+    )
   }
 
   get spellSlots() {
-    return this.class.spellSlots.map(
-      (count, i) => count + this.modifiers.spellSlots[i],
+    return (
+      this.class?.spellSlots.map(
+        (count, i) => count + this.modifiers.spellSlots[i],
+      ) || this.modifiers.spellSlots
     )
   }
 }

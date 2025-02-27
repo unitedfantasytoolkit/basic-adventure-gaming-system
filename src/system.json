@@ -37,17 +37,7 @@
     "allowBugReporter": true
   },
   "relationships": {
-    "recommends": [
-      {
-        "id": "bx-factions",
-        "type": "module",
-        "compatibility": {
-          "minimum": "0.1.0",
-          "verified": "1.0.99",
-          "maximum": "1.99.99"
-        }
-      }
-    ]
+    "recommends": []
   },
   "documentTypes": {
     "Actor": {
