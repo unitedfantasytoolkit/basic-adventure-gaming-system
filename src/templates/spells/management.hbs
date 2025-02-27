@@ -10,38 +10,71 @@
     </div>
   </div>
 
+  <search>
+    <i class="fa fa-search" role="presentation"></i>
+    <input
+      type="search"
+      name="search"
+      autocomplete="off"
+      placeholder="Search items"
+      aria-label="Search items" />
+
+    <button
+      type="button"
+      class="inline-control sort icon {{ sortMode.icon }}"
+      data-tooltip="{{ sortMode.label }}"
+      aria-label="{{ localize sortMode.label }}"
+    ></button>
+
+    <button
+      type="button"
+      class="inline-control filter icon {{ filterMode.icon }}"
+      data-tooltip="{{ filterMode.label }}"
+      aria-label="{{ localize filterMode.label }}"
+    ></button>
+
+    <button
+      type="button"
+      class="inline-control toggle-filter icon fa fa-arrow-rotate-left"
+      data-action="reset-filters"
+      data-tooltip="Reset filters"
+      aria-label="{{ localize "Reset filters" }}"
+    ></button>
+  </search>
+  
+
   <div class="spell-management__content scrollable">
     <table class="spell-table">
-      <thead>
+      <colgroup>
+        <col class="col-icon" />
+        <col class="col-name" />
+        <col class="col-level" />
+        <col class="col-actions" />
+      </colgroup>
+      <thead>  
         <tr>
+          <th role="presentation"></th>
           <th>{{localize "BAGS.SpellManager.SpellName"}}</th>
           <th>{{localize "BAGS.SpellManager.Level"}}</th>
-          <th>{{localize "BAGS.SpellManager.Class"}}</th>
           <th>{{localize "BAGS.SpellManager.Actions"}}</th>
         </tr>
       </thead>
       <tbody>
-        {{#each availableSpells as |spell|}}
+        {{#each this.document.items.documentsByType.spell as |spell|}}
           <tr class="spell-row" data-item-id="{{spell.id}}">
-            <td class="spell-name">
+            <td class="spell-icon">
               <img
                 src="{{spell.img}}"
                 alt="{{spell.name}}"
-                width="24"
-                height="24"
               />
-              <span>{{spell.name}}</span>
+            </td>
+            <td class="spell-name">
+              {{spell.name}}
             </td>
             <td class="spell-level">{{spell.system.level}}</td>
-            <td class="spell-class">
-              {{#if spell.system.castingClass}}
-                {{spell.system.castingClass.name}}
-              {{else}}
-                -
-              {{/if}}
-            </td>
             <td class="spell-actions">
               <button
+                class="inline-control icon"
                 data-action="edit-spell"
                 data-item-id="{{spell.id}}"
                 title="{{localize 'BAGS.SpellManager.Edit'}}"
@@ -49,23 +82,13 @@
                 <i class="fas fa-edit"></i>
               </button>
               <button
+                class="inline-control icon"
                 data-action="delete-spell"
                 data-item-id="{{spell.id}}"
                 title="{{localize 'BAGS.SpellManager.Delete'}}"
               >
                 <i class="fas fa-trash"></i>
               </button>
-              {{!--
-              {{#if (isPrepared spell.id)}}
-                <button data-action="unprepare-spell" data-item-id="{{spell.id}}" title="{{localize 'BAGS.SpellManager.Unprepare'}}">
-                  <i class="fas fa-book-open"></i>
-                </button>
-              {{else}}
-                <button data-action="prepare-spell" data-item-id="{{spell.id}}" title="{{localize 'BAGS.SpellManager.Prepare'}}">
-                  <i class="fas fa-book"></i>
-                </button>
-              {{/if}}
-              --}}
             </td>
           </tr>
         {{/each}}

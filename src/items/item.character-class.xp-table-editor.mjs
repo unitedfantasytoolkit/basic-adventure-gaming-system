@@ -2,33 +2,14 @@
  * @file A UI to edit a class's levels, saves, hit dice, and attack bonuses.
  */
 
-import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
-
 import BAGSApplication from "../applications/application.mjs"
+import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 const { DialogV2 } = foundry.applications.api
 
 export default class BAGSCharacterClassXPTableEditor extends BAGSApplication {
-  document
-
-  constructor(options = {}) {
-    super(options)
-    this.document = options.document
-  }
-
   // === Application Setup =====================================================
   static DEFAULT_OPTIONS = {
-    id: "xp-table-editor-{id}",
-    classes: ["application--xp-table-editor", "application--bags"],
-    tag: "form",
-    window: {
-      frame: true,
-      positioned: true,
-      controls: [],
-      minimizable: false,
-      resizable: false,
-      contentTag: "section",
-      contentClasses: [],
-    },
+    classes: ["application--xp-table-editor"],
     actions: {
       "add-level": this.addClassLevel,
       "remove-level": this.removeClassLevel,
@@ -57,9 +38,6 @@ export default class BAGSCharacterClassXPTableEditor extends BAGSApplication {
   }
 
   static PARTS = {
-    "tab-navigation": {
-      template: `${SYSTEM_TEMPLATE_PATH}/common/tabs.hbs`,
-    },
     "xp-table": {
       template: `${this.TEMPLATE_ROOT}/xp-table.edit.hbs`,
       scrollable: [".scrollable"],
@@ -78,36 +56,30 @@ export default class BAGSCharacterClassXPTableEditor extends BAGSApplication {
     sheet: "xp-table",
   }
 
-  /**
-   * Prepare an array of form header tabs.
-   * @returns {Record<string, Partial<ApplicationTab>>}
-   */
-  #getTabs() {
-    const tabs = {
-      "xp-table": {
-        id: "xp-table",
-        group: "sheet",
-        icon: "fa-solid fa-trophy",
-        label: "BAGS.CharacterClass.Tabs.XP",
-      },
-      resources: {
-        id: "resources",
-        group: "sheet",
-        icon: "fa-solid fa-list-tree",
-        label: "BAGS.CharacterClass.Tabs.Resources",
-      },
-      "spell-slots": {
-        id: "spell-slots",
-        group: "sheet",
-        icon: "fa-solid fa-sparkle",
-        label: "BAGS.CharacterClass.Tabs.SpellSlots",
-      },
-    }
-    for (const v of Object.values(tabs)) {
-      v.active = this.tabGroups[v.group] === v.id
-      v.cssClass = v.active ? "active" : ""
-    }
-    return tabs
+  static TABS = {
+    sheet: {
+      tabs: [
+        {
+          id: "xp-table",
+          group: "sheet",
+          icon: "fa-solid fa-trophy",
+          label: "BAGS.CharacterClass.Tabs.XP",
+        },
+        {
+          id: "resources",
+          group: "sheet",
+          icon: "fa-solid fa-list-tree",
+          label: "BAGS.CharacterClass.Tabs.Resources",
+        },
+        {
+          id: "spell-slots",
+          group: "sheet",
+          icon: "fa-solid fa-sparkle",
+          label: "BAGS.CharacterClass.Tabs.SpellSlots",
+        },
+      ],
+      initial: "preparation",
+    },
   }
 
   // --- UI Element Overrides --------------------------------------------------
@@ -119,40 +91,6 @@ export default class BAGSCharacterClassXPTableEditor extends BAGSApplication {
   }
 
   // === Render setup ==========================================================
-  async _prepareContext(_options) {
-    const doc = this.document
-
-    return {
-      item: doc,
-      source: doc.toObject(),
-      fields: doc.schema.fields,
-      systemFields: doc.system.schema.fields,
-      tabs: this.#getTabs(),
-    }
-  }
-
-  /** @override */
-  async _preparePartContext(partId, context) {
-    const doc = this.document
-    switch (partId) {
-      case "header":
-        context.title = this.title
-        context.hideIcon = true
-        break
-      case "xp-table":
-        context.tab = context.tabs[partId]
-        break
-      case "resources":
-        context.tab = context.tabs[partId]
-        break
-      case "spell-slots":
-        context.tab = context.tabs[partId]
-        break
-      default:
-        break
-    }
-    return context
-  }
 
   // === Update process ========================================================
   static async save(_event, _form, formData) {

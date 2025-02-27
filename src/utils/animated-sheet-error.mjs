@@ -21,7 +21,7 @@ export default (element, msg) => {
     })
     element.classList.add(ANIMATE_ERROR_CLASS)
 
-    if (msg) ui.notifications.error(msg)
+    if (msg) ui.notifications.error(msg, { localize: true })
   } catch {
     // noop; don't break anything if our fancy error message fails.
   }

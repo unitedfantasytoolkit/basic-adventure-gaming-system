@@ -149,7 +149,7 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
     const worstPossibleSave = savingThrowSettings?.worstPossible || 19
 
     const basePreparedSaves =
-      this.parent.itemTypes.class[0]?.system.currentLevelDetails.saves ||
+      this.class.savingThrows ||
       Object.keys(saves).reduce(
         (obj, key) => ({
           ...obj,
@@ -238,14 +238,15 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
     )
   }
 
-  /**
-   * @todo account for class basic attack bonus, if the system uses ascending AC
-   */
   get meleeAttackBonus() {
+    const { descending } = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+      CONFIG.BAGS.SystemRegistry.categories.COMBAT,
+    )
     return cumulativeModifiers(
       this.baseAttackBonus,
       this.abilityScores?.str?.meleeAttack || 0,
       this.modifiers.melee.attack,
+      descending ? 0 : this.class.attackBonus,
     )
   }
 
@@ -256,14 +257,15 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
     )
   }
 
-  /**
-   * @todo account for class basic attack bonus, if the system uses ascending AC
-   */
   get missileAttackBonus() {
+    const { descending } = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+      CONFIG.BAGS.SystemRegistry.categories.COMBAT,
+    )
     return cumulativeModifiers(
       this.baseAttackBonus,
       this.abilityScores?.dex?.missileAttack,
       this.modifiers.missile.attack,
+      descending ? 0 : this.class.attackBonus,
     )
   }
 
@@ -271,6 +273,19 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
     return cumulativeModifiers(
       this.abilityScores?.dex?.missileDamage,
       this.modifiers.missile.damage,
+    )
+  }
+
+  /**
+   * Character class
+   */
+  get class() {
+    return this.parent.items.documentsByType.class[0].system.currentLevelDetails
+  }
+
+  get spellSlots() {
+    return this.class.spellSlots.map(
+      (count, i) => count + this.modifiers.spellSlots[i],
     )
   }
 }

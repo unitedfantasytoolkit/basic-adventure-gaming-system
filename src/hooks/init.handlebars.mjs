@@ -24,6 +24,15 @@ Hooks.once("init", async () => {
       }
     },
     statusEffect: (key) => CONFIG.statusEffects.find((s) => s.id === key),
+    padArray(array, length, placeholder = null) {
+      const arr = Array.isArray(array) ? array : []
+      if (arr.length >= length) return arr.slice()
+      return [...arr, ...Array(length - arr.length).fill(placeholder)]
+    },
+    isEmptyArray(array) {
+      if (!Array.isArray(array)) return true
+      return !array.length
+    },
     signNumber,
     formatRoll,
     getActionFlavorText,

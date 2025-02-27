@@ -1,78 +1,48 @@
+{{#*inline "spell-tile"}}
+  <li class="spell-list__item" data-item-id="{{id}}" >
+    <img src="{{img}}" alt="{{name}}" data-tooltip="{{name}}" draggable />
+  </li>
+{{/inline}}
+
+{{#*inline "spell-tile-empty"}}
+  <li class="spell-list__item spell-list__item--empty"></li>
+{{/inline}}
+
 {{#> sheetTab}}
-<div class="spell-preparation">
-  <div class="spell-preparation__header">
+  <header class="spell-preparation-header">
     <h2>{{localize "BAGS.SpellManager.PrepareSpells"}}</h2>
     <p class="hint">{{localize "BAGS.SpellManager.DragToPrepare"}}</p>
-  </div>
+  </header>
 
-  <div class="spell-preparation__content">
-    <div class="spell-preparation__available">
-      <h3>{{localize "BAGS.SpellManager.AvailableSpells"}}</h3>
-      <div class="directory-list available-spells scrollable">
-        {{#each spellsByLevel as |spells level|}}
-          <div class="spell-level">
-            <h4>{{localize "BAGS.SpellManager.Level"}} {{level}}</h4>
-            <ul class="spell-list">
-              {{#each spells as |spell|}}
-{{!--                {{#unless (isPrepared spell.id)}}
-                  <li class="directory-item" data-item-id="{{spell.id}}">
-                    <div class="spell-item">
-                      <img src="{{spell.img}}" alt="{{spell.name}}" width="36" height="36">
-                      <div class="spell-details">
-                        <h4>{{spell.name}}</h4>
-                        <p class="spell-description">{{spell.system.description}}</p>
-                      </div>
-                      <div class="spell-actions">
-                        <button data-action="prepare-spell" data-item-id="{{spell.id}}" title="{{localize 'BAGS.SpellManager.Prepare'}}">
-                          <i class="fas fa-book"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </li>
-                {{/unless}}
-                --}}
-              {{/each}}
-            </ul>
-          </div>
-        {{/each}}
-      </div>
-    </div>
+  <div class="spell-preparation">
+    {{#each maxSlots as |amount|}}  
+      <h3>{{localize "BAGS.SpellManager.LevelNumber" level=(add @index 1)}}</h3>
 
-    <div class="spell-preparation__prepared">
-      <h3>{{localize "BAGS.SpellManager.PreparedSpells"}}</h3>
-      <div class="directory-list prepared-spells scrollable">
-        {{#each availableSpells as |spell|}}
-          {{!--
-          {{#if (isPrepared spell.id)}}
-            <li class="directory-item" data-item-id="{{spell.id}}">
-              <div class="spell-item prepared">
-                <img
-                  src="{{spell.img}}"
-                  alt="{{spell.name}}"
-                  width="36"
-                  height="36"
-                />
-                <div class="spell-details">
-                  <h4>{{spell.name}}</h4>
-                  <p class="spell-level">{{localize "BAGS.SpellManager.Level"}}
-                    {{spell.system.level}}</p>
-                </div>
-                <div class="spell-actions">
-                  <button
-                    data-action="unprepare-spell"
-                    data-item-id="{{spell.id}}"
-                    title="{{localize 'BAGS.SpellManager.Unprepare'}}"
-                  >
-                    <i class="fas fa-book-open"></i>
-                  </button>
-                </div>
-              </div>
-            </li>
-          {{/if}}
-          --}}
-        {{/each}}
-      </div>
-    </div>
+      {{#unless (isEmptyArray (lookup ../availableSpells @index)) }}
+        <div class="spell-preparation__available">
+          <h4>{{localize "BAGS.SpellManager.AvailableSpells"}}</h4>
+          <ul class="spell-list spell-list__available" data-spell-list-type="available">
+            {{#each (lookup ../availableSpells @index)}}
+              {{> spell-tile}}
+            {{/each}}
+          </ul>
+        </div>
+    
+        <div class="spell-preparation__prepared">
+          <h4>{{localize "BAGS.SpellManager.PreparedSpells"}}</h4>
+          <ul class="spell-list spell-list__prepared" data-spell-list-type="prepared">
+            {{#each (lookup ../preparedSpells @index) }}
+              {{#if this}}
+                {{> spell-tile}}
+              {{else}}
+                {{> spell-tile-empty}}
+              {{/if}}
+            {{/each}}
+          </ul>
+        </div>
+      {{else}}
+        <p class="empty">You have no spells of this level.</p>
+      {{/unless}}
+    {{/each}}
   </div>
-</div>
 {{/sheetTab}}

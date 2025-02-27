@@ -312,15 +312,6 @@
     gap: 0.5em;
   }
 
-  .tab--inventory {
-    search {
-      display: flex;
-      align-items: center;
-      padding-inline: 8px;
-      gap: 8px;
-    }
-  }
-
   .tab--sheet {
     padding-top: 2rem;
   }

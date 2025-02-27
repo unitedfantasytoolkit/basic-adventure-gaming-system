@@ -26,6 +26,7 @@
       "CreateSpell": "Create New Spell",
       "SpellName": "Name",
       "Level": "Level",
+      "LevelNumber": "Level {level}",
       "Class": "Class",
       "Actions": "Actions",
       "Edit": "Edit Spell",
@@ -34,7 +35,7 @@
       "Unprepare": "Unprepare Spell",
       "NewSpell": "New Spell",
       "DeleteSpellTitle": "Delete Spell",
-      "DeleteSpellContent": "Are you sure you want to delete this spell? This action cannot be undone."
+      "SlotsFull": "This actor can't prepare any more spells of this level."
     },
     "Actions": {
       "TabLabel": "Actions",

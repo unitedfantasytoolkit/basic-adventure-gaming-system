@@ -13,10 +13,39 @@ const BaseActorDataMixin = (schema) =>
       }
     }
 
+    /**
+     * Spellcasting
+     */
     get spellList() {
-      const { spells } = this.parent.items.documentsByType
+      return this.parent.items.documentsByType.spell
+    }
 
-      return spells
+    get availableSpellsByLevel() {
+      const spellMap = new Map()
+
+      this.spellList.forEach((spell) => {
+        const spellLevel = spell.system.level
+        if (!spellMap.has(spellLevel)) spellMap.set(spellLevel, [])
+
+        spellMap.get(spellLevel).push(spell)
+      })
+
+      return spellMap
+    }
+
+    get preparedSpellsByLevel() {
+      const spellMap = new Map()
+
+      this.preparedSpells.forEach((spellId) => {
+        const spell = this.parent.items.get(spellId)
+        if (!spell) return // TODO: we should remove bad spell IDs.
+        const spellLevel = spell.system.level
+        if (!spellMap.has(spellLevel)) spellMap.set(spellLevel, [])
+
+        spellMap.get(spellLevel).push(spell)
+      })
+
+      return spellMap
     }
 
     // get #spellList() {

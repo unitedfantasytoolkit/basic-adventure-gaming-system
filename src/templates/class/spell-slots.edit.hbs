@@ -8,16 +8,16 @@
       <thead>
         <tr>
           <th>{{localize "BAGS.CharacterClass.SpellSlots.Label"}}</th>
-          {{#each (repeat @root.item.system.maxLevel)}}
+          {{#each (repeat @root.document.system.maxLevel)}}
           <th>{{add @index 1}}</th>
           {{/each}}
         </tr>
       </thead>
       <tbody>
-        {{#each item.system.spellSlots as |spellLevel spellLevelIndex|}}
+        {{#each document.system.spellSlots as |spellLevel spellLevelIndex|}}
         <tr data-pool-id="{{spellLevelIndex}}">
           <th>{{{ordinal (add spellLevelIndex 1)}}}</th>
-          {{#each (repeat @root.item.system.maxLevel)}}
+          {{#each (repeat @root.document.system.maxLevel)}}
           <td>
             <input type="text" data-dtype="Number"
               name="system.spellSlots.{{spellLevelIndex}}.{{@index}}"

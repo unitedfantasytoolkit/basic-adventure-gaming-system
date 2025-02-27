@@ -152,8 +152,11 @@ export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
       xpTable: new ArrayField(
         new SchemaField({
           value: new NumberField({ min: 0, initial: 0 }),
+
+          // TODO: This and THAC0 could be combined into an attack roll offset
           attackBonus: new NumberField({ min: 0, initial: 0 }),
           thac0: new NumberField({ min: 1, max: combatSettings?.baseTHAC0 }),
+
           hd: new SchemaField({
             count: new NumberField({ min: 1, initial: 1, integer: true }),
             modifier: new NumberField({ min: 0, initial: 0 }),
@@ -307,10 +310,27 @@ export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
 
   get currentLevelDetails() {
     const currentLevelIndex = this.level - 1
+    const {
+      attackBonus,
+      thac0,
+      hd,
+      saves: savingThrows,
+      value: xpToNext,
+    } = this.xpTable[currentLevelIndex]
     return {
-      ...this.xpTable[currentLevelIndex],
+      id: this.parent.id,
+      name: this.parent.name,
+      level: this.level,
+      attackBonus,
+      thac0,
+      hd,
+      xp: {
+        current: this.xp,
+        next: xpToNext,
+      },
+      savingThrows,
       resources: this.leveledResources,
-      spellSlots: this.spellSlots[currentLevelIndex],
+      spellSlots: this.spellSlots[currentLevelIndex] || [],
     }
   }
 }

@@ -3,6 +3,7 @@
  */
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import BAGSApplication from "./application.mjs"
+import animatedSheetError from "../utils/animated-sheet-error.mjs"
 
 /**
  * Application for managing a character's spells, including preparation and editing.
@@ -20,8 +21,6 @@ export default class SpellManager extends BAGSApplication {
       "create-spell": this.createSpell,
       "edit-spell": this.editSpell,
       "delete-spell": this.deleteSpell,
-      "prepare-spell": this.prepareSpell,
-      "unprepare-spell": this.unprepareSpell,
     },
     form: {
       handler: null,
@@ -76,28 +75,38 @@ export default class SpellManager extends BAGSApplication {
   async _prepareContext(options) {
     const context = await super._prepareContext(options)
 
-    // Get all spells available to the character
-    const availableSpells = this.document.items.filter(
-      (item) => item.type === "spell",
-    )
+    const padArray = (array, length) => {
+      const arr = Array.isArray(array) ? array : []
+      if (arr.length >= length) return arr.slice()
+      return [...arr, ...Array(length - arr.length).fill(null)]
+    }
 
-    // Get prepared spells
-    const preparedSpells = this.document.system.preparedSpells || []
+    const maxSlots = this.document.system.spellSlots || []
 
-    // Group spells by level
-    const spellsByLevel = availableSpells.reduce((acc, spell) => {
-      const level = spell.system.level
-      if (!acc[level]) acc[level] = []
-      acc[level].push(spell)
-      return acc
-    }, {})
+    const availableSpells = [
+      ...(this.document.system.availableSpellsByLevel.values() || []),
+    ]
+
+    // const preparedSpells = [
+    //   ...(this.document.system.preparedSpellsByLevel.values() || []),
+    // ].map((level, index) => padArray(level || [], maxSlots[index]))
+
+    const preparedSpells = Array(maxSlots)
+      .fill(null)
+      .map((_, i) =>
+        padArray(
+          this.document.system.preparedSpellsByLevel.get(i + 1) || [],
+          maxSlots[i],
+        ),
+      )
 
     return {
       ...context,
       availableSpells,
       preparedSpells,
-      spellsByLevel,
-      isPrepared: (id) => preparedSpells.includes(id),
+      maxSlots,
+      sortMode: this.inventorySortMode,
+      filterMode: this.inventoryFilterMode,
     }
   }
 
@@ -109,8 +118,8 @@ export default class SpellManager extends BAGSApplication {
     super._onRender(context, options)
 
     new DragDrop({
-      dragSelector: ".directory-item",
-      dropSelector: ".directory-list",
+      dragSelector: ".spell-list__item",
+      dropSelector: ".spell-list",
       permissions: {
         dragstart: this._canDragStart.bind(this),
         drop: this._canDragDrop.bind(this),
@@ -121,6 +130,13 @@ export default class SpellManager extends BAGSApplication {
         drop: this._onDrop.bind(this),
       },
     }).bind(this.element)
+
+    // new SearchFilter({
+    //   inputSelector: "search input",
+    //   contentSelector: ".item-grid--inventory",
+    //   callback: (...args) => this._onFilterInventory(...args),
+    //   initial: this.element.querySelector("search input").value,
+    // }).bind(this.element)
   }
 
   // === Drag and Drop Handlers ================================================
@@ -157,7 +173,7 @@ export default class SpellManager extends BAGSApplication {
    * @param {Event} event - The dragstart event
    */
   _onDragStart(event) {
-    const itemId = event.currentTarget.dataset.itemId
+    const { itemId } = event.currentTarget.dataset
     const item = this.document.items.get(itemId)
 
     if (!item) return
@@ -166,9 +182,9 @@ export default class SpellManager extends BAGSApplication {
     event.dataTransfer.setData(
       "text/plain",
       JSON.stringify({
-        type: "Item",
-        uuid: item.uuid,
-        id: item.id,
+        ...item.toDragData(),
+        dragSource: event.target.closest("[data-spell-list-type]").dataset
+          .spellListType,
       }),
     )
   }
@@ -182,21 +198,16 @@ export default class SpellManager extends BAGSApplication {
 
     try {
       const data = JSON.parse(event.dataTransfer.getData("text/plain"))
-
       if (data.type !== "Item") return
-
       const item = await fromUuid(data.uuid)
-
       if (item.type !== "spell") return
-
       // Handle drop based on the target area
       const dropTarget = event.currentTarget
-
-      if (dropTarget.classList.contains("prepared-spells")) {
+      if (data.dragSource === dropTarget.dataset.spellListType) return
+      if (dropTarget.dataset.spellListType === "prepared")
         await this.prepareSpell(item.id)
-      } else if (dropTarget.classList.contains("available-spells")) {
+      else if (dropTarget.dataset.spellListType === "available")
         await this.unprepareSpell(item.id)
-      }
 
       this.render(true)
     } catch (error) {
@@ -235,63 +246,181 @@ export default class SpellManager extends BAGSApplication {
    * Edit an existing spell
    * @param {Event} event - The triggering event
    */
-  static async editSpell(event) {
-    event.preventDefault()
-
-    const itemId = event.currentTarget.closest("[data-item-id]").dataset.itemId
+  static async editSpell(event, button) {
+    const { itemId } = button.closest("[data-item-id]").dataset
     const item = this.document.items.get(itemId)
-
-    if (item) {
-      item.sheet.render(true)
-    }
+    item?.sheet?.render(true)
   }
 
   /**
    * Delete a spell from the character
    * @param {Event} event - The triggering event
    */
-  static async deleteSpell(event) {
-    event.preventDefault()
-
-    const itemId = event.currentTarget.closest("[data-item-id]").dataset.itemId
-
-    const confirmDelete = await Dialog.confirm({
-      title: game.i18n.localize("BAGS.SpellManager.DeleteSpellTitle"),
-      content: game.i18n.localize("BAGS.SpellManager.DeleteSpellContent"),
-      yes: () => this.document.deleteEmbeddedDocuments("Item", [itemId]),
-      no: () => {},
-      defaultYes: false,
-    })
-
-    if (confirmDelete) {
-      this.render(true)
-    }
+  static async deleteSpell(event, button) {
+    const { itemId } = button.closest("[data-item-id]").dataset
+    const item = this.document.items.get(itemId)
+    await item?.deleteDialog()
+    this.render(true)
   }
 
   /**
    * Prepare a spell for casting
    * @param {string} spellId - The ID of the spell to prepare
+   * @todo Block adding the spell when the user's at their spell slot cap.
    */
-  static async prepareSpell(spellId) {
-    const preparedSpells = [...this.document.system.preparedSpells]
-
-    if (!preparedSpells.includes(spellId)) {
-      preparedSpells.push(spellId)
-      await this.document.update({ "system.preparedSpells": preparedSpells })
+  async prepareSpell(spellId) {
+    try {
+      await this.document.prepareSpell(spellId)
+      this.render(true)
+    } catch (e) {
+      animatedSheetError(this.element, e.message)
     }
-
-    this.render(true)
   }
 
   /**
    * Unprepare a previously prepared spell
    * @param {string} spellId - The ID of the spell to unprepare
    */
-  static async unprepareSpell(spellId) {
-    const preparedSpells = this.document.system.preparedSpells.filter(
-      (id) => id !== spellId,
-    )
-    await this.document.update({ "system.preparedSpells": preparedSpells })
+  async unprepareSpell(spellId) {
+    await this.document.unprepareSpell(spellId)
     this.render(true)
+  }
+
+  // === Sorting and Filtering =================================================
+
+  static SORT_MODES = {
+    DEFAULT: {
+      icon: "fa fa-arrow-up-arrow-down",
+      id: 0,
+      label: "BAGS.Actors.Common.Inventory.Sort.Default",
+    },
+    NAME_ASCENDING: {
+      icon: "fa fa-arrow-down-a-z",
+      id: 1,
+      key: "name",
+      isDescending: false,
+      label: "BAGS.Actors.Common.Inventory.Sort.NameAscending",
+    },
+    NAME_DESCENDING: {
+      icon: "fa fa-arrow-up-z-a",
+      id: 2,
+      key: "name",
+      isDescending: true,
+      label: "BAGS.Actors.Common.Inventory.Sort.NameDescending",
+    },
+    ENCUMBRANCE_ASCENDING: {
+      icon: "fa fa-arrow-up-big-small",
+      id: 3,
+      key: "system.weight",
+      isDescending: false,
+      label: "BAGS.Actors.Common.Inventory.Sort.EncumbranceAscending",
+    },
+    ENCUMBRANCE_DESCENDING: {
+      icon: "fa fa-arrow-down-big-small",
+      id: 4,
+      key: "system.weight",
+      isDescending: true,
+      label: "BAGS.Actors.Common.Inventory.Sort.EncumbranceDescending",
+    },
+    VALUE_ASCENDING: {
+      icon: "fa fa-arrow-up-1-9",
+      id: 5,
+      key: "system.cost",
+      isDescending: false,
+      label: "BAGS.Actors.Common.Inventory.Sort.ValueAscending",
+    },
+    VALUE_DESCENDING: {
+      icon: "fa fa-arrow-down-9-1",
+      id: 6,
+      key: "system.cost",
+      isDescending: true,
+      label: "BAGS.Actors.Common.Inventory.Sort.ValueDescending",
+    },
+  }
+
+  static FILTER_MODES = {
+    DEFAULT: {
+      icon: "fa-regular fa-filter",
+      id: 0,
+      label: "BAGS.Actors.Common.Inventory.Filter.Default",
+      predicate: () => true,
+    },
+    TYPE_WEAPON: {
+      icon: "fa fa-sword",
+      id: 1,
+      label: "BAGS.Actors.Common.Inventory.Filter.Weapons",
+      predicate: (i) => i.type === "weapon",
+    },
+    TYPE_ARMOR: {
+      icon: "fa fa-shield",
+      id: 2,
+      label: "BAGS.Actors.Common.Inventory.Filter.Armor",
+      predicate: (i) => i.type === "armor",
+    },
+    TYPE_MISCELLANEOUS: {
+      icon: "fa fa-suitcase",
+      id: 3,
+      label: "BAGS.Actors.Common.Inventory.Filter.Miscellaneous",
+      predicate: (i) => i.type === "item",
+    },
+    CONTAINER: {
+      icon: "fa fa-sack",
+      id: 4,
+      label: "BAGS.Actors.Common.Inventory.Filter.Containers",
+      predicate: (i) => i.system.container.isContainer,
+    },
+    TREASURE: {
+      icon: "fa fa-coin",
+      id: 5,
+      label: "BAGS.Actors.Common.Inventory.Filter.Treasure",
+      predicate: (i) => i.system.countsAsTreasure,
+    },
+    WORTH_XP: {
+      icon: "fa fa-trophy",
+      id: 6,
+      label: "BAGS.Actors.Common.Inventory.Filter.WorthXP",
+      predicate: (i) =>
+        i.system.countsAsTreasure && !i.system.hasBeenCountedAsTreasure,
+    },
+  }
+
+  #sortMode = SpellManager.SORT_MODES.DEFAULT
+
+  #filterMode = SpellManager.FILTER_MODES.DEFAULT
+
+  get sortMode() {
+    return this.#sortMode
+  }
+
+  get filterMode() {
+    return this.#filterMode
+  }
+
+  _getSortOptions() {
+    return Object.values(this.constructor.SORT_MODES).map((f) => ({
+      name: f.label,
+      icon: `<i class="${f.icon}" role="presentation"></i>`,
+      callback: () => {
+        this.#sortMode = f
+        this.render()
+      },
+    }))
+  }
+
+  _getFilterOptions() {
+    return Object.values(this.constructor.FILTER_MODES).map((f) => ({
+      name: f.label,
+      icon: `<i class="${f.icon}" role="presentation"></i>`,
+      callback: () => {
+        this.#filterMode = f
+        this.render()
+      },
+    }))
+  }
+
+  static resetFilters() {
+    this.#sortMode = SpellManager.SORT_MODES.DEFAULT
+    this.#filterMode = SpellManager.FILTER_MODES.DEFAULT
+    this.render()
   }
 }

@@ -364,4 +364,30 @@ export default class BAGSActor extends Actor {
 
     return this.updateAction(actionId, action)
   }
+
+  // === Spell management ======================================================
+  async prepareSpell(spellId) {
+    const preparedSpells = [...this.system.preparedSpells]
+    const spellToAdd = this.items.get(spellId)
+    const maxSpellsAtLevel =
+      this.system.spellSlots[spellToAdd.system.level - 1] || 0
+    const preparedSpellsOfLevel = this.system.preparedSpells
+      .map((id) => this.items.get(id))
+      .filter((i) => i.system.level === spellToAdd.system.level).length
+
+    if (maxSpellsAtLevel <= preparedSpellsOfLevel)
+      throw new Error("BAGS.SpellManager.SlotsFull")
+
+    preparedSpells.push(spellId)
+    return this.update({ "system.preparedSpells": preparedSpells })
+  }
+
+  async unprepareSpell(spellId) {
+    const deletedSpellIndex = this.system.preparedSpells.findIndex(
+      (id) => id === spellId,
+    )
+    const preparedSpells = [...this.system.preparedSpells]
+    preparedSpells.splice(deletedSpellIndex, 1)
+    return this.update({ "system.preparedSpells": preparedSpells })
+  }
 }

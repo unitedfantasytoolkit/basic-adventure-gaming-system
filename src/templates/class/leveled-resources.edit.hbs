@@ -3,7 +3,7 @@
 		<h2>{{localize "BAGS.CharacterClass.Tabs.Resources"}}</h2>
 	</header>
 	<div class="tab__content resource-table scrollable">
-		{{#each item.system.leveledResources as |resourceItem resourceIndex|}}
+		{{#each document.system.leveledResources as |resourceItem resourceIndex|}}
 		<div class="resource-category" data-category-id="{{@index}}">
 			<header>
 				<label>{{localize "BAGS.CharacterClass.ClassResources.Category.Label"}}</label>
@@ -21,7 +21,7 @@
 					<thead>
 						<tr>
 							<th>{{localize "BAGS.CharacterClass.ClassResources.Pool.Label"}}</th>
-							{{#each (repeat @root.item.system.maxLevel)}}
+							{{#each (repeat @root.document.system.maxLevel)}}
 							<th>{{add @index 1}}</th>
 							{{/each}}
 							<th></th>
@@ -34,7 +34,7 @@
 								<input type="text" name="system.leveledResources.{{resourceIndex}}.pool.{{poolIndex}}.label"
 									value="{{poolItem.label}}" />
 							</th>
-							{{#each (repeat @root.item.system.maxLevel)}}
+							{{#each (repeat @root.document.system.maxLevel)}}
 							<td>
 								<input type="text" data-dtype="Number"
 									name="system.leveledResources.{{resourceIndex}}.pool.{{poolIndex}}.perLevel.{{@index}}"

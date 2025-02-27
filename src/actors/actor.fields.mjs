@@ -102,6 +102,11 @@ export const modifiersFactory = (fields) => {
         hint: "BAGS.Actors.Common.Fields.Modifiers.Missile.Damage.Hint",
       }),
     }),
+    spellSlots: new ArrayField(new NumberField({ min: 0, initial: 0 }), {
+      initial: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      min: 9,
+      max: 9,
+    }),
     initiative: new NumberField({
       initial: 0,
       nullable: false,
@@ -213,7 +218,8 @@ export const biographicalDetailsFactory = (fields) =>
     identityPrefix: new StringField({
       nullable: false,
       initial: "",
-      label: "BAGS.Actors.Common.Fields.BiographicalDetails.IdentityPrefix.Label",
+      label:
+        "BAGS.Actors.Common.Fields.BiographicalDetails.IdentityPrefix.Label",
       hint: "BAGS.Actors.Common.Fields.BiographicalDetails.IdentityPrefix.Hint",
     }),
     /**
@@ -223,7 +229,8 @@ export const biographicalDetailsFactory = (fields) =>
     identitySuffix: new StringField({
       nullable: false,
       initial: "",
-      label: "BAGS.Actors.Common.Fields.BiographicalDetails.IdentitySuffix.Label",
+      label:
+        "BAGS.Actors.Common.Fields.BiographicalDetails.IdentitySuffix.Label",
       hint: "BAGS.Actors.Common.Fields.BiographicalDetails.IdentitySuffix.Hint",
     }),
     /**

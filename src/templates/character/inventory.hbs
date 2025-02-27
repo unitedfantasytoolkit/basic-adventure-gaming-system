@@ -10,9 +10,6 @@
       placeholder="Search items"
       aria-label="Search items" />
 
-    {{!--
-      TODO: Sort types (asc/desc for gold value, encumbrance, and name)
-    --}}
     <button
       type="button"
       class="inline-control sort icon {{ sortMode.icon }}"
@@ -20,9 +17,6 @@
       aria-label="{{ localize sortMode.label }}"
     ></button>
 
-    {{!--
-      TODO: Filter types (weapon, armor, item, has actions, has effects, counts as treasure)
-    --}}
     <button
       type="button"
       class="inline-control filter icon {{ filterMode.icon }}"

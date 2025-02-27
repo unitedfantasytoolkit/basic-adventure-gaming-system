@@ -1,4 +1,9 @@
-<article class="tab region-{{tab.id}} {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+<article
+  class="tab region-{{tab.id}} {{tab.cssClass}}"
+  data-tab="{{tab.id}}"
+  data-group="{{tab.group}}"
+>
+  {{log this}}
   <header class="tab__header">
     <h2>{{localize "BAGS.CharacterClass.Tabs.XP"}}</h2>
   </header>
@@ -6,24 +11,12 @@
     <table class="xp-table sticky-table">
       <thead>
         <tr>
-          <th rowspan="2">{{localize
-            "BAGS.CharacterClass.XPTable.Level"
-            }}</th>
-          <th rowspan="2">{{localize
-            "BAGS.CharacterClass.XPTable.XP"
-            }}</th>
-          <th rowspan="2">{{localize
-            "BAGS.CharacterClass.XPTable.HD"
-            }}</th>
-          <th rowspan="2">{{localize
-            "BAGS.CharacterClass.XPTable.THAC0"
-            }}</th>
-          <th rowspan="2">{{localize
-            "BAGS.CharacterClass.XPTable.ConMod"
-            }}</th>
-          <th colspan="5">{{localize
-            "BAGS.CharacterClass.XPTable.Saves"
-            }}</th>
+          <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.Level"}}</th>
+          <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.XP"}}</th>
+          <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.HD"}}</th>
+          <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.THAC0"}}</th>
+          <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.ConMod"}}</th>
+          <th colspan="5">{{localize "BAGS.CharacterClass.XPTable.Saves"}}</th>
         </tr>
         <tr>
           <th>D</th>
@@ -35,68 +28,120 @@
       </thead>
 
       <tbody>
-        {{#each item.system.xpTable as |levelObj index|}}
-        <tr>
-          <td>{{add index 1}}</td>
-          <td>
-            <input type="text" data-dtype="Number" class="xp-field xp-field--xp" name="system.xpTable.{{index}}.value"
-              value="{{levelObj.value}}" />
-          </td>
-          <td>
-            <span class="flexrow">
-              <input type="text" data-dtype="Number" class="xp-field xp-field--"
-                name="system.xpTable.{{index}}.hd.count" value="{{levelObj.hd.count}}" />
-              d{{@root.item.system.hitDieSize}}+
-              <input type="text" data-dtype="Number" class="xp-field xp-field--"
-                name="system.xpTable.{{index}}.hd.modifier" value="{{levelObj.hd.modifier}}" />
-            </span>
-          </td>
-          <td>
-            <span class="flexrow">
-              <input type="text" data-dtype="Number" class="xp-field xp-field--" name="system.xpTable.{{index}}.thac0"
-                value="{{levelObj.thac0}}" />
-              (+
-              <input type="text" data-dtype="Number" class="xp-field xp-field--"
-                name="system.xpTable.{{index}}.attackBonus" value="{{levelObj.attackBonus}}" />
-              )
-            </span>
-          </td>
-          <td>
-            <input type="checkbox" name="system.xpTable.{{index}}.hd.canUseConMod" data-tooltip="{{localize
-                  'BAGS.CharacterClass.XPTable.conMod'
-                }}" aria-label="{{localize
-                  'BAGS.CharacterClass.XPTable.conMod'
-                }}" {{checked levelObj.hd.canUseConMod}} />
-          </td>
-          <td>
-            <input type="text" data-dtype="Number" class="xp-field xp-field--"
-              name="system.xpTable.{{index}}.saves.death" value="{{levelObj.saves.death}}" />
-          </td>
-          <td>
-            <input type="text" data-dtype="Number" class="xp-field xp-field--"
-              name="system.xpTable.{{index}}.saves.wands" value="{{levelObj.saves.wands}}" />
-          </td>
-          <td>
-            <input type="text" data-dtype="Number" class="xp-field xp-field--"
-              name="system.xpTable.{{index}}.saves.paralysis" value="{{levelObj.saves.paralysis}}" />
-          </td>
-          <td>
-            <input type="text" data-dtype="Number" class="xp-field xp-field--"
-              name="system.xpTable.{{index}}.saves.breath" value="{{levelObj.saves.breath}}" />
-          </td>
-          <td>
-            <input type="text" data-dtype="Number" class="xp-field xp-field--"
-              name="system.xpTable.{{index}}.saves.spell" value="{{levelObj.saves.spell}}" />
-          </td>
-        </tr>
+        {{#each document.system.xpTable as |levelObj index|}}
+          <tr>
+            <td>{{add index 1}}</td>
+            <td>
+              <input
+                type="text"
+                data-dtype="Number"
+                class="xp-field xp-field--xp"
+                name="system.xpTable.{{index}}.value"
+                value="{{levelObj.value}}"
+              />
+            </td>
+            <td>
+              <span class="flexrow">
+                <input
+                  type="text"
+                  data-dtype="Number"
+                  class="xp-field xp-field--"
+                  name="system.xpTable.{{index}}.hd.count"
+                  value="{{levelObj.hd.count}}"
+                />
+                d{{@root.document.system.hitDieSize}}+
+                <input
+                  type="text"
+                  data-dtype="Number"
+                  class="xp-field xp-field--"
+                  name="system.xpTable.{{index}}.hd.modifier"
+                  value="{{levelObj.hd.modifier}}"
+                />
+              </span>
+            </td>
+            <td>
+              <span class="flexrow">
+                <input
+                  type="text"
+                  data-dtype="Number"
+                  class="xp-field xp-field--"
+                  name="system.xpTable.{{index}}.thac0"
+                  value="{{levelObj.thac0}}"
+                />
+                (+
+                <input
+                  type="text"
+                  data-dtype="Number"
+                  class="xp-field xp-field--"
+                  name="system.xpTable.{{index}}.attackBonus"
+                  value="{{levelObj.attackBonus}}"
+                />
+                )
+              </span>
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                name="system.xpTable.{{index}}.hd.canUseConMod"
+                data-tooltip="{{localize 'BAGS.CharacterClass.XPTable.conMod'}}"
+                aria-label="{{localize 'BAGS.CharacterClass.XPTable.conMod'}}"
+                {{checked levelObj.hd.canUseConMod}}
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                data-dtype="Number"
+                class="xp-field xp-field--"
+                name="system.xpTable.{{index}}.saves.death"
+                value="{{levelObj.saves.death}}"
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                data-dtype="Number"
+                class="xp-field xp-field--"
+                name="system.xpTable.{{index}}.saves.wands"
+                value="{{levelObj.saves.wands}}"
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                data-dtype="Number"
+                class="xp-field xp-field--"
+                name="system.xpTable.{{index}}.saves.paralysis"
+                value="{{levelObj.saves.paralysis}}"
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                data-dtype="Number"
+                class="xp-field xp-field--"
+                name="system.xpTable.{{index}}.saves.breath"
+                value="{{levelObj.saves.breath}}"
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                data-dtype="Number"
+                class="xp-field xp-field--"
+                name="system.xpTable.{{index}}.saves.spell"
+                value="{{levelObj.saves.spell}}"
+              />
+            </td>
+          </tr>
         {{else}}
-        <tr>
-          <td colspan="10">
-            <p class="empty">{{localize
-              "BAGS.CharacterClass.XPTable.Empty"
-              }}</p>
-          </td>
-        </tr>
+          <tr>
+            <td colspan="10">
+              <p class="empty">{{localize
+                  "BAGS.CharacterClass.XPTable.Empty"
+                }}</p>
+            </td>
+          </tr>
         {{/each}}
       </tbody>
     </table>
@@ -105,9 +150,9 @@
   <footer class="tab-controls flexrow">
     <button type="button" data-action="add-level"><i class="fas fa-plus"></i>
       {{localize "BAGS.CharacterClass.XPTable.Add"}}</button>
-    <button type="button" data-action="remove-level"><i class="fas fa-minus"></i>
-      {{localize
-      "BAGS.CharacterClass.XPTable.Remove"
-      }}</button>
+    <button type="button" data-action="remove-level"><i
+        class="fas fa-minus"
+      ></i>
+      {{localize "BAGS.CharacterClass.XPTable.Remove"}}</button>
   </footer>
 </article>

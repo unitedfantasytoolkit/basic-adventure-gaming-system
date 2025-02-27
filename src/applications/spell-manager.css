@@ -1,143 +1,117 @@
 .application--spell-manager {
   .spell-preparation {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    display: grid;
+    grid-template-rows: min-content 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1em;
 
-    &__header {
-      margin-bottom: 1rem;
+    & > h3 {
+      grid-column: 1/3;
+      margin: 0;
     }
 
-    &__content {
-      display: flex;
-      gap: 1rem;
-      flex: 1;
+    .empty {
+      grid-column: 1/3;
+    }
 
-      .spell-preparation__available,
-      .spell-preparation__prepared {
+    :is(&__prepared, &__available) {
+      display: flex;
+      flex-direction: column;
+
+      h4 {
+        font-family: var(--font-primary);
+        font-size: 1.25rem;
+        opacity: 0.9;
+        font-variant: small-caps;
+        text-transform: lowercase;
+        margin: 0;
+        color: inherit;
+        overflow: hidden;
         flex: 1;
-        display: flex;
-        flex-direction: column;
-        border: 1px solid var(--color-border-light-primary);
-        border-radius: 5px;
-        padding: 0.5rem;
 
-        h3 {
-          margin-top: 0;
-          padding-bottom: 0.5rem;
-          border-bottom: 1px solid var(--color-border-light-secondary);
+        &::before,
+        &::after {
+          content: "";
+          display: inline-block;
+          width: 50%;
+          margin: 0 0.5em 0 -55%;
+          vertical-align: middle;
+          border-bottom: 1px solid var(--color-text-subtle);
         }
 
-        .scrollable {
-          flex: 1;
-          overflow-y: auto;
-          padding-right: 0.5rem;
+        &::after {
+          margin: 0 -55% 0 0.5em;
         }
       }
     }
   }
 
-  .spell-management {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-
-    &__header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    &__content {
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    .spell-table {
-      width: 100%;
-      border-collapse: collapse;
-
-      th,
-      td {
-        padding: 0.5rem;
-        text-align: left;
-        border-bottom: 1px solid var(--color-border-light-secondary);
-      }
-
-      th {
-        background-color: var(--color-bg-alt);
-      }
-
-      .spell-name {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .spell-actions {
-        display: flex;
-        gap: 0.5rem;
-
-        button {
-          background: none;
-          border: none;
-          cursor: pointer;
-          color: var(--color-text-dark-primary);
-
-          &:hover {
-            color: var(--color-text-hyperlink);
-          }
-        }
-      }
-    }
-  }
-
-  .directory-item {
+  .spell-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 32px);
+    align-items: start;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.5rem;
+    flex: 1;
     list-style: none;
     margin-bottom: 0.5rem;
 
-    .spell-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem;
-      border: 1px solid var(--color-border-light-secondary);
-      border-radius: 3px;
-      background-color: var(--color-bg-field);
+    &__item {
+      display: block;
+      width: var(--size, 32px);
+      height: var(--size, 32px);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      overflow: hidden;
+      background-color: #383531;
+      position: relative;
+      transition:
+        opacity ease-in-out 333ms,
+        filter ease-in-out 333ms;
+      cursor: grab;
+
+      &:active {
+        cursor: grabbing;
+      }
 
       &.prepared {
         background-color: var(--color-bg-highlight);
       }
+    }
+  }
 
-      .spell-details {
-        flex: 1;
+  .spell-table {
+    th {
+      text-align: left !important;
 
-        h4 {
-          margin: 0;
-        }
-
-        .spell-description {
-          margin: 0;
-          font-size: 0.8rem;
-          color: var(--color-text-dark-secondary);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 200px;
-        }
+      &:last-of-type {
+        text-align: center !important;
       }
+    }
 
-      .spell-actions button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: var(--color-text-dark-primary);
+    .spell-icon,
+    .spell-level {
+      width: 48px;
+    }
 
-        &:hover {
-          color: var(--color-text-hyperlink);
-        }
+    .spell-actions {
+      width: 10ch;
+
+      button {
+        display: inline-block;
+        margin-left: 1ch;
       }
+    }
+
+    img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .col-icon .col-level .col-actions {
+      width: min-content;
     }
   }
 }

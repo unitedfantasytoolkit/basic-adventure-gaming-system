@@ -49,6 +49,11 @@ const buildSchema = () => {
   return {
     base: baseFactory({
       savingThrows: new SchemaField(savingThrowFields),
+      spellSlots: new ArrayField(new NumberField({ min: 0, initial: 0 }), {
+        initial: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        min: 9,
+        max: 9,
+      }),
     }),
     xp: new NumberField({
       integer: true,
@@ -192,6 +197,12 @@ export default class BAGSMonsterDataModel extends BaseActorDataMixin(
         }),
         {},
       )
+  }
+
+  spellSlots() {
+    return this.base.spellSlots.map(
+      (count, i) => count + this.modifiers.spellSlots[i],
+    )
   }
 
   // === Armor Class ===========================================================
