@@ -33,6 +33,7 @@ import "./hooks/init.actors.mjs"
 import "./hooks/init.items.mjs"
 import "./hooks/init.combat.mjs"
 import "./hooks/init.chat.mjs"
+import "./hooks/init.dice.mjs"
 
 /* --- Setup -------------------------------------------------------------------
  * - Make our Party sidebar tab available.
@@ -63,6 +64,6 @@ devOnly(() => {
     script.src = src
     document.body.appendChild(script)
 
-    // ui.sidebar.toggleExpanded()
+    ui.sidebar.toggleExpanded()
   })
 })

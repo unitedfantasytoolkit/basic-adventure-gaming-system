@@ -10,6 +10,8 @@ import {
 
 import CharacterCreationWizard from "./actor.character.creation-wizard.mjs"
 import ActionResolver from "../rules-engines/action-resolver.mjs"
+import SavingThrowRoll from "../dice/dice.saving-throw.mjs"
+import AbilityScoreRoll from "../dice/dice.ability-score.mjs"
 
 export default class BAGSActor extends Actor {
   static getDefaultArtwork(actorData) {
@@ -62,19 +64,6 @@ export default class BAGSActor extends Actor {
       }
     }
   }
-
-  // get appliedEffects() {
-  //   const effects = super.appliedEffects.filter((e) => {
-  //     if (e.parent instanceof CONFIG.Actor.documentClass) return true
-  //     if (e.parent.isPhysical) {
-  //       console.info(e.parent.system)
-  //       return e.parent.system.isEquipped
-  //     }
-  //     return false
-  //   })
-
-  //   return effects
-  // }
 
   get appliedEffectsByAffectedKey() {
     const attributeModifications = new Map()
@@ -166,12 +155,44 @@ export default class BAGSActor extends Actor {
     return foundry.utils.flattenObject(this.overrides)
   }
 
-  async rollSave(save, modifier) {
-    const roll = new Roll(
-      `1d20+${modifier}cs<=${this.system.savingThrows[save]}`,
-    )
+  async rollSavingThrow(
+    saveType,
+    modifier,
+    formula = "1d20",
+    rollBelow = false,
+    rollMode = CONFIG.Dice.rollModes,
+  ) {
+    let adjustedFormula = formula
+    if (modifier) adjustedFormula = `${adjustedFormula} + ${modifier}`
 
-    await roll.resolve()
+    const roll = new SavingThrowRoll(adjustedFormula, this, {
+      target: this.system.savingThrows[saveType],
+      saveType,
+      rollBelow,
+      rollMode,
+    })
+
+    return roll.roll()
+  }
+
+  async rollAbilityScore(
+    abilityName,
+    modifier,
+    formula = "1d20",
+    rollBelow = false,
+    rollMode = CONFIG.Dice.rollModes,
+  ) {
+    let adjustedFormula = formula
+    if (modifier) adjustedFormula = `${adjustedFormula} + ${modifier}`
+
+    const roll = new AbilityScoreRoll(adjustedFormula, this, {
+      target: this.system.abilityScores[abilityName],
+      abilityName,
+      rollBelow,
+      rollMode,
+    })
+
+    return roll.roll()
   }
 
   async doCreationWizard() {

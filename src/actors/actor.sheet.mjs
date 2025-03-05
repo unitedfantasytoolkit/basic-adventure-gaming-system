@@ -3,6 +3,7 @@
  * @file The base class for actor sheets in this system.
  */
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
+import RollDialog from "../dialogs/dialog.roll-config.mjs"
 import animatedSheetAttention from "../utils/animated-sheet-attention.mjs"
 import animatedSheetError from "../utils/animated-sheet-error.mjs"
 import sortDocuments from "../utils/sort-documents.mjs"
@@ -64,8 +65,12 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         submitOnChange: true,
       },
       actions: {
+        // Rolls
+        "roll-ability-score": this.rollAbilityScore,
+        "roll-saving-throw": this.rollSavingThrow,
+        // Inventory management
         "reset-filters": this.resetFilters,
-        // Actor management
+        // Actor document management
         "edit-actor": this.editActor,
         // Action management
         "edit-actions": this.editActions,
@@ -808,6 +813,27 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
   static manageSpells() {
     BAGSActorSheet.#useSubApp(this.subApps.spellManager)
+  }
+
+  static async rollAbilityScore(_event, element) {
+    const { diceCount, diceSize, modifier, reversedSuccess, rollMode } =
+      await RollDialog.createDialog()
+
+    const roll = await this.document.rollAbilityScore(
+      element.dataset.abilityScore,
+      modifier,
+      `${diceCount}d${diceSize}`,
+      reversedSuccess,
+      rollMode,
+    )
+
+    console.info(roll.toMessage())
+
+    // roll.toMessage()
+  }
+
+  static rollSavingThrow(_event, element) {
+    this.document.rollSavingThrow(element.dataset.savingThrow)
   }
 
   static #useSubApp(subApp) {

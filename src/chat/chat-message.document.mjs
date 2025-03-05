@@ -69,7 +69,22 @@ export default class BAGSChatMessage extends ChatMessage {
     data.content = await TextEditor.enrichHTML(this.content, {
       rollData: this.getRollData(),
     })
+    data.rolls = data.rolls.map((r) => {
+      if (typeof r === "string") return JSON.parse(r)
+      return r
+    })
     const isWhisper = this.whisper.length
+
+    const cssClass = [
+      this.style === CONST.CHAT_MESSAGE_STYLES.IC ? "ic" : null,
+      this.style === CONST.CHAT_MESSAGE_STYLES.EMOTE ? "emote" : null,
+      isWhisper ? "whisper" : null,
+      this.blind ? "blind" : null,
+    ]
+
+    if (options.classes) {
+      cssClass.push(...options.classes)
+    }
 
     // Construct message data
     const messageData = {
@@ -79,12 +94,7 @@ export default class BAGSChatMessage extends ChatMessage {
       user: game.user,
       author: this.author,
       alias: this.alias,
-      cssClass: [
-        this.style === CONST.CHAT_MESSAGE_STYLES.IC ? "ic" : null,
-        this.style === CONST.CHAT_MESSAGE_STYLES.EMOTE ? "emote" : null,
-        isWhisper ? "whisper" : null,
-        this.blind ? "blind" : null,
-      ].filterJoin(" "),
+      cssClass: cssClass.filterJoin(" "),
       isWhisper: this.whisper.length,
       isGM: game.user.isGM,
       whisperTo: this.whisper

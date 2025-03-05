@@ -29,7 +29,7 @@
   <div class="left-rail__section number-showcase">
     <ul class="number-showcase__list">
       {{#each document.system.schema.fields.base.fields.abilityScores}}
-      <li data-tooltip="{{lookup ../abilityScoreTooltips name}}">
+      <li data-action="roll-ability-score" data-ability-score="{{name}}" data-data-tooltip="{{lookup ../abilityScoreTooltips name}}">
         <span class="number-showcase__label">{{localize (replace label "Label" "Short") }}</span>
         <span class="number-showcase__value">{{lookup ../document.system.base.abilityScores name}}</span>
       </li>
@@ -103,7 +103,7 @@
     <dl>
       {{#each savingThrowLocaleStrings as |save key|}}
         <dt data-tooltip="{{lookup ../savingThrowTooltips key}}">{{localize save.short}}</dt>
-        <dd class="rollable" data-action="roll-save" data-save="{{key}}">{{lookup ../document.system.savingThrows key}}</dd>
+        <dd class="rollable" data-action="roll-saving-throw" data-saving-throw="{{key}}">{{lookup ../document.system.savingThrows key}}</dd>
       {{/each}}
       {{#if (eq document.type "character")}}
         <dt>Bonus vs. Magic</dt>
