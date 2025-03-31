@@ -308,6 +308,7 @@ export default class PartySidebar extends HandlebarsApplicationMixin(
     // new ContextMenu(
     //   this.element,
     //   ".folder .folder-header",
+    //   [],
     //   this._getFolderContextOptions(),
     //   {
     //     hookName: "FolderContext",
@@ -318,6 +319,7 @@ export default class PartySidebar extends HandlebarsApplicationMixin(
     new ContextMenu(
       this.element,
       ".directory-item[data-entry-id]",
+      [],
       this._getEntryContextOptions(),
       {
         jQuery: false,
