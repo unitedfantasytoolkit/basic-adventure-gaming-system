@@ -554,6 +554,8 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   _onRender(context, options) {
     super._onRender(context, options)
 
+    const { SearchFilter } = foundry.applications.ux
+
     if (options.parts.includes("inventory")) {
       new SearchFilter({
         inputSelector: "search input",
@@ -865,6 +867,9 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   }
 
   _matchSearchItems(query, entryIds) {
+
+    const { SearchFilter } = foundry.applications.ux
+
     this.actor.items.contents.forEach((entry) => {
       if (query.test(SearchFilter.cleanQuery(entry.name))) {
         entryIds.add(entry.id)
