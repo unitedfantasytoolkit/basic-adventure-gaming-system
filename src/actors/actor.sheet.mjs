@@ -295,20 +295,20 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
     const { ContextMenu } = foundry.applications.ui
 
-    ContextMenu.create(this, this.element, ".tab--inventory uft-item-tile", {
+    new ContextMenu(this.element, ".tab--inventory uft-item-tile", {
       hookName: "InventoryContext",
       fixed: true,
       jQuery: false,
     })
 
-    ContextMenu.create(this, this.element, ".tab--inventory button.filter", {
+    new ContextMenu(this.element, ".tab--inventory button.filter", {
       hookName: "InventoryFilter",
       jQuery: false,
       fixed: true,
       eventName: "click",
     })
 
-    ContextMenu.create(this, this.element, ".tab--inventory button.sort", {
+    new ContextMenu(this.element, ".tab--inventory button.sort", {
       hookName: "InventorySort",
       jQuery: false,
       fixed: true,
