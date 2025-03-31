@@ -117,8 +117,10 @@ export default class BAGSChatMessage extends ChatMessage {
     }
 
     // Render the chat message
+    const { renderTemplate } = foundry.applications.handlebars
+
     let html = await renderTemplate(this.template, messageData)
-    html = foundry.applications.parseHTML(html)
+    html = foundry.utils.parseHTML(html)
 
     // Call hooks
     Hooks.call("renderChatMessageHTML", this, html, messageData)
