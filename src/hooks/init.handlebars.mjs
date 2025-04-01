@@ -40,6 +40,8 @@ Hooks.once("init", async () => {
     secondsToFriendlyTime,
   })
 
+  const { loadTemplates } = foundry.applications.handlebars
+
   await loadTemplates({
     /* ======================================================================
      * Helpers
