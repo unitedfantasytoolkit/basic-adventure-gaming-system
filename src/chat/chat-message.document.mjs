@@ -65,6 +65,7 @@ export default class BAGSChatMessage extends ChatMessage {
     const finalCanDelete = canDelete ?? game.user.isGM
 
     // Determine some metadata
+    const { TextEditor } = foundry.applications.ux
     const data = this.toObject(false)
     data.content = await TextEditor.enrichHTML(this.content, {
       rollData: this.getRollData(),

@@ -432,6 +432,7 @@ export default class PartySidebar extends HandlebarsApplicationMixin(
 
     // Drag-drop
     if (options.parts.includes("directory")) {
+      const { DragDrop } = foundry.applications.ux
       new DragDrop({
         dragSelector: ".directory-item",
         dropSelector: ".directory-list",
@@ -1054,6 +1055,7 @@ export default class PartySidebar extends HandlebarsApplicationMixin(
 
   /** @override */
   _onDrop(event) {
+    const { TextEditor } = foundry.applications.ux
     const data = TextEditor.getDragEventData(event)
     if (!data.type) return
     const target = event.target.closest(".directory-item") ?? null
