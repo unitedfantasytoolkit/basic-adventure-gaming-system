@@ -33,6 +33,7 @@ export default class BAGSAbilitySheet extends BAGSBaseItemSheet {
 
   /** @override */
   async _preparePartContext(partId, context) {
+    const { TextEditor } = foundry.applications.ux
     const doc = this.document
     context.tab = context.tabs.find((t) => t.id === partId)
     switch (partId) {

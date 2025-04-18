@@ -43,6 +43,7 @@ export default class ActionResolver {
     this.document = document
     this.action = action
 
+    const { UserTargets } = foundry.canvas.placeables.tokens
     if (!targets) this.targets = []
     else if (targets instanceof UserTargets)
       this.targets = Array.from(targets.entries())

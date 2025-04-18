@@ -112,6 +112,7 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
 
   /** @override */
   async _prepareContext(_options) {
+    const { TextEditor } = foundry.applications.ux
     const doc = this.document
 
     const gearTable = doc.system.gearTable

@@ -293,22 +293,22 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   async _onFirstRender(context, options) {
     await super._onFirstRender(context, options)
 
-    const { ContextMenu } = foundry.applications.ui
+    const { ContextMenu } = foundry.applications.ux
 
-    ContextMenu.create(this, this.element, ".tab--inventory uft-item-tile", {
+    new ContextMenu(this.element, ".tab--inventory uft-item-tile", [], {
       hookName: "InventoryContext",
       fixed: true,
       jQuery: false,
     })
 
-    ContextMenu.create(this, this.element, ".tab--inventory button.filter", {
+    new ContextMenu(this.element, ".tab--inventory button.filter", [], {
       hookName: "InventoryFilter",
       jQuery: false,
       fixed: true,
       eventName: "click",
     })
 
-    ContextMenu.create(this, this.element, ".tab--inventory button.sort", {
+    new ContextMenu(this.element, ".tab--inventory button.sort", [], {
       hookName: "InventorySort",
       jQuery: false,
       fixed: true,
@@ -553,6 +553,8 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
   _onRender(context, options) {
     super._onRender(context, options)
+
+    const { SearchFilter } = foundry.applications.ux
 
     if (options.parts.includes("inventory")) {
       new SearchFilter({
@@ -865,6 +867,9 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   }
 
   _matchSearchItems(query, entryIds) {
+
+    const { SearchFilter } = foundry.applications.ux
+
     this.actor.items.contents.forEach((entry) => {
       if (query.test(SearchFilter.cleanQuery(entry.name))) {
         entryIds.add(entry.id)

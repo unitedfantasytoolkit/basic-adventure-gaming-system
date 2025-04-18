@@ -117,6 +117,7 @@ export default class SpellManager extends BAGSApplication {
   _onRender(context, options) {
     super._onRender(context, options)
 
+    const { DragDrop } = foundry.applications.ux
     new DragDrop({
       dragSelector: ".spell-list__item",
       dropSelector: ".spell-list",

@@ -33,7 +33,10 @@ Hooks.once("init", async () => {
   }
 
   // Register data models and sheets for items
-  Items.unregisterSheet("core", ItemSheet)
+  const { Items } = foundry.documents.collections
+  const { ItemSheetV2 } = foundry.applications.sheets
+
+  Items.unregisterSheet("core", ItemSheetV2 )
 
   // --- Physical items ----------------------------------------------------
   Items.registerSheet(SYSTEM_NAME, BAGSMiscellaneousItemSheet, {

@@ -63,6 +63,7 @@ export default class CharacterClassEditor extends BAGSBaseItemEditor {
   // === Render setup ==========================================================
   /** @override */
   async _prepareFormattedFields() {
+    const { TextEditor } = foundry.applications.ux
     const gearTableDocument = await fromUuid(this.document.system.gearTable)
 
     const gearTable = this.document.system.gearTable

@@ -170,6 +170,7 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   }
 
   async _prepareFormattedFields() {
+    const { TextEditor } = foundry.applications.ux
     return {
       flavorText: await TextEditor.enrichHTML(this.document.system.flavorText),
       description: await TextEditor.enrichHTML(

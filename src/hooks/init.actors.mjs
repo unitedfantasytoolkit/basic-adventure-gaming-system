@@ -21,7 +21,10 @@ Hooks.once("init", async () => {
   }
 
   // Register sheet application classes
-  Actors.unregisterSheet("core", ActorSheet)
+  const { Actors } = foundry.documents.collections
+  const { ActorSheetV2 } = foundry.applications.sheets
+
+  Actors.unregisterSheet("core", ActorSheetV2)
   Actors.registerSheet(SYSTEM_NAME, BAGSCharacterSheet, {
     types: ["character"],
     makeDefault: true,

@@ -192,8 +192,8 @@ import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 //
 //     // ContextMenu is a global.
 //
-//     ContextMenu.create(
-//       this,
+//     new ContextMenu(
+//       this.element,
 //       html,
 //       this.options.contextMenuSelector,
 //       contextOptions,
@@ -305,8 +305,7 @@ export default class PartySidebar extends HandlebarsApplicationMixin(
    * @protected
    */
   _createContextMenus() {
-    // ContextMenu.create(
-    //   this,
+    // new ContextMenu(
     //   this.element,
     //   ".folder .folder-header",
     //   this._getFolderContextOptions(),
@@ -316,8 +315,7 @@ export default class PartySidebar extends HandlebarsApplicationMixin(
     //     fixed: true,
     //   },
     // )
-    ContextMenu.create(
-      this,
+    new ContextMenu(
       this.element,
       ".directory-item[data-entry-id]",
       this._getEntryContextOptions(),
@@ -434,6 +432,7 @@ export default class PartySidebar extends HandlebarsApplicationMixin(
 
     // Drag-drop
     if (options.parts.includes("directory")) {
+      const { DragDrop } = foundry.applications.ux
       new DragDrop({
         dragSelector: ".directory-item",
         dropSelector: ".directory-list",
@@ -1056,6 +1055,7 @@ export default class PartySidebar extends HandlebarsApplicationMixin(
 
   /** @override */
   _onDrop(event) {
+    const { TextEditor } = foundry.applications.ux
     const data = TextEditor.getDragEventData(event)
     if (!data.type) return
     const target = event.target.closest(".directory-item") ?? null
