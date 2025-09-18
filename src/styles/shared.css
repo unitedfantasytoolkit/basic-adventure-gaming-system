@@ -199,6 +199,10 @@
         flex-direction: column;
         position: relative;
 
+        &[data-action] {
+          cursor: pointer;
+        }
+
         &::after {
           position: absolute;
           display: block;
@@ -295,5 +299,24 @@
     :is(.window-icon, .window-title) {
       display: none;
     }
+  }
+}
+
+.roll-config {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.roll-fields {
+  display: grid;
+  grid-template-columns: 1fr 10ch 10ch;
+  gap: 0.5em;
+
+  .form-group {
+    flex-direction: column;
+    text-align: left;
+    align-items: start;
+    gap: 0;
   }
 }

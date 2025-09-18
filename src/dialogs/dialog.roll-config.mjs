@@ -4,170 +4,177 @@
  */
 const { DialogV2 } = foundry.applications.api
 
+const generateDiceRollModes = (rollMode) =>
+  Object.entries(CONFIG.Dice.rollModes)
+    .map(
+      ([key, { label }]) =>
+        `<option value="${key}" ${rollMode === key ? "selected" : ""}>${game.i18n.localize(label)}</option>`,
+    )
+    .join("")
+
 export default class RollDialog extends DialogV2 {
   /**
-   * Create and display a roll dialog, returning a Promise that resolves to the roll configuration
-   * @param {Object} options - Configuration options for the dialog
+   * Create and display a roll dialog, returning a Promise that resolves to the
+   * roll configuration
+   * @param {object} options - Configuration options for the dialog
    * @param {string} [options.title] - The dialog title
    * @param {number} [options.diceCount=1] - Initial number of dice
    * @param {number} [options.diceSize=20] - Initial dice size (d20, d6, etc.)
    * @param {string|number} [options.modifier="0"] - Initial modifier
-   * @param {boolean} [options.reversedSuccess=false] - Whether success is lower than target (true) or higher than target (false)
+   * @param {boolean} [options.reversedSuccess=false] - Whether success is
+   * lower than target (true) or higher than target (false)
    * @param {string} [options.rollMode="roll"] - The roll mode to use
-   * @param {string} [options.description] - Optional description text to show above the form
-   * @returns {Promise<Object|null>} Roll parameters or null if canceled
+   * @param {string} [options.description] - Optional description text to show
+   * above the form
+   * @param {number} [options.target] - Optional numeric target for the roll
+   * @returns {Promise<object|null>} Roll parameters or null if canceled
    */
   static async createDialog({
-    title = game.i18n.localize("OSR.Dialog.Roll.Title"),
-    diceCount = 1,
-    diceSize = 20,
-    modifier = "0",
+    title = game.i18n.localize("BAGS.Dialogs.RollWithTarget.Title"),
+    formula = "1d20",
+    modifier = 0,
     reversedSuccess = false,
     rollMode = "roll",
     description = "",
+    target,
+    hasMutableTarget = true,
+    hasMutableModifier = true,
   } = {}) {
     // Create the content HTML
     const content = `
       ${description ? `<div class="roll-description">${description}</div>` : ""}
-      <form class="osr-roll-form">
-        <div class="form-group">
-          <label for="diceCount">${game.i18n.localize("OSR.Dialog.Roll.DiceCount")}</label>
-          <div class="form-fields">
-            <input type="number" name="diceCount" value="${diceCount}" min="1" step="1">
+      <div class="roll-config">
+        <div class="roll-fields">
+          <div class="form-group">
+            <label for="diceCount">${game.i18n.localize("BAGS.Dialogs.RollConfig.Formula")}</label>
+            <div class="form-fields">
+              <input type="text" name="formula" value="${formula}" placeholder="1d20" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="modifier">${game.i18n.localize("BAGS.Dialogs.RollConfig.Modifier")}</label>
+            <div class="form-fields">
+              <input type="number" name="modifier" value="${modifier}" step="1" ${!hasMutableModifier && "readonly"} />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="diceSize">${game.i18n.localize("BAGS.Dialogs.RollConfig.Target")}</label>
+            <div class="form-fields">
+              <input type="number" name="target" value="${target}" min="1" step="1" ${!hasMutableTarget && "readonly"} />
+            </div>
           </div>
         </div>
-        
+
         <div class="form-group">
-          <label for="diceSize">${game.i18n.localize("OSR.Dialog.Roll.DiceSize")}</label>
-          <div class="form-fields">
-            <input type="number" name="diceSize" value="${diceSize}" min="1" step="1">
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="modifier">${game.i18n.localize("OSR.Dialog.Roll.Modifier")}</label>
-          <div class="form-fields">
-            <input type="text" name="modifier" value="${modifier}">
-          </div>
-          <p class="hint">${game.i18n.localize("OSR.Dialog.Roll.ModifierHint")}</p>
-        </div>
-        
-        <div class="form-group">
-          <label for="reversedSuccess">${game.i18n.localize("OSR.Dialog.Roll.ReversedSuccess")}</label>
-          <div class="form-fields">
-            <input type="checkbox" name="reversedSuccess" ${reversedSuccess ? "checked" : ""}>
-          </div>
-          <p class="hint">${game.i18n.localize("OSR.Dialog.Roll.ReversedSuccessHint")}</p>
-        </div>
-        
-        <div class="form-group">
-          <label for="rollMode">${game.i18n.localize("OSR.Dialog.Roll.RollMode")}</label>
+          <label for="rollMode">${game.i18n.localize("BAGS.Dialogs.RollConfig.RollMode")}</label>
           <div class="form-fields">
             <select name="rollMode">
-              ${Object.entries(CONFIG.Dice.rollModes)
-                .map(([key, { label }]) => {
-                  return `<option value="${key}" ${rollMode === key ? "selected" : ""}>${game.i18n.localize(label)}</option>`
-                })
-                .join("")}
+              ${generateDiceRollModes(rollMode)}
             </select>
           </div>
         </div>
-      </form>
+
+        <div class="form-group">
+          <label for="reversedSuccess">${game.i18n.localize("BAGS.Dialogs.RollConfig.ReversedSuccess")}</label>
+          <div class="form-fields">
+            <input type="checkbox" name="reversedSuccess" ${reversedSuccess ? "checked" : ""}>
+          </div>
+          <p class="hint">${game.i18n.localize("BAGS.Dialogs.RollConfig.ReversedSuccessHint")}</p>
+        </div>
+      </div>
     `
 
     // Create the buttons
     const buttons = [
       {
         action: "roll",
-        label: "OSR.Dialog.Roll.Button",
+        label: "BAGS.Dialogs.RollConfig.Roll",
         icon: "fas fa-dice-d20",
         class: "roll-button",
         default: true,
       },
-      {
-        action: "cancel",
-        label: "Cancel",
-        icon: "fas fa-times",
-      },
     ]
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.wait({
         classes: ["application--roll-form"],
-        window: { title },
+        window: { title, icon: "fa-solid fa-dice-d20" },
         content,
+        position: {
+          width: 360,
+        },
         buttons,
-        render: (event, element) => {
+        render: (_event, app) => {
           // Auto-focus the dice count input on render
           setTimeout(() => {
-            const input = element.querySelector('input[name="diceCount"]')
+            const input = app.element.querySelector('input[name="formula"]')
             if (input) input.focus()
           }, 100)
         },
         rejectClose: false,
-        submit: async (result) => {
-          if (result === "cancel" || result === null) return null
-
-          // Get form data
-          const form = document.querySelector(".application--roll-form form")
-          if (!form) return null
-
-          resolve({
-            diceCount: Math.max(
-              1,
-              Math.floor(Number(form.elements.diceCount.value)) || 1,
-            ),
-            diceSize: Math.max(
-              1,
-              Math.floor(Number(form.elements.diceSize.value)) || 20,
-            ),
-            modifier: form.elements.modifier.value || "0",
-            reversedSuccess: form.elements.reversedSuccess.checked,
-            rollMode: form.elements.rollMode.value,
-          })
-          // console.info(response)
-
-          // return response
-        },
+        submit: (result) => this.#onSubmitRollForm(result, resolve),
       })
+    })
+  }
+
+  static #onSubmitRollForm(result, resolve) {
+    if (result === "cancel" || result === null) return null
+
+    // Get form data
+    const form = document.querySelector(".application--roll-form form")
+    if (!form) return null
+
+    return resolve({
+      formula: form.elements.formula.value || "1d20",
+      modifier: form.elements.modifier.value || "0",
+      target: form.elements.target.value || 0,
+      reversedSuccess: form.elements.reversedSuccess.checked,
+      rollMode: form.elements.rollMode.value,
     })
   }
 
   /**
    * Request that a specific user make a roll with their assigned character
-   * @param {User|string} user - The User instance or user ID who should make the roll
-   * @param {Object} options - Roll configuration options
-   * @returns {Promise<Object|null>} The roll result or null if the request was declined
+   * @param {unknown|string} user - The User instance or user ID who should
+   * make the roll
+   * @param {object} options - Roll configuration options
+   * @returns {Promise<object|null>} The roll result or null if the request was
+   * declined
    */
   static async requestRoll(user, options = {}) {
+    let mutableUser = user
+    const mutableOptions = options
+
     // If user is a string (ID), get the user object
-    if (typeof user === "string") {
-      const userId = user
-      user = game.users.get(userId)
-      if (!user) throw new Error(`User [${userId}] does not exist`)
+    if (typeof mutableUser === "string") {
+      const userId = mutableUser
+      mutableUser = game.users.get(userId)
+      if (!mutableUser) throw new Error(`User [${userId}] does not exist`)
     }
 
     // Handle self-requests (GM rolling for themselves)
-    if (user.isSelf) {
-      return this.createDialog(options)
+    if (mutableUser.isSelf) {
+      return this.createDialog(mutableOptions)
     }
 
     // Include the requester's name in the options
-    options.requestedBy = game.user.name
+    mutableOptions.requestedBy = game.user.name
 
     // Handle requests to other users
-    return user.query("osrRollRequest", options)
+    return mutableUser.query("osrRollRequest", mutableOptions)
   }
 
   /**
    * Handle incoming roll requests
-   * @param {Object} data - The roll request data
-   * @returns {Promise<Object|null>} The roll result or null if declined
+   * @param {object} data - The roll request data
+   * @returns {Promise<object|null>} The roll result or null if declined
    * @internal
    */
   static async _handleRollRequest(data) {
     // Get the character assigned to this user
-    const character = game.user.character
+    const { character } = game.user
     if (!character) {
       ui.notifications.warn(
         game.i18n.localize("OSR.Warnings.NoCharacterAssigned"),
@@ -175,18 +182,27 @@ export default class RollDialog extends DialogV2 {
       return null
     }
 
+    const {
+      requestedBy: name,
+      description,
+      diceCount,
+      diceSize,
+      modifier,
+      reversedSuccess,
+    } = data
+
+    const reversedSuccessLabel = reversedSuccess
+      ? `<span>(${game.i18n.localize("OSR.Dialog.Roll.ReversedSuccess")})</span>`
+      : ""
+
     // Format the request notification
     const requestHtml = `
       <div class="roll-request-notification">
-        <h3>${game.i18n.format("OSR.Dialog.RollRequest.From", { name: data.requestedBy })}</h3>
-        ${data.description ? `<p>${data.description}</p>` : ""}
+        <h3>${game.i18n.format("OSR.Dialog.RollRequest.From", { name })}</h3>
+        ${description ? `<p>${description}</p>` : ""}
         <div class="roll-details">
-          <span>${data.diceCount}d${data.diceSize} ${data.modifier !== "0" ? `+ ${data.modifier}` : ""}</span>
-          ${
-            data.reversedSuccess
-              ? `<span>(${game.i18n.localize("OSR.Dialog.Roll.ReversedSuccess")})</span>`
-              : ""
-          }
+          <span>${diceCount}d${diceSize} ${modifier !== "0" ? `+ ${modifier}` : ""}</span>
+          ${reversedSuccessLabel}
         </div>
       </div>
     `
@@ -291,11 +307,9 @@ export default class RollDialog extends DialogV2 {
         formula += ` + ${modifier}`
       } else {
         const modNum = Number(modifier)
-        if (!NumberisNaN(modNum)) {
+        if (!Number.isNaN(modNum))
           formula += modNum >= 0 ? ` + ${modNum}` : ` - ${Math.abs(modNum)}`
-        } else {
-          formula += ` + ${modifier}`
-        }
+        else formula += ` + ${modifier}`
       }
     }
 

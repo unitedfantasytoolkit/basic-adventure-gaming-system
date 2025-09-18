@@ -66,4 +66,36 @@ export default class SavingThrowRoll extends Roll {
       rollBelow: this.rollBelow,
     }
   }
+
+  async toMessage(messageData = {}, { rollMode, create = true } = {}) {
+    if (rollMode === "roll") rollMode = undefined
+    rollMode ||= game.settings.get("core", "rollMode")
+
+    // Perform the roll, if it has not yet been rolled
+    if (!this._evaluated)
+      await this.evaluate({
+        allowInteractive: rollMode !== CONST.DICE_ROLL_MODES.BLIND,
+      })
+
+    // Prepare chat data
+    messageData = foundry.utils.mergeObject(
+      {
+        author: game.user.id,
+        content: String(this.total),
+        sound: CONFIG.sounds.dice,
+        type: "check",
+      },
+      messageData,
+    )
+    messageData.rolls = [this]
+
+    // Either create the message or just return the chat data
+    const Cls = getDocumentClass("ChatMessage")
+    const msg = new Cls(messageData)
+    msg.applyRollMode(rollMode)
+
+    // Either create or return the data
+    if (create) return Cls.create(msg)
+    return msg.toObject()
+  }
 }

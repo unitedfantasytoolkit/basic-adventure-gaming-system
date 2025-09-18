@@ -1,0 +1,5 @@
+.roll-config .roll-fields {
+  display: grid;
+  gap: 0.5em;
+  grid-template-columns: 1fr 10ch 10ch;
+}

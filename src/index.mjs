@@ -26,6 +26,7 @@ import "./hooks/bags.register-systems.bx.mjs"
  * - Register sheets for actors, items, etc.
  * - Perform non-UI class overrides.
  */
+import "./hooks/init.queries.mjs"
 import "./hooks/init.system-registration.mjs"
 import "./hooks/init.settings.mjs"
 import "./hooks/init.handlebars.mjs"
@@ -52,14 +53,13 @@ import "./hooks/updateActiveEffect.mjs"
 devOnly(() => {
   Hooks.once("ready", async () => {
     try {
-      fromUuidSync("Actor.A81XqzmshDo9D55H").sheet.render(true)
-      // await fromUuidSync("Actor.KT24QxIqGbFu9mZq").sheet.render(true)
+      fromUuidSync("Actor.swRWtVyGUdsSkflY").sheet.render(true)
     } catch {
       // noop -- use your own UUIDs above if this breaks
     }
 
     // Add livereload script in development mode
-    const src = `http://${(window.location.host || "localhost").split(":")[0]}:9999/livereload.js?snipver=1`
+    const src = `${window.location.protocol}/${(window.location.host || "localhost").split(":")[0]}:9999/livereload.js?snipver=1`
     const script = document.createElement("script")
     script.src = src
     document.body.appendChild(script)

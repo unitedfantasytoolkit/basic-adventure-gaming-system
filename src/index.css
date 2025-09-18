@@ -41,6 +41,9 @@
 /* --- Applications: Tag management ----------------------------------------- */
 @import url("./applications/settings.tag-config.css");
 
+/* --- Applications: Dialogs ------------------------------------------------ */
+@import url("./dialogs/dialog.roll-config.css");
+
 /* --- Applications: Miscellaneous ------------------------------------------ */
 @import url("./applications/character-creation-source-config.css");
 @import url("./applications/spell-manager.css");

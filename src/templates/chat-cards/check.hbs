@@ -6,13 +6,15 @@
 >
   {{> chatActionHeader}}
   {{#with (lookup message.rolls 0) }}
-  <div class="check-result ">
+  <div class="check-result">
   {{log this}}
 
   </div>
   {{/with}}
+  {{log message.content}}
+  {{{message.content}}}
 
-  <div class="check-result">
+  {{!-- <div class="check-result">
   {{!--
 
   <div class="action">
@@ -39,6 +41,6 @@
       </p>
       {{/unless}}
     </div>
-  </div>
-  --}}
+    --}}
+  {{!-- </div> --}}
 </li>

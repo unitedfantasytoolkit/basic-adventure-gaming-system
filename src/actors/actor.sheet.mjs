@@ -293,27 +293,39 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   async _onFirstRender(context, options) {
     await super._onFirstRender(context, options)
 
-    const { ContextMenu } = foundry.applications.ui
+    const { ContextMenu } = foundry.applications.ux
 
-    ContextMenu.create(this, this.element, ".tab--inventory uft-item-tile", {
-      hookName: "InventoryContext",
-      fixed: true,
-      jQuery: false,
-    })
+    const InventoryContext = new ContextMenu(
+      this.element,
+      ".tab--inventory uft-item-tile",
+      {
+        hookName: "InventoryContext",
+        fixed: true,
+        jQuery: false,
+      },
+    )
 
-    ContextMenu.create(this, this.element, ".tab--inventory button.filter", {
-      hookName: "InventoryFilter",
-      jQuery: false,
-      fixed: true,
-      eventName: "click",
-    })
+    const InventoryFilter = new ContextMenu(
+      this.element,
+      ".tab--inventory button.filter",
+      {
+        hookName: "InventoryFilter",
+        jQuery: false,
+        fixed: true,
+        eventName: "click",
+      },
+    )
 
-    ContextMenu.create(this, this.element, ".tab--inventory button.sort", {
-      hookName: "InventorySort",
-      jQuery: false,
-      fixed: true,
-      eventName: "click",
-    })
+    const InventorySort = new ContextMenu(
+      this.element,
+      ".tab--inventory button.sort",
+      {
+        hookName: "InventorySort",
+        jQuery: false,
+        fixed: true,
+        eventName: "click",
+      },
+    )
   }
 
   static INVENTORY_SORT_MODES = {
@@ -555,7 +567,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     super._onRender(context, options)
 
     if (options.parts.includes("inventory")) {
-      new SearchFilter({
+      new foundry.applications.ux.SearchFilter({
         inputSelector: "search input",
         contentSelector: ".item-grid--inventory",
         callback: (...args) => this._onFilterInventory(...args),
@@ -816,24 +828,79 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   }
 
   static async rollAbilityScore(_event, element) {
-    const { diceCount, diceSize, modifier, reversedSuccess, rollMode } =
-      await RollDialog.createDialog()
+    const title = game.i18n.format(
+      "BAGS.Actors.Character.SheetRolls.AbilityScore.DialogTitle",
+      {
+        name: game.i18n.localize(
+          this.document.system.schema.fields.base.fields.abilityScores.fields[
+            element.dataset.abilityScore
+          ].label,
+        ),
+      },
+    )
+
+    const { formula, modifier, reversedSuccess, rollMode } =
+      await this.#stampRollDialog(
+        title,
+        this.document.system.abilityScores[element.dataset.abilityScore].value,
+      )
 
     const roll = await this.document.rollAbilityScore(
       element.dataset.abilityScore,
+      formula,
       modifier,
-      `${diceCount}d${diceSize}`,
       reversedSuccess,
       rollMode,
     )
 
-    console.info(roll.toMessage())
-
-    // roll.toMessage()
+    roll.toMessage()
   }
 
-  static rollSavingThrow(_event, element) {
-    this.document.rollSavingThrow(element.dataset.savingThrow)
+  static async rollSavingThrow(_event, element) {
+    const { savingThrow } = element.dataset
+
+    const saveLabel = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+      CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
+    )?.savingThrows[savingThrow].label
+
+    const title = game.i18n.format(
+      "BAGS.Actors.Character.SheetRolls.SavingThrow.DialogTitle",
+      {
+        name: game.i18n.localize(saveLabel),
+      },
+    )
+
+    const { formula, modifier, reversedSuccess, rollMode } =
+      await this.#stampRollDialog(
+        title,
+        this.document.system.savingThrows[element.dataset.savingThrow],
+      )
+
+    const roll = await this.document.rollSavingThrow(
+      element.dataset.savingThrow,
+      formula,
+      modifier,
+      reversedSuccess,
+      rollMode,
+    )
+
+    roll.toMessage()
+  }
+
+  #stampRollDialog(
+    title,
+    target,
+    formula = "1d20",
+    modifier = 0,
+    hasMutableTarget = false,
+  ) {
+    return RollDialog.createDialog({
+      formula,
+      modifier,
+      target,
+      hasMutableTarget,
+      title,
+    })
   }
 
   static #useSubApp(subApp) {

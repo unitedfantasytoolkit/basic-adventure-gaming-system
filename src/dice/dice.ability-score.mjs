@@ -1,18 +1,18 @@
-import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
-
-/**
- * A specialized Roll subclass designed for OSR ability score checks
- * Evaluates success based on rolling below (or above) a target ability score
- */
 export default class AbilityScoreRoll extends Roll {
   /**
-   * @param {string} formula    The formula to roll, typically "1d20" or similar
-   * @param {object} data       The data object against which to parse attributes within the formula
-   * @param {object} options    Additional options that modify the roll
-   * @param {number} options.target       The target ability score value to roll against
-   * @param {boolean} options.rollBelow   Whether success is determined by rolling below the target (default: true)
-   * @param {string} options.rollMode     The roll mode (roll, gmroll, blindroll, selfroll)
-   * @param {string} options.abilityName  The name of the ability being checked
+   * A specialized Roll subclass designed for OSR ability score checks
+   * Evaluates success based on rolling below (or above) a target ability score
+   * @param {string} formula - The formula to roll, typically "1d20" or similar
+   * @param {object} data - The data object against which to parse
+   * attributes within the formula
+   * @param {object} options - Additional options that modify the roll
+   * @param {number} options.target - The target ability score value to
+   * roll against
+   * @param {boolean} options.rollBelow - Whether success is determined by
+   * rolling below the target (default: true)
+   * @param {string} options.rollMode - The roll mode (roll, gmroll,
+   * blindroll, selfroll)
+   * @param {string} options.abilityName - The name of the ability being checked
    */
   constructor(formula, data = {}, options = {}) {
     super(formula, data, options)
@@ -29,7 +29,8 @@ export default class AbilityScoreRoll extends Roll {
   }
 
   /**
-   * Determine if the roll succeeded based on the target value and rollBelow setting
+   * Determine if the roll succeeded based on the target value and rollBelow
+   * setting
    * @returns {boolean} Whether the roll was successful
    */
   get isSuccess() {
@@ -81,12 +82,12 @@ export default class AbilityScoreRoll extends Roll {
     messageData.rolls = [this]
 
     // Either create the message or just return the chat data
-    const cls = getDocumentClass("ChatMessage")
-    const msg = new cls(messageData)
+    const Cls = getDocumentClass("ChatMessage")
+    const msg = new Cls(messageData)
     msg.applyRollMode(rollMode)
 
     // Either create or return the data
-    if (create) return cls.create(msg)
+    if (create) return Cls.create(msg)
     return msg.toObject()
   }
 }

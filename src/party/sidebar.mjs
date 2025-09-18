@@ -424,7 +424,7 @@ export default class PartySidebar extends HandlebarsApplicationMixin(
 
     // Search
     if (options.parts.includes("header")) {
-      new SearchFilter({
+      new foundry.applications.ux.SearchFilter({
         inputSelector: "search input",
         contentSelector: ".directory-list",
         callback: this._onSearchFilter.bind(this),

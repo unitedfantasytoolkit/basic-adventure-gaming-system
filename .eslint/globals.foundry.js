@@ -37,7 +37,6 @@ export default {
   fromUuid: "readonly",
   fromUuidSync: "readonly",
   PoolTerm: "readonly",
-  ContextMenu: "readonly",
   ActiveEffect: "readonly",
-  SearchFilder: "readonly",
+  getDocumentClass: "readonly",
 }

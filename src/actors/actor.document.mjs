@@ -157,37 +157,60 @@ export default class BAGSActor extends Actor {
 
   async rollSavingThrow(
     saveType,
-    modifier,
     formula = "1d20",
+    modifier = 0,
     rollBelow = false,
     rollMode = CONFIG.Dice.rollModes,
   ) {
-    let adjustedFormula = formula
-    if (modifier) adjustedFormula = `${adjustedFormula} + ${modifier}`
-
-    const roll = new SavingThrowRoll(adjustedFormula, this, {
-      target: this.system.savingThrows[saveType],
+    return this.#rollUsingSpecialtyDice(
+      SavingThrowRoll,
+      formula,
+      modifier,
+      this.system.savingThrows[saveType],
+      "saveType",
       saveType,
       rollBelow,
       rollMode,
-    })
-
-    return roll.roll()
+    )
   }
 
   async rollAbilityScore(
     abilityName,
-    modifier,
     formula = "1d20",
+    modifier = 0,
     rollBelow = false,
     rollMode = CONFIG.Dice.rollModes,
   ) {
-    let adjustedFormula = formula
-    if (modifier) adjustedFormula = `${adjustedFormula} + ${modifier}`
-
-    const roll = new AbilityScoreRoll(adjustedFormula, this, {
-      target: this.system.abilityScores[abilityName],
+    return this.#rollUsingSpecialtyDice(
+      AbilityScoreRoll,
+      formula,
+      modifier,
+      this.system.abilityScores[abilityName],
+      "abilityName",
       abilityName,
+      rollBelow,
+      rollMode,
+    )
+  }
+
+  #rollUsingSpecialtyDice(
+    DiceClass,
+    formula,
+    modifier,
+    target,
+    key,
+    keyValue,
+    rollBelow,
+    rollMode,
+  ) {
+    let modifierString = ""
+
+    if (modifier > 0) modifierString = `+${modifier}`
+    else if (modifier < 0) modifierString = `${modifier}`
+
+    const roll = new DiceClass(`${formula}${modifierString}`, this, {
+      target,
+      [key]: keyValue,
       rollBelow,
       rollMode,
     })

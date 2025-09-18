@@ -424,7 +424,15 @@
           "ClassAbilities": "{className} Abilities",
           "OtherAbilities": "Other Abilities"
         },
-        "ExplorationSkills": "Exploration Skills"
+        "ExplorationSkills": "Exploration Skills",
+        "SheetRolls": {
+          "AbilityScore": {
+            "DialogTitle": "Rolling against {name}"
+          },
+          "SavingThrow": {
+            "DialogTitle": "Rolling Saving Throw vs. {name}"
+          }
+        }
       },
       "Monster": {
         "Editor": {
@@ -801,6 +809,19 @@
           "label": "XP",
           "long": "Experience"
         }
+      }
+    },
+    "Dialogs": {
+      "RollConfig": {
+        "Title": "Roll Dice",
+        "Formula": "Formula",
+        "Target": "Target",
+        "Modifier": "Modifier",
+        "ModifierHint": "",
+        "ReversedSuccess": "Reversed success",
+        "ReversedSuccessHint": "This roll is successful when the result is higher than the target.",
+        "RollMode": "Roll mode",
+        "Roll": "Roll"
       }
     },
     "Settings": {
