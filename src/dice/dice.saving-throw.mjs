@@ -1,11 +1,9 @@
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 
-/**
- * A specialized Roll subclass designed for OSR saving throws
- * Evaluates success based on rolling above (or below) a target save value
- */
 export default class SavingThrowRoll extends Roll {
   /**
+   * A specialized Roll subclass designed for OSR saving throws
+   * Evaluates success based on rolling above (or below) a target save value
    * @param {string} formula - The formula to roll, typically "1d20" or similar
    * @param {object} data - The data object against which to parse attributes
    * within the formula

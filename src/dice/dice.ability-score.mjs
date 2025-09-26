@@ -1,3 +1,5 @@
+import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
+
 export default class AbilityScoreRoll extends Roll {
   /**
    * A specialized Roll subclass designed for OSR ability score checks
@@ -41,7 +43,7 @@ export default class AbilityScoreRoll extends Roll {
   }
 
   /** @override */
-  // static CHAT_TEMPLATE = `${SYSTEM_TEMPLATE_PATH}/chat-cards/ability-score-roll.hbs`
+  static CHAT_TEMPLATE = `${SYSTEM_TEMPLATE_PATH}/chat-cards/ability-score-roll.hbs`
 
   /** @override */
   async _prepareChatRenderContext(options = {}) {

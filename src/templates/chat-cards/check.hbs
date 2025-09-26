@@ -5,14 +5,17 @@
   data-message-id="{{message._id}}"
 >
   {{> chatActionHeader}}
-  {{#with (lookup message.rolls 0) }}
-  <div class="check-result">
-  {{log this}}
 
+  <div class="action">
+    {{{message.content}}}
   </div>
-  {{/with}}
-  {{log message.content}}
-  {{{message.content}}}
+
+  {{!-- {{#with (lookup message.rolls 0) }} --}}
+  {{!-- <div class="check-result"> --}}
+  {{!--   {{log this}} --}}
+  {{!-- </div> --}}
+  {{!-- {{/with}} --}}
+
 
   {{!-- <div class="check-result">
   {{!--

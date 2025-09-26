@@ -135,13 +135,6 @@ export default class BAGSChatMessage extends ChatMessage {
    */
   async #renderRollContent(messageData) {
     const data = messageData.message
-    const renderRolls = async (isPrivate) => {
-      let html = ""
-      for (const r of this.rolls) {
-        html += await r.render({ isPrivate })
-      }
-      return html
-    }
     // Suppress the "to:" whisper flavor for private rolls
     if (this.blind || this.whisper.length) messageData.isWhisper = false
     // Display standard Roll HTML content
@@ -157,7 +150,7 @@ export default class BAGSChatMessage extends ChatMessage {
       data.flavor = game.i18n.format("CHAT.PrivateRollContent", {
         user: foundry.utils.escapeHTML(name),
       })
-      data.content = await renderRolls(true)
+      data.content = await this.#renderRollHTML(true)
       messageData.alias = name
     }
   }
