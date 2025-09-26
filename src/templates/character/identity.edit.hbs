@@ -1,0 +1,11 @@
+{{#> sheetTab}}
+<h2>{{localize "BAGS.Actors.Character.Editor.Tabs.Identity"}}</h2>
+<div class="scrollable">
+  <div class="standard-form">
+    {{formGroup systemFields.biographicalDetails.fields.identityPrefix value=document.system.bigraphicalDetails.identityPrefix hint="" localize="true"}}
+    {{formGroup systemFields.biographicalDetails.fields.identitySuffix value=document.system.bigraphicalDetails.identitySuffix hint="" localize="true"}}
+    {{formGroup systemFields.biographicalDetails.fields.title value=document.system.bigraphicalDetails.title hint="" localize="true"}}
+  </div>
+</div>
+{{/sheetTab}}
+

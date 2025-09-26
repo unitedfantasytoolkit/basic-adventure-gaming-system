@@ -1,0 +1,18 @@
+{{#> sheetTab}}
+<h2>{{localize "BAGS.Actors.Character.Editor.Tabs.Stats"}}</h2>
+<div class="scrollable">
+  <div class="standard-form">
+    {{formGroup fields.name value=document.name hint="" localize=true}}
+    {{formGroup systemFields.biographicalDetails.fields.alignment value=document.system.bigraphicalDetails.alignment hint="" localize="true"}}
+    {{formGroup systemFields.base.fields.speed value=document.system.base.speed hint="" localize="true"}}
+
+    <h3>Hit Points</h3>
+    <div class="roll-fields roll-fields--width-equal">
+      {{formGroup systemFields.hp.fields.value label="BAGS.Actors.Common.Fields.HP.Value.Short" value=document.system.hp.value hint="" localize=true}}
+      {{formGroup systemFields.hp.fields.max label="BAGS.Actors.Common.Fields.HP.Max.Short"  value=document.system.hp.max hint="" localize=true}}
+      {{formGroup systemFields.hp.fields.temporary label="BAGS.Actors.Common.Fields.HP.Temporary.Short"  value=document.system.hp.temporary hint="" localize=true}}
+    </div>
+  </div>
+</div>
+{{/sheetTab}}
+

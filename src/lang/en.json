@@ -416,6 +416,12 @@
             "RemainingGold": "Gold Remaining"
           }
         },
+        "Editor": {
+          "Tabs": {
+            "Stats": "Character Stats",
+            "ClassAndAbilities": "Classes and Abilities"
+          }
+        },
         "Equipment": {
           "Title": "Equipment",
           "NoWeaponActions": "None of your weapons have actions."
@@ -508,8 +514,10 @@
           }
         }
       },
-
       "Common": {
+        "Editor": {
+          "Title": "Edit Actor: {name}"
+        },
         "Tabs": {
           "Details": "Details",
           "Combat": "Combat",
@@ -603,14 +611,17 @@
           "HP": {
             "Value": {
               "Label": "Current HP",
+              "Short": "HP",
               "Hint": "The character's current hit points"
             },
             "Max": {
               "Label": "Maximum HP",
+              "Short": "Max",
               "Hint": "The character's maximum hit points when fully healed"
             },
             "Temporary": {
               "Label": "Temporary HP",
+              "Short": "Temp.",
               "Hint": "Additional hit points that are lost before regular hit points"
             }
           },

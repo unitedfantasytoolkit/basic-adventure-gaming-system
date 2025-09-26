@@ -310,8 +310,12 @@
 
 .roll-fields {
   display: grid;
-  grid-template-columns: 1fr 10ch 10ch;
+  grid-template-columns: var(--roll-fields-columns, 1fr 10ch 10ch);
   gap: 0.5em;
+
+  &--width-equal {
+    --roll-fields-columns: 1fr 1fr 1fr;
+  }
 
   .form-group {
     flex-direction: column;

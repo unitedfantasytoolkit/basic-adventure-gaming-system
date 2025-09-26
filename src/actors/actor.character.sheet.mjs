@@ -7,6 +7,7 @@ import BAGSActiveEffectEditor from "../applications/active-effects.editor.mjs"
 import SpellManager from "../applications/spell-manager.mjs"
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import effectListToTooltip from "../utils/effect-list-to-tooltip.mjs"
+import BAGSCharacterEditor from "./actor.character.editor.mjs"
 
 export default class BAGSCharacterSheet extends BAGSActorSheet {
   // === App config ============================================================
@@ -54,7 +55,7 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
     actionEditor: ActionEditor,
     activeEffectEditor: BAGSActiveEffectEditor,
     spellManager: SpellManager,
-    // actorEditor: BAGSCharacterEditor,
+    actorEditor: BAGSCharacterEditor,
   }
 
   // --- Tabs ------------------------------------------------------------------

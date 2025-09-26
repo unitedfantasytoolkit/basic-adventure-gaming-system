@@ -828,22 +828,23 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   }
 
   static async rollAbilityScore(_event, element) {
+    const { abilityScore } = element.dataset
+
     const title = game.i18n.format(
       "BAGS.Actors.Character.SheetRolls.AbilityScore.DialogTitle",
       {
         name: game.i18n.localize(
           this.document.system.schema.fields.base.fields.abilityScores.fields[
-            element.dataset.abilityScore
+            abilityScore
           ].label,
         ),
       },
     )
 
+    const target = this.document.system.abilityScores[abilityScore].value
+
     const { formula, modifier, reversedSuccess, rollMode } =
-      await this.#stampRollDialog(
-        title,
-        this.document.system.abilityScores[element.dataset.abilityScore].value,
-      )
+      await this.#stampRollDialog(title, target)
 
     const roll = await this.document.rollAbilityScore(
       element.dataset.abilityScore,
@@ -870,11 +871,11 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
       },
     )
 
+    const target =
+      this.document.system.savingThrows[element.dataset.savingThrow]
+
     const { formula, modifier, reversedSuccess, rollMode } =
-      await this.#stampRollDialog(
-        title,
-        this.document.system.savingThrows[element.dataset.savingThrow],
-      )
+      await this.#stampRollDialog(title, target)
 
     const roll = await this.document.rollSavingThrow(
       element.dataset.savingThrow,

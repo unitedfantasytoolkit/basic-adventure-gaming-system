@@ -1,0 +1,11 @@
+{{#> sheetTab}}
+<h2>{{localize "BAGS.Actors.Character.Editor.Tabs.Stats"}}</h2>
+<div class="scrollable">
+  <div class="standard-form">
+    {{#each systemFields.base.fields.abilityScores.fields as |abilityScore|}}
+      {{formGroup abilityScore value=(lookup ../document.system.base.abilityScores abilityScore.name) localize=true }}
+    {{/each}}
+  </div>
+</div>
+{{/sheetTab}}
+
