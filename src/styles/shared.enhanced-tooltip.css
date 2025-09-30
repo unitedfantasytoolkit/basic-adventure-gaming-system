@@ -3,10 +3,15 @@
 
   overflow: clip;
   padding: 0;
+  max-width: var(--enriched-tooltip-width, 35ch);
 
-  main,
-  header:not(:has(img)) {
+  header:not(:has(img)),
+  footer {
     padding: 0.5rem 1rem;
+  }
+
+  main + footer {
+    padding-top: 0;
   }
 
   header {
@@ -42,10 +47,56 @@
     margin: 0 10%;
   }
 
+  .item-stats {
+    display: flex;
+    margin: 0.5em auto;
+    width: fit-content;
+    align-items: baseline;
+    line-height: 1;
+    color: var(--color-text-subtle);
+
+    dt {
+      margin-right: 0.5em;
+      color: inherit;
+    }
+
+    dd {
+      text-align: left;
+      margin: 0 1em 0 0;
+
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+
+  main {
+    &:empty {
+      display: none;
+    }
+
+    padding: 0 1em 0.5em;
+    margin-top: 0;
+    font-style: italic;
+    line-height: 1.4;
+    text-align: center;
+
+    p {
+      margin-top: 0;
+    }
+
+    :last-child {
+      margin-bottom: 0;
+    }
+  }
+
   footer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
+    gap: 1em;
+    line-height: 24px;
+    color: var(--color-text-subtle);
 
     .keybind {
       padding: 0 4px;

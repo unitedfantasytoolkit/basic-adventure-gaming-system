@@ -21,22 +21,11 @@ class ItemTile extends BaseElement {
 
   async #buildTooltipTemplate(level) {
     const template = document.createElement("template")
-    const tooltip = await this.tooltip
-    const banner = this.document?.system?.banner
-      ? html`<img
-          src="${this.document.system.banner}"
-          class="banner"
-          alt=""
-        />`
-      : ""
 
-    template.innerHTML = html`<div>
-      <header>
-        ${banner}
-        <h1>${this.document.name}</h1>
-      </header>
+    template.innerHTML = html`<div class="tooltip__container">
+      ${this.tooltipHeader}
       <hr />
-      <main>${tooltip}</main>
+      ${this.#tooltipLogistics} ${this.tooltipContent} ${this.tooltipFooter}
     </div>`
     return template.content.firstElementChild
   }
@@ -51,11 +40,48 @@ class ItemTile extends BaseElement {
   get uuid() {
     return this.getAttribute("uuid")
   }
+
   get src() {
     return this.getAttribute("src")
   }
-  get tooltip() {
-    return this.document?.system?.tooltip || ""
+
+  get tooltipHeader() {
+    const banner = this.document?.system?.banner
+      ? html`<img
+          src="${this.document.system.banner}"
+          class="banner"
+          alt=""
+        />`
+      : ""
+    return `
+      <header>
+        ${banner}
+        <h1>${this.document.name}</h1>
+      </header>
+    `
+  }
+
+  get tooltipContent() {
+    return this.document?.tooltipHTML.body
+      ? `<main>${this.document.tooltipHTML.body}</main>`
+      : ""
+  }
+
+  /**
+   * @todo What else goes in the footer?
+   */
+  get tooltipFooter() {
+    if (!this.document?.tooltipHTML.controls) return ""
+
+    return `<footer>${this.#tooltipControls}</footer>`
+  }
+
+  get #tooltipControls() {
+    return this.document?.tooltipHTML.controls || ""
+  }
+
+  get #tooltipLogistics() {
+    return this.document?.tooltipHTML.logistics || ""
   }
 
   get template() {

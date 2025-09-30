@@ -22,6 +22,18 @@ export default class BAGSItem extends Item {
     return BAGSItem.PHYSICAL_TYPES.includes(this.type)
   }
 
+  /**
+   * HTML strings representing parts of the item's tooltip
+   * @returns {{[key: string]: string}} The strings used to build the tooltip.
+   */
+  get tooltipHTML() {
+    return {
+      controls: this.system._tooltipControlsHTML,
+      logistics: this.system._tooltipLogisticsHTML,
+      body: this.system._tooltipContentHTML,
+    }
+  }
+
   // === Action management =====================================================
 
   /**

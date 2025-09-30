@@ -1,17 +1,17 @@
 <ul class="item-stats">
   <li>
-    <i class="fa fa-sack"></i>
+    <i class="fa fa-hashtag"></i>
     {{item.system.quantity}}
   </li>
 
   <li>
     <i class="fa fa-coins"></i>
-    {{ifThen item.system.cost item.system.cost "&ndash;"}}
+    {{ifThen item.system.cost item.system.cost "-"}}
   </li>
 
   <li>
     <i class="fa fa-weight-hanging"></i>
-    {{ifThen item.system.weight item.system.weight "&ndash;"}}
+    {{ifThen item.system.weight item.system.weight "-"}}
   </li>
 
   {{#if item.system.armorClass}}

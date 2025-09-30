@@ -35,14 +35,32 @@ class BaseItemDataModel extends foundry.abstract.TypeDataModel {
     return this.areActionsAvailableWhenUnequipped || this.isEquipped
   }
 
-  get tooltip() {
+  // eslint-disable-next-line
+  get _tooltipControlsHTML() {
     return `
-  ${this.flavorText || this.description || ""}
-  <footer>
-  <span><span class="keybind">Left-Click</span> View</span>
-  <span><span class="keybind">Right-Click</span> Menu</span>
-  </footer>
+      <span><i class="iconoir-mouse-button-left" aria-label="Left click"></i> View</span>
+      <span><i class="iconoir-pc-mouse" aria-label="Middle click"></i> Pin tooltip</span>
+      <span><i class="iconoir-mouse-button-right" aria-label="Right Click"></i> Menu</span>
+    `
+  }
+
+  get _tooltipLogisticsHTML() {
+    return `
+  <dl class="item-stats">
+    <dt><i class="fas fa-hashtag" aria-label="Quantity"></i></dt>
+    <dd>${this.quantity}</dd>
+
+    <dt><i class="fa fa-coins"></i></dt>
+    <dd>${this.cost > 0 ? this.cost : "-"}</dd>
+
+    <dt><i class="fa fa-weight-hanging"></i></dt>
+    <dd>${this.weight > 0 ? this.weight : "-"}</dd>
+  </dl>
   `
+  }
+
+  get _tooltipContentHTML() {
+    return this.flavorText || this.description || ""
   }
 }
 
