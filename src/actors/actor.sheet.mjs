@@ -298,6 +298,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     const InventoryContext = new ContextMenu(
       this.element,
       ".tab--inventory uft-item-tile",
+      this._getInventoryContextOptions(),
       {
         hookName: "InventoryContext",
         fixed: true,
@@ -308,6 +309,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     const InventoryFilter = new ContextMenu(
       this.element,
       ".tab--inventory button.filter",
+      this._getInventoryFilterOptions(),
       {
         hookName: "InventoryFilter",
         jQuery: false,
@@ -319,6 +321,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     const InventorySort = new ContextMenu(
       this.element,
       ".tab--inventory button.sort",
+      this._getInventorySortOptions(),
       {
         hookName: "InventorySort",
         jQuery: false,
