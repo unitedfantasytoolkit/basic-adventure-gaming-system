@@ -171,8 +171,10 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
 
   async _prepareFormattedFields() {
     return {
-      flavorText: await TextEditor.enrichHTML(this.document.system.flavorText),
-      description: await TextEditor.enrichHTML(
+      flavorText: await foundry.applications.ux.TextEditor.enrichHTML(
+        this.document.system.flavorText,
+      ),
+      description: await foundry.applications.ux.TextEditor.enrichHTML(
         this.document.system.description,
       ),
     }

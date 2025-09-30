@@ -109,9 +109,9 @@ class ItemTile extends BaseElement {
 
   async #onMouseOver(e) {
     e.stopPropagation()
-    const content = await this.#buildTooltipTemplate()
+    const html = await this.#buildTooltipTemplate()
     game.tooltip.activate(this, {
-      content,
+      html,
       cssClass: "tooltip--enriched-tooltip",
     })
   }

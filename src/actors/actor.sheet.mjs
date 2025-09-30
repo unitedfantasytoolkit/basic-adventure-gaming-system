@@ -937,7 +937,9 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
   _matchSearchItems(query, entryIds) {
     this.actor.items.contents.forEach((entry) => {
-      if (query.test(SearchFilter.cleanQuery(entry.name))) {
+      if (
+        query.test(foundry.applications.ux.SearchFilter.cleanQuery(entry.name))
+      ) {
         entryIds.add(entry.id)
       }
     })

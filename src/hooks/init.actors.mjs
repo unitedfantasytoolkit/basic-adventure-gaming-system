@@ -21,15 +21,26 @@ Hooks.once("init", async () => {
   }
 
   // Register sheet application classes
-  Actors.unregisterSheet("core", ActorSheet)
-  Actors.registerSheet(SYSTEM_NAME, BAGSCharacterSheet, {
-    types: ["character"],
-    makeDefault: true,
-    label: "BAGS.SheetClassCharacter",
-  })
-  Actors.registerSheet(game.system.id, BAGSMonsterSheet, {
-    types: ["monster"],
-    makeDefault: true,
-    label: "BAGS.SheetClassMonster",
-  })
+  foundry.documents.collections.Actors.unregisterSheet(
+    "core",
+    foundry.appv1.sheets.ActorSheet,
+  )
+  foundry.documents.collections.Actors.registerSheet(
+    SYSTEM_NAME,
+    BAGSCharacterSheet,
+    {
+      types: ["character"],
+      makeDefault: true,
+      label: "BAGS.SheetClassCharacter",
+    },
+  )
+  foundry.documents.collections.Actors.registerSheet(
+    game.system.id,
+    BAGSMonsterSheet,
+    {
+      types: ["monster"],
+      makeDefault: true,
+      label: "BAGS.SheetClassMonster",
+    },
+  )
 })

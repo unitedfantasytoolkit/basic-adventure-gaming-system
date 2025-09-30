@@ -33,38 +33,65 @@ Hooks.once("init", async () => {
   }
 
   // Register data models and sheets for items
-  Items.unregisterSheet("core", ItemSheet)
+  foundry.documents.collections.Items.unregisterSheet(
+    "core",
+    foundry.appv1.sheets.ItemSheet,
+  )
 
   // --- Physical items ----------------------------------------------------
-  Items.registerSheet(SYSTEM_NAME, BAGSMiscellaneousItemSheet, {
-    types: ["item"],
-    makeDefault: true,
-    label: "BAGS.SheetItem",
-  })
-  Items.registerSheet(SYSTEM_NAME, BAGSWeaponSheet, {
-    types: ["weapon"],
-    makeDefault: true,
-    label: "BAGS.SheetWeapon",
-  })
-  Items.registerSheet(SYSTEM_NAME, BAGSArmorSheet, {
-    types: ["armor"],
-    makeDefault: true,
-    label: "BAGS.SheetSpell",
-  })
+  foundry.documents.collections.Items.registerSheet(
+    SYSTEM_NAME,
+    BAGSMiscellaneousItemSheet,
+    {
+      types: ["item"],
+      makeDefault: true,
+      label: "BAGS.SheetItem",
+    },
+  )
+  foundry.documents.collections.Items.registerSheet(
+    SYSTEM_NAME,
+    BAGSWeaponSheet,
+    {
+      types: ["weapon"],
+      makeDefault: true,
+      label: "BAGS.SheetWeapon",
+    },
+  )
+  foundry.documents.collections.Items.registerSheet(
+    SYSTEM_NAME,
+    BAGSArmorSheet,
+    {
+      types: ["armor"],
+      makeDefault: true,
+      label: "BAGS.SheetSpell",
+    },
+  )
   // --- Non-physical items ----------------------------------------------------
-  Items.registerSheet(SYSTEM_NAME, BAGSCharacterClassSheet, {
-    types: ["class"],
-    makeDefault: true,
-    label: "BAGS.SheetClassItem",
-  })
-  Items.registerSheet(SYSTEM_NAME, BAGSSpellSheet, {
-    types: ["spell"],
-    makeDefault: true,
-    label: "BAGS.SheetSpell",
-  })
-  Items.registerSheet(SYSTEM_NAME, BAGSAbilitySheet, {
-    types: ["ability"],
-    makeDefault: true,
-    label: "BAGS.SheetAbility",
-  })
+  foundry.documents.collections.Items.registerSheet(
+    SYSTEM_NAME,
+    BAGSCharacterClassSheet,
+    {
+      types: ["class"],
+      makeDefault: true,
+      label: "BAGS.SheetClassItem",
+    },
+  )
+  foundry.documents.collections.Items.registerSheet(
+    SYSTEM_NAME,
+    BAGSSpellSheet,
+    {
+      types: ["spell"],
+      makeDefault: true,
+      label: "BAGS.SheetSpell",
+    },
+  )
+  foundry.documents.collections.Items.registerSheet(
+    SYSTEM_NAME,
+    BAGSAbilitySheet,
+    {
+      types: ["ability"],
+      makeDefault: true,
+      label: "BAGS.SheetAbility",
+    },
+  )
 })

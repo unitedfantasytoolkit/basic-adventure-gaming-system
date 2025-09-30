@@ -66,9 +66,12 @@ export default class BAGSChatMessage extends ChatMessage {
 
     // Determine some metadata
     const data = this.toObject(false)
-    data.content = await TextEditor.enrichHTML(this.content, {
-      rollData: this.getRollData(),
-    })
+    data.content = await foundry.applications.ux.TextEditor.enrichHTML(
+      this.content,
+      {
+        rollData: this.getRollData(),
+      },
+    )
     data.rolls = data.rolls.map((r) => {
       if (typeof r === "string") return JSON.parse(r)
       return r
@@ -117,7 +120,10 @@ export default class BAGSChatMessage extends ChatMessage {
     }
 
     // Render the chat message
-    let html = await renderTemplate(this.template, messageData)
+    let html = await foundry.applications.handlebars.renderTemplate(
+      this.template,
+      messageData,
+    )
     html = foundry.utils.parseHTML(html)
 
     // Call hooks
