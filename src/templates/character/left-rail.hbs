@@ -72,7 +72,7 @@
           {{#with document.system.speed}}
             {{exploration}} ({{encounter}})
           {{/with}}
-        </dd>  
+        </dd>
       {{/if}}
     </dl>
   </div>
@@ -86,10 +86,10 @@
     </header>
 
     <dl>
-      <dt>{{localize "BAGS.Actors.Common.Combat.Melee"}}</dt>
+      <dt class="rollable" data-action="roll-attack" data-attack-type="melee">{{localize "BAGS.Actors.Common.Combat.Melee"}}</dt>
       <dd>{{signNumber document.system.meleeAttackBonus forceSign=true}}</dd>
       <dd>{{signNumber document.system.meleeDamageBonus forceSign=true}}</dd>
-      <dt>{{localize "BAGS.Actors.Common.Combat.Missile"}}</dt>
+      <dt class="rollable" data-action="roll-attack" data-attack-type="missile">{{localize "BAGS.Actors.Common.Combat.Missile"}}</dt>
       <dd>{{signNumber document.system.missileAttackBonus forceSign=true}}</dd>
       <dd>{{signNumber document.system.missileDamageBonus forceSign=true}}</dd>
     </dl>
@@ -102,8 +102,8 @@
     <h3 class="decorated">Saving Throws</h3>
     <dl>
       {{#each savingThrowLocaleStrings as |save key|}}
-        <dt data-tooltip="{{lookup ../savingThrowTooltips key}}">{{localize save.short}}</dt>
-        <dd class="rollable" data-action="roll-saving-throw" data-saving-throw="{{key}}">{{lookup ../document.system.savingThrows key}}</dd>
+        <dt data-tooltip="{{lookup ../savingThrowTooltips key}}" class="rollable" data-action="roll-saving-throw" data-saving-throw="{{key}}">{{localize save.short}}</dt>
+        <dd>{{lookup ../document.system.savingThrows key}}</dd>
       {{/each}}
       {{#if (eq document.type "character")}}
         <dt>Bonus vs. Magic</dt>
@@ -114,7 +114,7 @@
 
       {{#if (and (eq document.type "monster") document.system.magicResistance) }}
         <dt>Magic Resistance</dt>
-        <dd>75%</dd>      
+        <dd>75%</dd>
       {{/if}}
     </dl>
   </div>
@@ -292,7 +292,7 @@
           {{else}}
             <p class="empty">{{localize "BAGS.Actors.Character.Equipment.NoWeaponActions"}}</p>
           {{/each}}
-      
+
         </div>
       </div>
     </div>

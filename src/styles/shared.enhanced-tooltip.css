@@ -1,4 +1,5 @@
-.tooltip--enriched-tooltip {
+.tooltip--enriched-tooltip,
+#tooltip:has(.enhanced-tooltip) {
   --border-color: #b78846aa;
 
   overflow: clip;
@@ -92,11 +93,16 @@
 
   footer {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-around;
     gap: 1em;
-    line-height: 24px;
     color: var(--color-text-subtle);
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 0.25em;
+    }
 
     .keybind {
       padding: 0 4px;
@@ -106,6 +112,22 @@
       border-radius: 5px;
       box-shadow: 1px 1px #444;
       text-align: center;
+    }
+  }
+
+  .effect-modification {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5em;
+    padding: 0.5em;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+
+    img {
+      width: 1rem;
+      height: 1rem;
     }
   }
 }

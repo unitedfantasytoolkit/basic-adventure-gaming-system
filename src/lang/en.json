@@ -918,27 +918,32 @@
           "death": {
             "Short": "Death",
             "Long": "Death/Poison",
-            "Initial": "D"
+            "Initial": "D",
+            "Hint": "Resist poison, venom, and death magic."
           },
           "wands": {
             "Short": "Wands",
             "Long": "Wands",
-            "Initial": "W"
+            "Initial": "W",
+            "Hint": "Resist aimed magical effects"
           },
           "paralysis": {
             "Short": "Paralysis",
             "Long": "Paralysis/Petrification",
-            "Initial": "P"
+            "Initial": "P",
+            "Hint": "Resist attempts to crush you, hold you in place, or turn you to stone."
           },
           "breath": {
             "Short": "Breath",
             "Long": "Breath Weapons",
-            "Initial": "B"
+            "Initial": "B",
+            "Hint": "Avoid fireballs, duck out of the way of dragon's breath."
           },
           "spell": {
             "Short": "Spells",
             "Long": "Spells/Rods/Staves",
-            "Initial": "S"
+            "Initial": "S",
+            "Hint": "Resist general spell effects."
           }
         },
         "Exploration": {

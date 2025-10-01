@@ -174,6 +174,8 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
               this.document.appliedEffectsByAffectedKey.get(
                 `system.modifiers.savingThrows.${key}`,
               ),
+              savingThrowSettings.savingThrows[key].label,
+              savingThrowSettings.savingThrows[key].hint,
             ),
           }),
           {},
