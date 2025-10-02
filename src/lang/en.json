@@ -744,6 +744,7 @@
         "XP": "Exp.",
         "HD": "Hit Dice",
         "THAC0": "THAC0",
+        "AttackBonus": "Attack Bonus",
         "ConMod": "Con. Mod?",
         "Saves": "Saving Throws",
         "Add": "Add Level",

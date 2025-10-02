@@ -1,61 +1,48 @@
-<section
-  class="tab region-{{tab.id}} {{tab.cssClass}}"
-  data-tab="{{tab.id}}"
-  data-group="{{tab.group}}"
->
+{{#> sheetTab}}
   <header class="tab__header">
     <h2>{{localize "BAGS.CharacterClass.Tabs.Information"}}</h2>
   </header>
 
-  <div class="control control--details">
-    {{formGroup item.system.schema.fields.hitDieSize}}
-    <div class="form-group">
-      <label>{{localize "BAGS.CharacterClass.FIELDS.gearTable.label"}}</label>
-      {{#unless item.system.gearTable}} {{formInput
-      item.system.schema.fields.gearTable}} {{else}}
-      <div class="form-fields">
-        {{{formattedSystem.gearTable}}}
-        <button
-          type="button"
-          class="delete-button remove-gear-table"
-          data-tooltip="Remove gear table"
-          aria-label="Remove gear table"
-        >
-          <i class="fas fa-x"></i>
-        </button>
+  <div class="scrollable">
+    <div class="standard-form">
+
+      {{formGroup systemFields.hitDieSize value=document.system.hitDieSize}}
+
+      {{formGroup systemFields.weapons value=document.system.weapons}}
+      {{formGroup systemFields.armor value=document.system.armor}}
+      {{formGroup systemFields.languages value=document.system.languages}}
+
+      {{!--
+        This looks a little weird, and is due an explanation:
+
+        If there isn't a roll table assigned to this class, we'll render
+        Foundry's built-in input for roll tables.
+
+        If there *is* a roll table assigned to this class, we render a link to
+        the roll table (so the user can edit the table), as well as a button
+        that allows the user to clear the table field.
+      --}}
+      <div class="form-group">
+        <label>{{localize "BAGS.CharacterClass.FIELDS.gearTable.label"}}</label>
+        {{#unless document.system.gearTable}}
+          {{formInput systemFields.gearTable}}
+        {{else}}
+          <div class="form-fields">
+            {{{formattedSystem.gearTable}}}
+            <button
+              type="button"
+              class="inline-control icon fas fa-x"
+              data-action="clear-gear-table"
+              data-tooltip="Remove gear table"
+              aria-label="Remove gear table"
+            ></button>
+          </div>
+        {{/unless}}
+        <p class="hint">{{localize
+            "BAGS.CharacterClass.FIELDS.gearTable.hint"
+          }}</p>
       </div>
-      {{/unless}}
+
     </div>
-    <p class="hint">{{localize "BAGS.CharacterClass.FIELDS.gearTable.hint"}}</p>
   </div>
-
-  {{formGroup systemFields.weapons}} {{formGroup systemFields.armor}}
-  {{formGroup systemFields.languages}}
-
-  <div class="control control--requisite-grid">
-    {{!-- First row --}} {{#each systemFields.fullPrimeRequisites.fields}}
-    <span class="requisite-grid__stat-label">{{localize label}}</span>
-    {{/each}}
-    <span class="requisite-grid__stat-label"
-      >{{localize "BAGS.CharacterClass.Information.PrimeRequisiteInclusivity"
-      }}</span
-    >
-
-    {{!-- Second row --}}
-    <span class="requisite-grid__heading"
-      >{{localize "BAGS.CharacterClass.Information.HalfPrimeRequisites" }}</span
-    >
-
-    {{#each systemFields.halfPrimeRequisites.fields as |field key| }}
-    {{formInput field value=(lookup ../item.system.halfPrimeRequisites.fields
-    key) }} {{/each}} {{formInput systemFields.halfPrimeRequisites.fields.isAnd
-    }} {{!-- Third row --}}
-    <span class="requisite-grid__heading"
-      >{{localize "BAGS.CharacterClass.Information.FullPrimeRequisites" }}</span
-    >
-    {{#each systemFields.halfPrimeRequisites.fields as |field key| }}
-    {{formInput field value=(lookup ../item.system.halfPrimeRequisites.fields
-    key) }} {{/each}} {{formInput systemFields.fullPrimeRequisites.fields.isAnd
-    }}
-  </div>
-</section>
+{{/sheetTab}}

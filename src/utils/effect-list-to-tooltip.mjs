@@ -10,8 +10,6 @@ import html from "./html.mjs"
  * @returns {string} The tooltip to display.
  */
 export default (effects, heading = "", flavor = "") => {
-  if (!effects?.length) return ""
-
   const entryToListItem = ({ img, name, parent, modification }) => html`
     <div class="effect-modification">
       <img src="${img}" />
@@ -31,14 +29,15 @@ export default (effects, heading = "", flavor = "") => {
     `
     : ""
   const formattedFlavor = flavor ? `<p>${game.i18n.localize(flavor)}</p>` : ""
-
-  console.info(effects)
+  const formattedEffects = effects?.length
+    ? effects.map(entryToListItem).join("")
+    : ""
 
   return html`
     <div class="enhanced-tooltip">
       ${formattedHeading}
       <main>${formattedFlavor}</main>
-      ${effects.map(entryToListItem).join("")}
+      ${formattedEffects}
     </div>
   `
 }

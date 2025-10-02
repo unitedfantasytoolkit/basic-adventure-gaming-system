@@ -29,6 +29,7 @@
       flex-direction: column;
       align-items: center;
       margin-top: -1.25rem;
+      pointer-events: none;
 
       &__result {
         font-size: 2rem;

@@ -92,6 +92,38 @@ export default class BAGSCharacterClassXPTableEditor extends BAGSApplication {
 
   // === Render setup ==========================================================
 
+  /** @override */
+  async _preparePartContext(partId, context, options) {
+    super._preparePartContext(partId, context, options)
+
+    const savingThrowLocaleStrings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
+      )?.savingThrows
+
+    const savingThrowFields =
+      context.systemFields.xpTable.element.fields.saves.fields
+
+    context.savingThrows = Object.entries(savingThrowFields).reduce(
+      (obj, [key, field]) => ({
+        ...obj,
+        [key]: {
+          field,
+          initial: savingThrowLocaleStrings[key].initial,
+        },
+      }),
+      {},
+    )
+
+    context.savingThrowTypeCount = Object.keys(context.savingThrows).length
+
+    context.usesDescendingAC = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+      CONFIG.BAGS.SystemRegistry.categories.COMBAT,
+    )?.descending
+
+    return context
+  }
+
   // === Update process ========================================================
   static async save(_event, _form, formData) {
     await this.document.update(formData.object)

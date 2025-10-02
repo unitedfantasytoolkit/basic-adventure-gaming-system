@@ -45,7 +45,7 @@
         {{#with document.system.hp.hitDice}}
           {{#if usesHitDice}}
             <dt>Hit Dice</dt>
-            <dd class="rollable rollable--before" data-action="roll-hp">{{count}}d{{size}}{{ifThen modifier (signNumber modifier) ""}}</dd>
+            <dd class="rollable rollable--icon-before" data-action="roll-hp">{{count}}d{{size}}{{ifThen modifier (signNumber modifier) ""}}</dd>
           {{/if}}
         {{/with}}
       {{/if}}
@@ -86,10 +86,10 @@
     </header>
 
     <dl>
-      <dt class="rollable" data-action="roll-attack" data-attack-type="melee">{{localize "BAGS.Actors.Common.Combat.Melee"}}</dt>
+      <dt class="rollable rollable--icon-before" data-action="roll-attack" data-attack-type="melee">{{localize "BAGS.Actors.Common.Combat.Melee"}}</dt>
       <dd>{{signNumber document.system.meleeAttackBonus forceSign=true}}</dd>
       <dd>{{signNumber document.system.meleeDamageBonus forceSign=true}}</dd>
-      <dt class="rollable" data-action="roll-attack" data-attack-type="missile">{{localize "BAGS.Actors.Common.Combat.Missile"}}</dt>
+      <dt class="rollable rollable--icon-before" data-action="roll-attack" data-attack-type="missile">{{localize "BAGS.Actors.Common.Combat.Missile"}}</dt>
       <dd>{{signNumber document.system.missileAttackBonus forceSign=true}}</dd>
       <dd>{{signNumber document.system.missileDamageBonus forceSign=true}}</dd>
     </dl>
@@ -102,7 +102,7 @@
     <h3 class="decorated">Saving Throws</h3>
     <dl>
       {{#each savingThrowLocaleStrings as |save key|}}
-        <dt data-tooltip="{{lookup ../savingThrowTooltips key}}" class="rollable" data-action="roll-saving-throw" data-saving-throw="{{key}}">{{localize save.short}}</dt>
+        <dt data-tooltip="{{lookup ../savingThrowTooltips key}}" class="rollable rollable--icon-before" data-action="roll-saving-throw" data-saving-throw="{{key}}">{{localize save.short}}</dt>
         <dd>{{lookup ../document.system.savingThrows key}}</dd>
       {{/each}}
       {{#if (eq document.type "character")}}
@@ -136,7 +136,7 @@
       <dd>TODO</dd>
 
       <dt>{{localize "BAGS.Actors.Monster.Details.MoraleRating"}}</dt>
-      <dd class="rollable" data-action="roll-morale">{{document.system.morale.value}}</dd>
+      <dd class="rollable rollable--icon-before" data-action="roll-morale">{{document.system.morale.value}}</dd>
 
       <dt>Treasure Table</dt>
       <dd class="rollable" data-action="roll-morale">TODO</dd>

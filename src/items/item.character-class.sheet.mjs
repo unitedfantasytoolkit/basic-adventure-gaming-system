@@ -70,11 +70,14 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
       CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
         CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
       )
+    context.usesDescendingAC = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+      CONFIG.BAGS.SystemRegistry.categories.COMBAT,
+    )?.descending
 
     switch (partId) {
       case "summary":
         context.gearTable = doc.system.gearTable
-          ? await TextEditor.enrichHTML(
+          ? await foundry.applications.ux.TextEditor.enrichHTML(
               fromUuidSync(doc.system.gearTable)._createDocumentLink(),
             )
           : ""

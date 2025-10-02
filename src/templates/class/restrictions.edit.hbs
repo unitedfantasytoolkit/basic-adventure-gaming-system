@@ -1,49 +1,10 @@
-{{!
-}}
-<section
-  class="tab region-{{tab.id}} {{tab.cssClass}}"
-  data-tab="{{tab.id}}"
-  data-group="{{tab.group}}"
->
+{{#> sheetTab}}
   <header class="tab__header">
     <h2>{{localize "BAGS.CharacterClass.Tabs.Restrictions"}}</h2>
   </header>
 
-  <div class="tab__content">
-  <div class="control control--requisite-grid">
-    <!-- First row -->
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.AbilityScores.Strength.Short"
-      }}</span>
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.AbilityScores.Intelligence.Short"
-      }}</span>
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.AbilityScores.Wisdom.Short"
-      }}</span>
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.AbilityScores.Dexterity.Short"
-      }}</span>
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.AbilityScores.Constitution.Short"
-      }}</span>
-    <span class="requisite-grid__stat-label">{{localize
-      "BAGS.AbilityScores.Charisma.Short"
-      }}</span>
-
-    <span class="requisite-grid__heading">{{localize
-      "BAGS.CharacterClass.Information.Prerequisites"
-      }}</span>
-    {{formInput systemFields.prerequisites.fields.str }}
-    {{formInput systemFields.prerequisites.fields.int }}
-    {{formInput systemFields.prerequisites.fields.wis }}
-    {{formInput systemFields.prerequisites.fields.dex }}
-    {{formInput systemFields.prerequisites.fields.con }}
-    {{formInput systemFields.prerequisites.fields.cha }}
-  </div>
-  <h3>{{localize "BAGS.CharacterClass.Information.AdditionalRestrictions"}}</h3>
-  <prose-mirror name="system.restrictions" value="{{item.system.restrictions}}"></prose-mirror>
-  </div>
-
-  
-</section>
+  <prose-mirror
+    name="system.restrictions"
+    value="{{item.system.restrictions}}"
+  ></prose-mirror>
+{{/sheetTab}}

@@ -1,36 +1,28 @@
 .application--class-editor {
-  .control {
-    &:is(.control--details, .control--requisite-grid) {
-      display: grid;
-      align-items: center;
-      gap: 0.5em;
+  .requisite-table {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5em;
+
+    &__stat-label {
+      color: var(--color-form-label);
+      font-weight: bold;
+      line-height: var(--input-height);
+      cursor: var(--cursor-default);
+
+      &:first-of-type {
+        grid-column: 2;
+      }
+
+      &--column-heading {
+        line-height: 1.2;
+        align-self: end;
+      }
     }
 
-    &--requisite-grid {
-      grid-template-columns: max-content repeat(7, 1fr);
-
-      &:not(:has([name$="isAnd"])) {
-        grid-template-columns: max-content repeat(6, 1fr);
-      }
-
-      .requisite-grid {
-        &__heading {
-          text-align: right;
-          grid-column-start: 1;
-        }
-
-        &__stat-label {
-          text-align: center;
-
-          &:first-of-type {
-            grid-column-start: 2;
-          }
-        }
-      }
-
-      input {
-        text-align: center;
-        justify-self: center;
+    &__stat-field {
+      &--half-prime-requisite-exclusivity {
+        grid-column: 3;
       }
     }
   }

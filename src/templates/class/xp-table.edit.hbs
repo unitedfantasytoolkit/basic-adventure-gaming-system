@@ -1,9 +1,4 @@
-<article
-  class="tab region-{{tab.id}} {{tab.cssClass}}"
-  data-tab="{{tab.id}}"
-  data-group="{{tab.group}}"
->
-  {{log this}}
+{{#> sheetTab}}
   <header class="tab__header">
     <h2>{{localize "BAGS.CharacterClass.Tabs.XP"}}</h2>
   </header>
@@ -14,16 +9,20 @@
           <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.Level"}}</th>
           <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.XP"}}</th>
           <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.HD"}}</th>
+          {{#if usesDescendingAC}}
           <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.THAC0"}}</th>
+          {{else}}
+          <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.AttackBonus"}}</th>
+          {{/if}}
           <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.ConMod"}}</th>
-          <th colspan="5">{{localize "BAGS.CharacterClass.XPTable.Saves"}}</th>
+          <th colspan="{{savingThrowTypeCount}}">{{localize "BAGS.CharacterClass.XPTable.Saves"}}</th>
         </tr>
         <tr>
-          <th>D</th>
-          <th>W</th>
-          <th>P</th>
-          <th>B</th>
-          <th>S</th>
+          {{#each @root.savingThrows as |save saveKey|}}
+            <th>
+              {{localize save.initial}}
+            </th>
+          {{/each}}
         </tr>
       </thead>
 
@@ -61,6 +60,7 @@
             </td>
             <td>
               <span class="flexrow">
+                {{#if ../usesDescendingAC}}
                 <input
                   type="text"
                   data-dtype="Number"
@@ -68,7 +68,8 @@
                   name="system.xpTable.{{index}}.thac0"
                   value="{{levelObj.thac0}}"
                 />
-                (+
+                {{else}}
+                +
                 <input
                   type="text"
                   data-dtype="Number"
@@ -76,7 +77,7 @@
                   name="system.xpTable.{{index}}.attackBonus"
                   value="{{levelObj.attackBonus}}"
                 />
-                )
+                {{/if}}
               </span>
             </td>
             <td>
@@ -88,51 +89,14 @@
                 {{checked levelObj.hd.canUseConMod}}
               />
             </td>
-            <td>
-              <input
-                type="text"
-                data-dtype="Number"
-                class="xp-field xp-field--"
-                name="system.xpTable.{{index}}.saves.death"
-                value="{{levelObj.saves.death}}"
-              />
-            </td>
-            <td>
-              <input
-                type="text"
-                data-dtype="Number"
-                class="xp-field xp-field--"
-                name="system.xpTable.{{index}}.saves.wands"
-                value="{{levelObj.saves.wands}}"
-              />
-            </td>
-            <td>
-              <input
-                type="text"
-                data-dtype="Number"
-                class="xp-field xp-field--"
-                name="system.xpTable.{{index}}.saves.paralysis"
-                value="{{levelObj.saves.paralysis}}"
-              />
-            </td>
-            <td>
-              <input
-                type="text"
-                data-dtype="Number"
-                class="xp-field xp-field--"
-                name="system.xpTable.{{index}}.saves.breath"
-                value="{{levelObj.saves.breath}}"
-              />
-            </td>
-            <td>
-              <input
-                type="text"
-                data-dtype="Number"
-                class="xp-field xp-field--"
-                name="system.xpTable.{{index}}.saves.spell"
-                value="{{levelObj.saves.spell}}"
-              />
-            </td>
+            {{#each @root.savingThrows as |save saveKey|}}
+              <td>
+                {{formInput save.field
+                  value=(lookup levelObj.saves saveKey)
+                  name=(concat "system.xpTable." index ".saves." saveKey)
+                }}
+              </td>
+            {{/each}}
           </tr>
         {{else}}
           <tr>
@@ -155,4 +119,4 @@
       ></i>
       {{localize "BAGS.CharacterClass.XPTable.Remove"}}</button>
   </footer>
-</article>
+{{/sheetTab}}

@@ -16,6 +16,9 @@ export default class CharacterClassEditor extends BAGSBaseItemEditor {
   // === Application Setup =====================================================
   static DEFAULT_OPTIONS = {
     classes: ["application--class-editor"],
+    actions: {
+      "clear-gear-table": this.clearGearTable,
+    },
     tag: "form",
     window: {
       frame: true,
@@ -41,17 +44,30 @@ export default class CharacterClassEditor extends BAGSBaseItemEditor {
   }
 
   static PARTS = {
-    description: {
-      template: `${this.TEMPLATE_ROOT}/description.edit.hbs`,
-    },
-    restrictions: {
-      template: `${this.TEMPLATE_ROOT}/restrictions.edit.hbs`,
-    },
     details: {
       template: `${this.TEMPLATE_ROOT}/class-details.edit.hbs`,
     },
     features: {
       template: `${this.TEMPLATE_ROOT}/features.edit.hbs`,
+    },
+    requisites: {
+      template: `${this.TEMPLATE_ROOT}/prerequisites-and-prime-requisites.edit.hbs`,
+    },
+    /**
+     * @todo use `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-text-editor.hbs` for
+     * this field's template.
+     */
+    restrictions: {
+      template: `${this.TEMPLATE_ROOT}/restrictions.edit.hbs`,
+    },
+    media: {
+      template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-media.hbs`,
+    },
+    description: {
+      template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-text-editor.hbs`,
+    },
+    "flavor-text": {
+      template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-text-editor.hbs`,
     },
   }
 
@@ -66,7 +82,9 @@ export default class CharacterClassEditor extends BAGSBaseItemEditor {
     const gearTableDocument = await fromUuid(this.document.system.gearTable)
 
     const gearTable = this.document.system.gearTable
-      ? await TextEditor.enrichHTML(gearTableDocument._createDocumentLink())
+      ? await foundry.applications.ux.TextEditor.enrichHTML(
+          gearTableDocument._createDocumentLink(),
+        )
       : ""
 
     return {
@@ -96,6 +114,12 @@ export default class CharacterClassEditor extends BAGSBaseItemEditor {
           group: "sheet",
           icon: "fa-solid fa-tag",
           label: "BAGS.CharacterClass.Tabs.Features",
+        },
+        {
+          id: "requisites",
+          group: "sheet",
+          icon: "fa-solid fa-tag",
+          label: "BAGS.CharacterClass.Tabs.Requisites",
         },
         {
           id: "restrictions",
@@ -128,5 +152,12 @@ export default class CharacterClassEditor extends BAGSBaseItemEditor {
       initial: "details",
       labelPrefix: "BAGS.Items.CharacterClass.Tabs",
     },
+  }
+
+  static async clearGearTable() {
+    await this.document.update({
+      "system.gearTable": "",
+    })
+    this.render(true)
   }
 }

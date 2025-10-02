@@ -1,0 +1,37 @@
+{{#> sheetTab}}
+  <header class="tab__header">
+    <h2>{{localize "BAGS.CharacterClass.Tabs.Requisites"}}</h2>
+  </header>
+  <div class="scrollable">
+    <div class="standard-form">
+      <div class="requisite-table">
+        <span class="requisite-table__stat-label requisite-table__stat-label--column-heading">{{localize "Prerequisites"}}</span>
+        <span class="requisite-table__stat-label requisite-table__stat-label--column-heading">{{localize "Half Prime Requisites"}}</span>
+        <span class="requisite-table__stat-label requisite-table__stat-label--column-heading">{{localize "Full Prime Requisites"}}</span>
+        {{#each systemFields.fullPrimeRequisites.fields as |field key|}}
+          {{#if (ne key "isAnd")}}
+            <span class="requisite-table__stat-label">{{localize field.label}}</span>
+            <span class="requisite-table__stat-field">
+              {{formInput (lookup ../systemFields.prerequisites.fields key)}}
+            </span>
+            <span class="requisite-table__stat-field">
+              {{formInput (lookup ../systemFields.halfPrimeRequisites.fields key)}}
+            </span>
+            <span class="requisite-table__stat-field">
+              {{formInput (lookup ../systemFields.fullPrimeRequisites.fields key)}}
+            </span>
+          {{/if}}
+        {{/each}}
+        <span class="requisite-table__stat-label">
+          {{localize "BAGS.CharacterClass.Information.PrimeRequisiteInclusivity"}}
+        </span>
+        <span class="requisite-table__stat-field requisite-table__stat-field--half-prime-requisite-exclusivity">
+          {{formInput systemFields.halfPrimeRequisites.fields.isAnd}}
+        </span>
+        <span class="requisite-table__stat-field">
+          {{formInput systemFields.fullPrimeRequisites.fields.isAnd}}
+        </span>
+      </div>
+    </div>
+  </div>
+{{/sheetTab}}

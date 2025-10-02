@@ -1,4 +1,4 @@
-<article class="tab character-class-sheet-{{tab.id}} {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+{{#> sheetTab}}
   <header class="tab__header">
     <h2>{{localize "BAGS.CharacterClass.Tabs.Advancement"}}</h2>
   </header>
@@ -19,7 +19,11 @@
           <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.Level"}}</th>
           <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.XP"}}</th>
           <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.HD"}}</th>
-          <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.THAC0"}}</th>
+          {{#if usesDescendingAC}}
+            <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.THAC0"}}</th>
+          {{else}}
+            <th rowspan="2">{{localize "BAGS.CharacterClass.XPTable.AttackBonus"}}</th>
+          {{/if}}
           <th colspan="{{savingThrowTypeCount}}">{{localize "BAGS.CharacterClass.XPTable.Saves"}}</th>
           {{#each item.system.leveledResources}}
           {{#if pool.length}}
@@ -52,11 +56,15 @@
           <td>{{levelObj.value}}</td>
           <td>{{levelObj.hd.count}}d{{../item.system.hitDieSize}}{{#if
             levelObj.hd.modifier}}+{{levelObj.hd.modifier}}{{/if}}{{#unless levelObj.hd.canUseConMod}}*{{/unless}}</td>
-          <td>{{levelObj.thac0}} (+{{levelObj.attackBonus}})</td>
+          {{#if ../usesDescendingAC}}
+            <td>{{levelObj.thac0}}</td>
+          {{else}}
+            <td>{{signNumber levelObj.attackBonus}}</td>
+          {{/if}}
 
           {{!-- Saving throws --}}
           {{#each ../savingThrows as |save key|}}
-            <td data-tooltip="{{localize save.label}}">{{lookup levelObj.saves key}}</th>
+            <td data-tooltip="{{localize save.label}}">{{lookup levelObj.saves key}}</td>
           {{/each}}
 
           {{!-- Leveled resources (thief skills) --}}
@@ -82,6 +90,6 @@
     </table>
   </div>
   <footer class="tab__footer">
-    <p><em>*</em>: {{localize "BAGS.CharacterClass.XPTable.NoMoreConMod"}}</p>
+    <p class="advancement-table-con-mod-explanation"><em>*</em>: {{localize "BAGS.CharacterClass.XPTable.NoMoreConMod"}}</p>
   </footer>
-</article>
+{{/sheetTab}}
