@@ -58,10 +58,10 @@ export default class CharacterClassEditor extends BAGSBaseItemEditor {
      * this field's template.
      */
     restrictions: {
-      template: `${this.TEMPLATE_ROOT}/restrictions.edit.hbs`,
+      template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-text-editor.hbs`,
     },
     media: {
-      template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-media.hbs`,
+      template: `${SYSTEM_TEMPLATE_PATH}/common/editor-tab-media.hbs`,
     },
     description: {
       template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-text-editor.hbs`,
@@ -152,6 +152,23 @@ export default class CharacterClassEditor extends BAGSBaseItemEditor {
       initial: "details",
       labelPrefix: "BAGS.Items.CharacterClass.Tabs",
     },
+  }
+
+  /** @override */
+  async _preparePartContext(partId, context) {
+    super._preparePartContext(partId, context)
+
+    const doc = this.document
+    switch (partId) {
+      case "restrictions":
+        context.headingText = "BAGS.Items.CommonTabs.Restrictions"
+        context.field = context.systemFields.restrictions
+        context.fieldValue = doc.system.restrictions
+        break
+      default:
+        break
+    }
+    return context
   }
 
   static async clearGearTable() {

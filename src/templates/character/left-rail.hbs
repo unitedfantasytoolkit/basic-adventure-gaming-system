@@ -1,14 +1,16 @@
+{{!--
+  Character Class
+  ---
+  A widget that renders a character class, its level, and current/next level XP.
+--}}
 {{#*inline "character-class"}}
-  <article
-    class="character-class"
-    aria-label="Level {{system.level}} {{name}}"
-  >
+  <article aria-label="Level {{system.level}} {{name}}">
+    <img
+      src="{{img}}"
+      class="document-art"
+      alt=""
+    />
     <div class="character-class__name">
-        <img
-          src="{{img}}"
-          class="document-art"
-          alt=""
-        />
         Lv. {{system.level}} {{name}}
     </div>
     <uft-character-info-meter
@@ -16,15 +18,69 @@
       max="{{xpBar.max}}"
       class="xp"
     >
-      <i slot="icon" class="fa fa-trophy"></i>
     </uft-character-info-meter>
   </article>
 {{/inline}}
 
-{{#*inline "tab-navigation"}}
+{{!-- ===================================================================== --}}
+
+{{!--
+
+--}}
+{{#*inline "character-identity"}}
+    <div class="left-rail__section left-rail__section--portrait">
+      <img src="{{document.img}}" alt="" />
+      <h2 class="decorated">{{document.name}}</h3>
+    </div>
+  <div class="left-rail__section">
+    <dl>
+      <dt>{{localize "BAGS.Actors.Character.Identity.Alignment"}}</dt>
+      <dd>{{ifThen document.system.biographicalDetails.alignment
+            document.system.biographicalDetails.alignment
+            (localize "BAGS.Actors.Character.Identity.Unaligned")
+          }}
+      </dd>
+    </dl>
+  </div>
+  {{#if (eq document.type "character")}}
+    <div class="left-rail__section left-rail__section--character-classes">
+      <h3 class="decorated">
+        {{localize
+          (ifThen (gt classes.length 1)
+            "BAGS.Actors.Character.Identity.Classes"
+            "BAGS.Actors.Character.Identity.Class"
+          )
+        }}</h3>
+      <ul class="character-classes">
+        {{#each classes}}
+          <li class="character-class">{{> character-class this}}</li>
+        {{else}}
+          <p class="empty">{{localize "BAGS.Actors.Character.NoClasses"}}</p>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
 
 {{/inline}}
 
+{{!-- ===================================================================== --}}
+
+{{!--
+
+--}}
+{{#*inline "tab-navigation"}}
+  <nav class="tabs tabs--left-rail">
+    {{#each tabs}}
+      <button class="{{ifThen active "active" ""}}" data-tooltip="{{localize label}}" data-action="tab" data-group="{{group}}" data-tab="{{id}}" aria-label="{{localize label}}"><i class="{{icon}}"></i></button>
+    {{/each}}
+  </nav>
+{{/inline}}
+
+{{!-- ===================================================================== --}}
+
+{{!--
+
+--}}
 {{#*inline "ability-scores"}}
   <div class="left-rail__section number-showcase">
     <ul class="number-showcase__list">
@@ -38,6 +94,11 @@
   </div>
 {{/inline}}
 
+{{!-- ===================================================================== --}}
+
+{{!--
+
+--}}
 {{#*inline "combat-modifiers"}}
   <div class="left-rail__section">
     <dl>
@@ -97,6 +158,11 @@
   {{/if}}
 {{/inline}}
 
+{{!-- ===================================================================== --}}
+
+{{!--
+
+--}}
 {{#*inline "saving-throws"}}
   <div class="left-rail__section left-rail__section--saving-throws">
     <h3 class="decorated">Saving Throws</h3>
@@ -120,6 +186,11 @@
   </div>
 {{/inline}}
 
+{{!-- ===================================================================== --}}
+
+{{!--
+
+--}}
 {{#*inline "monster-details"}}
   <div class="left-rail__section left-rail__section--monster-details">
     <h3 class="decorated">Monster Details</h3>
@@ -145,6 +216,11 @@
 {{/inline}}
 
 
+{{!-- ===================================================================== --}}
+
+{{!--
+
+--}}
 {{#*inline "employment-details"}}
   <dl>
     <dt>Employed by</dt>
@@ -157,6 +233,11 @@
   </dl>
 {{/inline}}
 
+{{!-- ===================================================================== --}}
+
+{{!--
+
+--}}
 {{#*inline "action-item"}}
   <div class="action-source">
     <div class="action-source__header">
@@ -171,6 +252,11 @@
   </div>
 {{/inline}}
 
+{{!-- ===================================================================== --}}
+
+{{!--
+
+--}}
 {{#*inline "action-item-collapsible"}}
   <details class="action-source" open>
     <summary class="action-source__header">
@@ -185,6 +271,11 @@
   </details>
 {{/inline}}
 
+{{!-- ===================================================================== --}}
+
+{{!--
+
+--}}
 {{#*inline "action-button"}}
   <button class="action-list-item action-list-item--single-action"
     role="listitem"
@@ -198,6 +289,11 @@
   </button>
 {{/inline}}
 
+{{!-- ===================================================================== --}}
+
+{{!--
+
+--}}
 {{#*inline "effect-list-item"}}
   <button class="action-list-item action-list-item--single-action"
     role="listitem"
@@ -213,11 +309,9 @@
 {{/inline}}
 
 
-<section class="left-rail theme-dark">
-  {{#each classes}}
-    {{> character-class this}}
-  {{/each}}
+{{!-- ===================================================================== --}}
 
+<section class="left-rail theme-dark">
   <article class="meters">
     <uft-character-info-meter
       value="{{document.system.hp.value}}"
@@ -233,11 +327,7 @@
     {{{ encumbranceMeter }}}
   </article>
 
-  <nav class="tabs tabs--left-rail">
-    {{#each tabs}}
-      <button class="{{ifThen active "active" ""}}" data-tooltip="{{localize label}}" data-action="tab" data-group="{{group}}" data-tab="{{id}}" aria-label="{{localize label}}"><i class="{{icon}}"></i></button>
-    {{/each}}
-  </nav>
+  {{> tab-navigation}}
 
   {{#> sheetTab tab=tabs.summary}}
     {{#if (eq document.type "character")}}
@@ -255,6 +345,10 @@
     {{#if document.system.retainer.isRetainer}}
       {{> employment-details}}
     {{/if}}
+  {{/sheetTab}}
+
+  {{#> sheetTab tab=tabs.identity}}
+    {{> character-identity}}
   {{/sheetTab}}
 
   {{#> sheetTab tab=tabs.actions}}

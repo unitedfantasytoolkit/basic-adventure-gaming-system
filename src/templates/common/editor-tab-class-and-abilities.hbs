@@ -1,3 +1,24 @@
 {{#> sheetTab}}
-<p>Details</p>
+  <div class="scrollable">
+    <div class="standard-form">
+      <h2>Classes</h2>
+      {{#each this.document.items.documentsByType.class}}
+        <div class="character-editor-class">
+          <img src="{{img}}" alt="" />
+          <h3>{{name}}</h3>
+
+          {{log system.xp}}
+          {{log system.xpToNext}}
+          <uft-character-info-meter
+            value="{{system.xp}}"
+            max="{{system.xpToNext}}"
+            class="xp"
+          >
+          </uft-character-info-meter>
+        </div>
+      {{else}}
+        <p class="empty">This character has no classes.</p>
+      {{/each}}
+    </div>
+  </div>
 {{/sheetTab}}

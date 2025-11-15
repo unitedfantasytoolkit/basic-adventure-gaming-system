@@ -31,7 +31,9 @@
           {{/if}}
           {{/each}}
           {{#if item.system.spellSlots.length}}
-          <th colspan="{{item.system.spellSlots.length}}">Spell Slots</th>
+          <th colspan="{{item.system.spellSlots.length}}">
+            {{localize "BAGS.CharacterClass.XPTable.SpellSlots"}}
+          </th>
           {{/if}}
         </tr>
         <tr>

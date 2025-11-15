@@ -10,6 +10,16 @@ import effectListToTooltip from "../utils/effect-list-to-tooltip.mjs"
 import BAGSCharacterEditor from "./actor.character.editor.mjs"
 
 export default class BAGSCharacterSheet extends BAGSActorSheet {
+  /**
+   * @todo Delete this later
+   */
+  constructor(options = {}) {
+    super(options)
+    setTimeout(() => {
+      this.subApps.actorEditor.render(true)
+    }, 500)
+  }
+
   // === App config ============================================================
   static get DEFAULT_OPTIONS() {
     return {
@@ -64,6 +74,13 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
     sheet: super.TABS.sheet,
     leftRail: {
       tabs: [
+        {
+          id: "identity",
+          group: "leftRail",
+          icon: "fa-solid fa-square-list",
+          label: "Identity",
+          cssClass: "tab--identity",
+        },
         {
           id: "actions",
           group: "leftRail",
@@ -138,6 +155,7 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
 
     switch (partId) {
       case "left-rail":
+        context.identity = doc.itemTypes.identities || []
         context.classes = doc.itemTypes.class.map((cls) => ({
           ...cls,
           xpBar: {

@@ -53,7 +53,7 @@ import "./hooks/updateActiveEffect.mjs"
 devOnly(() => {
   Hooks.once("ready", async () => {
     try {
-      fromUuidSync("Actor.swRWtVyGUdsSkflY").sheet.render(true)
+      fromUuidSync("Item.qhXlV5bYHMkuCfY6").sheet.render(true)
     } catch {
       // noop -- use your own UUIDs above if this breaks
     }

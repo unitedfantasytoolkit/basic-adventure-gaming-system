@@ -78,7 +78,8 @@
     gap: 1em;
     padding: var(--application-content-padding) 1rem
       var(--application-content-padding) var(--application-content-padding);
-    background-image: url("assets/sheets/background-texture.webp"),
+    background-image:
+      url("assets/sheets/background-texture.webp"),
       var(--application-filler-gradient);
     background-blend-mode: multiply;
     overflow: hidden;
@@ -103,15 +104,15 @@
     &__section {
       --character-info-columns: 1fr 12ch;
 
-      h3 {
+      :is(h1, h2, h3, h4, h5, h6) {
         font-family: var(--font-primary);
-        font-size: 1rem;
         opacity: 0.9;
         font-variant: small-caps;
         text-transform: lowercase;
         margin: 0;
         color: inherit;
         overflow: hidden;
+        margin-bottom: 0.25em;
 
         &.decorated {
           &::before,
@@ -128,6 +129,10 @@
             margin: 0 -55% 0 0.5em;
           }
         }
+      }
+
+      h3 {
+        font-size: 1rem;
       }
 
       dl {
@@ -159,6 +164,21 @@
 
       &--monster-details {
         --character-info-columns: max-content 1fr;
+      }
+
+      &--portrait {
+        img {
+          background-color: #383531;
+          border: 1px solid var(--border-color);
+          border-radius: 4px;
+          display: block;
+          flex-basis: 3rem;
+          height: auto;
+          overflow: hidden;
+          position: relative;
+          margin: 0 1em 0.5em;
+          object-fit: cover;
+        }
       }
 
       &:has(header) {

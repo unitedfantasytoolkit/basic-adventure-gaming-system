@@ -98,7 +98,7 @@ export default class BAGSBaseItemEditor extends BAGSApplication {
         template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-container-settings.hbs`,
       },
       media: {
-        template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-media.hbs`,
+        template: `${SYSTEM_TEMPLATE_PATH}/common/editor-tab-media.hbs`,
       },
       description: {
         template: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab-text-editor.hbs`,

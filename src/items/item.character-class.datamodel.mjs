@@ -308,6 +308,27 @@ export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
     return this.xpTable[this.level].value
   }
 
+  get currentLevelData() {
+    try {
+      return this.xpTable[this.level]
+    } catch {
+      return null
+    }
+  }
+
+  get canLevelUp() {
+    if (this.level >= this.xpTable.length) return false
+    return this.xp >= this.xpToNext
+  }
+
+  /**
+   * @todo Handle "can't gain more XP than one less needed to earn two levels"
+   */
+  get canAddXP() {
+    if (this.level >= this.xpTable.length) return false
+    return true
+  }
+
   get currentLevelDetails() {
     const currentLevelIndex = this.level - 1
     const {

@@ -337,12 +337,24 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     titleAreaContainer.appendChild(documentArt)
     titleAreaContainer.appendChild(titleAndTagsContainer)
 
+    this.customizeTitleArea(titleAreaContainer)
+
     // --- Put everything together ---------------------------------------------
     if (this.document.system.banner) {
       header.appendChild(this.#buildHeaderBanner())
     }
     header.appendChild(buttonContainer)
     header.appendChild(titleAreaContainer)
+  }
+
+  /**
+   * Perform further modifications on the header area.
+   * @param {HTMLDivElement} titleBarContainer - The title bar container to
+   * tinker with.
+   * @abstract
+   */
+  customizeTitleArea(titleBarContainer) {
+    // noop
   }
 
   /**

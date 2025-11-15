@@ -1,6 +1,5 @@
 :host {
   display: flex;
-  gap: 0.5em;
   height: fit-content;
   width: 100%;
   align-items: center;
@@ -17,6 +16,10 @@
   --meter-height: calc(1em - var(--meter-padding) * 2);
 }
 
+:host([has-icon]) {
+  gap: 0.5em;
+}
+
 ::slotted(i) {
   width: 2.5ch;
 }
@@ -25,6 +28,10 @@
   text-align: center;
   font-size: 0.9em;
   line-height: 1;
+}
+
+:host(:not([has-icon])) .icon {
+  display: none;
 }
 
 .value {

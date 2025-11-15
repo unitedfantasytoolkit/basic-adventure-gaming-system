@@ -22,4 +22,19 @@
       flex: 1;
     }
   }
+
+  &--media {
+    .upload-row {
+      display: grid;
+      grid-template-columns: 3rem 1fr;
+      gap: 1em;
+      align-items: center;
+
+      &--banner {
+        figure img {
+          max-height: 4rem;
+        }
+      }
+    }
+  }
 }

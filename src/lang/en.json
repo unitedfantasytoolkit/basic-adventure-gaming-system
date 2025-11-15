@@ -396,6 +396,12 @@
     },
     "Actors": {
       "Character": {
+        "Identity": {
+          "Class": "Character Class",
+          "Classes": "Character Classes",
+          "Alignment": "Alignment",
+          "Unaligned": "Unaligned"
+        },
         "CreationWizard": {
           "Title": "Character Creation: {name}",
           "Previous": "Previous",
@@ -415,6 +421,9 @@
             "StartingGold": "Starting Gold",
             "RemainingGold": "Gold Remaining"
           }
+        },
+        "Tabs": {
+          "Identity": "Identity"
         },
         "Editor": {
           "Tabs": {
@@ -745,6 +754,7 @@
         "HD": "Hit Dice",
         "THAC0": "THAC0",
         "AttackBonus": "Attack Bonus",
+        "SpellSlots": "Spell Slots",
         "ConMod": "Con. Mod?",
         "Saves": "Saving Throws",
         "Add": "Add Level",

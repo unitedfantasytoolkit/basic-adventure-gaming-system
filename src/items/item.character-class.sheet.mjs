@@ -114,6 +114,79 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
     },
   }
 
+  customizeTitleArea(titleBarContainer) {
+    // If this is attached to a character, we should display an XP bar.
+    if (!this.document.parent) {
+      const xpBarContainer = document.createElement("div")
+      xpBarContainer.classList.add("xp-meter")
+
+      const xpBar = document.createElement("uft-character-info-meter")
+      xpBar.setAttribute("value", this.document.system.xp)
+      xpBar.setAttribute("max", this.document.system.xpToNext)
+
+      const levelLabel = document.createElement("span")
+      levelLabel.innerText = this.document.system.level
+      levelLabel.classList.add("level")
+
+      xpBarContainer.append(levelLabel, xpBar)
+
+      if (this.document.isOwner) {
+        const addXpButton = document.createElement("button")
+        addXpButton.classList.add(
+          "inline-control",
+          "icon",
+          "fa",
+          "fa-plus-large",
+          "add-xp-button",
+        )
+        addXpButton.dataset.tooltip = "Add Experience Points"
+        addXpButton.toggleAttribute("disabled", !this.document.system.canAddXP)
+
+        const levelUpButton = document.createElement("button")
+        levelUpButton.classList.add(
+          "inline-control",
+          "icon",
+          "fa",
+          "fa-turn-up",
+          "level-up-button",
+        )
+        levelUpButton.dataset.tooltip = "Level up"
+        levelUpButton.toggleAttribute(
+          "disabled",
+          !this.document.system.canLevelUp,
+        )
+        xpBarContainer.append(addXpButton, levelUpButton)
+      }
+
+      titleBarContainer
+        .querySelector(".window-header__text")
+        .append(xpBarContainer)
+    }
+  }
+
+  _replaceHTML(...args) {
+    super._replaceHTML(...args)
+
+    const xpBar = this.element.querySelector(
+      ".window-header__text uft-character-info-meter",
+    )
+
+    if (xpBar) {
+      console.info("Can gain XP", this.document.system.canAddXP)
+      console.info("Can level up", this.document.system.canLevelUp)
+
+      xpBar.setAttribute("value", this.document.system.xp)
+      xpBar.setAttribute("max", this.document.system.xpToNext)
+
+      this.element
+        .querySelector(".add-xp-button")
+        ?.toggleAttribute("disabled", !this.document.system.canAddXP)
+      this.element
+        .querySelector(".level-up-button")
+        ?.toggleAttribute("disabled", !this.document.system.canLevelUp)
+    }
+  }
+
   static editAdvancement() {
     this.subApps.advancementEditor.render(true)
   }

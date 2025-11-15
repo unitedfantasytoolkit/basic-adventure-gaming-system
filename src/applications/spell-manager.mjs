@@ -6,9 +6,10 @@ import BAGSApplication from "./application.mjs"
 import animatedSheetError from "../utils/animated-sheet-error.mjs"
 
 /**
- * Application for managing a character's spells, including preparation and editing.
+ * Application for managing a character's spells, including preparation and
+ * editing.
  * @class
- * @extends {BAGSApplication}
+ * @augments {BAGSApplication}
  */
 export default class SpellManager extends BAGSApplication {
   static DEFAULT_OPTIONS = {
@@ -116,6 +117,8 @@ export default class SpellManager extends BAGSApplication {
    */
   _onRender(context, options) {
     super._onRender(context, options)
+
+    const DragDrop = foundry.applications.ux.DragDrop.implementation
 
     new DragDrop({
       dragSelector: ".spell-list__item",

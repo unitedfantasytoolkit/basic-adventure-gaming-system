@@ -1,51 +1,75 @@
 {{#> sheetTab}}
-  <div class="xp-meter">
-    <span class="level">{{document.system.level}}</span>
-    <uft-character-info-meter value="{{document.system.xp}}" max="{{document.system.xpToNext}}"></uft-character-info-meter>
-  </div>
 
   {{#if item.system.flavorText}}
     <div class="flavor">{{{item.system.flavorText}}}</div>
   {{/if}}
+
   <main>
     {{{item.system.description}}}
   </main>
-  <aside>
+
+  <aside class="scrollable">
+    {{#if document.system.currentLevelDetails}}
+    {{#with document.system.currentLevelDetails}}
     <dl>
-      {{#if item.system.hasPrerequisites}}
-      <dt>{{localize "BAGS.CharacterClass.Information.Prerequisites"}}</dt>
-      <dd>
-        {{#each item.system.prerequisitesFormatted}}
-        <span>{{this}} {{localize (concat "BAGS.AbilityScores." @key '.Short')}}{{#unless @last}},{{/unless}}</span>
-        {{/each}}
-      </dd>
+      <dt>Hit Dice</dt>
+      <dd>{{hd.count}}d{{@root.document.system.hitDieSize}}{{ifThen hd.modifier (signNumber hd.modifier) ""}}</dd>
+
+      <dt>THAC0</dt>
+      <dd>{{thac0}}</dd>
+    </dl>
+    <h3 class="decorated">Saving Throws</h3>
+    <dl>
+      {{#each savingThrows}}
+      <dt>{{@key}}</dt>
+      <dd>{{this}}</dd>
+      {{/each}}
+    </dl>
+    {{/with}}
     {{/if}}
 
-    <dt>{{localize "BAGS.CharacterClass.Information.PrimeRequisites"}}</dt>
+    {{#if item.system.hasPrerequisites}}
+      <h3 class="decorated">{{localize "BAGS.CharacterClass.Information.Prerequisites"}}</h3>
+      <dl>
+      {{#each item.system.prerequisitesFormatted}}
+        <dt>{{@key}}</dt>
+        <dd>{{this}}</dd>
+        {{!-- <span>{{this}} {{localize (concat "BAGS.AbilityScores." @key '.Short')}}{{#unless @last}},{{/unless}}</span> --}}
+      {{/each}}
+      </dl>
+    {{/if}}
+
+  <h3 class="decorated">{{localize "BAGS.CharacterClass.Information.PrimeRequisites"}}</h3>
+  <dl>
+    <dt>5%</dt>
+    <dd>
+      {{#each item.system.halfRequisitesFormatted}}
+        {{#unless @first}}
+          {{#if @last}}
+            {{#if @root.item.system.halfPrimeRequisites.isAnd}}
+              {{localize "BAGS.CharacterClass.Information.PrimeRequisitesInclusive"}}
+            {{else}}
+              {{localize "BAGS.CharacterClass.Information.PrimeRequisitesExclusive"}}
+            {{/if}}
+          {{/if}}
+        {{/unless}}
+
+        {{!-- {{this}} {{localize (concat "BAGS.AbilityScores." @key '.Short')}} --}}
+        {{this}}
+
+        {{#unless @last}}
+          {{#if (gt ../item.system.halfRequisitesCount 2)}},{{/if}}
+        {{/unless}}
+      {{else}}
+        <p class="empty">{{localize "BAGS.CharacterClass.Information.PrimeRequisitesEmpty"}}</p>
+      {{/each}}
+    </dd>
+    {{!--
     <dd>
       <table>
         <tr>
         <th>5%</th>
           <td>
-            {{#each item.system.halfRequisitesFormatted}}
-              {{#unless @first}}
-                {{#if @last}}
-                  {{#if @root.item.system.halfPrimeRequisites.isAnd}}
-                    {{localize "BAGS.CharacterClass.Information.PrimeRequisitesInclusive"}}
-                  {{else}}
-                    {{localize "BAGS.CharacterClass.Information.PrimeRequisitesExclusive"}}
-                  {{/if}}
-                {{/if}}
-              {{/unless}}
-
-              {{this}} {{localize (concat "BAGS.AbilityScores." @key '.Short')}}
-
-              {{#unless @last}}
-                {{#if (gt ../item.system.halfRequisitesCount 2)}},{{/if}}
-              {{/unless}}
-            {{else}}
-              <p class="empty">{{localize "BAGS.CharacterClass.Information.PrimeRequisitesEmpty"}}</p>
-            {{/each}}
           </td>
         </tr>
         <tr>
@@ -62,7 +86,8 @@
                 {{/if}}
               {{/unless}}
 
-              {{this}} {{localize (concat "BAGS.AbilityScores." @key '.Short')}}
+              {{!-- {{this}} {{localize (concat "BAGS.AbilityScores." @key '.Short')}} --}
+              {{this}}
 
               {{#unless @last}}
                 {{#if (gt ../item.system.fullRequisitesCount 2)}},{{/if}}
@@ -74,15 +99,17 @@
         </tr>
       </table>
     </dd>
+    --}}
+    </dl>
 
     {{#if restrictions}}
-      <dt>{{localize "BAGS.CharacterClass.Information.Restrictions"}}</dt>
-      <dd>{{{restrictions}}}</dd>
+    <h3 class="decorated">{{localize "BAGS.CharacterClass.Information.Restrictions"}}</h3>
+    {{{restrictions}}}
     {{/if}}
 
     {{#if gearTable}}
-      <dt>{{localize "BAGS.CharacterClass.Information.GearTable"}}</dt>
-      <dd class="gear-table">{{{gearTable}}}</dd>
+      <h3 class="decorated">{{localize "BAGS.CharacterClass.Information.GearTable"}}</h3>
+      <p>{{{gearTable}}}</p>
     {{/if}}
 
     </dl>

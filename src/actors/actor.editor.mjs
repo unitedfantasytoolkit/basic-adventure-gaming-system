@@ -30,7 +30,7 @@ export default class BAGSBaseActorEditor extends BAGSApplication {
   // --- Tabs ------------------------------------------------------------------
 
   tabGroups = {
-    sheet: "details",
+    sheet: "class-and-abilities",
   }
 
   static TABS = {

@@ -12,13 +12,19 @@
           {{#if (ne key "isAnd")}}
             <span class="requisite-table__stat-label">{{localize field.label}}</span>
             <span class="requisite-table__stat-field">
-              {{formInput (lookup ../systemFields.prerequisites.fields key)}}
+              {{formInput
+                (lookup ../systemFields.prerequisites.fields key)
+                value=(lookup @root.document.system.prerequisites key)}}
             </span>
             <span class="requisite-table__stat-field">
-              {{formInput (lookup ../systemFields.halfPrimeRequisites.fields key)}}
+              {{formInput
+                (lookup ../systemFields.halfPrimeRequisites.fields key)
+                value=(lookup @root.document.system.halfPrimeRequisites key)}}
             </span>
             <span class="requisite-table__stat-field">
-              {{formInput (lookup ../systemFields.fullPrimeRequisites.fields key)}}
+              {{formInput
+                (lookup ../systemFields.fullPrimeRequisites.fields key)
+                value=(lookup @root.document.system.fullPrimeRequisites key)}}
             </span>
           {{/if}}
         {{/each}}

@@ -65,4 +65,8 @@ export default class BAGSCharacterEditor extends BAGSBaseActorEditor {
       template: `${this.TEMPLATE_ROOT}/identity.edit.hbs`,
     },
   }
+
+  static async save(_event, _form, formData) {
+    console.info(_event, _form, formData)
+  }
 }

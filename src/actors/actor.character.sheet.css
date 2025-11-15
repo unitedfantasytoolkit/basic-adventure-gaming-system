@@ -1,3 +1,36 @@
 .application--character-sheet:not(.minimized) {
   /* TODO: how are character sheets meaningfully different? */
+  .character-classes {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    gap: 1em;
+    flex-direction: column;
+  }
+
+  .character-class {
+    article {
+      display: grid;
+      grid-template-areas:
+        "image label"
+        "image xp-bar";
+      grid-template-columns: 4ch 1fr;
+      gap: 0.25em 1em;
+      align-items: center;
+    }
+
+    img {
+      grid-area: image;
+      max-width: 5ch;
+    }
+
+    &__name {
+      grid-area: label;
+      font-weight: 700;
+    }
+
+    uft-character-info-meter.xp {
+      grid-area: xp-bar;
+    }
+  }
 }
