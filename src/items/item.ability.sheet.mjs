@@ -28,14 +28,16 @@ export default class BAGSAbilitySheet extends BAGSBaseItemSheet {
   }
 
   tabGroups = {
-    sheet: "actions",
+    sheet: "summary",
   }
 
-  /** @override */
   async _preparePartContext(partId, context) {
+    super._preparePartContext(partId, context)
     const doc = this.document
-    context.tab = context.tabs.find((t) => t.id === partId)
+
     switch (partId) {
+      case "summary":
+        break
       case "actions":
         context.actions = await Promise.all(
           doc.system.actions.map(async (a) => ({
@@ -56,21 +58,27 @@ export default class BAGSAbilitySheet extends BAGSBaseItemSheet {
    * displayed.
    */
   static get TABS() {
-    return [
-      ...BAGSBaseItemSheet.TABS,
-      {
-        id: "actions",
-        group: "sheet",
-        icon: "fa-solid fa-sparkles",
-        label: "BAGS.Actions.TabLabel",
-        cssClass: "tab--actions",
+    return {
+      sheet: {
+        tabs: [
+          {
+            id: "summary",
+            group: "sheet",
+            icon: "fa-solid fa-square-list",
+            label: "BAGS.Identity.Tabs.Summary",
+            cssClass: "tab--summary",
+          },
+          {
+            id: "actions",
+            group: "sheet",
+            icon: "fa-solid fa-sparkles",
+            label: "BAGS.Identity.Tabs.Actions",
+            cssClass: "tab--actions",
+          },
+        ],
+        initial: "summary",
+        labelPrefix: "BAGS.Identity.Tabs",
       },
-      {
-        id: "active-description",
-        group: "sheet",
-        icon: "fa-solid fa-scroll-old",
-        label: "BAGS.Actions.Editor.Tabs.Description",
-      },
-    ]
+    }
   }
 }
