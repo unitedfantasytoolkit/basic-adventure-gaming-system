@@ -2,13 +2,9 @@
  * @file The Action Resolver engine -- a class that accepts an Action and the
  * context that it's used within, waits for it to be processed, then returns
  * the result.
- * @todo Given an action, validate that the action can be performed.
- * @todo Given an action, consume resources for the action.
- * @todo Given an action, perform the action against multiple targets with a
- * minimum/maximum number of targets.
  */
 
-import rollDice from "../utils/roll-dice.mjs"
+import { FoundryDocumentAdapter } from "./foundry-document-adapter.mjs"
 
 /**
  * @typedef {import('../common/actions.fields.mjs').Action} Action
@@ -26,6 +22,8 @@ export default class ActionResolver {
 
   #resolutions = new Map()
 
+  #adapter
+
   static KEY_WITH_NO_TARGETS = "untargeted"
 
   /**
@@ -34,21 +32,18 @@ export default class ActionResolver {
    * @param {unknown} document - The Actions's source document.
    * @param {unknown} actor - The Action's owner, if any.
    * @param {unknown[]} targets - The Actors that are the target of the Action
+   * @param {FoundryDocumentAdapter} adapter - The Foundry document adapter (for testing)
    */
-  constructor(action, document, actor, targets = []) {
+  constructor(action, document, actor, targets = [], adapter = null) {
     if (!action)
       throw new TypeError("An action resolver must have an action to resolve.")
 
     this.actor = actor
     this.document = document
     this.action = action
+    this.#adapter = adapter || new FoundryDocumentAdapter()
 
-    if (!targets) this.targets = []
-    else if (targets instanceof UserTargets)
-      this.targets = Array.from(targets.entries())
-    else if (!Array.isArray(targets)) this.targets = [targets]
-    else this.targets = targets
-    this.targets = this.targets.flat()
+    this.targets = this.#adapter.normalizeTargets(targets)
   }
 
   get result() {
@@ -81,7 +76,7 @@ export default class ActionResolver {
 
       await this.#report()
     } catch (e) {
-      ui.notifications.error(e.message)
+      this.#adapter.notifyError(e.message)
       return false
     }
 
@@ -105,40 +100,150 @@ export default class ActionResolver {
   }
 
   /**
-   * Validates that the action can be performed.
-   * @returns {boolean} True if the action is valid, false otherwise.
-   * @todo Add resource validation for item consumption -- including if zero of
-   * the item is consumed (see also non-consumed spell reagents)
-   * @todo Add resource validation for HP consumption
-   * @todo Add resource validation for spell slot consumption
-   * @todo Is it appropriate to validate level here?
+   * Validates level requirements
+   * @param {object} action - The action configuration
+   * @param {object} actorData - Plain object with actor data
+   * @returns {{valid: boolean, errors: string[]}}
    */
-  #validateAction() {
-    const { actor, action } = this
+  #validateLevel(action, actorData) {
+    const errors = []
 
-    if (actor) {
-      // #1: Does the Actor meet the Action's min/max level requirements?
-      if (action.level.min !== undefined)
-        if (actor.system.details?.level < action.level.min)
-          throw new Error(
-            `${actor.name} does not meet the minimum level for ${action.name}`,
-          )
-
-      if (action.level.max !== undefined)
-        if (actor.system.details?.level > action.level.max)
-          throw new Error(
-            `${actor.name} exceeds the maximum level for ${action.name}`,
-          )
+    if (!actorData) {
+      return { valid: true, errors }
     }
 
-    // #2: If the Action consumes its own charges, are there any left to use?
-    if (action.uses.max)
-      if (action.uses.value <= 0)
-        throw new Error(`${actor.name} is out of uses of ${action.name}`)
+    const level = actorData.system?.details?.level
 
-    /** @todo What other validation do we need? */
+    if (level === undefined || level === null) {
+      return { valid: true, errors }
+    }
+
+    if (action.level?.min !== undefined && level < action.level.min) {
+      errors.push(
+        `${actorData.name || 'Actor'} does not meet the minimum level for ${action.name || 'this action'} (requires level ${action.level.min}, is level ${level})`,
+      )
+    }
+
+    if (action.level?.max !== undefined && level > action.level.max) {
+      errors.push(
+        `${actorData.name || 'Actor'} exceeds the maximum level for ${action.name || 'this action'} (max level ${action.level.max}, is level ${level})`,
+      )
+    }
+
+    return { valid: errors.length === 0, errors }
+  }
+
+  /**
+   * Validates action uses
+   * @param {object} action - The action configuration
+   * @returns {{valid: boolean, errors: string[]}}
+   */
+  #validateUses(action) {
+    const errors = []
+
+    if (action.uses?.max > 0 && action.uses.value <= 0) {
+      errors.push(
+        `No uses remaining for ${action.name || 'this action'} (0 of ${action.uses.max})`,
+      )
+    }
+
+    return { valid: errors.length === 0, errors }
+  }
+
+  /**
+   * Validates that the action can be performed.
+   * @returns {boolean} True if the action is valid, false otherwise.
+   */
+  #validateAction() {
+    const actorData = this.actor
+      ? {
+          name: this.actor.name,
+          system: this.actor.system,
+        }
+      : null
+
+    const levelValidation = this.#validateLevel(this.action, actorData)
+    const usesValidation = this.#validateUses(this.action)
+
+    const validation = {
+      valid: levelValidation.valid && usesValidation.valid,
+      errors: [...levelValidation.errors, ...usesValidation.errors],
+    }
+
+    if (!validation.valid) {
+      throw new Error(validation.errors.join("; "))
+    }
 
     return true
+  }
+
+  /**
+   * Compares a roll result against a target
+   * @param {number} roll - The roll result
+   * @param {string} operator - Comparison operator (>=, <=, ==, etc)
+   * @param {number} target - Target number
+   * @returns {boolean} Whether the comparison succeeds
+   */
+  #compareRoll(roll, operator, target) {
+    switch (operator) {
+      case '=':
+      case '==':
+        return roll === target
+      case '>=':
+        return roll >= target
+      case '<=':
+        return roll <= target
+      case '>':
+        return roll > target
+      case '<':
+        return roll < target
+      default:
+        return false
+    }
+  }
+
+  /**
+   * Builds damage formula with modifiers
+   * @param {string} baseFormula - Base dice formula (e.g., "1d8")
+   * @param {object} modifiers - Modifier values
+   * @param {string} attackType - Type of attack (melee, missile, none)
+   * @returns {string} Modified formula
+   */
+  #buildDamageFormula(baseFormula, modifiers = {}, attackType = 'none') {
+    let formula = baseFormula
+
+    switch (attackType) {
+      case 'melee':
+        if (modifiers.meleeDamageBonus) {
+          formula = `${formula}+${modifiers.meleeDamageBonus}`
+        }
+        break
+      case 'missile':
+        if (modifiers.missileDamageBonus) {
+          formula = `${formula}+${modifiers.missileDamageBonus}`
+        }
+        break
+      default:
+        break
+    }
+
+    return formula
+  }
+
+  /**
+   * Formats a numeric effect message
+   * @param {string} effectType - 'attack' or 'healing'
+   * @param {number} value - The numeric value
+   * @param {object|null} target - The target with name property, or null
+   * @returns {string} The formatted message
+   */
+  #formatEffectMessage(effectType, value, target) {
+    if (!target) {
+      return `${effectType === 'attack' ? 'Damage' : 'Healing'}: ${value}`
+    }
+
+    const verb = effectType === 'attack' ? 'takes' : 'heals'
+    return `${target.name} ${verb} ${value} points`
   }
 
   /**
@@ -154,7 +259,7 @@ export default class ActionResolver {
     switch (type) {
       case "selfQuantity":
         if (this.document?.system?.quantity > 0) {
-          await this.document.update({
+          await this.#adapter.updateDocument(this.document, {
             "system.quantity": this.document.system.quantity - 1,
           })
         }
@@ -162,16 +267,16 @@ export default class ActionResolver {
 
       case "selfUses":
         if (this.document?.system?.uses?.value > 0) {
-          await this.document.update({
+          await this.#adapter.updateDocument(this.document, {
             "system.uses.value": this.document.system.uses.value - 1,
           })
         }
         break
 
       case "itemQuantity": {
-        const targetItem = await fromUuid(item.item)
+        const targetItem = await this.#adapter.resolveUuid(item.item)
         if (targetItem?.system?.quantity >= item.quantity) {
-          await targetItem.update({
+          await this.#adapter.updateDocument(targetItem, {
             "system.quantity": targetItem.system.quantity - item.quantity,
           })
         } else {
@@ -183,9 +288,9 @@ export default class ActionResolver {
       }
 
       case "itemUses": {
-        const targetItem = await fromUuid(item.item)
+        const targetItem = await this.#adapter.resolveUuid(item.item)
         if (targetItem?.system?.uses?.value >= item.quantity) {
-          await targetItem.update({
+          await this.#adapter.updateDocument(targetItem, {
             "system.uses.value": targetItem.system.uses.value - item.quantity,
           })
         } else {
@@ -198,7 +303,7 @@ export default class ActionResolver {
 
       case "hp":
         if (this.actor?.system?.hp?.value >= item.quantity) {
-          await this.actor.update({
+          await this.#adapter.updateDocument(this.actor, {
             "system.hp.value": this.actor.system.hp.value - item.quantity,
           })
         } else {
@@ -207,19 +312,19 @@ export default class ActionResolver {
         break
 
       case "spellslot": {
-        const classItem = await fromUuid(spellSlots.class)
+        const classItem = await this.#adapter.resolveUuid(spellSlots.class)
         if (!classItem) {
           throw new Error("Spell slot class not found")
         }
 
         const slotPath = `system.spellSlots.${spellSlots.level - 1}`
-        const currentSlots = foundry.utils.getProperty(
+        const currentSlots = this.#adapter.getProperty(
           this.actor,
           `${slotPath}.value`,
         )
 
         if (currentSlots > 0) {
-          await this.actor.update({
+          await this.#adapter.updateDocument(this.actor, {
             [`${slotPath}.value`]: currentSlots - 1,
           })
         } else {
@@ -238,7 +343,7 @@ export default class ActionResolver {
             (a) => a.id === this.action.id,
           )
           if (actionIndex >= 0) {
-            await this.document.update({
+            await this.#adapter.updateDocument(this.document, {
               [`system.actions.${actionIndex}.uses.value`]:
                 this.action.uses.value - 1,
             })
@@ -264,7 +369,7 @@ export default class ActionResolver {
    */
   async #performAttempt(targetActor) {
     // Case #0: action doesn't have an attempt roll.
-    if (!this.action.flags.usesAttempt) return true
+    if (!this.action.flags.usesAttempt) return { success: true }
 
     // Case #1: Action is like an attack. It's a d20 roll plus modifier against
     // a target.
@@ -274,29 +379,30 @@ export default class ActionResolver {
     // Case #2: Action is not like an attack; it has a static value that it
     // rolls against.
     const { formula, operator, target } = this.action.attempt.roll
-    const roll = await rollDice(this.actor, formula)
+    const roll = await this.#adapter.rollDice(this.actor, formula)
 
-    let parsedTarget =
+    const parsedTarget =
       typeof target === "string" && target.startsWith("@")
-        ? foundry.utils.getProperty(this.actor.system, target.replace("@", ""))
+        ? this.#adapter.getProperty(this.actor.system, target.replace("@", ""))
         : target
-
-    if (!parsedTarget) parsedTarget = 1
 
     return {
       roll,
-      target: parsedTarget,
-      success: this.#compareRoll(roll.total, operator, parsedTarget),
+      target: parsedTarget ?? 1,
+      success: this.#compareRoll(
+        roll.total,
+        operator,
+        parsedTarget ?? 1,
+      ),
     }
   }
 
   async #performAttemptAsAttack(target) {
-    const combatSettings = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
-      CONFIG.BAGS.SystemRegistry.categories.COMBAT,
-    )
+    const combatSettings = this.#adapter.getCombatSystem()
 
     return combatSettings.resolveAttackRoll(this.actor, target?.actor, {
       attackType: this.action.attempt.attack.type,
+      bonus: this.action.attempt.attack.bonus || 0,
     })
   }
 
@@ -341,7 +447,7 @@ export default class ActionResolver {
             }
 
           default:
-            ui.notifications.warn(`Unknown effect type: ${effect.type}`)
+            this.#adapter.notifyWarning(`Unknown effect type: ${effect.type}`)
             return null
         }
       }),
@@ -361,9 +467,7 @@ export default class ActionResolver {
 
     switch (type) {
       case "savingThrow": {
-        const saveSettings = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
-          CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
-        )
+        const saveSettings = this.#adapter.getSavingThrowSystem()
 
         const result = await saveSettings.resolve(target.actor, savingThrow, {
           rollFormula: effect.resistance.roll?.formula || "1d20",
@@ -374,14 +478,18 @@ export default class ActionResolver {
       }
 
       case "abilityScore": {
-        const result = await rollDice(target, roll.formula)
+        const result = await this.#adapter.rollDice(target, roll.formula)
         const score = target.system.abilities[roll.abilityScore].value
         return this.#compareRoll(result.total, roll.operator, score)
       }
 
       case "number": {
-        const result = await rollDice(target, roll.formula)
-        return this.#compareRoll(result.total, roll.operator, staticTarget)
+        const result = await this.#adapter.rollDice(target, roll.formula)
+        return this.#compareRoll(
+          result.total,
+          roll.operator,
+          staticTarget,
+        )
       }
 
       default:
@@ -396,51 +504,32 @@ export default class ActionResolver {
    * @returns {Promise<object>} The result of processing the effect
    */
   async #processNumericEffect(effect, target) {
-    let { formula } = effect
+    const attackType = effect.flags.isLikeAttack
+      ? this.action.attempt.attack.type
+      : "none"
 
-    if (effect.flags.isLikeAttack) {
-      switch (this.action.attempt.attack.type) {
-        case "melee":
-          formula = `${formula}+@meleeDamageBonus`
-          break
-        case "missile":
-          formula = `${formula}+@missileDamageBonus`
-          break
-        default:
-          break
-      }
-    }
+    const formula = this.#buildDamageFormula(
+      effect.formula,
+      {
+        meleeDamageBonus: this.actor.system.meleeDamageBonus,
+        missileDamageBonus: this.actor.system.missileDamageBonus,
+      },
+      attackType,
+    )
 
-    const roll = await rollDice(this.actor, formula)
+    const roll = await this.#adapter.rollDice(this.actor, formula)
     const value = roll.total
-
-    if (!target) {
-      return {
-        type: effect.type,
-        value,
-        roll,
-        message: `${effect.type === "attack" ? "Damage" : "Healing"}: ${value}`,
-      }
-    }
-
-    // TODO:  Automatically apply damage to targets?
-
-    // const currentHP = target.system.hp.value
-    // const newHP =
-    //   effect.type === "attack"
-    //     ? Math.max(0, currentHP - value)
-    //     : Math.min(target.system.hp.max, currentHP + value)
-    //
-    // await target.update({
-    //   "system.hp.value": newHP,
-    // })
 
     return {
       type: effect.type,
-      target: target.uuid,
+      target: target?.uuid,
       value,
       roll,
-      message: `${target.name} ${effect.type === "attack" ? "takes" : "heals"} ${value} points`,
+      message: this.#formatEffectMessage(
+        effect.type,
+        value,
+        target,
+      ),
     }
   }
 
@@ -450,22 +539,23 @@ export default class ActionResolver {
    * @param {Actor} target - The target of the effect
    * @returns {Promise<object>} The result of processing the effect
    */
-  // eslint-disable-next-line class-methods-use-this
   async #processActiveEffect(effect, target) {
     if (!target) return null
 
     const effectData = {
-      label: effect.note || "New Effect",
-      icon: effect.icon,
-      duration: effect.duration,
+      label: effect.note || effect.condition?.name || "New Effect",
+      icon: effect.condition?.img || effect.icon,
+      description: effect.condition?.description,
+      duration: effect.condition?.duration || effect.duration,
+      changes: effect.condition?.changes || [],
       flags: {
         core: {
-          statusId: effect.condition,
+          statusId: effect.condition?.name,
         },
       },
     }
 
-    const createdEffect = await ActiveEffect.create(effectData, {
+    const createdEffect = await this.#adapter.createActiveEffect(effectData, {
       parent: target,
     })
 
@@ -473,7 +563,7 @@ export default class ActionResolver {
       type: "effect",
       target: target.uuid,
       effectId: createdEffect.id,
-      message: `Applied ${effect.note || "effect"} to ${target.name}`,
+      message: `Applied ${effect.note || effect.condition?.name || "effect"} to ${target.name}`,
     }
   }
 
@@ -484,8 +574,12 @@ export default class ActionResolver {
    * @returns {Promise<object>} The result of processing the effect
    */
   async #processMacroEffect(effect, target) {
-    const macro = await fromUuid(effect.macro)
-    await macro?.execute({ actor: this.actor, target, action: this.action })
+    const macro = await this.#adapter.resolveUuid(effect.macro)
+    await this.#adapter.executeMacro(macro, {
+      actor: this.actor,
+      target,
+      action: this.action,
+    })
     return {
       type: "macro",
       message: "Executed macro effect",
@@ -515,12 +609,11 @@ export default class ActionResolver {
    * @param {object} effect - The effect to process
    * @returns {Promise<object>} The result of processing the effect
    */
-  // eslint-disable-next-line class-methods-use-this
   async #processTableEffect(effect) {
-    const table = await fromUuid(effect.rollTable.document)
+    const table = await this.#adapter.resolveUuid(effect.rollTable.document)
     if (!table) return null
 
-    const roll = await table.roll()
+    const roll = await this.#adapter.rollTable(table)
     const result = roll.results[0]
 
     return {
@@ -531,35 +624,9 @@ export default class ActionResolver {
     }
   }
 
-  /**
-   * Utility to compare roll results
-   * @param {number} roll - The roll result
-   * @param {string} operator - The comparison operator
-   * @param {number} target - The target number
-   * @returns {boolean} Whether the comparison succeeds
-   */
-  // eslint-disable-next-line class-methods-use-this
-  #compareRoll(roll, operator, target) {
-    switch (operator) {
-      case "=":
-      case "==":
-        return roll === target
-      case ">=":
-        return roll >= target
-      case "<=":
-        return roll <= target
-      case ">":
-        return roll > target
-      case "<":
-        return roll < target
-      default:
-        return false
-    }
-  }
-
   async #report() {
     const messageData = {
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      speaker: this.#adapter.getSpeaker({ actor: this.actor }),
       type: "action",
       system: {
         actor: this.actor?.uuid || undefined,
@@ -569,10 +636,22 @@ export default class ActionResolver {
       },
     }
 
-    if (this.action.flags.isBlind) {
-      messageData.blind = true
+    // Determine roll mode from action configuration
+    let rollMode = null
+    if (this.action.flags.usesAttempt && this.action.attempt.roll?.type) {
+      rollMode = this.action.attempt.roll.type
     }
 
-    const message = await ChatMessage.create(messageData)
+    // isBlind flag overrides to force blind roll mode
+    if (this.action.flags.isBlind) {
+      rollMode = 'blind'
+    }
+
+    // Apply roll mode properties via adapter
+    if (rollMode) {
+      this.#adapter.applyRollMode(messageData, rollMode)
+    }
+
+    await this.#adapter.createChatMessage(messageData)
   }
 }
