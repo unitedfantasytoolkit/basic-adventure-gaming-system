@@ -786,7 +786,8 @@
         "Resources": "Resources",
         "SpellList": "Spell List",
         "SpellSlots": "Spell Slots",
-        "Features": "Features"
+        "Features": "Features",
+        "History": "History"
       },
       "XPTable": {
         "EditorTitle": "Advancement Table Editor",
@@ -822,7 +823,9 @@
         "FullPrimeRequisites": "Full Prime Requisites",
         "PrimeRequisiteInclusivity": "Inclusive",
         "Restrictions": "Restrictions",
-        "AdditionalRestrictions": "Additional Restrictions"
+        "AdditionalRestrictions": "Additional Restrictions",
+        "ClassAbilities": "Class Abilities",
+        "Spellcasting": "Spellcasting"
       },
       "ClassResources": {
         "Category": {
@@ -873,6 +876,14 @@
           "label": "XP",
           "long": "Experience"
         }
+      },
+      "History": {
+        "Date": "Date",
+        "Event": "Event",
+        "XPChange": "XP",
+        "LevelChange": "Level",
+        "Note": "Reason",
+        "Empty": "No history recorded yet."
       }
     },
     "Identity": {

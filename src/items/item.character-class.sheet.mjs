@@ -37,6 +37,8 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
     },
     actions: {
       "edit-advancement": this.editAdvancement,
+      "add-xp": this.addXP,
+      "level-up": this.levelUp,
     },
   }
 
@@ -57,6 +59,9 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
       advancement: {
         template: `${this.TEMPLATE_ROOT}/xp-table.view.hbs`,
       },
+      history: {
+        template: `${this.TEMPLATE_ROOT}/history.hbs`,
+      },
       ...super.TAB_PARTS,
     }
   }
@@ -73,6 +78,7 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
     context.usesDescendingAC = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
       CONFIG.BAGS.SystemRegistry.categories.COMBAT,
     )?.descending
+    context.savingThrows = savingThrowSettings.savingThrows
 
     switch (partId) {
       case "summary":
@@ -86,7 +92,6 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
         context.savingThrowTypeCount = Object.keys(
           savingThrowSettings.savingThrows,
         ).length
-        context.savingThrows = savingThrowSettings.savingThrows
         break
       default:
         return super._preparePartContext(partId, context)
@@ -110,6 +115,13 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
           label: "BAGS.CharacterClass.Tabs.Advancement",
           cssClass: "tab--advancement",
         },
+        {
+          id: "history",
+          group: "sheet",
+          icon: "fa-solid fa-clock-rotate-left",
+          label: "BAGS.CharacterClass.Tabs.History",
+          cssClass: "tab--history",
+        },
       ],
     },
   }
@@ -123,40 +135,13 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
       const xpBar = document.createElement("uft-character-info-meter")
       xpBar.setAttribute("value", this.document.system.xp)
       xpBar.setAttribute("max", this.document.system.xpToNext)
+      xpBar.classList.add("clickable")
+      xpBar.dataset.action = "add-xp"
+      xpBar.dataset.tooltip = this.document.system.canAddXP
+        ? "Click to add XP"
+        : `Maximum level reached (${this.document.system.maxLevel})`
 
-      const levelLabel = document.createElement("span")
-      levelLabel.innerText = this.document.system.level
-      levelLabel.classList.add("level")
-
-      xpBarContainer.append(levelLabel, xpBar)
-
-      if (this.document.isOwner) {
-        const addXpButton = document.createElement("button")
-        addXpButton.classList.add(
-          "inline-control",
-          "icon",
-          "fa",
-          "fa-plus-large",
-          "add-xp-button",
-        )
-        addXpButton.dataset.tooltip = "Add Experience Points"
-        addXpButton.toggleAttribute("disabled", !this.document.system.canAddXP)
-
-        const levelUpButton = document.createElement("button")
-        levelUpButton.classList.add(
-          "inline-control",
-          "icon",
-          "fa",
-          "fa-turn-up",
-          "level-up-button",
-        )
-        levelUpButton.dataset.tooltip = "Level up"
-        levelUpButton.toggleAttribute(
-          "disabled",
-          !this.document.system.canLevelUp,
-        )
-        xpBarContainer.append(addXpButton, levelUpButton)
-      }
+      xpBarContainer.append(xpBar)
 
       titleBarContainer
         .querySelector(".window-header__text")
@@ -172,19 +157,97 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
     )
 
     if (xpBar) {
-      console.info("Can gain XP", this.document.system.canAddXP)
-      console.info("Can level up", this.document.system.canLevelUp)
-
       xpBar.setAttribute("value", this.document.system.xp)
       xpBar.setAttribute("max", this.document.system.xpToNext)
-
-      this.element
-        .querySelector(".add-xp-button")
-        ?.toggleAttribute("disabled", !this.document.system.canAddXP)
-      this.element
-        .querySelector(".level-up-button")
-        ?.toggleAttribute("disabled", !this.document.system.canLevelUp)
+      xpBar.dataset.tooltip = this.document.system.canAddXP
+        ? "Click to add XP"
+        : `Maximum level reached (${this.document.system.maxLevel})`
     }
+  }
+
+  static async addXP() {
+    if (!this.document.system.canAddXP) return
+
+    const xpToAdd = await foundry.applications.api.DialogV2.prompt({
+      window: { title: "Add Experience Points" },
+      content: `
+        <form>
+          <div class="form-group">
+            <label>XP to add</label>
+            <input type="number" name="xp" min="1" placeholder="Enter XP amount" autofocus />
+          </div>
+          <div class="form-group">
+            <label>Note (optional)</label>
+            <input type="text" name="note" placeholder="e.g., Defeated the goblin king" />
+          </div>
+        </form>
+      `,
+      ok: {
+        label: "Add XP",
+        callback: (event, button) => {
+          const { form } = button
+          return {
+            xp: parseInt(form.elements.xp.value, 10),
+            note: form.elements.note.value,
+          }
+        },
+      },
+      rejectClose: false,
+    })
+
+    if (!xpToAdd || !xpToAdd.xp) return
+
+    const currentXP = this.document.system.xp
+    const newXP = currentXP + xpToAdd.xp
+
+    // Add to audit log
+    const logEntry = {
+      date: Date.now(),
+      xpChange: xpToAdd.xp,
+      levelChange: 0,
+      note: xpToAdd.note || "XP added",
+    }
+
+    await this.document.update({
+      "system.xp": newXP,
+      "system.xpLog": [...this.document.system.xpLog, logEntry],
+    })
+
+    ui.notifications.info(
+      `Added ${xpToAdd.xp} XP to ${this.document.name}. Total: ${newXP}`,
+    )
+  }
+
+  static async levelUp() {
+    if (!this.document.system.canLevelUp) return
+
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "Level Up" },
+      content: `<p>Level up to ${this.document.system.level + 1}?</p>`,
+      yes: { label: "Level Up!" },
+      no: { label: "Cancel" },
+      rejectClose: false,
+    })
+
+    if (!confirmed) return
+
+    const oldLevel = this.document.system.level
+    const newLevel = oldLevel + 1
+
+    // Add to audit log
+    const logEntry = {
+      date: Date.now(),
+      xpChange: 0,
+      levelChange: 1,
+      note: `Leveled up from ${oldLevel} to ${newLevel}`,
+    }
+
+    await this.document.update({
+      "system.manuallySetLevel": newLevel,
+      "system.xpLog": [...this.document.system.xpLog, logEntry],
+    })
+
+    ui.notifications.info(`${this.document.name} is now level ${newLevel}!`)
   }
 
   static editAdvancement() {

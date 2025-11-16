@@ -4,27 +4,81 @@
     <div class="flavor">{{{item.system.flavorText}}}</div>
   {{/if}}
 
+  {{#if document.system.currentLevelDetails}}
+  {{#with document.system.currentLevelDetails}}
+  <div class="current-level-hero">
+    <button
+      class="hero__badge {{#if @root.document.system.canLevelUp}}hero__badge--can-level-up{{/if}}"
+      data-action="level-up"
+      {{#unless @root.document.system.canLevelUp}}disabled{{/unless}}
+      data-tooltip="{{#if @root.document.system.canLevelUp}}Click to level up!{{else}}Need {{@root.document.system.xpRemaining}} more XP{{/if}}"
+    >
+      <span class="hero__badge-label">Level</span>
+      <span class="hero__badge-value">{{level}}</span>
+    </button>
+
+    <div class="hero__stat">
+      <span class="hero__stat-label">Hit Dice</span>
+      <span class="hero__stat-value">{{hd.count}}d{{@root.document.system.hitDieSize}}{{ifThen hd.modifier (signNumber hd.modifier) ""}}</span>
+    </div>
+
+    {{#if @root.usesDescendingAC}}
+      <div class="hero__stat">
+        <span class="hero__stat-label">THAC0</span>
+        <span class="hero__stat-value">{{thac0}}</span>
+      </div>
+    {{else}}
+      <div class="hero__stat">
+        <span class="hero__stat-label">Attack Bonus</span>
+        <span class="hero__stat-value">{{signNumber attackBonus forceSign=true}}</span>
+      </div>
+    {{/if}}
+
+    <div class="hero__saves">
+      {{#each savingThrows}}
+        <div class="hero__save" data-tooltip="{{localize (lookup (lookup @root.savingThrows @key) "label")}}">
+          <span class="hero__save-initial">{{localize (lookup (lookup @root.savingThrows @key) "initial")}}</span>
+          <span class="hero__save-value">{{this}}</span>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/with}}
+  {{/if}}
+
   <main>
+    {{#if item.system.description}}
     {{{item.system.description}}}
+    {{else}}
+      <p class="empty">{{localize "BAGS.NoDescription"}}
+    {{/if}}
   </main>
 
   <aside class="scrollable">
+    {{#if document.system.actions.length}}
+      <h3 class="decorated">{{localize "BAGS.CharacterClass.Information.ClassAbilities"}}</h3>
+      <div class="ability-grid">
+        {{#each document.system.actions}}
+          <button class="ability-grid__icon" data-action="use-action" data-action-id="{{id}}" data-tooltip="{{name}}">
+            <img src="{{img}}" alt="{{name}}">
+          </button>
+        {{/each}}
+      </div>
+    {{/if}}
+
     {{#if document.system.currentLevelDetails}}
     {{#with document.system.currentLevelDetails}}
-    <dl>
-      <dt>Hit Dice</dt>
-      <dd>{{hd.count}}d{{@root.document.system.hitDieSize}}{{ifThen hd.modifier (signNumber hd.modifier) ""}}</dd>
-
-      <dt>THAC0</dt>
-      <dd>{{thac0}}</dd>
-    </dl>
-    <h3 class="decorated">Saving Throws</h3>
-    <dl>
-      {{#each savingThrows}}
-      <dt>{{@key}}</dt>
-      <dd>{{this}}</dd>
-      {{/each}}
-    </dl>
+    {{#if spellSlots.length}}
+      <h3 class="decorated">{{localize "BAGS.CharacterClass.Information.Spellcasting"}}</h3>
+      <dl class="spell-slots-list">
+        {{#each spellSlots}}
+        {{#if this}}
+        <dt>{{{ordinal (add @index 1)}}} Level</dt>
+        <dd>{{this}}</dd>
+        {{/if}}
+        {{/each}}
+      </dl>
+    {{/if}}
     {{/with}}
     {{/if}}
 

@@ -1,0 +1,50 @@
+{{#> sheetTab}}
+  <header class="tab__header">
+    <h2>{{localize "BAGS.CharacterClass.Tabs.History"}}</h2>
+  </header>
+
+  <div class="tab__content scrollable">
+    {{#if item.system.xpLog.length}}
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>{{localize "BAGS.CharacterClass.History.Date"}}</th>
+            <th>{{localize "BAGS.CharacterClass.History.Event"}}</th>
+            <th>{{localize "BAGS.CharacterClass.History.XPChange"}}</th>
+            <th>{{localize "BAGS.CharacterClass.History.LevelChange"}}</th>
+            <th>{{localize "BAGS.CharacterClass.History.Note"}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each item.system.xpLog}}
+            <tr>
+              <td>{{formatDate date format="short"}}</td>
+              <td>
+                {{#if (gt xpChange 0)}}
+                  <i class="fa fa-plus-circle" style="color: var(--color-success);"></i> XP Gained
+                {{else if (lt xpChange 0)}}
+                  <i class="fa fa-minus-circle" style="color: var(--color-warning);"></i> XP Lost
+                {{else if (gt levelChange 0)}}
+                  <i class="fa fa-arrow-up" style="color: var(--color-success);"></i> Level Up
+                {{else if (lt levelChange 0)}}
+                  <i class="fa fa-arrow-down" style="color: var(--color-warning);"></i> Level Drained
+                {{else}}
+                  <i class="fa fa-info-circle"></i> Other
+                {{/if}}
+              </td>
+              <td class="{{#if (gt xpChange 0)}}positive{{else if (lt xpChange 0)}}negative{{/if}}">
+                {{#if xpChange}}{{signNumber xpChange forceSign=true}}{{else}}&mdash;{{/if}}
+              </td>
+              <td class="{{#if (gt levelChange 0)}}positive{{else if (lt levelChange 0)}}negative{{/if}}">
+                {{#if levelChange}}{{signNumber levelChange forceSign=true}}{{else}}&mdash;{{/if}}
+              </td>
+              <td>{{note}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    {{else}}
+      <p class="empty">{{localize "BAGS.CharacterClass.History.Empty"}}</p>
+    {{/if}}
+  </div>
+{{/sheetTab}}

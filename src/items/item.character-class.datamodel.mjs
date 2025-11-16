@@ -352,6 +352,10 @@ export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
     return this.xpTable[this.level].value
   }
 
+  get xpRemaining() {
+    return Math.max(0, this.xpToNext - this.xp)
+  }
+
   get currentLevelData() {
     try {
       return this.xpTable[this.level]
@@ -382,6 +386,12 @@ export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
       saves: savingThrows,
       value: xpToNext,
     } = this.xpTable[currentLevelIndex]
+    
+    // Transpose spell slots from [spellLevel][characterLevel] to [characterLevel]
+    const currentSpellSlots = this.spellSlots.map(
+      spellLevelSlots => spellLevelSlots[currentLevelIndex]
+    ).filter(slots => slots != null)
+    
     return {
       id: this.parent.id,
       name: this.parent.name,
@@ -395,7 +405,7 @@ export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
       },
       savingThrows,
       resources: this.leveledResources,
-      spellSlots: this.spellSlots[currentLevelIndex] || [],
+      spellSlots: currentSpellSlots,
     }
   }
 }
