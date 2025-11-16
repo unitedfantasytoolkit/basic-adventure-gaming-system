@@ -21,12 +21,13 @@ export const DEFAULT_ART_ACTOR_MONSTER = `${SYSTEM_ASSET_PATH}/icons/actor.monst
 export const DEFAULT_ART_ACTOR_VEHICLE = ""
 
 // --- Items -------------------------------------------------------------------
-export const DEFAULT_ART_ITEM = ""
-export const DEFAULT_ART_WEAPON = ""
-export const DEFAULT_ART_ARMOR = ""
-export const DEFAULT_ART_SPELL = ""
-export const DEFAULT_ART_ABILITY = ""
-export const DEFAULT_ART_CHARACTER_CLASS = ""
+export const DEFAULT_ART_ITEM_ITEM = ""
+export const DEFAULT_ART_ITEM_WEAPON = `${SYSTEM_ASSET_PATH}/icons/item.weapon.img.svg`
+export const DEFAULT_ART_ITEM_ARMOR = `${SYSTEM_ASSET_PATH}/icons/item.armor.img.svg`
+export const DEFAULT_ART_ITEM_SPELL = `${SYSTEM_ASSET_PATH}/icons/item.spell.img.svg`
+export const DEFAULT_ART_ITEM_ABILITY = `${SYSTEM_ASSET_PATH}/icons/item.ability.img.svg`
+export const DEFAULT_ART_ITEM_CHARACTER_CLASS = `${SYSTEM_ASSET_PATH}/icons/item.class.img.svg`
+export const DEFAULT_ART_ITEM_IDENTITY = `${SYSTEM_ASSET_PATH}/icons/item.identity.img.svg`
 
 // --- Abilities ---------------------------------------------------------------
 export const ABILITY_TYPES = {

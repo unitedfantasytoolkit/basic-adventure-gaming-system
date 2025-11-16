@@ -1,6 +1,15 @@
 /**
  * @file An overriding document class for Item documents in the BAGS system.
  */
+import {
+  DEFAULT_ART_ITEM_ABILITY,
+  DEFAULT_ART_ITEM_ARMOR,
+  DEFAULT_ART_ITEM_CHARACTER_CLASS,
+  DEFAULT_ART_ITEM_IDENTITY,
+  DEFAULT_ART_ITEM_ITEM,
+  DEFAULT_ART_ITEM_SPELL,
+  DEFAULT_ART_ITEM_WEAPON,
+} from "../config/constants.mjs"
 import ActionResolver from "../rules-engines/action-resolver.mjs"
 
 /**
@@ -10,6 +19,38 @@ import ActionResolver from "../rules-engines/action-resolver.mjs"
  * @augments {Item}
  */
 export default class BAGSItem extends Item {
+  static getDefaultArtwork(actorData) {
+    let art = ""
+
+    switch (actorData.type) {
+      case "weapon":
+        art = DEFAULT_ART_ITEM_WEAPON
+        break
+      case "armor":
+        art = DEFAULT_ART_ITEM_ARMOR
+        break
+      case "class":
+        art = DEFAULT_ART_ITEM_CHARACTER_CLASS
+        break
+      case "identity":
+        art = DEFAULT_ART_ITEM_IDENTITY
+        break
+      case "spell":
+        art = DEFAULT_ART_ITEM_SPELL
+        break
+      case "ability":
+        art = DEFAULT_ART_ITEM_ABILITY
+        break
+      default:
+        art = DEFAULT_ART_ITEM_ITEM
+        break
+    }
+
+    return {
+      img: art || this.DEFAULT_ICON,
+    }
+  }
+
   /** @type {string[]} Types of items that are considered physical objects */
   static PHYSICAL_TYPES = ["weapon", "armor", "item"]
 
