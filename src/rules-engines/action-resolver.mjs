@@ -124,7 +124,7 @@ export default class ActionResolver {
             `${actor.name} does not meet the minimum level for ${action.name}`,
           )
 
-      if (action.level.min !== undefined)
+      if (action.level.max !== undefined)
         if (actor.system.details?.level > action.level.max)
           throw new Error(
             `${actor.name} exceeds the maximum level for ${action.name}`,
@@ -146,8 +146,112 @@ export default class ActionResolver {
    * @returns {Promise<boolean>} True if resources were successfully consumed,
    * false otherwise.
    */
-  // eslint-disable-next-line class-methods-use-this
   async #consumeResources() {
+    if (!this.action.flags.usesConsumption) return true
+
+    const { type, item, spellSlots } = this.action.consumption
+
+    switch (type) {
+      case "selfQuantity":
+        if (this.document?.system?.quantity > 0) {
+          await this.document.update({
+            "system.quantity": this.document.system.quantity - 1,
+          })
+        }
+        break
+
+      case "selfUses":
+        if (this.document?.system?.uses?.value > 0) {
+          await this.document.update({
+            "system.uses.value": this.document.system.uses.value - 1,
+          })
+        }
+        break
+
+      case "itemQuantity": {
+        const targetItem = await fromUuid(item.item)
+        if (targetItem?.system?.quantity >= item.quantity) {
+          await targetItem.update({
+            "system.quantity": targetItem.system.quantity - item.quantity,
+          })
+        } else {
+          throw new Error(
+            `Insufficient quantity of ${targetItem?.name || "item"}`,
+          )
+        }
+        break
+      }
+
+      case "itemUses": {
+        const targetItem = await fromUuid(item.item)
+        if (targetItem?.system?.uses?.value >= item.quantity) {
+          await targetItem.update({
+            "system.uses.value": targetItem.system.uses.value - item.quantity,
+          })
+        } else {
+          throw new Error(
+            `Insufficient uses of ${targetItem?.name || "item"}`,
+          )
+        }
+        break
+      }
+
+      case "hp":
+        if (this.actor?.system?.hp?.value >= item.quantity) {
+          await this.actor.update({
+            "system.hp.value": this.actor.system.hp.value - item.quantity,
+          })
+        } else {
+          throw new Error("Insufficient HP to use this action")
+        }
+        break
+
+      case "spellslot": {
+        const classItem = await fromUuid(spellSlots.class)
+        if (!classItem) {
+          throw new Error("Spell slot class not found")
+        }
+
+        const slotPath = `system.spellSlots.${spellSlots.level - 1}`
+        const currentSlots = foundry.utils.getProperty(
+          this.actor,
+          `${slotPath}.value`,
+        )
+
+        if (currentSlots > 0) {
+          await this.actor.update({
+            [`${slotPath}.value`]: currentSlots - 1,
+          })
+        } else {
+          throw new Error(
+            `No level ${spellSlots.level} spell slots remaining`,
+          )
+        }
+        break
+      }
+
+      case "actionUse":
+        if (this.action.uses.value > 0) {
+          // Note: This updates the action within the parent document
+          const actions = this.document.system.actions
+          const actionIndex = actions.findIndex(
+            (a) => a.id === this.action.id,
+          )
+          if (actionIndex >= 0) {
+            await this.document.update({
+              [`system.actions.${actionIndex}.uses.value`]:
+                this.action.uses.value - 1,
+            })
+          }
+        } else {
+          throw new Error("No uses of this action remaining")
+        }
+        break
+
+      default:
+        break
+    }
+
     return true
   }
 
@@ -261,11 +365,12 @@ export default class ActionResolver {
           CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
         )
 
-        const didSave = saveSettings.resolve(target, savingThrow)
+        const result = await saveSettings.resolve(target.actor, savingThrow, {
+          rollFormula: effect.resistance.roll?.formula || "1d20",
+          modifier: effect.resistance.targetRollModifier || 0,
+        })
 
-        console.info(didSave)
-
-        return false
+        return result.success
       }
 
       case "abilityScore": {

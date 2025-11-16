@@ -2,6 +2,7 @@
   "name": "basic-adventure-gaming-system",
   "version": "0.0.0",
   "scripts": {
+    "lint": "eslint",
     "build": "npm-run-all -p  build:js build:css",
     "build:js": "rollup --config ./rollup.config.js",
     "build:css": "postcss src/index.css -o dist/bags.css",

@@ -241,6 +241,7 @@
       "Consumption": {
         "Types": {
           "Label": "Consumed Resource",
+          "Hint": "What resource does this action consume when used?",
           "SelfQuantity": "This item's quantity",
           "SelfUses": "This item's uses",
           "ItemQuantity": "Another item's quantity",
@@ -248,7 +249,48 @@
           "HP": "User's HP",
           "Spellslot": "User's Spell slots",
           "ActionUse": "This action's uses"
+        },
+        "Item": {
+          "Label": "Item",
+          "Hint": "The item to consume from"
+        },
+        "Quantity": {
+          "Label": "Quantity",
+          "Hint": "How much of the resource to consume"
+        },
+        "SpellSlot": {
+          "Class": {
+            "Label": "Class",
+            "Hint": "The class providing the spell slots"
+          },
+          "Level": {
+            "Label": "Spell Level",
+            "Hint": "The level of spell slot to consume"
+          }
         }
+      },
+      "Uses": {
+        "Value": {
+          "Label": "Current Uses",
+          "Hint": "How many uses of this action remain"
+        },
+        "Max": {
+          "Label": "Maximum Uses",
+          "Hint": "Maximum number of uses before needing to recharge"
+        },
+        "RechargesOn": {
+          "Label": "Recharges On",
+          "Hint": "When does this action regain its uses?"
+        }
+      },
+      "RechargeType": {
+        "Round": "Per Round (10 seconds)",
+        "Turn": "Per Turn (10 minutes)",
+        "Day": "Per Day (24 hours)",
+        "Dawn": "Per Dawn",
+        "Dusk": "Per Dusk",
+        "Rest": "Per Rest",
+        "Other": "Other"
       },
       "Name": {
         "Label": "Action Name",
