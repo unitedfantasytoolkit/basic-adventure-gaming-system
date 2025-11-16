@@ -20,6 +20,9 @@ import BAGSSpellDataModel from "../items/item.spell.datamodel.mjs"
 import BAGSWeaponSheet from "../items/item.weapon.sheet.mjs"
 import BAGSItemWeaponDataModel from "../items/item.weapon.datamodel.mjs"
 
+import BAGSIdentitySheet from "../items/item.identity.sheet.mjs"
+import BAGSIdentityDataModel from "../items/item.identity.datamodel.mjs"
+
 Hooks.once("init", async () => {
   CONFIG.Item.documentClass = BAGSItem
 
@@ -30,6 +33,7 @@ Hooks.once("init", async () => {
     armor: BAGSItemArmorDataModel,
     spell: BAGSSpellDataModel,
     weapon: BAGSItemWeaponDataModel,
+    identity: BAGSIdentityDataModel,
   }
 
   // Register data models and sheets for items
@@ -92,6 +96,15 @@ Hooks.once("init", async () => {
       types: ["ability"],
       makeDefault: true,
       label: "BAGS.SheetAbility",
+    },
+  )
+  foundry.documents.collections.Items.registerSheet(
+    SYSTEM_NAME,
+    BAGSIdentitySheet,
+    {
+      types: ["identity"],
+      makeDefault: true,
+      label: "BAGS.SheetIdentity",
     },
   )
 })

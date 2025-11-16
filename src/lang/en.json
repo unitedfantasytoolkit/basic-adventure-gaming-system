@@ -833,6 +833,32 @@
         }
       }
     },
+    "Identity": {
+      "Tabs": {
+        "Summary": "Summary",
+        "Actions": "Actions"
+      },
+      "Information": {
+        "ActionLabel": "Edit Identity",
+        "Prerequisites": "Prerequisites",
+        "PrerequisitesHint": "Set minimum ability scores required for this identity. Leave at 0 for no requirement.",
+        "Restrictions": "Restrictions"
+      },
+      "Editor": {
+        "Tabs": {
+          "Details": "Details",
+          "Restrictions": "Restrictions",
+          "Media": "Media",
+          "FlavorText": "Flavor Text",
+          "Description": "Description"
+        }
+      },
+      "FIELDS": {}
+    },
+    "Common": {
+      "AbilityScore": "Ability Score",
+      "Minimum": "Minimum"
+    },
     "Dialogs": {
       "RollConfig": {
         "Title": "Roll Dice",
@@ -1053,7 +1079,8 @@
       "item": "Item",
       "class": "Character Class",
       "ability": "Ability",
-      "spell": "Spell"
+      "spell": "Spell",
+      "identity": "Identity"
     }
   },
   "TIME": {

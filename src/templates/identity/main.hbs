@@ -1,0 +1,27 @@
+{{#> sheetTab}}
+
+  {{#if item.system.flavorText}}
+    <div class="flavor">{{{item.system.flavorText}}}</div>
+  {{/if}}
+
+  <main>
+    {{{item.system.description}}}
+  </main>
+
+  <aside>
+    {{#if prerequisites}}
+      <h3 class="decorated">{{localize "BAGS.Identity.Information.Prerequisites"}}</h3>
+      <dl>
+      {{#each prerequisites}}
+        <dt>{{this.label}}</dt>
+        <dd>{{this.value}}</dd>
+      {{/each}}
+      </dl>
+    {{/if}}
+
+    {{#if item.system.restrictions}}
+      <h3 class="decorated">{{localize "BAGS.Identity.Information.Restrictions"}}</h3>
+      {{{item.system.restrictions}}}
+    {{/if}}
+  </aside>
+{{/sheetTab}}
