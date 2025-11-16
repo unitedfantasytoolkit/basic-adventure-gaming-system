@@ -177,6 +177,10 @@
           margin: 0 0 0.5em;
           grid-template-columns: 1fr 6ch;
 
+          &.prime-requisites-list {
+            grid-template-columns: 4ch 1fr;
+          }
+
           :is(dd, dt) {
             margin: 0;
           }

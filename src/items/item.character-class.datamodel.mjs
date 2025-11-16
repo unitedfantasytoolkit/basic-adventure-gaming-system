@@ -261,17 +261,47 @@ export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
   }
 
   get prerequisitesFormatted() {
-    return filterFalsyKeyVals(this.prerequisites)
+    const abilityScoreSettings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.ABILITY_SCORES,
+      )
+    const abilityScores = abilityScoreSettings?.abilityScores || new Map()
+
+    const formatted = {}
+    for (const [key, value] of Object.entries(this.prerequisites)) {
+      if (value > 0) {
+        const config = abilityScores.get(key)
+        formatted[key] = {
+          label: config?.label || key,
+          value,
+        }
+      }
+    }
+    return formatted
   }
 
   get prerequsiitesCount() {
-    return Object.keys(this.preequisitesFormatted).length
+    return Object.keys(this.prerequisitesFormatted).length
   }
 
   get halfRequisitesFormatted() {
-    const reqs = filterFalsyKeyVals(this.halfPrimeRequisites)
-    if (reqs.isAnd) delete reqs.isAnd
-    return reqs
+    const abilityScoreSettings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.ABILITY_SCORES,
+      )
+    const abilityScores = abilityScoreSettings?.abilityScores || new Map()
+
+    const formatted = {}
+    for (const [key, value] of Object.entries(this.halfPrimeRequisites)) {
+      if (key !== "isAnd" && value > 0) {
+        const config = abilityScores.get(key)
+        formatted[key] = {
+          label: config?.label || key,
+          value,
+        }
+      }
+    }
+    return formatted
   }
 
   get halfRequisitesCount() {
@@ -279,9 +309,23 @@ export default class BAGSCharacterClassDataModel extends BaseItemDataModel {
   }
 
   get fullRequisitesFormatted() {
-    const reqs = filterFalsyKeyVals(this.fullPrimeRequisites)
-    if (reqs.isAnd) delete reqs.isAnd
-    return reqs
+    const abilityScoreSettings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.ABILITY_SCORES,
+      )
+    const abilityScores = abilityScoreSettings?.abilityScores || new Map()
+
+    const formatted = {}
+    for (const [key, value] of Object.entries(this.fullPrimeRequisites)) {
+      if (key !== "isAnd" && value > 0) {
+        const config = abilityScores.get(key)
+        formatted[key] = {
+          label: config?.label || key,
+          value,
+        }
+      }
+    }
+    return formatted
   }
 
   get fullRequisitesCount() {
