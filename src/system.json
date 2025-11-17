@@ -55,6 +55,7 @@
     },
     "ChatMessage": {
       "action": {},
+      "levelup": {},
       "check": {}
     }
   },

@@ -5,6 +5,8 @@ import BAGSCharacterClassXPTableEditor from "./item.character-class.xp-table-edi
 import BAGSCharacterClassDetailsEditor from "./item.character-class.details-editor.mjs"
 import BAGSBaseItemSheet from "./item.sheet.mjs"
 import ActionEditor from "../applications/action-editor.mjs"
+import { showAddXPDialog, addXPToClass } from "../dialogs/dialog.add-xp.mjs"
+import { showLevelUpDialog, levelUpClass } from "../dialogs/dialog.level-up.mjs"
 
 /**
  * @typedef {import('../types.mjs').SheetNavTab} SheetNavTab
@@ -166,88 +168,17 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
   }
 
   static async addXP() {
-    if (!this.document.system.canAddXP) return
-
-    const xpToAdd = await foundry.applications.api.DialogV2.prompt({
-      window: { title: "Add Experience Points" },
-      content: `
-        <form>
-          <div class="form-group">
-            <label>XP to add</label>
-            <input type="number" name="xp" min="1" placeholder="Enter XP amount" autofocus />
-          </div>
-          <div class="form-group">
-            <label>Note (optional)</label>
-            <input type="text" name="note" placeholder="e.g., Defeated the goblin king" />
-          </div>
-        </form>
-      `,
-      ok: {
-        label: "Add XP",
-        callback: (event, button) => {
-          const { form } = button
-          return {
-            xp: parseInt(form.elements.xp.value, 10),
-            note: form.elements.note.value,
-          }
-        },
-      },
-      rejectClose: false,
-    })
-
-    if (!xpToAdd || !xpToAdd.xp) return
-
-    const currentXP = this.document.system.xp
-    const newXP = currentXP + xpToAdd.xp
-
-    // Add to audit log
-    const logEntry = {
-      date: Date.now(),
-      xpChange: xpToAdd.xp,
-      levelChange: 0,
-      note: xpToAdd.note || "XP added",
+    const result = await showAddXPDialog(this.document)
+    if (result) {
+      await addXPToClass(this.document, result.xp, result.note)
     }
-
-    await this.document.update({
-      "system.xp": newXP,
-      "system.xpLog": [...this.document.system.xpLog, logEntry],
-    })
-
-    ui.notifications.info(
-      `Added ${xpToAdd.xp} XP to ${this.document.name}. Total: ${newXP}`,
-    )
   }
 
   static async levelUp() {
-    if (!this.document.system.canLevelUp) return
-
-    const confirmed = await foundry.applications.api.DialogV2.confirm({
-      window: { title: "Level Up" },
-      content: `<p>Level up to ${this.document.system.level + 1}?</p>`,
-      yes: { label: "Level Up!" },
-      no: { label: "Cancel" },
-      rejectClose: false,
-    })
-
-    if (!confirmed) return
-
-    const oldLevel = this.document.system.level
-    const newLevel = oldLevel + 1
-
-    // Add to audit log
-    const logEntry = {
-      date: Date.now(),
-      xpChange: 0,
-      levelChange: 1,
-      note: `Leveled up from ${oldLevel} to ${newLevel}`,
+    const result = await showLevelUpDialog(this.document)
+    if (result) {
+      await levelUpClass(this.document, result.note)
     }
-
-    await this.document.update({
-      "system.manuallySetLevel": newLevel,
-      "system.xpLog": [...this.document.system.xpLog, logEntry],
-    })
-
-    ui.notifications.info(`${this.document.name} is now level ${newLevel}!`)
   }
 
   static editAdvancement() {

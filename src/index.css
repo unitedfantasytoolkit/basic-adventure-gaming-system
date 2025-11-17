@@ -38,6 +38,7 @@
 
 /* --- Chat cards: Actions -------------------------------------------------- */
 @import url("./chat/chat-message.action.css");
+@import url("./chat/chat-message.level-up.css");
 
 /* --- Applications: Tag management ----------------------------------------- */
 @import url("./applications/settings.tag-config.css");

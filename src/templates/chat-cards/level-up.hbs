@@ -1,0 +1,53 @@
+<li
+  class="chat-message chat-message--bags chat-message--level-up message flexcol"
+  data-message-id="{{message._id}}"
+>
+  {{> chatActionHeader}}
+  <div class="level-up">
+    <div class="level-up__header">
+      <div class="level-up__badge">
+        <div class="level-up__badge__number">{{levelup.newLevel}}</div>
+      </div>
+      <div class="level-up__title">
+        <h1>{{levelup.characterName}}</h1>
+        <div class="level-up__subtitle">{{levelup.className}} — Level {{levelup.newLevel}}</div>
+        {{#if levelup.note}}
+        <div class="level-up__note">{{levelup.note}}</div>
+        {{/if}}
+      </div>
+      {{#if levelup.characterImage}}
+      <div class="level-up__portrait">
+        <img src="{{levelup.characterImage}}" alt="{{levelup.characterName}}" />
+      </div>
+      {{/if}}
+    </div>
+
+    <div class="level-up__body">
+      <div class="level-up__primary">
+        <div class="level-up__hp">
+          <div class="level-up__hp-label">Hit Points</div>
+          <div class="level-up__hp-gain">+{{levelup.hpRoll.total}}</div>
+          <div class="level-up__hp-dice">
+            {{#each levelup.hpRoll.dice.0.results}}
+              <span class="die d{{../levelup.hitDieSize}}">{{result}}</span>
+            {{/each}}
+            {{#if levelup.conMod}}
+              <span class="die-mod">+{{levelup.conMod}}</span>
+            {{/if}}
+          </div>
+        </div>
+
+        {{#if levelup.improvements.length}}
+        <div class="level-up__improvements">
+          <div class="level-up__improvements-label">Improvements</div>
+          <ul class="level-up__improvements-list">
+            {{#each levelup.improvements}}
+              <li>{{{this}}}</li>
+            {{/each}}
+          </ul>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</li>

@@ -58,6 +58,24 @@ export default class BAGSChatMessage extends ChatMessage {
   }
 
   /**
+   * Given a message of type "levelup", prepare the level-up details for display.
+   * @returns {object} the level-up details to display
+   */
+  async #prepareLevelUpDetails() {
+    return {
+      newLevel: this.system.newLevel,
+      className: this.system.className,
+      characterName: this.system.characterName,
+      characterImage: this.system.characterImage,
+      note: this.system.note,
+      hpRoll: this.system.hpRoll,
+      hitDieSize: this.system.hitDieSize,
+      conMod: this.system.conMod,
+      improvements: this.system.improvements,
+    }
+  }
+
+  /**
    * @override
    */
   async renderHTML(options = {}) {
@@ -110,6 +128,9 @@ export default class BAGSChatMessage extends ChatMessage {
 
     if (this.type === "action")
       messageData.action = await this.#prepareActionDetails()
+
+    if (this.type === "levelup")
+      messageData.levelup = await this.#prepareLevelUpDetails()
 
     // Render message data specifically for ROLL type messages
     if (this.isRoll) await this.#renderRollContent(messageData)

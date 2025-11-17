@@ -1,14 +1,4 @@
 .chat-message--action {
-  /* --border-color: #b78846; */
-
-  /* margin-top: 8px; */
-
-  /* background: transparent; */
-
-  /* border: none; */
-
-  /* color: var(--text-color-primary); */
-
   .action {
     backdrop-filter: blur(4px);
     box-shadow: 0 0 3px #000;
