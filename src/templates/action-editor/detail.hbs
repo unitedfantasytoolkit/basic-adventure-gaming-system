@@ -1,11 +1,12 @@
 <article class="application__master-detail__detail">
   {{#if action}}
-    {{> actionEditorDetailsSettings action=action fields=fields }}        
-    {{> actionEditorDetailsAttempt action=action fields=fields }}        
-    {{> actionEditorDetailsAttemptMessages action=action fields=fields }}
-    {{> actionEditorDetailsEffects action=action fields=fields }}
-    {{> actionEditorDetailsConsumption action=action fields=fields }}
-    {{> actionEditorDetailsRestrictions action=action fields=fields }}
+    {{> actionEditorDetailsSettings action=action fields=fields tab=tabs.settings}}
+    {{> actionEditorDetailsDescription action=action fields=fields tab=tabs.description}}
+    {{> actionEditorDetailsAttempt action=action fields=fields tab=tabs.attempt}}        
+    {{> actionEditorDetailsAttemptMessages action=action fields=fields tab=tabs.attempt-messages}}
+    {{> actionEditorDetailsEffects action=action fields=fields tab=tabs.effects}}
+    {{> actionEditorDetailsConsumption action=action fields=fields tab=tabs.consumption}}
+    {{> actionEditorDetailsRestrictions action=action fields=fields tab=tabs.restrictions}}
   {{else}}
     <p class="empty">Select an action to edit, or create a new one.</p>
   {{/if}}

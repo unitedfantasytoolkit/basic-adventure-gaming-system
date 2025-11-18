@@ -1,27 +1,28 @@
 <article class="application__master-detail__master">
   <menu>
     {{#each actions}}
-      {{log this}}
-      <li
-        class="application__master-detail__master-item{{ifThen
-            active
-            '
-          application__master-detail__master-item--active'
-            ''
-          }}"
-        data-action-id="{{id}}"
-        data-action="select-action"
-      >
-        <img src="{{img}}" alt="" role="presentation" />
-        <span>{{name}}</span>
-        <button
-          class="inline-control icon fa-solid fa-trash"
-          data-action="delete-action"
-          aria-label="{{localize 'BAGS.ActionEditor.DeleteAction' name=name}}"
-        >
-        </button>
+      <li class="application__master-detail__master-item{{ifThen active ' application__master-detail__master-item--active' ''}}" data-action-id="{{id}}" draggable="true">
+        <div class="master-item__drag-handle">
+          <i class="fa fa-grip-vertical"></i>
+        </div>
+        <div class="master-item__content" data-action="select-action">
+          <img src="{{img}}" alt="" role="presentation" />
+          <span>{{name}}</span>
+        </div>
+        <div class="master-item__controls">
+          <button
+            class="inline-control icon fa-solid fa-trash"
+            data-action="delete-action"
+            data-action-id="{{id}}"
+            data-tooltip="Delete {{name}}"
+            aria-label="{{localize 'BAGS.ActionEditor.DeleteAction' name=name}}"
+          >
+          </button>
+        </div>
       </li>
     {{/each}}
   </menu>
-  <button data-action="add-action">Add action</button>
+  <button data-action="add-action">
+    <i class="fa fa-plus"></i> Add Action
+  </button>
 </article>

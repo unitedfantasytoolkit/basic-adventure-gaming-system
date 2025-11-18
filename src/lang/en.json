@@ -55,6 +55,15 @@
             "Label": "Note",
             "Hint": "Text displayed with the rolled effect (e.g: \"X hit dice turned\", \"Fire damage\""
           }
+        },
+        "Consumption": {
+          "Heading": "Consumption & Uses"
+        },
+        "Restrictions": {
+          "Heading": "Level Restrictions"
+        },
+        "Description": {
+          "Heading": "Action Description"
         }
       },
       "Range": {
@@ -99,20 +108,21 @@
           "None": "Unmodified"
         },
         "AttackBonus": {
-          "Label": "Bonus to attack rolls"
+          "Label": "Bonus to attack rolls",
+          "Hint": "Add a flat bonus or penalty to the attack roll (e.g., +2 for a magic weapon, -2 for disadvantage)"
         },
         "Roll": {
           "Formula": {
             "Label": "Formula",
-            "Hint": "The dice to be rolled for this attempt."
+            "Hint": "Dice formula (e.g., 1d20, 2d6+3, 1d20+@wis.mod)"
           },
           "Operator": {
             "Label": "Operator",
-            "Hint": "How the outcome of the roll formula will be compared to the target."
+            "Hint": "How to compare the roll result"
           },
           "Target": {
             "Label": "Target",
-            "Hint": "The value to be compared to the roll formula."
+            "Hint": "Number to compare against (e.g., 15 for DC 15)"
           }
         },
         "AttemptText": {
@@ -130,6 +140,29 @@
         "BlindText": {
           "Label": "Blind Text",
           "Hint": "Text displayed in the chat card on rolls where the result should be ambiguous."
+        },
+        "HasFlavorText": {
+          "Label": "Has flavor text",
+          "Hint": "This action has custom success, fail, or attempt text."
+        },
+        "Heading": "Attempt Roll",
+        "Hint": "Configure how this action is rolled and what determines success",
+        "Type": {
+          "Heading": "Attempt Type",
+          "IsLikeAttack": "Enable this for weapon attacks and spells that make attack rolls. The system will automatically use attack bonuses and roll against AC."
+        },
+        "Attack": {
+          "Heading": "Attack Configuration",
+          "Hint": "Configure the type of attack and any bonuses",
+          "TypeHint": "<strong>Melee:</strong> Uses STR modifier. <strong>Missile:</strong> Uses DEX modifier. <strong>None:</strong> Just base attack bonus.",
+          "BonusHint": "Add a flat bonus or penalty to the attack roll (e.g., +2 for a magic weapon, -2 for disadvantage)"
+        },
+        "CustomRoll": {
+          "Heading": "Custom Roll Configuration",
+          "Hint": "Define a custom roll formula and success condition",
+          "FormulaHint": "Dice formula (e.g., 1d20, 2d6+3, 1d20+@wis.mod)",
+          "OperatorHint": "How to compare the roll result",
+          "TargetHint": "Number to compare against (e.g., 15 for DC 15)"
         }
       },
       "Effects": {
@@ -239,6 +272,8 @@
         }
       },
       "Consumption": {
+        "Heading": "Resource Consumption",
+        "Hint": "Configure what resources this action uses when activated",
         "Types": {
           "Label": "Consumed Resource",
           "Hint": "What resource does this action consume when used?",
@@ -250,6 +285,10 @@
           "Spellslot": "User's Spell slots",
           "ActionUse": "This action's uses"
         },
+        "ResourceType": {
+          "Heading": "Resource Type",
+          "Hint": "What gets consumed when this action is used?"
+        },
         "Item": {
           "Label": "Item",
           "Hint": "The item to consume from"
@@ -258,7 +297,21 @@
           "Label": "Quantity",
           "Hint": "How much of the resource to consume"
         },
+        "ItemConsumption": {
+          "Heading": "Item Consumption",
+          "Hint": "Configure which item and how much to consume (e.g., arrows, potions)",
+          "ItemHint": "Select the item to consume from the actor's inventory",
+          "QuantityHint": "How many to consume per use (usually 1)"
+        },
+        "ItemCharges": {
+          "Heading": "Item Charges",
+          "Hint": "Consume charges/uses from another item (e.g., wand charges, item abilities)",
+          "ItemHint": "Select the item to consume charges from",
+          "QuantityHint": "How many charges to consume per use"
+        },
         "SpellSlot": {
+          "Heading": "Spell Slot",
+          "Hint": "Consume a spell slot of a specific level",
           "Class": {
             "Label": "Class",
             "Hint": "The class providing the spell slots"
@@ -266,10 +319,20 @@
           "Level": {
             "Label": "Spell Level",
             "Hint": "The level of spell slot to consume"
-          }
+          },
+          "ClassHint": "Which spellcasting class provides the slot",
+          "LevelHint": "Spell level (1-9)"
+        },
+        "LimitedUses": {
+          "Heading": "Limited Uses",
+          "Hint": "This action has a limited number of uses that recharge over time",
+          "MaxHint": "Maximum uses before needing to recharge (e.g., 3 for \"3/day\")",
+          "ValueHint": "Current uses remaining (usually starts at max)",
+          "RechargesOnHint": "When do all uses restore? (e.g., \"Per Day\" for daily abilities)"
         }
       },
       "Uses": {
+        "Heading": "Action Uses",
         "Value": {
           "Label": "Current Uses",
           "Hint": "How many uses of this action remain"
@@ -299,6 +362,70 @@
       "Description": {
         "Label": "Description",
         "Hint": "A summary of what this action does."
+      },
+      "Level": {
+        "Heading": "Character Level Requirements",
+        "Hint": "Restrict this action to specific character levels. Leave empty for no restrictions.",
+        "Minimum": {
+          "Label": "Minimum Level",
+          "Hint": "The minimum character level required to use this action"
+        },
+        "Maximum": {
+          "Label": "Maximum Level",
+          "Hint": "The maximum character level that can use this action"
+        }
+      },
+      "DeleteAction": {
+        "Title": "Delete Action",
+        "Content": "Are you sure you want to delete the action \"{name}\"? This action cannot be undone."
+      },
+      "DeleteEffect": {
+        "Title": "Delete Effect",
+        "Content": "Are you sure you want to delete the effect \"{name}\"? This action cannot be undone."
+      },
+      "DeleteConditionChange": {
+        "Title": "Delete Condition Change",
+        "Content": "Are you sure you want to delete this condition change? This action cannot be undone."
+      },
+      "UnnamedEffect": "Unnamed Effect",
+      "TabDisabled": {
+        "Attempt": "This action does not use an attempt roll. Enable \"Uses an attempt roll\" in the Settings tab to configure attempt options.",
+        "Effects": "This action has no effects. Enable \"Has effects\" in the Settings tab to add effects.",
+        "Consumption": "This action does not consume resources. Enable \"Consumes resources\" in the Settings tab to configure consumption.",
+        "Restrictions": "This action has no restrictions. Enable \"Is restricted\" in the Settings tab to configure level restrictions."
+      },
+      "Settings": {
+        "BasicInfo": {
+          "Heading": "Basic Information",
+          "Hint": "The name and icon that identify this action"
+        },
+        "Capabilities": {
+          "Heading": "Action Capabilities",
+          "Hint": "Enable the features you need for this action. Each checkbox enables a corresponding tab.",
+          "UsesAttempt": "Enables <strong>Attempt</strong> and <strong>Attempt Messages</strong> tabs. Use for attacks, skill checks, or any roll that can succeed or fail.",
+          "UsesEffect": "Enables <strong>Effects</strong> tab. Use for damage, healing, status effects, or any game-mechanical outcome.",
+          "UsesConsumption": "Enables <strong>Consumption</strong> tab. Use for actions that consume spell slots, item charges, ammunition, HP, etc.",
+          "UsesRestrictions": "Enables <strong>Restrictions</strong> tab. Use for class abilities available only at certain levels."
+        },
+        "SpecialProperties": {
+          "Heading": "Special Properties",
+          "IsBlind": "Players see that a roll was made but not the result. GM always sees the outcome. Useful for secret checks."
+        },
+        "Range": {
+          "Heading": "Range",
+          "Hint": "Define range bands for this action. Leave all at 0 to ignore range. Only set medium range for simple ranged attacks without bonuses/penalties."
+        }
+      },
+      "Restrictions": {
+        "Heading": "Action Restrictions",
+        "Hint": "Limit when this action is available",
+        "LevelRestrictions": {
+          "Heading": "Level Restrictions",
+          "Hint": "Restrict this action to specific character levels. Useful for class abilities that are replaced at higher levels or only available in a level range.",
+          "MinHint": "Minimum character level required (leave empty for no minimum)",
+          "MaxHint": "Maximum character level allowed (leave empty for no maximum)",
+          "Example": "Example: A 1st-level class ability that's replaced at 5th level would have Min: 1, Max: 4"
+        }
       }
     },
     "Items": {

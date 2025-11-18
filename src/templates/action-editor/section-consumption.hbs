@@ -1,4 +1,115 @@
-{{#> sheetTab tab=tabs.consumption}}
+{{#> sheetTab}}
+  {{#if action.flags.usesConsumption}}
+    <header class="tab__header">
+      <h3>{{localize "BAGS.Actions.Consumption.Heading"}}</h3>
+      <p class="hint">{{localize "BAGS.Actions.Consumption.Hint"}}</p>
+    </header>
 
-  TODO: Consumption
+    <article class="standard-form">
+      <fieldset class="settings-group">
+        <legend><i class="fa fa-box-open"></i> {{localize "BAGS.Actions.Consumption.ResourceType.Heading"}}</legend>
+        <p class="hint">{{localize "BAGS.Actions.Consumption.ResourceType.Hint"}}</p>
+        
+        {{formGroup
+          fields.consumption.fields.type
+          value=action.consumption.type
+          name="consumption.type"
+          localize=true
+        }}
+      </fieldset>
+
+      {{#if (eq action.consumption.type "itemQuantity")}}
+        <fieldset class="settings-group">
+          <legend><i class="fa fa-link"></i> {{localize "BAGS.Actions.Consumption.ItemConsumption.Heading"}}</legend>
+          <p class="hint">{{localize "BAGS.Actions.Consumption.ItemConsumption.Hint"}}</p>
+          {{formGroup
+            fields.consumption.fields.item.fields.item
+            value=action.consumption.item.item
+            name="consumption.item.item"
+            localize=true
+          }}
+          
+          {{formGroup
+            fields.consumption.fields.item.fields.quantity
+            value=action.consumption.item.quantity
+            name="consumption.item.quantity"
+            localize=true
+          }}
+        </fieldset>
+      {{/if}}
+
+      {{#if (eq action.consumption.type "itemUses")}}
+        <fieldset class="settings-group">
+          <legend><i class="fa fa-battery-half"></i> {{localize "BAGS.Actions.Consumption.ItemCharges.Heading"}}</legend>
+          <p class="hint">{{localize "BAGS.Actions.Consumption.ItemCharges.Hint"}}</p>
+          {{formGroup
+            fields.consumption.fields.item.fields.item
+            value=action.consumption.item.item
+            name="consumption.item.item"
+            localize=true
+          }}
+          
+          {{formGroup
+            fields.consumption.fields.item.fields.quantity
+            value=action.consumption.item.quantity
+            name="consumption.item.quantity"
+            localize=true
+          }}
+        </fieldset>
+      {{/if}}
+
+      {{#if (eq action.consumption.type "spellslot")}}
+        <fieldset class="settings-group">
+          <legend><i class="fa fa-sparkles"></i> {{localize "BAGS.Actions.Consumption.SpellSlot.Heading"}}</legend>
+          <p class="hint">{{localize "BAGS.Actions.Consumption.SpellSlot.Hint"}}</p>
+          {{formGroup
+            fields.consumption.fields.spellSlots.fields.class
+            value=action.consumption.spellSlots.class
+            name="consumption.spellSlots.class"
+            localize=true
+          }}
+          
+          {{formGroup
+            fields.consumption.fields.spellSlots.fields.level
+            value=action.consumption.spellSlots.level
+            name="consumption.spellSlots.level"
+            localize=true
+          }}
+        </fieldset>
+      {{/if}}
+
+      {{#if (eq action.consumption.type "actionUse")}}
+        <fieldset class="settings-group">
+          <legend><i class="fa fa-repeat"></i> {{localize "BAGS.Actions.Consumption.LimitedUses.Heading"}}</legend>
+          <p class="hint">{{localize "BAGS.Actions.Consumption.LimitedUses.Hint"}}</p>
+          
+          {{formGroup
+            fields.uses.fields.max
+            value=action.uses.max
+            name="uses.max"
+            localize=true
+          }}
+          
+          {{formGroup
+            fields.uses.fields.value
+            value=action.uses.value
+            name="uses.value"
+            localize=true
+          }}
+          
+          {{formGroup
+            fields.uses.fields.rechargesOn
+            value=action.uses.rechargesOn
+            name="uses.rechargesOn"
+            localize=true
+          }}
+        </fieldset>
+      {{/if}}
+    </article>
+  {{else}}
+    <div class="tab-disabled-notice">
+      <i class="fa fa-info-circle"></i>
+      <p>{{localize "BAGS.Actions.TabDisabled.Consumption"}}</p>
+    </div>
+  {{/if}}
 {{/sheetTab}}

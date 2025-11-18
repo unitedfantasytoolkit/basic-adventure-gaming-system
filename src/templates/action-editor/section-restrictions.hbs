@@ -1,3 +1,38 @@
 {{#> sheetTab tab=tabs.restrictions}}
-  TODO: Restrictions
+  {{#if action.flags.usesRestrictions}}
+    <header class="tab__header">
+      <h3>{{localize "BAGS.Actions.Restrictions.Heading"}}</h3>
+      <p class="hint">{{localize "BAGS.Actions.Restrictions.Hint"}}</p>
+    </header>
+
+    <article class="standard-form">
+      <fieldset class="settings-group">
+        <legend><i class="fa fa-layer-group"></i> {{localize "BAGS.Actions.Restrictions.LevelRestrictions.Heading"}}</legend>
+        <p class="hint">{{localize "BAGS.Actions.Restrictions.LevelRestrictions.Hint"}}</p>
+        
+        {{formGroup
+          fields.level.fields.min
+          value=action.level.min
+          name="level.min"
+          localize=true
+        }}
+        
+        {{formGroup
+          fields.level.fields.max
+          value=action.level.max
+          name="level.max"
+          localize=true
+        }}
+        
+        <div class="example-box">
+          <strong>{{localize "BAGS.Actions.Restrictions.LevelRestrictions.Example"}}</strong>
+        </div>
+      </fieldset>
+    </article>
+  {{else}}
+    <div class="tab-disabled-notice">
+      <i class="fa fa-info-circle"></i>
+      <p>{{localize "BAGS.Actions.TabDisabled.Restrictions"}}</p>
+    </div>
+  {{/if}}
 {{/sheetTab}}

@@ -54,7 +54,7 @@ export function attemptFieldFactory() {
       isLikeAttack: new BooleanField({
         initial: false,
         label: "BAGS.Actions.Attempt.IsLikeAttack.Label",
-        hint: "BAGS.Actions.Attempt.IsLikeAttack.Hint",
+        hint: "BAGS.Actions.Attempt.Type.IsLikeAttack",
       }),
       hasFlavorText: new BooleanField({
         initial: false,
@@ -69,13 +69,14 @@ export function attemptFieldFactory() {
         blank: false,
         initial: "melee",
         label: "BAGS.Actions.Attempt.AttackType.Label",
-        hint: "BAGS.Actions.Attempt.AttackType.Hint",
+        hint: "BAGS.Actions.Attempt.Attack.TypeHint",
       }),
       bonus: new NumberField({
         min: 0,
         integer: true,
         initial: ACTION_DEFAULT_EFFECT_TARGET,
         label: "BAGS.Actions.Attempt.AttackBonus.Label",
+        hint: "BAGS.Actions.Attempt.Attack.BonusHint",
       }),
     }),
     roll: new SchemaField({
@@ -87,16 +88,19 @@ export function attemptFieldFactory() {
       formula: new StringField({
         initial: `${ACTION_DEFAULT_ATTEMPT_TERM_DICE_COUNT}d${ACTION_DEFAULT_ATTEMPT_TERM_DICE_SIZE}`,
         label: "BAGS.Actions.Attempt.Roll.Formula.Label",
+        hint: "BAGS.Actions.Attempt.CustomRoll.FormulaHint",
       }),
       operator: new StringField({
         choices: ROLL_RESOLUTION_OPERATORS,
         initial: ">=",
         label: "BAGS.Actions.Attempt.Roll.Operator.Label",
+        hint: "BAGS.Actions.Attempt.CustomRoll.OperatorHint",
       }),
       target: new NumberField({
         min: 1,
         initial: ACTION_DEFAULT_EFFECT_TARGET,
         label: "BAGS.Actions.Attempt.Roll.Target.Label",
+        hint: "BAGS.Actions.Attempt.CustomRoll.TargetHint",
       }),
     }),
     flavorText: new SchemaField({

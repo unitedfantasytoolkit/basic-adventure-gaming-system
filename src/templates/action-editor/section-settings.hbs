@@ -1,57 +1,87 @@
-{{#> sheetTab tab=tabs.settings}}
+{{#> sheetTab}}
   <section class="scrollable">
     <article class="standard-form">
-      {{formGroup
-        fields.name
-        value=action.name
-        name="name"
-        localize=true
-      }}
-      {{formGroup
-        fields.flags.fields.usesAttempt
-        value=action.flags.usesAttempt
-        name="flags.usesAttempt"
-        localize=true
-      }}
-      {{formGroup fields.flags.fields.usesEffect value=action.flags.usesEffect name="flags.usesEffect" localize=true }}
-      {{formGroup
-        fields.flags.fields.usesRestrictions
-        value=action.flags.usesRestrictions
-        name="flags.usesRestrictions"
-        localize=true
-      }}
-      {{formGroup
-        fields.flags.fields.usesConsumption
-        value=action.flags.usesConsumption
-        name="flags.usesConsumption"
-        localize=true
-      }}
-      {{formGroup
-        fields.flags.fields.isBlind
-        value=action.flags.isBlind
-        name="flags.isBlind"
-        localize=true
-      }}
-      
-      <fieldset>
-        <legend>{{localize "BAGS.Actions.Range.Label"}}</legend>
+      <fieldset class="settings-group">
+        <legend><i class="fa fa-id-card"></i> {{localize "BAGS.Actions.Settings.BasicInfo.Heading"}}</legend>
+        <p class="hint">{{localize "BAGS.Actions.Settings.BasicInfo.Hint"}}</p>
         {{formGroup
-          systemFields.attack.fields.range.fields.short
-          value=document.system.attack.range.short
+          fields.name
+          value=action.name
+          name="name"
           localize=true
         }}
         {{formGroup
-          systemFields.attack.fields.range.fields.medium
-          value=document.system.attack.range.medium
-          localize=true
-        }}
-        {{formGroup
-          systemFields.attack.fields.range.fields.long
-          value=document.system.attack.range.long
+          fields.img
+          value=action.img
+          name="img"
           localize=true
         }}
       </fieldset>
-      <p>{{localize "BAGS.Actions.Range.Note"}}</p>
+
+      <fieldset class="settings-group">
+        <legend><i class="fa fa-tasks"></i> {{localize "BAGS.Actions.Settings.Capabilities.Heading"}}</legend>
+        <p class="hint">{{localize "BAGS.Actions.Settings.Capabilities.Hint"}}</p>
+        
+        <div class="capability-group">
+          {{formGroup
+            fields.flags.fields.usesAttempt
+            value=action.flags.usesAttempt
+            name="flags.usesAttempt"
+            localize=true
+          }}
+
+          {{formGroup fields.flags.fields.usesEffect value=action.flags.usesEffect name="flags.usesEffect" localize=true }}
+
+          {{formGroup
+            fields.flags.fields.usesConsumption
+            value=action.flags.usesConsumption
+            name="flags.usesConsumption"
+            localize=true
+          }}
+
+          {{formGroup
+            fields.flags.fields.usesRestrictions
+            value=action.flags.usesRestrictions
+            name="flags.usesRestrictions"
+            localize=true
+          }}
+        </div>
+      </fieldset>
+
+      <fieldset class="settings-group">
+        <legend><i class="fa fa-eye-slash"></i> {{localize "BAGS.Actions.Settings.SpecialProperties.Heading"}}</legend>
+        {{formGroup
+          fields.flags.fields.isBlind
+          value=action.flags.isBlind
+          name="flags.isBlind"
+          localize=true
+        }}
+      </fieldset>
+      
+      <fieldset class="settings-group">
+        <legend><i class="fa fa-ruler"></i> {{localize "BAGS.Actions.Settings.Range.Heading"}}</legend>
+        <p class="hint">{{localize "BAGS.Actions.Settings.Range.Hint"}}</p>
+        <div class="range-fields">
+          {{formGroup
+            fields.range.fields.short
+            value=action.range.short
+            name="range.short"
+            localize=true
+          }}
+          {{formGroup
+            fields.range.fields.medium
+            value=action.range.medium
+            name="range.medium"
+            localize=true
+          }}
+          {{formGroup
+            fields.range.fields.long
+            value=action.range.long
+            name="range.long"
+            localize=true
+          }}
+        </div>
+      </fieldset>
     </article>
   </section>
 {{/sheetTab}}

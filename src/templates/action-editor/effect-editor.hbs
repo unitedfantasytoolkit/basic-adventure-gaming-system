@@ -54,13 +54,13 @@
             {{formGroup
               fields.resistance.fields.roll.fields.formula
               value=effect.resistance.roll.formula
-              name="resistance.formula"
+              name="resistance.roll.formula"
               localize=true
             }}
             {{formGroup
               fields.resistance.fields.roll.fields.operator
               value=effect.resistance.roll.operator
-              name="resistance.operator"
+              name="resistance.roll.operator"
               localize=true
             }}
 
@@ -78,7 +78,7 @@
               {{formGroup
                 fields.resistance.fields.roll.fields.target
                 value=effect.resistance.roll.target
-                name="resistance.staticTarget"
+                name="resistance.roll.target"
                 localize=true
               }}
             {{/if}}
@@ -107,6 +107,24 @@
         localize=true
       }}
       {{formGroup fields.note value=effect.note name="note" localize=true}}
+      
+      <fieldset>
+        <legend>{{localize "BAGS.Actions.Effects.AreaOfEffect.Heading"}}</legend>
+        {{formGroup
+          fields.areaOfEffect.fields.type
+          value=effect.areaOfEffect.type
+          name="areaOfEffect.type"
+          localize=true
+        }}
+        {{#if effect.areaOfEffect.type}}
+          {{formGroup
+            fields.areaOfEffect.fields.size
+            value=effect.areaOfEffect.size
+            name="areaOfEffect.size"
+            localize=true
+          }}
+        {{/if}}
+      </fieldset>
     {{/if}}
 
     {{#if (eq effect.type "healing")}}

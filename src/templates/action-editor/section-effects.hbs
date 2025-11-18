@@ -1,17 +1,24 @@
-{{#> sheetTab tab=tabs.effects}}
-  <header class="action-header">
-    <h2>Effects</h2>
-    <button data-action="add-action-effect" aria-label="Add Effect"><i class="icon inline-control fa fa-plus"></i></button>
-  </header>
+{{#> sheetTab}}
+  {{#if action.flags.usesEffect}}
+    <header class="action-header">
+      <h2>Effects</h2>
+      <button data-action="add-action-effect" aria-label="Add Effect"><i class="icon inline-control fa fa-plus"></i></button>
+    </header>
 
-  <ul class="action-effects">
-    {{#each action.effects}}
-      <li class="action-effects__effect">
-        <i class="fa fa-grip-dots-vertical"></i>
-        <span class="action-effects__effect-name">{{name}}</span>
-        <button type="button" class="icon inline-control fa fa-pencil" data-tooltip="Edit effect" data-effect-id="{{id}}" data-action-id="{{@root.action.id}}" data-action="edit-action-effect" ></button>
-        <button class="icon inline-control fa fa-trash" data-tooltip="Delete effect" data-effect-id="{{id}}" data-action-id="{{@root.action.id}}" data-action="delete-action-effect" ></button>
-      </li>
-    {{/each}}
-  </ul>
+    <ul class="action-effects">
+      {{#each action.effects}}
+        <li class="action-effects__effect" data-effect-id="{{id}}" draggable="true">
+          <i class="fa fa-grip-dots-vertical"></i>
+          <span class="action-effects__effect-name">{{name}}</span>
+          <button type="button" class="icon inline-control fa fa-pencil" data-tooltip="Edit effect" data-effect-id="{{id}}" data-action-id="{{@root.action.id}}" data-action="edit-action-effect" ></button>
+          <button class="icon inline-control fa fa-trash" data-tooltip="Delete effect" data-effect-id="{{id}}" data-action-id="{{@root.action.id}}" data-action="delete-action-effect" ></button>
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <div class="tab-disabled-notice">
+      <i class="fa fa-info-circle"></i>
+      <p>{{localize "BAGS.Actions.TabDisabled.Effects"}}</p>
+    </div>
+  {{/if}}
 {{/sheetTab}}

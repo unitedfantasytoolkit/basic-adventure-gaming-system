@@ -16,7 +16,6 @@ export default class ActionEffectEditor extends BAGSApplication {
   constructor(options = {}) {
     super(options)
     this.parent = options.parent
-    this._activeAction = this.document.system.actions?.[0]?.id
   }
 
   // === App config ============================================================
@@ -66,7 +65,8 @@ export default class ActionEffectEditor extends BAGSApplication {
     }
 
     if (typeof fetchedEffect === "string") {
-      fetchedEffect = this.document.getEffect(fetchedAction.id, effect)
+      const actionObj = this.document.getAction(fetchedAction.id)
+      fetchedEffect = actionObj?.effects.find(({ id }) => id === effect)
     }
 
     this.#action = fetchedAction
@@ -142,29 +142,63 @@ export default class ActionEffectEditor extends BAGSApplication {
   }
 
   static async deleteConditionChange(_event, button) {
-    this.#effect.condition.changes.splice(
-      button.dataset.conditionChangeIndex,
-      1,
-    )
-    console.info(this.#effect.condition.changes)
-    await this.document.updateEffect(this.#action.id, this.#effect.id, {
-      condition: this.#effect.condition,
+    const action = this.document.getAction(this.#action.id)
+    if (!action) return
+
+    const effect = action.effects.find(({ id }) => id === this.#effect.id)
+    if (!effect) return
+
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize("BAGS.Actions.DeleteConditionChange.Title") },
+      content: `<p>${game.i18n.localize("BAGS.Actions.DeleteConditionChange.Content")}</p>`,
+      rejectClose: false,
+      modal: true,
     })
+    
+    if (!confirmed) return
+
+    const updatedChanges = [...effect.condition.changes]
+    updatedChanges.splice(button.dataset.conditionChangeIndex, 1)
+
+    const updatedEffects = action.effects.map((e) =>
+      e.id === this.#effect.id
+        ? { ...e, condition: { ...e.condition, changes: updatedChanges } }
+        : e,
+    )
+
+    await this.document.updateAction(this.#action.id, {
+      effects: updatedEffects,
+    })
+
+    // Refresh our local reference
+    this.#effect = updatedEffects.find(({ id }) => id === this.#effect.id)
     this.render(true)
   }
 
   static async addConditionChange() {
+    const action = this.document.getAction(this.#action.id)
+    if (!action) return
+
+    const effect = action.effects.find(({ id }) => id === this.#effect.id)
+    if (!effect) return
+
     const newChange =
-      // eslint-disable-next-line max-len
       this.document.system.schema.fields.actions.element.fields.effects.element.fields.condition.fields.changes.element.getInitialValue()
 
-    if (!Array.isArray(this.#effect.condition.changes)) {
-      this.#effect.condition.changes = []
-    }
-    this.#effect.condition.changes.push(newChange)
-    await this.document.updateEffect(this.#action.id, this.#effect.id, {
-      condition: this.#effect.condition,
+    const updatedChanges = [...(effect.condition.changes || []), newChange]
+
+    const updatedEffects = action.effects.map((e) =>
+      e.id === this.#effect.id
+        ? { ...e, condition: { ...e.condition, changes: updatedChanges } }
+        : e,
+    )
+
+    await this.document.updateAction(this.#action.id, {
+      effects: updatedEffects,
     })
+
+    // Refresh our local reference
+    this.#effect = updatedEffects.find(({ id }) => id === this.#effect.id)
     this.render(true)
   }
 
@@ -175,15 +209,22 @@ export default class ActionEffectEditor extends BAGSApplication {
    * @param {SubmitEvent} _event - Todo
    * @param {HTMLFormElement} _form - Todo
    * @param {FormData} formData - Data from this Application's form.
-   * @this {ActionEdtior}
+   * @this {ActionEffectEditor}
    */
   static async save(_event, _form, formData) {
-    await this.document.updateEffect(
-      this.#action.id,
-      this.#effect.id,
-      formData.object,
+    const action = this.document.getAction(this.#action.id)
+    if (!action) return
+
+    const updatedEffects = action.effects.map((e) =>
+      e.id === this.#effect.id ? { ...e, ...formData.object } : e,
     )
-    this.prepareToEdit(this.#action.id, this.#effect.id)
+
+    await this.document.updateAction(this.#action.id, {
+      effects: updatedEffects,
+    })
+
+    // Refresh our local references
+    this.#effect = updatedEffects.find(({ id }) => id === this.#effect.id)
     this.render(true)
   }
 }

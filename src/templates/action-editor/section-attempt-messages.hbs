@@ -1,35 +1,42 @@
-{{#> sheetTab tab=tabs.attempt-messages}}
-  <header class="tab__header">
-    <h3>{{localize "BAGS.Actions.Editor.Attempt.ResultText"}}</h3>
-  </header>
+{{#> sheetTab}}
+  {{#if action.flags.usesAttempt}}
+    <header class="tab__header">
+      <h3>{{localize "BAGS.Actions.Editor.Attempt.ResultText"}}</h3>
+    </header>
 
-  <div class="scrollable">
-    <article class="standard-form">
-      {{formGroup
-        fields.attempt.fields.flavorText.fields.attempt
-        value=action.attempt.flavorText.attempt
-        name="attempt.flavorText.attempt"
-        localize=true
-      }}
-      {{formGroup
-        fields.attempt.fields.flavorText.fields.success
-        value=action.attempt.flavorText.success
-        name="attempt.flavorText.success"
-        localize=true
-      }}
-      {{formGroup
-        fields.attempt.fields.flavorText.fields.fail
-        value=action.attempt.flavorText.fail
-        name="attempt.flavorText.fail"
-        localize=true
-      }}
-      {{formGroup
-        fields.attempt.fields.flavorText.fields.blind
-        value=action.attempt.flavorText.blind
-        name="attempt.flavorText.blind"
-        localize=true
-      }}
-    </article>
-  </div>
+    <div class="scrollable">
+      <article class="standard-form">
+        {{formGroup
+          fields.attempt.fields.flavorText.fields.attempt
+          value=action.attempt.flavorText.attempt
+          name="attempt.flavorText.attempt"
+          localize=true
+        }}
+        {{formGroup
+          fields.attempt.fields.flavorText.fields.success
+          value=action.attempt.flavorText.success
+          name="attempt.flavorText.success"
+          localize=true
+        }}
+        {{formGroup
+          fields.attempt.fields.flavorText.fields.fail
+          value=action.attempt.flavorText.fail
+          name="attempt.flavorText.fail"
+          localize=true
+        }}
+        {{formGroup
+          fields.attempt.fields.flavorText.fields.blind
+          value=action.attempt.flavorText.blind
+          name="attempt.flavorText.blind"
+          localize=true
+        }}
+      </article>
+    </div>
+  {{else}}
+    <div class="tab-disabled-notice">
+      <i class="fa fa-info-circle"></i>
+      <p>{{localize "BAGS.Actions.TabDisabled.Attempt"}}</p>
+    </div>
+  {{/if}}
 {{/sheetTab}}
 

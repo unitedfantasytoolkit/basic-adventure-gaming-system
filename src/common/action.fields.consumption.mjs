@@ -20,28 +20,28 @@ export function consumptionFieldFactory() {
     type: new StringField({
       choices: consumedTypeOptions,
       label: "BAGS.Actions.Consumption.Types.Label",
-      hint: "BAGS.Actions.Consumption.Types.Hint",
+      hint: "BAGS.Actions.Consumption.ResourceType.Hint",
     }),
     item: new SchemaField({
       item: new DocumentUUIDField({
         label: "BAGS.Actions.Consumption.Item.Label",
-        hint: "BAGS.Actions.Consumption.Item.Hint",
+        hint: "BAGS.Actions.Consumption.ItemConsumption.ItemHint",
       }),
       quantity: new NumberField({
         label: "BAGS.Actions.Consumption.Quantity.Label",
-        hint: "BAGS.Actions.Consumption.Quantity.Hint",
+        hint: "BAGS.Actions.Consumption.ItemConsumption.QuantityHint",
       }),
     }),
     spellSlots: new SchemaField({
       class: new DocumentUUIDField({
         type: "Item",
         label: "BAGS.Actions.Consumption.SpellSlot.Class.Label",
-        hint: "BAGS.Actions.Consumption.SpellSlot.Class.Hint",
+        hint: "BAGS.Actions.Consumption.SpellSlot.ClassHint",
       }),
       level: new NumberField({
         min: 1,
         label: "BAGS.Actions.Consumption.SpellSlot.Level.Label",
-        hint: "BAGS.Actions.Consumption.SpellSlot.Level.Hint",
+        hint: "BAGS.Actions.Consumption.SpellSlot.LevelHint",
       }),
     }),
   })
@@ -63,18 +63,18 @@ export function usesFieldFactory() {
       min: 0,
       initial: 0,
       label: "BAGS.Actions.Uses.Value.Label",
-      hint: "BAGS.Actions.Uses.Value.Hint",
+      hint: "BAGS.Actions.Consumption.LimitedUses.ValueHint",
     }),
     max: new NumberField({
       min: 0,
       initial: 0,
       label: "BAGS.Actions.Uses.Max.Label",
-      hint: "BAGS.Actions.Uses.Max.Hint",
+      hint: "BAGS.Actions.Consumption.LimitedUses.MaxHint",
     }),
     rechargesOn: new StringField({
       choices: actionRechargeOptions,
       label: "BAGS.Actions.Uses.RechargesOn.Label",
-      hint: "BAGS.Actions.Uses.RechargesOn.Hint",
+      hint: "BAGS.Actions.Consumption.LimitedUses.RechargesOnHint",
     }),
   })
 }

@@ -1,44 +1,73 @@
-{{#> sheetTab tab=tabs.attempt}}
-  <header class="tab__header">
-    <h3>{{localize "BAGS.Actions.Editor.Attempt.Heading"}}</h3>
-  </header>
+{{#> sheetTab}}
+  {{#if action.flags.usesAttempt}}
+    <header class="tab__header">
+      <h3>{{localize "BAGS.Actions.Attempt.Heading"}}</h3>
+      <p class="hint">{{localize "BAGS.Actions.Attempt.Hint"}}</p>
+    </header>
 
-  <article class="standard-form">
-    {{formGroup
-      fields.attempt.fields.flags.fields.isLikeAttack
-      value=action.attempt.flags.isLikeAttack
-      name="attempt.flags.isLikeAttack"
-      localize=true
-    }}
-    {{#if action.attempt.flags.isLikeAttack}}
-      {{formGroup
-        fields.attempt.fields.attack.fields.type
-        value=action.attempt.attack.type
-        name="attempt.attack.type"
-        localize=true
-      }}
-    {{else}}
-      <div class="roll-fields">
+    <article class="standard-form scrollable">
+      <fieldset class="settings-group">
+        <legend><i class="fa fa-bullseye"></i> {{localize "BAGS.Actions.Attempt.Type.Heading"}}</legend>
         {{formGroup
-          fields.attempt.fields.roll.fields.formula
-          value=action.attempt.roll.formula
-          name="attempt.roll.formula"
+          fields.attempt.fields.flags.fields.isLikeAttack
+          value=action.attempt.flags.isLikeAttack
+          name="attempt.flags.isLikeAttack"
           localize=true
         }}
-        {{formGroup
-          fields.attempt.fields.roll.fields.operator
-          value=action.attempt.roll.operator
-          name="attempt.roll.operator ``"
-          localize=true
-        }}
-        {{formGroup
-          fields.attempt.fields.roll.fields.target
-          value=action.attempt.roll.target
-          name="attempt.roll.target"
-          localize=true
-        }}
-      </div>
-    {{/if}}
-  </article>
+      </fieldset>
+
+      {{#if action.attempt.flags.isLikeAttack}}
+        <fieldset class="settings-group">
+          <legend><i class="fa fa-swords"></i> {{localize "BAGS.Actions.Attempt.Attack.Heading"}}</legend>
+          <p class="hint">{{localize "BAGS.Actions.Attempt.Attack.Hint"}}</p>
+          {{formGroup
+            fields.attempt.fields.attack.fields.type
+            value=action.attempt.attack.type
+            name="attempt.attack.type"
+            localize=true
+          }}
+
+          {{formGroup
+            fields.attempt.fields.attack.fields.bonus
+            value=action.attempt.attack.bonus
+            name="attempt.attack.bonus"
+            localize=true
+          }}
+        </fieldset>
+      {{else}}
+        <fieldset class="settings-group">
+          <legend><i class="fa fa-dice-d20"></i> {{localize "BAGS.Actions.Attempt.CustomRoll.Heading"}}</legend>
+          <p class="hint">{{localize "BAGS.Actions.Attempt.CustomRoll.Hint"}}</p>
+          <div class="roll-fields">
+            {{formGroup
+              fields.attempt.fields.roll.fields.formula
+              value=action.attempt.roll.formula
+              name="attempt.roll.formula"
+              localize=true
+            }}
+
+            {{formGroup
+              fields.attempt.fields.roll.fields.operator
+              value=action.attempt.roll.operator
+              name="attempt.roll.operator"
+              localize=true
+            }}
+
+            {{formGroup
+              fields.attempt.fields.roll.fields.target
+              value=action.attempt.roll.target
+              name="attempt.roll.target"
+              localize=true
+            }}
+          </div>
+        </fieldset>
+      {{/if}}
+    </article>
+  {{else}}
+    <div class="tab-disabled-notice">
+      <i class="fa fa-info-circle"></i>
+      <p>{{localize "BAGS.Actions.TabDisabled.Attempt"}}</p>
+    </div>
+  {{/if}}
 {{/sheetTab}}
 

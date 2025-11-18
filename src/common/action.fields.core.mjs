@@ -77,23 +77,27 @@ export function flagsFieldFactory() {
     usesAttempt: new BooleanField({
       initial: true,
       label: "BAGS.Actions.Flags.UsesAttempt.Label",
+      hint: "BAGS.Actions.Settings.Capabilities.UsesAttempt",
     }),
     usesEffect: new BooleanField({
       initial: false,
       label: "BAGS.Actions.Flags.UsesEffect.Label",
+      hint: "BAGS.Actions.Settings.Capabilities.UsesEffect",
     }),
     usesRestrictions: new BooleanField({
       initial: false,
       label: "BAGS.Actions.Flags.UsesRestrictions.Label",
+      hint: "BAGS.Actions.Settings.Capabilities.UsesRestrictions",
     }),
     usesConsumption: new BooleanField({
       initial: false,
       label: "BAGS.Actions.Flags.UsesConsumption.Label",
+      hint: "BAGS.Actions.Settings.Capabilities.UsesConsumption",
     }),
     isBlind: new BooleanField({
       initial: false,
       label: "BAGS.Actions.Flags.IsBlind.Label",
-      hint: "BAGS.Actions.Flags.IsBlind.Hint",
+      hint: "BAGS.Actions.Settings.SpecialProperties.IsBlind",
     }),
   })
 }
@@ -111,12 +115,12 @@ export function levelFieldFactory() {
     min: new NumberField({
       min: 1,
       label: "BAGS.Actions.Level.Minimum.Label",
-      hint: "BAGS.Actions.Level.Minimum.Hint",
+      hint: "BAGS.Actions.Restrictions.LevelRestrictions.MinHint",
     }),
     max: new NumberField({
       min: 1,
       label: "BAGS.Actions.Level.Maximum.Label",
-      hint: "BAGS.Actions.Level.Maximum.Hint",
+      hint: "BAGS.Actions.Restrictions.LevelRestrictions.MaxHint",
     }),
   })
 }
