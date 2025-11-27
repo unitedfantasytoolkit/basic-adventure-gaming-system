@@ -165,6 +165,11 @@
           "TargetHint": "Number to compare against (e.g., 15 for DC 15)"
         }
       },
+      "AttemptMessages": {
+        "UsingDefaults": "This action uses default attempt messages. Click below to customize success, failure, and attempt text.",
+        "Customize": "Customize Messages",
+        "UseDefaults": "Use Default Messages"
+      },
       "Effects": {
         "Name": {
           "Label": "Effect Name"

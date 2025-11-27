@@ -83,4 +83,40 @@
       margin-bottom: -100%;
     }
   }
+
+  /* Progressive disclosure empty states */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+    padding: 2em;
+    text-align: center;
+    color: var(--color-text-dark-secondary);
+
+    i {
+      color: var(--color-text-dark-inactive);
+    }
+
+    &__message {
+      max-width: 40ch;
+      margin: 0;
+    }
+
+    button {
+      margin-top: 0.5em;
+    }
+  }
+
+  .primary-button,
+  .secondary-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+
+  .secondary-button {
+    margin-top: 1em;
+  }
 }

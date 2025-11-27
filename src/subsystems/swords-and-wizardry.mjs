@@ -1,6 +1,12 @@
+/**
+ * @file Swords & Wizardry saving throw system integration.
+ * Implements S&W's unified saving throw where all saves use the same target number.
+ * Simpler than B/X's five categories - just one save value that improves with level.
+ */
+
 import rollDice from "../utils/roll-dice.mjs"
 
-// Swords & Wizardry
+// Swords & Wizardry saving throw system registration
 CONFIG.BAGS.SavingThrowResolver.registerSystem("snw", {
   displayName: "Swords & Wizardry",
   saves: ["save"],

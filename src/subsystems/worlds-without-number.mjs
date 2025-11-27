@@ -1,6 +1,12 @@
+/**
+ * @file Worlds Without Number saving throw system integration.
+ * Implements WWN's three-category saves (Physical/Evasion/Mental) with
+ * level-based progression and ability score modifiers.
+ */
+
 import rollDice from "../utils/roll-dice.mjs"
 
-// Worlds Without Number
+// Worlds Without Number saving throw system registration
 CONFIG.BAGS.SavingThrowResolver.registerSystem("wwn", {
   displayName: "Worlds Without Number",
   saves: ["evasion", "physical", "mental"],

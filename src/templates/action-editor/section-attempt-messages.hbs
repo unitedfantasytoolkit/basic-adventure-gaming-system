@@ -6,30 +6,44 @@
 
     <div class="scrollable">
       <article class="standard-form">
-        {{formGroup
-          fields.attempt.fields.flavorText.fields.attempt
-          value=action.attempt.flavorText.attempt
-          name="attempt.flavorText.attempt"
-          localize=true
-        }}
-        {{formGroup
-          fields.attempt.fields.flavorText.fields.success
-          value=action.attempt.flavorText.success
-          name="attempt.flavorText.success"
-          localize=true
-        }}
-        {{formGroup
-          fields.attempt.fields.flavorText.fields.fail
-          value=action.attempt.flavorText.fail
-          name="attempt.flavorText.fail"
-          localize=true
-        }}
-        {{formGroup
-          fields.attempt.fields.flavorText.fields.blind
-          value=action.attempt.flavorText.blind
-          name="attempt.flavorText.blind"
-          localize=true
-        }}
+        {{#if action.attempt.flags.hasFlavorText}}
+          {{formGroup
+            fields.attempt.fields.flavorText.fields.attempt
+            value=action.attempt.flavorText.attempt
+            name="attempt.flavorText.attempt"
+            localize=true
+          }}
+          {{formGroup
+            fields.attempt.fields.flavorText.fields.success
+            value=action.attempt.flavorText.success
+            name="attempt.flavorText.success"
+            localize=true
+          }}
+          {{formGroup
+            fields.attempt.fields.flavorText.fields.fail
+            value=action.attempt.flavorText.fail
+            name="attempt.flavorText.fail"
+            localize=true
+          }}
+          {{formGroup
+            fields.attempt.fields.flavorText.fields.blind
+            value=action.attempt.flavorText.blind
+            name="attempt.flavorText.blind"
+            localize=true
+          }}
+          
+          <button type="button" class="secondary-button" data-action="disableFlavorText">
+            <i class="fa fa-times-circle"></i> {{localize "BAGS.Actions.AttemptMessages.UseDefaults"}}
+          </button>
+        {{else}}
+          <div class="empty-state">
+            <i class="fa fa-comment-dots fa-3x"></i>
+            <p class="empty-state__message">{{localize "BAGS.Actions.AttemptMessages.UsingDefaults"}}</p>
+            <button type="button" class="primary-button" data-action="enableFlavorText">
+              <i class="fa fa-plus-circle"></i> {{localize "BAGS.Actions.AttemptMessages.Customize"}}
+            </button>
+          </div>
+        {{/if}}
       </article>
     </div>
   {{else}}

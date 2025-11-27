@@ -1,3 +1,9 @@
+/**
+ * @file Attack resolution using THAC0 and descending Armor Class.
+ * Handles the classic "roll high" attack system where lower AC is better.
+ * Used in B/X D&D, AD&D, and similar retroclones.
+ */
+
 import rollDice from "./roll-dice.mjs"
 
 /**

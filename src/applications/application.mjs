@@ -173,7 +173,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
   }
 
   render(...args) {
-    if (this.parent?.rendered) this.parent.render(true)
+    if (this.parent?.rendered) this.parent.render()
     super.render(...args)
   }
 

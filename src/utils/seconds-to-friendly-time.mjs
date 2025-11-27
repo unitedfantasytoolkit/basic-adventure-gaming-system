@@ -1,8 +1,18 @@
 /**
- * Given an amount of seconds, convert it to a human-readable format.
- * @param {number} seconds - The number of seconds to convert.
- * @returns {string} A string, formatted as years/months/days/hours/minutes/
- * seconds.
+ * @file Converts seconds into human-readable time format.
+ * Integrates with Simple Calendar module if present, otherwise uses standard time.
+ * Useful for displaying spell durations, rest periods, and time-based effects.
+ */
+
+/**
+ * Converts seconds into friendly time format like "3d 4h 15m".
+ * If Simple Calendar module is active, uses its custom calendar settings.
+ * Otherwise falls back to standard Earth time (60s/min, 24h/day, etc.).
+ * @param {number} seconds - The number of seconds to convert
+ * @returns {string} Formatted time string using localized abbreviations
+ * @example
+ * secondsToFriendlyTime(3661)  // Returns "1h 1m 1s"
+ * secondsToFriendlyTime(0)     // Returns "0s"
  */
 export default (seconds) => {
   if (!seconds || seconds < 0)

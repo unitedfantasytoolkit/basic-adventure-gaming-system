@@ -1,6 +1,12 @@
+/**
+ * @file Into the Odd saving throw system integration.
+ * Implements ItO's roll-under mechanic using three ability scores (STR/DEX/WIL).
+ * Different save categories map to appropriate abilities - simpler than B/X.
+ */
+
 import rollDice from "../utils/roll-dice.mjs"
 
-// Into the Odd
+// Into the Odd saving throw system registration
 CONFIG.BAGS.SavingThrowResolver.registerSystem("into-the-odd", {
   displayName: "Into the Odd",
   saves: ["str", "dex", "wil"],

@@ -1,3 +1,9 @@
+/**
+ * @file Generates tooltip HTML for stats modified by Active Effects.
+ * Shows players which effects are influencing their character's stats, making
+ * buffs, debuffs, and magical effects more transparent.
+ */
+
 import html from "./html.mjs"
 
 /**

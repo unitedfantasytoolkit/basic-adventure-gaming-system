@@ -7,6 +7,7 @@ import BAGSBaseItemSheet from "./item.sheet.mjs"
 import ActionEditor from "../applications/action-editor.mjs"
 import { showAddXPDialog, addXPToClass } from "../dialogs/dialog.add-xp.mjs"
 import { showLevelUpDialog, levelUpClass } from "../dialogs/dialog.level-up.mjs"
+import BAGSActiveEffectEditor from "../applications/active-effects.editor.mjs"
 
 /**
  * @typedef {import('../types.mjs').SheetNavTab} SheetNavTab
@@ -35,6 +36,12 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
           label: "Edit Actions",
           ownership: "OWNER",
         },
+        {
+          action: "edit-active-effects",
+          icon: "fa-solid fa-sparkles",
+          label: "Manage Active Effects",
+          ownership: "OWNER",
+        },
       ],
     },
     actions: {
@@ -51,6 +58,7 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
     actionEditor: ActionEditor,
     itemEditor: BAGSCharacterClassDetailsEditor,
     advancementEditor: BAGSCharacterClassXPTableEditor,
+    activeEffectEditor: BAGSActiveEffectEditor,
   }
 
   static get PARTS() {

@@ -1,6 +1,12 @@
+/**
+ * @file Whitehack saving throw system integration.
+ * Implements the Whitehack double-roll-under mechanic where you roll 2d20 and
+ * both must be under your ability score to succeed. Saves map to ability scores.
+ */
+
 import rollDice from "../utils/roll-dice.mjs"
 
-// Whitehack
+// Whitehack saving throw system registration
 CONFIG.BAGS.SavingThrowResolver.registerSystem("whitehack", {
   displayName: "Whitehack",
   saves: ["str", "dex", "con", "int", "wis", "cha"],

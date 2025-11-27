@@ -1,10 +1,20 @@
 /**
- * Helper to get all relevant modifiers from effects
- * @todo Should we account for more than just addition?
- * @param {any} actorData - The system object of the actor to get modifiers
- * of.
- * @param {string} key - The active effect key to look up and apply.
- * @returns {number} The modifier.
+ * @file Sums all Active Effect modifiers for a specific stat.
+ * When multiple effects modify the same stat (like AC or attack bonus), this
+ * helper adds them all up to get the total modifier.
+ */
+
+/**
+ * Finds and sums all Active Effect changes affecting a specific data path.
+ * Currently only handles additive effects (mode ADD). Returns null if no effects
+ * are found, making it easy to check if a stat is modified.
+ * @todo Should we account for more than just addition? (multiply, override, etc.)
+ * @param {object} actorData - The actor's system data object
+ * @param {string} key - The data path to look for (e.g., "system.base.ac", "system.hp.max")
+ * @returns {number|null} Total modifier from all effects, or null if no effects found
+ * @example
+ * // Actor has +2 AC from Shield spell and +1 AC from Ring of Protection
+ * getModifiersOfKey(actorData, "system.base.ac")  // Returns 3
  */
 export default (actorData, key) => {
   const applicableEffects = actorData.parent.effects.filter((e) =>
