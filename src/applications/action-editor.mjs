@@ -148,21 +148,24 @@ export default class ActionEditor extends BAGSApplication {
    */
   async _renderFrame(options) {
     const frame = await super._renderFrame(options)
-    
+
     // Get the current action to check flags
     const action = this._activeAction
       ? this.document.getAction(this._activeAction)
-      : (this.document.system.actions[0] || null)
-    
+      : this.document.system.actions[0] || null
+
     if (action) {
       const tabButtons = frame.querySelectorAll('[data-action="tab"]')
-      
-      tabButtons.forEach(btn => {
+
+      tabButtons.forEach((btn) => {
         const tabId = btn.dataset.tab
         let shouldDisable = false
-        
+
         // Check if this tab should be disabled based on action flags
-        if ((tabId === "attempt" || tabId === "attempt-messages") && !action.flags.usesAttempt) {
+        if (
+          (tabId === "attempt" || tabId === "attempt-messages") &&
+          !action.flags.usesAttempt
+        ) {
           shouldDisable = true
         } else if (tabId === "effects" && !action.flags.usesEffect) {
           shouldDisable = true
@@ -171,17 +174,17 @@ export default class ActionEditor extends BAGSApplication {
         } else if (tabId === "restrictions" && !action.flags.usesRestrictions) {
           shouldDisable = true
         }
-        
+
         if (shouldDisable) {
           btn.disabled = true
-          btn.setAttribute('aria-disabled', 'true')
+          btn.setAttribute("aria-disabled", "true")
         } else {
           btn.disabled = false
-          btn.removeAttribute('aria-disabled')
+          btn.removeAttribute("aria-disabled")
         }
       })
     }
-    
+
     return frame
   }
 
@@ -191,52 +194,55 @@ export default class ActionEditor extends BAGSApplication {
     const doc = this.document
     context.tabs = this._prepareTabs("sheet")
     context.tab = context.tabs[partId] || null
-    
+
     // Get the active action for flag checks
     const action = this._activeAction
       ? doc.getAction(this._activeAction)
-      : (doc.system.actions[0] || null)
-    
+      : doc.system.actions[0] || null
+
     // Modify the tabs array to disable tabs based on action flags
     if (action && Array.isArray(context.tabs)) {
-      context.tabs = context.tabs.map(tab => {
+      context.tabs = context.tabs.map((tab) => {
         const tabCopy = { ...tab }
-        
+
         // Disable attempt tabs if usesAttempt is false
-        if ((tab.id === "attempt" || tab.id === "attempt-messages") && !action.flags.usesAttempt) {
+        if (
+          (tab.id === "attempt" || tab.id === "attempt-messages") &&
+          !action.flags.usesAttempt
+        ) {
           tabCopy.disabled = true
         }
-        
+
         // Disable effects tab if usesEffect is false
         if (tab.id === "effects" && !action.flags.usesEffect) {
           tabCopy.disabled = true
         }
-        
+
         // Disable consumption tab if usesConsumption is false
         if (tab.id === "consumption" && !action.flags.usesConsumption) {
           tabCopy.disabled = true
         }
-        
+
         // Disable restrictions tab if usesRestrictions is false
         if (tab.id === "restrictions" && !action.flags.usesRestrictions) {
           tabCopy.disabled = true
         }
-        
+
         return tabCopy
       })
-      
+
       // If the current active tab for this group is disabled, switch to an enabled tab
       const currentTab = this.tabGroups.sheet
-      const currentTabData = context.tabs.find(t => t.id === currentTab)
+      const currentTabData = context.tabs.find((t) => t.id === currentTab)
       if (currentTabData?.disabled) {
         // Find the first enabled tab
-        const firstEnabledTab = context.tabs.find(t => !t.disabled)
+        const firstEnabledTab = context.tabs.find((t) => !t.disabled)
         if (firstEnabledTab) {
           this.tabGroups.sheet = firstEnabledTab.id
         }
       }
     }
-    
+
     switch (partId) {
       case "master":
         context.actions = doc.system.actions.map((a) => ({
@@ -247,14 +253,15 @@ export default class ActionEditor extends BAGSApplication {
       case "detail":
         context.action = this._activeAction
           ? doc.getAction(this._activeAction)
-          : (doc.system.actions[0] || null)
+          : doc.system.actions[0] || null
         break
       case "description":
         context.headingText = "BAGS.Actions.Editor.Description.Heading"
-        context.field = doc.system.schema.fields.actions.element.fields.description
+        context.field =
+          doc.system.schema.fields.actions.element.fields.description
         context.fieldValue = this._activeAction
           ? doc.getAction(this._activeAction)?.description
-          : (doc.system.actions[0]?.description || "")
+          : doc.system.actions[0]?.description || ""
         break
       default:
         break
@@ -277,23 +284,23 @@ export default class ActionEditor extends BAGSApplication {
     // Generate a unique name for the new action
     const existingActions = this.document.system.actions
     const baseNames = existingActions
-      .map(a => a.name)
-      .filter(name => /^New Action( \d+)?$/.test(name))
-    
+      .map((a) => a.name)
+      .filter((name) => /^New Action( \d+)?$/.test(name))
+
     let newName = "New Action"
     if (baseNames.length > 0) {
       // Find the highest number
       const numbers = baseNames
-        .map(name => {
+        .map((name) => {
           const match = name.match(/^New Action(?: (\d+))?$/)
           return match ? (match[1] ? parseInt(match[1]) : 1) : 0
         })
-        .filter(n => n > 0)
-      
+        .filter((n) => n > 0)
+
       const maxNumber = numbers.length > 0 ? Math.max(...numbers) : 0
       newName = `New Action ${maxNumber + 1}`
     }
-    
+
     await this.document.createAction({ name: newName })
     if (!this._activeAction)
       this._activeAction = this.document.system.actions[0].id
@@ -307,22 +314,22 @@ export default class ActionEditor extends BAGSApplication {
   static async deleteAction(event) {
     const actionId = event.target.closest("[data-action-id]").dataset.actionId
     const action = this.document.getAction(actionId)
-    
+
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize("BAGS.Actions.DeleteAction.Title") },
       content: `<p>${game.i18n.format("BAGS.Actions.DeleteAction.Content", { name: action.name })}</p>`,
       rejectClose: false,
       modal: true,
     })
-    
+
     if (!confirmed) return
-    
+
     const actions = this.document.system.actions
-    
+
     // If we're deleting the active action, we need to update the selection
     if (this._activeAction === actionId) {
       const currentIndex = actions.findIndex(({ id }) => id === actionId)
-      
+
       // Try to select the next action, or the previous one, or null if none left
       if (actions.length > 1) {
         // If there's an action after this one, select it
@@ -338,7 +345,7 @@ export default class ActionEditor extends BAGSApplication {
         this._activeAction = null
       }
     }
-    
+
     await this.document.deleteAction(actionId)
     this.render()
   }
@@ -372,16 +379,16 @@ export default class ActionEditor extends BAGSApplication {
 
     const effectId = button.dataset.effectId
     const effect = action.effects.find(({ id }) => id === effectId)
-    
+
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize("BAGS.Actions.DeleteEffect.Title") },
       content: `<p>${game.i18n.format("BAGS.Actions.DeleteEffect.Content", { name: effect.name || game.i18n.localize("BAGS.Actions.UnnamedEffect") })}</p>`,
       rejectClose: false,
       modal: true,
     })
-    
+
     if (!confirmed) return
-    
+
     const updatedEffects = action.effects.filter(({ id }) => id !== effectId)
 
     await this.document.updateAction(this._activeAction, {
@@ -474,21 +481,25 @@ export default class ActionEditor extends BAGSApplication {
    * Set up the resize handle for the master panel
    */
   _setupResizeHandle() {
-    const masterDetail = this.element.querySelector('.application__master-detail')
+    const masterDetail = this.element.querySelector(
+      ".application__master-detail",
+    )
     if (!masterDetail) return
 
     // Create resize handle if it doesn't exist
-    let resizeHandle = masterDetail.querySelector('.application__master-detail__resize-handle')
+    let resizeHandle = masterDetail.querySelector(
+      ".application__master-detail__resize-handle",
+    )
     if (!resizeHandle) {
-      resizeHandle = document.createElement('div')
-      resizeHandle.classList.add('application__master-detail__resize-handle')
+      resizeHandle = document.createElement("div")
+      resizeHandle.classList.add("application__master-detail__resize-handle")
       masterDetail.appendChild(resizeHandle)
     }
 
     // Load saved width
-    const savedWidth = localStorage.getItem('actionEditor.masterWidth')
+    const savedWidth = localStorage.getItem("actionEditor.masterWidth")
     if (savedWidth) {
-      masterDetail.style.setProperty('--master-width', savedWidth)
+      masterDetail.style.setProperty("--master-width", savedWidth)
     }
 
     // Set up resize drag
@@ -499,37 +510,39 @@ export default class ActionEditor extends BAGSApplication {
     const startResize = (e) => {
       isResizing = true
       startX = e.clientX
-      const master = masterDetail.querySelector('.application__master-detail__master')
+      const master = masterDetail.querySelector(
+        ".application__master-detail__master",
+      )
       startWidth = master.offsetWidth
-      resizeHandle.classList.add('dragging')
-      document.body.style.cursor = 'col-resize'
-      document.body.style.userSelect = 'none'
+      resizeHandle.classList.add("dragging")
+      document.body.style.cursor = "col-resize"
+      document.body.style.userSelect = "none"
     }
 
     const doResize = (e) => {
       if (!isResizing) return
       const delta = e.clientX - startX
       const newWidth = Math.max(150, Math.min(500, startWidth + delta))
-      masterDetail.style.setProperty('--master-width', `${newWidth}px`)
+      masterDetail.style.setProperty("--master-width", `${newWidth}px`)
     }
 
     const stopResize = () => {
       if (!isResizing) return
       isResizing = false
-      resizeHandle.classList.remove('dragging')
-      document.body.style.cursor = ''
-      document.body.style.userSelect = ''
-      
+      resizeHandle.classList.remove("dragging")
+      document.body.style.cursor = ""
+      document.body.style.userSelect = ""
+
       // Save width
-      const currentWidth = masterDetail.style.getPropertyValue('--master-width')
+      const currentWidth = masterDetail.style.getPropertyValue("--master-width")
       if (currentWidth) {
-        localStorage.setItem('actionEditor.masterWidth', currentWidth)
+        localStorage.setItem("actionEditor.masterWidth", currentWidth)
       }
     }
 
-    resizeHandle.addEventListener('mousedown', startResize)
-    document.addEventListener('mousemove', doResize)
-    document.addEventListener('mouseup', stopResize)
+    resizeHandle.addEventListener("mousedown", startResize)
+    document.addEventListener("mousemove", doResize)
+    document.addEventListener("mouseup", stopResize)
   }
 
   /**
@@ -539,18 +552,21 @@ export default class ActionEditor extends BAGSApplication {
     // Get the current action to check flags
     const action = this._activeAction
       ? this.document.getAction(this._activeAction)
-      : (this.document.system.actions[0] || null)
-    
+      : this.document.system.actions[0] || null
+
     if (!action) return
-    
+
     const tabButtons = this.element.querySelectorAll('[data-action="tab"]')
-    
-    tabButtons.forEach(btn => {
+
+    tabButtons.forEach((btn) => {
       const tabId = btn.dataset.tab
       let shouldDisable = false
-      
+
       // Check if this tab should be disabled based on action flags
-      if ((tabId === "attempt" || tabId === "attempt-messages") && !action.flags.usesAttempt) {
+      if (
+        (tabId === "attempt" || tabId === "attempt-messages") &&
+        !action.flags.usesAttempt
+      ) {
         shouldDisable = true
       } else if (tabId === "effects" && !action.flags.usesEffect) {
         shouldDisable = true
@@ -559,13 +575,13 @@ export default class ActionEditor extends BAGSApplication {
       } else if (tabId === "restrictions" && !action.flags.usesRestrictions) {
         shouldDisable = true
       }
-      
+
       if (shouldDisable) {
         btn.disabled = true
-        btn.setAttribute('aria-disabled', 'true')
+        btn.setAttribute("aria-disabled", "true")
       } else {
         btn.disabled = false
-        btn.removeAttribute('aria-disabled')
+        btn.removeAttribute("aria-disabled")
       }
     })
   }
@@ -608,7 +624,9 @@ export default class ActionEditor extends BAGSApplication {
       const action = this.document.getAction(this._activeAction)
       if (!action) return
 
-      const draggedEffect = action.effects.find(({ id }) => id === data.effectId)
+      const draggedEffect = action.effects.find(
+        ({ id }) => id === data.effectId,
+      )
       if (!draggedEffect) return
 
       const dropTarget = event.target.closest(".action-effects__effect")
@@ -664,7 +682,9 @@ export default class ActionEditor extends BAGSApplication {
       const data = JSON.parse(event.dataTransfer.getData("text/plain"))
       if (data.type !== "Action") return
 
-      const dropTarget = event.target.closest(".application__master-detail__master-item")
+      const dropTarget = event.target.closest(
+        ".application__master-detail__master-item",
+      )
       if (!dropTarget) return
 
       const draggedActionId = data.actionId
