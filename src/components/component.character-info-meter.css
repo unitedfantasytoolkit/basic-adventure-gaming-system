@@ -34,7 +34,7 @@
   display: none;
 }
 
-.value {
+.value-display {
   color: white;
   z-index: 4;
   position: absolute;
@@ -43,6 +43,44 @@
   top: 0;
   line-height: 1em;
   text-shadow: 1px 1px rgb(0 0 0 / 50%);
+}
+
+:host(.editing) .value-display {
+  display: none;
+}
+
+.value-display--editable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.value-display--editable:hover {
+  text-shadow:
+    0 0 4px rgb(255 255 255 / 50%),
+    1px 1px rgb(0 0 0 / 50%);
+}
+
+.value-input {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 3em;
+  height: 0.9em;
+  text-align: center;
+  background: rgb(0 0 0 / 50%);
+  border: 1px solid var(--meter-color-edge-highlight);
+  color: white;
+  font-size: inherit;
+  font-family: inherit;
+  z-index: 5;
+  padding: 0.125em;
+  border-radius: 0.25em;
+}
+
+:host(.editing) .value-input {
+  display: block;
 }
 
 .meter {

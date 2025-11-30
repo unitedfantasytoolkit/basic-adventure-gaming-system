@@ -97,6 +97,39 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
   #subApps = {}
 
+  // --- Form Handling ---------------------------------------------------------
+
+  /**
+   * Handle form submission for actor sheets.
+   * 
+   * IMPORTANT: This is a workaround. The default Foundry DocumentSheetV2 form
+   * handler was not being invoked properly (reason unknown). This override
+   * manually extracts FormData, expands it to an object, and updates the
+   * document. It works correctly but bypasses the normal Foundry submission
+   * pipeline (_prepareSubmitData, _processSubmitData, etc.).
+   * 
+   * This approach properly handles form-associated custom elements (FACEs) via
+   * the FormDataExtended constructor, which calls the native FormData
+   * constructor that automatically includes FACE values set via setFormValue().
+   * 
+   * @param {object} formConfig - Form configuration object
+   * @param {Event} event - The form submission event
+   * @returns {Promise<void>}
+   */
+  async _onSubmitForm(formConfig, event) {
+    event.preventDefault()
+
+    const form = event.currentTarget
+    const formData = new foundry.applications.ux.FormDataExtended(form)
+    const submitData = foundry.utils.expandObject(formData.object)
+
+    try {
+      await this.document.update(submitData)
+    } catch (err) {
+      ui.notifications.error(err.message)
+    }
+  }
+
   // --- Tabs ------------------------------------------------------------------
 
   tabGroups = {
@@ -152,38 +185,95 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   // === Rendering =============================================================
 
   /**
-   * @todo Implement this!
+   * Determine if a field has been modified by active effects and whether those
+   * modifications are beneficial or detrimental.
+   * 
+   * This is used to provide visual feedback to players about how their character
+   * has been affected by buffs/debuffs, allowing them to quickly understand the
+   * state of their character.
+   * 
+   * The method automatically determines "improvement direction" based on common
+   * patterns, but can be overridden with the forcedDirection parameter.
+   * 
+   * @param {string} key - The dot-notation path to the field (e.g., "system.hp.max")
+   * @param {'ascending'|'descending'} [forcedDirection] - Override the default direction
+   * @returns {null|'improved'|'impaired'} Modification state, or null if no modifications
    */
   getFieldModificationState(key, forcedDirection) {
     const modifications =
-      this.document.appliedEffectsByAffectedKey().get(key) ?? []
+      this.document.appliedEffectsByAffectedKey.get(key) ?? []
     if (!modifications.length) return null
 
-    // Get the direction where positive is "better"
-    // const direction =
-    // this.constructor.FIELD_IMPROVEMENT_DIRECTION[key] ?? 'ascending'
-    const direction = forcedDirection || "ascending"
+    // Determine if higher values are better or worse for this field
+    const direction = forcedDirection || this.#getFieldDirection(key)
 
-    // Calculate total numerical modification
+    // Calculate total numerical modification across all active effects
     const totalMod = modifications.reduce((sum, mod) => {
       const value = Number(mod.modification.value) || 0
 
-      // Handle different modification modes
+      // Handle different Foundry modification modes
       switch (mod.modification.mode) {
-        case 2: // ADD
+        case CONST.ACTIVE_EFFECT_MODES.ADD: // 2
           return sum + value
-        case 1: // MULTIPLY
+        case CONST.ACTIVE_EFFECT_MODES.MULTIPLY: // 1
           return sum * value
-        // Add other cases as needed
+        case CONST.ACTIVE_EFFECT_MODES.OVERRIDE: // 5
+          // For override, treat as the value itself (not additive)
+          return value
+        case CONST.ACTIVE_EFFECT_MODES.UPGRADE: // 3
+        case CONST.ACTIVE_EFFECT_MODES.DOWNGRADE: // 4
+          // These compare and take max/min, so just use the value
+          return value
         default:
           return sum
       }
     }, 0)
 
+    // No effective modification
     if (totalMod === 0) return null
 
-    if (direction === "ascending") return totalMod > 0 ? "improved" : "impaired"
+    // Determine if the modification is beneficial or detrimental
+    if (direction === "ascending") {
+      return totalMod > 0 ? "improved" : "impaired"
+    }
     return totalMod < 0 ? "improved" : "impaired"
+  }
+
+  /**
+   * Determine the "improvement direction" for a given field path.
+   * 
+   * Returns "ascending" if higher values are better, "descending" if lower values
+   * are better. This uses heuristics based on common field naming patterns.
+   * 
+   * @param {string} key - The dot-notation path to the field
+   * @returns {'ascending'|'descending'} The improvement direction
+   * @private
+   */
+  #getFieldDirection(key) {
+    // Ability scores - always higher is better
+    if (key.includes("abilityScores")) return "ascending"
+    
+    // HP and movement - higher is better
+    if (key.includes("hp.") || key.includes("movement.")) return "ascending"
+    
+    // Saving throws - in old-school games, lower is typically better
+    // (you roll d20 and need to meet or beat the target)
+    if (key.includes("savingThrows")) return "descending"
+    
+    // THAC0 - lower is better (descending AC systems)
+    if (key.includes("thac0")) return "descending"
+    
+    // AC depends on system, but ascending AC systems use higher is better
+    // For now, assume ascending (most modern interpretations)
+    if (key.includes("armorClass") || key.includes(".ac")) return "ascending"
+    
+    // Attack and damage bonuses - higher is better
+    if (key.includes("Attack") || key.includes("Damage") || key.includes("Bonus")) {
+      return "ascending"
+    }
+    
+    // Default to ascending for most stats
+    return "ascending"
   }
 
   /**

@@ -527,3 +527,68 @@
     }
   }
 }
+
+/* === Field Modification Indicators ======================================== */
+
+/**
+ * Visual indicators for fields affected by active effects.
+ * 
+ * .field--improved: Field has been buffed (beneficial modification)
+ * .field--impaired: Field has been debuffed (detrimental modification)
+ */
+
+.field--improved {
+  position: relative;
+
+  /* Subtle green glow for improved fields */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 4px;
+    background: radial-gradient(
+      circle at center,
+      rgb(34 197 94 / 15%) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Slightly brighter text */
+  color: rgb(134 239 172);
+
+  /* Enhanced border/outline for better visibility */
+  &.number-showcase__value,
+  & > .number-showcase__value {
+    text-shadow: 0 0 8px rgb(34 197 94 / 40%);
+  }
+}
+
+.field--impaired {
+  position: relative;
+
+  /* Subtle red glow for impaired fields */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 4px;
+    background: radial-gradient(
+      circle at center,
+      rgb(239 68 68 / 15%) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Slightly muted/warning text color */
+  color: rgb(252 165 165);
+
+  /* Enhanced border/outline for better visibility */
+  &.number-showcase__value,
+  & > .number-showcase__value {
+    text-shadow: 0 0 8px rgb(239 68 68 / 40%);
+  }
+}

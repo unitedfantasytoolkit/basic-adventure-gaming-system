@@ -172,6 +172,8 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
           CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
             CONFIG.BAGS.SystemRegistry.categories.COMBAT,
           )?.descending
+        
+        // Ability score tooltips and modification states
         context.abilityScoreTooltips = Object.entries(
           this.document.system.schema.fields.base.fields.abilityScores.fields,
         ).reduce(
@@ -183,6 +185,17 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
           }),
           {},
         )
+        context.abilityScoreModifications = Object.entries(
+          this.document.system.schema.fields.base.fields.abilityScores.fields,
+        ).reduce(
+          (obj, [key, field]) => ({
+            ...obj,
+            [key]: this.getFieldModificationState(field.fieldPath),
+          }),
+          {},
+        )
+        
+        // Saving throw tooltips and modification states
         context.savingThrowTooltips = Object.keys(
           savingThrowSettings.savingThrows,
         ).reduce(
@@ -198,6 +211,28 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
           }),
           {},
         )
+        context.savingThrowModifications = Object.keys(
+          savingThrowSettings.savingThrows,
+        ).reduce(
+          (obj, key) => ({
+            ...obj,
+            [key]: this.getFieldModificationState(`system.modifiers.savingThrows.${key}`),
+          }),
+          {},
+        )
+        
+        // Combat stat modification states
+        context.combatModifications = {
+          hp: this.getFieldModificationState("system.hp.max"),
+          ac: this.getFieldModificationState("system.armorClass"),
+          thac0: this.getFieldModificationState("system.thac0"),
+          baseAttackBonus: this.getFieldModificationState("system.baseAttackBonus"),
+          meleeAttack: this.getFieldModificationState("system.meleeAttackBonus"),
+          meleeDamage: this.getFieldModificationState("system.meleeDamageBonus"),
+          missileAttack: this.getFieldModificationState("system.missileAttackBonus"),
+          missileDamage: this.getFieldModificationState("system.missileDamageBonus"),
+        }
+        
         context.encumbranceMeter = encumbranceSettings.encumbranceMeter(
           doc.system,
         )

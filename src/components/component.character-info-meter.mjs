@@ -11,9 +11,9 @@ export default class CharacterInfoMeter extends BaseElement {
   /**
    * Is this component associated to a form?
    *
-   * A must when trying to use a component to update a Foundry document!
+   * We use form association to submit values via ElementInternals API.
    */
-  static formAssociated = false
+  static formAssociated = true
 
   constructor() {
     super()
@@ -25,12 +25,56 @@ export default class CharacterInfoMeter extends BaseElement {
   }
 
   static get observedAttributes() {
-    return ["value", "max"]
+    return ["value", "max", "editable"]
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    // console.info(name, old, new)
+    if (oldValue === newValue) return
     this.shadowRoot.innerHTML = this.template
+    this.events()
+  }
+
+  events() {
+    if (!this.#isEditable) return
+
+    const valueDisplay = this.shadowRoot.querySelector(".value-display")
+    const input = this.shadowRoot.querySelector(".value-input")
+
+    if (valueDisplay) {
+      valueDisplay.addEventListener("click", () => {
+        this.classList.add("editing")
+        input?.focus()
+        input?.select()
+      })
+    }
+
+    if (input) {
+      input.addEventListener("blur", () => this.#exitEditMode(input))
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault()
+          input.blur()
+        }
+        if (e.key === "Escape") {
+          e.preventDefault()
+          this.#cancelEdit(input)
+        }
+      })
+    }
+  }
+
+  #exitEditMode(input) {
+    const newValue = parseInt(input.value, 10)
+    if (!isNaN(newValue) && newValue >= 0 && newValue !== this.#value) {
+      this.value = newValue.toString()
+      this.dispatchEvent(new Event("change", { bubbles: true }))
+    }
+    this.classList.remove("editing")
+  }
+
+  #cancelEdit(input) {
+    input.value = this.#value.toString()
+    this.classList.remove("editing")
   }
 
   #removeIconContainerIfUnused() {
@@ -41,6 +85,10 @@ export default class CharacterInfoMeter extends BaseElement {
 
   static get styles() {
     return [styles]
+  }
+
+  get #isEditable() {
+    return this.hasAttribute("editable")
   }
 
   get #value() {
@@ -63,12 +111,14 @@ export default class CharacterInfoMeter extends BaseElement {
   }
 
   /**
-   *
+   * Renders the component template.
+   * Both display and input are always present; CSS controls visibility.
    */
   get template() {
     const meterClasses = ["meter"]
     if (this.#progress === 0) meterClasses.push("meter--empty")
     if (this.#progress === 100) meterClasses.push("meter--full")
+
     return html`
       <div class="icon">
         <slot name="icon"></slot>
@@ -77,7 +127,21 @@ export default class CharacterInfoMeter extends BaseElement {
         class="${meterClasses.join(" ")}"
         style="--meter-fill-pct: ${this.#progress}%"
       >
-        <span class="value">${this.#value}/${this.#max}</span>
+        <span class="value-display ${this.#isEditable ? "value-display--editable" : ""}"
+          >${this.#value}/${this.#max}</span
+        >
+        ${
+          this.#isEditable
+            ? html`<input
+                type="number"
+                name="${this.getAttribute("name") || ""}"
+                value="${this.#value}"
+                min="0"
+                max="${this.#max}"
+                class="value-input"
+              />`
+            : ""
+        }
       </div>
     `
   }
