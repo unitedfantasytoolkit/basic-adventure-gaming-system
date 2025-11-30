@@ -76,7 +76,7 @@ export default class SpellManager extends BAGSApplication {
   async _prepareContext(options) {
     const context = await super._prepareContext(options)
 
-    const padArray = (array, length) => {
+    const padArray = (array, length = 0) => {
       const arr = Array.isArray(array) ? array : []
       if (arr.length >= length) return arr.slice()
       return [...arr, ...Array(length - arr.length).fill(null)]

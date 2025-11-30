@@ -20,4 +20,23 @@ export default class BAGSSpellDataModel extends BaseItemDataModel {
   }
 
   cast() {}
+
+  /**
+   * Generate tooltip logistics HTML for spells showing level and casting class
+   * @returns {string} HTML for the logistics section of the tooltip
+   */
+  get _tooltipLogisticsHTML() {
+    const className = this.castingClass?.name || "—"
+    const levelLabel = game.i18n.localize("BAGS.SpellManager.Level")
+
+    return `
+      <dl class="item-stats">
+        <dt><i class="fas fa-layer-group" aria-label="${levelLabel}"></i></dt>
+        <dd>${this.level}</dd>
+
+        <dt><i class="fas fa-graduation-cap" aria-label="Class"></i></dt>
+        <dd>${className}</dd>
+      </dl>
+    `
+  }
 }

@@ -61,18 +61,22 @@
       display: block;
       width: var(--size, 32px);
       height: var(--size, 32px);
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      overflow: hidden;
-      background-color: #383531;
-      position: relative;
-      transition:
-        opacity ease-in-out 333ms,
-        filter ease-in-out 333ms;
       cursor: grab;
 
       &:active {
         cursor: grabbing;
+      }
+
+      /* Empty slots styling */
+      &--empty {
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        overflow: hidden;
+        background-color: #383531;
+        position: relative;
+        transition:
+          opacity ease-in-out 333ms,
+          filter ease-in-out 333ms;
       }
 
       &.prepared {
