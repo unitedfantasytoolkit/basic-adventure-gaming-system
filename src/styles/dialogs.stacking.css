@@ -1,0 +1,30 @@
+/**
+ * @file Styles for item stacking dialogs
+ */
+
+/* Stack Items Dialog */
+.stacking-dialog__items {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  margin-block: 1em;
+}
+
+.stacking-dialog__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25em;
+}
+
+.stacking-dialog__item img {
+  width: 48px;
+  height: 48px;
+  border-radius: 3px;
+}
+
+.stacking-dialog__separator {
+  font-size: 1.5em;
+  opacity: 0.6;
+}

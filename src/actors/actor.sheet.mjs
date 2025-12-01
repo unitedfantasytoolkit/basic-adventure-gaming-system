@@ -7,6 +7,13 @@ import RollDialog from "../dialogs/dialog.roll-config.mjs"
 import animatedSheetAttention from "../utils/animated-sheet-attention.mjs"
 import animatedSheetError from "../utils/animated-sheet-error.mjs"
 import sortDocuments from "../utils/sort-documents.mjs"
+import StackingDialog from "../applications/stacking-dialog.mjs"
+import {
+  canItemsStack,
+  findStackableMatches,
+  mergeItemStacks,
+  splitItemStack,
+} from "../utils/item-stacking.mjs"
 
 /**
  * @typedef {import('../types.mjs').SheetNavTab} SheetNavTab
@@ -19,6 +26,12 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 ) {
   constructor(options = {}) {
     super(options)
+
+    /**
+     * Track modifier keys during drag operations
+     * @type {{altKey: boolean, ctrlKey: boolean, metaKey: boolean}}
+     */
+    this.#dragModifiers = { altKey: false, ctrlKey: false, metaKey: false }
 
     /**
      * @todo skip over non-Applications
@@ -97,26 +110,32 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
   #subApps = {}
 
+  /**
+   * Track modifier keys during drag operations
+   * @type {{altKey: boolean, ctrlKey: boolean, metaKey: boolean}}
+   */
+  #dragModifiers = { altKey: false, ctrlKey: false, metaKey: false }
+
   // --- Form Handling ---------------------------------------------------------
 
   /**
    * Handle form submission for actor sheets.
-   * 
+   *
    * IMPORTANT: This is a workaround. The default Foundry DocumentSheetV2 form
    * handler was not being invoked properly (reason unknown). This override
    * manually extracts FormData, expands it to an object, and updates the
    * document. It works correctly but bypasses the normal Foundry submission
    * pipeline (_prepareSubmitData, _processSubmitData, etc.).
-   * 
+   *
    * This approach properly handles form-associated custom elements (FACEs) via
    * the FormDataExtended constructor, which calls the native FormData
    * constructor that automatically includes FACE values set via setFormValue().
-   * 
-   * @param {object} formConfig - Form configuration object
+   *
+   * @param {object} _formConfig - Form configuration object
    * @param {Event} event - The form submission event
    * @returns {Promise<void>}
    */
-  async _onSubmitForm(formConfig, event) {
+  async _onSubmitForm(_formConfig, event) {
     event.preventDefault()
 
     const form = event.currentTarget
@@ -187,17 +206,21 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   /**
    * Determine if a field has been modified by active effects and whether those
    * modifications are beneficial or detrimental.
-   * 
-   * This is used to provide visual feedback to players about how their character
+   *
+   * This is used to provide visual feedback to players about how their
+   * character
    * has been affected by buffs/debuffs, allowing them to quickly understand the
    * state of their character.
-   * 
+   *
    * The method automatically determines "improvement direction" based on common
    * patterns, but can be overridden with the forcedDirection parameter.
-   * 
-   * @param {string} key - The dot-notation path to the field (e.g., "system.hp.max")
-   * @param {'ascending'|'descending'} [forcedDirection] - Override the default direction
-   * @returns {null|'improved'|'impaired'} Modification state, or null if no modifications
+   *
+   * @param {string} key - The dot-notation path to the field (e.g., "system.hp.
+   * max")
+   * @param {'ascending'|'descending'} [forcedDirection] - Override the default
+   * direction
+   * @returns {null|'improved'|'impaired'} Modification state, or null if no
+   * modifications
    */
   getFieldModificationState(key, forcedDirection) {
     const modifications =
@@ -241,10 +264,11 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
   /**
    * Determine the "improvement direction" for a given field path.
-   * 
-   * Returns "ascending" if higher values are better, "descending" if lower values
+   *
+   * Returns "ascending" if higher values are better, "descending" if lower
+   * values
    * are better. This uses heuristics based on common field naming patterns.
-   * 
+   *
    * @param {string} key - The dot-notation path to the field
    * @returns {'ascending'|'descending'} The improvement direction
    * @private
@@ -252,26 +276,30 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   #getFieldDirection(key) {
     // Ability scores - always higher is better
     if (key.includes("abilityScores")) return "ascending"
-    
+
     // HP and movement - higher is better
     if (key.includes("hp.") || key.includes("movement.")) return "ascending"
-    
+
     // Saving throws - in old-school games, lower is typically better
     // (you roll d20 and need to meet or beat the target)
     if (key.includes("savingThrows")) return "descending"
-    
+
     // THAC0 - lower is better (descending AC systems)
     if (key.includes("thac0")) return "descending"
-    
+
     // AC depends on system, but ascending AC systems use higher is better
     // For now, assume ascending (most modern interpretations)
     if (key.includes("armorClass") || key.includes(".ac")) return "ascending"
-    
+
     // Attack and damage bonuses - higher is better
-    if (key.includes("Attack") || key.includes("Damage") || key.includes("Bonus")) {
+    if (
+      key.includes("Attack") ||
+      key.includes("Damage") ||
+      key.includes("Bonus")
+    ) {
       return "ascending"
     }
-    
+
     // Default to ascending for most stats
     return "ascending"
   }
@@ -592,6 +620,57 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         },
       },
       {
+        name: "BAGS.Actors.Common.Actions.SplitStack",
+        icon: "<i class='fa fa-scissors' />",
+        condition: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          return (
+            item.isOwner &&
+            item.system.isPhysicalItem &&
+            item.system.quantity > 1
+          )
+        },
+        callback: async (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          if (!item) return
+
+          const splitQty = await StackingDialog.promptSplit(item)
+          if (splitQty) {
+            await splitItemStack(item, splitQty)
+          }
+        },
+      },
+      {
+        name: "BAGS.Actors.Common.Actions.MergeSimilar",
+        icon: "<i class='fa fa-layer-group' />",
+        condition: (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          if (!item?.isOwner || !item.system.isPhysicalItem) return false
+
+          const matches = findStackableMatches(item, this.actor)
+          return matches.length > 0
+        },
+        callback: async (element) => {
+          const item = this.document.items.get(element.dataset.itemId)
+          if (!item) return
+
+          const matches = findStackableMatches(item, this.actor)
+          if (matches.length === 0) return
+
+          // Merge all matches into this item
+          for (const match of matches) {
+            await mergeItemStacks(item, match)
+          }
+
+          ui.notifications.info(
+            game.i18n.format("BAGS.Actors.Common.Notifications.MergedItems", {
+              count: matches.length,
+              itemName: item.name,
+            }),
+          )
+        },
+      },
+      {
         name: "BAGS.Actors.Common.Actions.Unidentify",
         icon: "<i class='fa fa-eye-slash' />",
         condition: (element) => {
@@ -857,45 +936,65 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     else this.document.createEmbeddedDocuments("Item", [doc])
   }
 
-  async #onDropWeapon(doc) {
-    this.document.createEmbeddedDocuments("Item", [doc])
-  }
+  /**
+   * Override dragstart to capture modifier keys
+   * @param {DragEvent} event - The drag event
+   * @override
+   */
+  async _onDragStart(event) {
+    // Capture modifier keys at drag start
+    this.#dragModifiers = {
+      altKey: event.altKey,
+      ctrlKey: event.ctrlKey,
+      metaKey: event.metaKey,
+    }
 
-  async #onDropArmor(doc) {
-    this.document.createEmbeddedDocuments("Item", [doc])
-  }
-
-  // TODO: Add onto an existing stack, if one exists.
-  async #onDropMiscellaneous(doc) {
-    this.document.createEmbeddedDocuments("Item", [doc])
+    // Call parent implementation
+    return super._onDragStart(event)
   }
 
   /**
    * A handler for dropping items onto the sheet.
+   *
+   * This method intercepts item drops to check if the dropped item can be
+   * stacked with an existing item. If so, it prompts the user to choose
+   * between stacking them or keeping them separate.
+   *
    * @param {DragEvent} event - The browser event fired when dropping the item
-   * @param {unknown} doc - The Foundry Item to handle
-   * @todo handle duplicate items on types with quantities
-   * @todo handle duplicate items on types that shouldn't have copies
-   * @returns {Promise<unknown>} The dropped item, if creating it works.
+   * @param {Item} doc - The Foundry Item to handle
+   * @returns {Promise<Item|false>} The created/merged item, or false if not owner
    */
   async _onDropItem(event, doc) {
     if (!this.actor.isOwner) return false
 
-    // TODO: Handle containers
-    if (this.actor.uuid === doc.parent?.uuid)
-      return this._onSortItem(event, doc)
-
-    switch (doc.type) {
-      case "class":
-        return this.#onDropCharacterClass(doc)
-      case "spell":
-      case "ability":
-      case "weapon":
-      case "armor":
-      case "item":
-      default:
-        return super._onDropItem(event, doc)
+    // Handle class items specially (only one class allowed)
+    if (doc.type === "class") {
+      return this.#onDropCharacterClass(doc)
     }
+
+    const isSameActor = this.actor.uuid === doc.parent?.uuid
+
+    // Check for modifier keys on physical items BEFORE sorting logic
+    if (doc.system?.isPhysicalItem) {
+      // Alt+Drag: Split stack before dropping (works within same actor too)
+      if (this.#dragModifiers.altKey && doc.system.quantity > 1) {
+        const splitQty = await StackingDialog.promptSplit(doc)
+        if (splitQty) {
+          const newItem = await splitItemStack(doc, splitQty)
+          return newItem
+        }
+        // User cancelled split - abort drop
+        return false
+      }
+
+      if (isSameActor) return this._onSortItem(event, doc)
+    } else if (isSameActor) {
+      // Non-physical item sorting within same actor
+      return this._onSortItem(event, doc)
+    }
+
+    // Default: create the item normally (handles all item types)
+    return super._onDropItem(event, doc)
   }
 
   // === Events ================================================================

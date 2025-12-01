@@ -20,6 +20,17 @@ class PhysicalItemDataModel extends BaseItemDataModel {
   static defineSchema() {
     return {
       ...super.defineSchema(),
+      baseItemId: new StringField({
+        nullable: true,
+        initial: () => foundry.utils.randomID(),
+        label: "BAGS.Items.Physical.BaseItemId.Label",
+        hint: "BAGS.Items.Physical.BaseItemId.Hint",
+      }),
+      isStackable: new BooleanField({
+        initial: true,
+        label: "BAGS.Items.Physical.IsStackable.Label",
+        hint: "BAGS.Items.Physical.IsStackable.Hint",
+      }),
       quantity: new NumberField({
         min: 0,
         initial: 1,

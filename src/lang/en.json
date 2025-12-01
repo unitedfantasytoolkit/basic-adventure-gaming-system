@@ -446,6 +446,14 @@
         "ContainerSettings": "Container Settings"
       },
       "Physical": {
+        "BaseItemId": {
+          "Label": "Base Item ID",
+          "Hint": "Identifies the base item template for stacking purposes. Items with the same Base Item ID can potentially be stacked together."
+        },
+        "IsStackable": {
+          "Label": "Can Stack",
+          "Hint": "Whether this item can be stacked with other identical items. Uncheck to make this item unique."
+        },
         "Quantity": {
           "Label": "Quantity",
           "Hint": "The number of this item in the stack"
@@ -860,11 +868,16 @@
           "Use": "Use",
           "View": "View",
           "Edit": "Edit",
+          "SplitStack": "Split Stack",
+          "MergeSimilar": "Merge Similar Items",
           "Unidentify": "Un-identify",
           "Identify": "Identify",
           "Equip": "Equip",
           "Unequip": "Unequip",
           "Delete": "Delete"
+        },
+        "Notifications": {
+          "MergedItems": "Merged {count} stacks into {itemName}"
         },
         "Errors": {
           "ClassesOnlyForCharacters": "Only characters may have classes.",
@@ -1055,6 +1068,18 @@
         "ReversedSuccessHint": "This roll is successful when the result is higher than the target.",
         "RollMode": "Roll mode",
         "Roll": "Roll"
+      },
+      "StackItems": {
+        "Title": "Stack Items?",
+        "Message": "Stack {itemName} (×{droppedQty}) with existing {itemName} (×{existingQty}) for a total of ×{totalQty}?",
+        "Stack": "Stack Together",
+        "KeepSeparate": "Keep Separate"
+      },
+      "SplitStack": {
+        "Title": "Split {itemName}",
+        "Message": "How many {itemName} would you like to split off? (Total: {quantity})",
+        "Quantity": "Split Quantity",
+        "Split": "Split Stack"
       }
     },
     "Settings": {

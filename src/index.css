@@ -45,6 +45,7 @@
 
 /* --- Applications: Dialogs ------------------------------------------------ */
 @import url("./dialogs/dialog.roll-config.css");
+@import url("./styles/dialogs.stacking.css");
 
 /* --- Applications: Miscellaneous ------------------------------------------ */
 @import url("./applications/character-creation-source-config.css");
