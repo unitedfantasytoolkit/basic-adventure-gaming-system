@@ -127,6 +127,60 @@ class PhysicalItemDataModel extends BaseItemDataModel {
   get canUseActions() {
     return this.areActionsAvailableWhenUnequipped || this.isEquipped
   }
+
+  /**
+   * Get the container that holds this item, if any.
+   * Returns null if the item is not stored in a container.
+   * @type {Item|null}
+   */
+  get parentContainer() {
+    if (!this.parent?.actor) return null
+
+    return (
+      this.parent.actor.items.find((i) =>
+        i.system.container?.contains?.includes(this.parent.uuid),
+      ) || null
+    )
+  }
+
+  /**
+   * Get all items contained within this container.
+   * Automatically filters out invalid/deleted items.
+   * Only returns items if this item is marked as a container.
+   * @type {Item[]}
+   */
+  get contents() {
+    if (!this.container?.isContainer || !this.parent?.actor) {
+      return []
+    }
+
+    const actor = this.parent.actor
+    const uuids = this.container.contains || []
+
+    return uuids
+      .map((uuid) => fromUuidSync(uuid))
+      .filter((item) => item && item.actor === actor)
+  }
+
+  /**
+   * Current weight of all contents in this container.
+   * Returns 0 for non-containers or empty containers.
+   * TODO: Implement recursive weight calculation with container modifiers
+   * @type {number}
+   */
+  get contentsWeight() {
+    if (!this.container?.isContainer) return 0
+    // Placeholder - will implement proper weight calculation later
+    return 0
+  }
+
+  /**
+   * Check if this item is currently stored in a container.
+   * @type {boolean}
+   */
+  get isInContainer() {
+    return this.parentContainer !== null
+  }
 }
 
 export default PhysicalItemDataModel

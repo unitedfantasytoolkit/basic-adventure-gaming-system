@@ -8,6 +8,38 @@
     <div class="flavor-text">{{{formattedSystem.flavorText}}}</div>
   {{/if}}
 
+  {{!-- Container Contents Section --}}
+  {{#if item.system.container.isContainer}}
+    <section class="container-contents">
+      <header class="container-contents__header">
+        <h2>Contents</h2>
+        {{#if item.system.container.weightMax}}
+          <div class="container-capacity">
+            <span class="capacity-current">{{containerData.currentWeight}}</span>
+            /
+            <span class="capacity-max">{{item.system.container.weightMax}}</span>
+            lbs
+          </div>
+        {{/if}}
+      </header>
+
+      {{#if containerData.contents.length}}
+        <div class="item-grid item-grid--container" style="--item-grid-minimum-rows: 3">
+          {{#each containerData.contents}}
+            <uft-item-tile
+              class="item-grid__item draggable"
+              data-item-id="{{id}}"
+              uuid="{{uuid}}"
+              data-in-container="true"
+            ></uft-item-tile>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="empty">Container is empty</p>
+      {{/if}}
+    </section>
+  {{/if}}
+
   <article class="item-details">
     <main class="scrollable">
       {{#if item.system.description}}

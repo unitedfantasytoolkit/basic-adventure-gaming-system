@@ -9,7 +9,7 @@
  * If an item is stored in a container (like a Bag of Holding), the container's
  * weight modifier is applied. This ensures encumbrance is calculated correctly.
  * @param {Item} item - The Item to calculate weight for
- * @param {object} actorData - The actor's system data object
+ * @param {object} actorData - The actor's system data object (unused but kept for backwards compatibility)
  * @returns {number} The effective weight after applying quantity and container modifiers
  * @example
  * // Item with quantity 5, weight 2 = 10 total
@@ -22,13 +22,9 @@ export default (item, actorData) => {
   let { weight } = item.system
 
   // Apply container modifiers if item is in a container
-  if (item.system.container?.containerId) {
-    const container = actorData.parent.items.get(
-      item.system.container.containerId,
-    )
-    if (container?.system.container?.weightModifier) {
-      weight *= container.system.container.weightModifier ?? 1
-    }
+  const container = item.system.parentContainer
+  if (container?.system.container?.weightModifier) {
+    weight *= container.system.container.weightModifier
   }
 
   const totalWeight = weight * quantity

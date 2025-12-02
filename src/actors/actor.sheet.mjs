@@ -349,6 +349,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
           ...context.armor,
           ...context.items,
         ]
+          .filter((item) => !item.system.isInContainer) // Filter out items in containers
           .filter(this.inventoryFilterMode.predicate)
           .sort(
             sortDocuments(
@@ -966,6 +967,13 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
    */
   async _onDropItem(event, doc) {
     if (!this.actor.isOwner) return false
+
+    // Handle removing item from container
+    if (doc.system?.isInContainer && doc.actor === this.actor) {
+      await doc.removeFromContainer()
+      ui.notifications.info(`Removed ${doc.name} from container`)
+      return doc
+    }
 
     // Handle class items specially (only one class allowed)
     if (doc.type === "class") {

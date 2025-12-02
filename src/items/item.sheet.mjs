@@ -71,6 +71,13 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       // Active effect management
       "edit-active-effects": this.editActiveEffects,
     },
+    // Enable drag-drop for containers
+    dragDrop: [
+      {
+        dragSelector: ".item-grid--container uft-item-tile",
+        dropSelector: ".container-contents",
+      },
+    ],
     position: {
       width: 490,
       height: 520,
@@ -137,6 +144,10 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     const doc = this.document
     switch (partId) {
       case "summary":
+        // Prepare container data if this item is a container
+        if (doc.system.container?.isContainer) {
+          context.containerData = await this._prepareContainerData()
+        }
         break
       case "effects":
         break
@@ -169,6 +180,31 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
     }
   }
 
+  /**
+   * Set up drag-drop handlers after rendering.
+   * @override
+   */
+  async _onRender(context, options) {
+    await super._onRender(context, options)
+
+    // Set up drag-drop for container contents
+    if (this.document.system.container?.isContainer) {
+      const DragDrop = foundry.applications.ux.DragDrop.implementation
+      new DragDrop({
+        dragSelector: ".item-grid--container uft-item-tile",
+        dropSelector: ".container-contents",
+        permissions: {
+          dragstart: this._canDragStart.bind(this),
+          drop: this._canDragDrop.bind(this),
+        },
+        callbacks: {
+          dragstart: this._onDragStart.bind(this),
+          drop: this._onDrop.bind(this),
+        },
+      }).bind(this.element)
+    }
+  }
+
   async _prepareFormattedFields() {
     return {
       flavorText: await foundry.applications.ux.TextEditor.enrichHTML(
@@ -177,6 +213,124 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       description: await foundry.applications.ux.TextEditor.enrichHTML(
         this.document.system.description,
       ),
+    }
+  }
+
+  /**
+   * Prepare data for container display in the summary tab.
+   * @returns {Promise<object>} Container data including contents and weight
+   * @private
+   */
+  async _prepareContainerData() {
+    const doc = this.document
+    const contents = doc.system.contents || []
+
+    // Calculate current weight (placeholder - will implement properly later)
+    const currentWeight = 0
+
+    return {
+      contents: contents.map((item) => ({
+        id: item.id,
+        uuid: item.uuid,
+        name: item.name,
+        img: item.img,
+      })),
+      currentWeight,
+      maxWeight: doc.system.container.weightMax || 0,
+      itemCount: contents.length,
+    }
+  }
+
+  // === Drag and Drop =========================================================
+
+  /**
+   * Define whether a user can begin a drag operation.
+   * @param {string} selector - The candidate HTML selector for dragging
+   * @returns {boolean} Can the current user drag this selector?
+   * @protected
+   */
+  _canDragStart(selector) {
+    return this.isEditable
+  }
+
+  /**
+   * Define whether a user can complete a drop operation.
+   * @param {string} selector - The candidate HTML selector for the drop target
+   * @returns {boolean} Can the current user drop on this selector?
+   * @protected
+   */
+  _canDragDrop(selector) {
+    return this.isEditable
+  }
+
+  /**
+   * Handle drag start for items in the container.
+   * @param {DragEvent} event - The drag start event
+   * @protected
+   */
+  async _onDragStart(event) {
+    const target = event.currentTarget
+    if ("link" in event.target.dataset) return
+
+    // Get the item being dragged from the container
+    if (target.dataset.itemId) {
+      const item = this.document.actor.items.get(target.dataset.itemId)
+      if (!item) return
+
+      const dragData = item.toDragData()
+      event.dataTransfer.setData("text/plain", JSON.stringify(dragData))
+    }
+  }
+
+  /**
+   * Handle drop events on the item sheet.
+   * @override
+   */
+  async _onDrop(event) {
+    const data = foundry.applications.ux.TextEditor.getDragEventData(event)
+
+    // Only handle item drops if this is a container
+    if (data.type === "Item" && this.document.system.container?.isContainer) {
+      return this._onDropItem(event, data)
+    }
+
+    return super._onDrop(event)
+  }
+
+  /**
+   * Handle dropping an item onto a container.
+   * @param {DragEvent} event - The drop event
+   * @param {object} data - The parsed drag data
+   * @returns {Promise<Item|void>} The updated container
+   * @private
+   */
+  async _onDropItem(event, data) {
+    const droppedItem = await fromUuid(data.uuid)
+    console.info(event, data)
+    if (!droppedItem) return
+
+    // Can't add items from other actors
+    if (droppedItem.actor !== this.document.actor) {
+      ui.notifications.warn(
+        "Cannot add items from other actors to this container",
+      )
+      return
+    }
+
+    // Can't add the container to itself
+    if (droppedItem.id === this.document.id) {
+      ui.notifications.warn("Cannot add a container to itself")
+      return
+    }
+
+    // Use the document's addToContainer method which includes circular ref check
+    try {
+      await droppedItem.addToContainer(this.document)
+      ui.notifications.info(
+        `Added ${droppedItem.name} to ${this.document.name}`,
+      )
+    } catch (error) {
+      ui.notifications.error(error.message)
     }
   }
 

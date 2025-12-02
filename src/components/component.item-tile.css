@@ -138,3 +138,29 @@ img {
   animation-play-state: paused;
 }
 */
+
+/* Container Badge */
+.container-badge {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  background-color: rgb(76 175 80 / 90%);
+  border-radius: 3px;
+  font-size: 0.75em;
+  color: white;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.container-badge i {
+  font-size: 0.9em;
+}
+
+.container-count {
+  font-weight: bold;
+  font-size: 0.85em;
+}

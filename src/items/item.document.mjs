@@ -221,4 +221,70 @@ export default class BAGSItem extends Item {
 
     return this.update({ "system.isEquipped": newState })
   }
+
+  // === Container Management ==================================================
+
+  /**
+   * Add this item to a container.
+   * Validates that the target is a container and prevents circular references.
+   * @param {Item} container - The container to add this item to
+   * @returns {Promise<Item>} The updated container
+   * @throws {Error} If target is not a container or would create circular ref
+   */
+  async addToContainer(container) {
+    const { addItemToContainer, wouldCreateCircularRef } = await import(
+      "../utils/container-utils.mjs"
+    )
+
+    if (wouldCreateCircularRef(this, container)) {
+      throw new Error(
+        "Cannot add item to container: would create circular reference",
+      )
+    }
+
+    return addItemToContainer(this, container)
+  }
+
+  /**
+   * Remove this item from its parent container.
+   * @returns {Promise<Item|null>} The updated container, or null if not in a container
+   */
+  async removeFromContainer() {
+    const { removeItemFromContainer } = await import(
+      "../utils/container-utils.mjs"
+    )
+    return removeItemFromContainer(this)
+  }
+
+  // === Lifecycle Hooks =======================================================
+
+  /**
+   * Pre-update hook to clean invalid container references.
+   * @override
+   */
+  async _preUpdate(changes, options, user) {
+    // Clean invalid container refs when updating
+    if (
+      changes.system?.container?.contains &&
+      this.system.container?.isContainer
+    ) {
+      changes.system.container.contains = await this._cleanContainerRefs(
+        changes.system.container.contains,
+      )
+    }
+
+    return super._preUpdate(changes, options, user)
+  }
+
+  /**
+   * Remove invalid UUIDs from container references.
+   * Ensures all UUIDs resolve to valid items in the same actor.
+   * @param {string[]} uuids - Array of item UUIDs to validate
+   * @returns {Promise<string[]>} Filtered array of valid UUIDs
+   * @private
+   */
+  async _cleanContainerRefs(uuids) {
+    const { cleanContainerRefs } = await import("../utils/container-utils.mjs")
+    return cleanContainerRefs(uuids, this.actor)
+  }
 }

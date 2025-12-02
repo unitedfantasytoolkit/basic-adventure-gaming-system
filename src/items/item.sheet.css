@@ -154,3 +154,59 @@
     }
   }
 }
+
+/* === Container Contents Display =========================================== */
+
+.application--bags.application--item-sheet .container-contents {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: var(--color-bg-secondary, rgb(0 0 0 / 10%));
+  border-radius: 4px;
+
+  .container-contents__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    h2 {
+      margin: 0;
+      font-size: 1.2em;
+    }
+
+    .container-capacity {
+      font-size: 0.9em;
+      color: var(--color-text-secondary, #999);
+
+      .capacity-current {
+        font-weight: bold;
+        color: var(--color-text-primary, #fff);
+      }
+    }
+  }
+
+  .item-grid--container {
+    min-height: 8rem;
+    padding: 0.5rem;
+    background: var(--color-bg-primary, rgb(0 0 0 / 20%));
+    border: 2px dashed var(--color-border-dark, rgb(255 255 255 / 10%));
+    border-radius: 4px;
+
+    &:empty::after {
+      content: "Drop items here";
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--color-text-secondary, #999);
+      font-style: italic;
+    }
+  }
+
+  p.empty {
+    text-align: center;
+    color: var(--color-text-secondary, #999);
+    font-style: italic;
+    margin: 2rem 0;
+  }
+}

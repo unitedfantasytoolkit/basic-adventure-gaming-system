@@ -96,7 +96,17 @@ class ItemTile extends BaseElement {
         ? html`<span class="quantity">${quantity}</span>`
         : ""
 
-    return `${img}${quantityLabel}`
+    // Container badge showing number of items inside
+    const containerBadge =
+      this.document.system.container?.isContainer &&
+      this.document.system.contents?.length > 0
+        ? html`<span class="container-badge" data-tooltip="Container (${this.document.system.contents.length} items)">
+            <i class="fa fa-box"></i>
+            <span class="container-count">${this.document.system.contents.length}</span>
+          </span>`
+        : ""
+
+    return `${img}${quantityLabel}${containerBadge}`
   }
 
   async #onClick(e) {

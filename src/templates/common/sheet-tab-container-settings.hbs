@@ -3,9 +3,21 @@
 <div class="scrollable">
   <div class="standard-form">
     {{#with systemFields.container.fields as |fields|}}
-      {{formGroup fields.isContainer name="system.container.isContainer" localize=true}}
-      {{formGroup fields.weightMax name="system.container.weightMax" localize=true}}
-      {{formGroup fields.weightModifier name="system.container.weightModifier" localize=true}}
+      {{formGroup fields.isContainer
+        name="system.container.isContainer"
+        localize=true
+        value=@root.document.system.container.isContainer
+      }}
+      {{formGroup fields.weightMax
+        name="system.container.weightMax"
+        localize=true
+        value=@root.document.system.container.weightMax
+      }}
+      {{formGroup fields.weightModifier
+        name="system.container.weightModifier"
+        localize=true
+        value=@root.document.system.container.weightModifier
+      }}
     {{/with}}
   </div>
 </div>
