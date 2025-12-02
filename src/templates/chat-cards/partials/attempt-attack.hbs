@@ -1,5 +1,5 @@
 <div class="action__attempt">
-  <span class="action__attempt__result{{#if target}} action__attempt__result--{{ifThen attempt.success "success" "fail"}}{{/if}}">{{attempt.roll.total}}</span>
+  <span class="action__attempt__result{{#if (and target attempt.hasTarget)}} action__attempt__result--{{ifThen attempt.success "success" "fail"}}{{/if}}">{{attempt.roll.total}}</span>
   <span class="action__attempt__context action__attempt__context--attack">
     {{#if target}}
       {{localize
@@ -10,7 +10,7 @@
       {{#if usesDescendingAC}}
         {{localize
           "BAGS.ChatCards.Action.Attempt.Attack.ArmorClassHit.Descending"
-          amount=target.system.armorClass
+          amount=attempt.acHit
         }}
       {{/if}}
     {{/if}}

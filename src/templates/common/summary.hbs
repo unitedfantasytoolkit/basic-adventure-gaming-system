@@ -101,11 +101,11 @@
       {{/if}}
     </main>
 
-    {{#if item.system.actions.length}}
+    {{#if item.system.actionList.length}}
       <aside>
         <h2>{{localize "BAGS.Items.Common.Actions"}}</h2>
         <menu class="action-menu">
-          {{#each item.system.actions}}
+          {{#each item.system.actionList}}
             <li data-action-id="{{id}}" data-action="use-action">
               <img src="{{img}}" alt="" role="presentation" />
               <span>{{name}}</span>

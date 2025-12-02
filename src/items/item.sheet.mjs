@@ -604,10 +604,10 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
    * @returns {HTMLULElement | null} Whatever we plan to render for actions.
    */
   #buildHeaderActionMenu() {
-    if (this.document.system.actions) {
+    if (this.document.system.actionList) {
       const actionMenu = document.createElement("menu")
       actionMenu.classList.add("window-header__actions")
-      this.document.system.actions.forEach((a) => {
+      this.document.system.actionList.forEach((a) => {
         const actionArt = document.createElement("img")
         actionArt.src = a.img
         const listItem = document.createElement("li")
@@ -647,7 +647,7 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
    */
   static async _onPerformAction(event) {
     const { actionId } = event.target.closest("[data-action-id]").dataset
-    const action = this.document.system.actions.find((a) => a.id === actionId)
+    const action = this.document.system.actionList.find((a) => a.id === actionId)
     await this.document.resolveAction(action)
   }
 

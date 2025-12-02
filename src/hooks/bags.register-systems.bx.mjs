@@ -76,12 +76,10 @@ const registerBX = (registry) => {
           typeof actor.system.thac0 === "number"
             ? actor.system.thac0
             : this.baseTHAC0
-        const targetAC =
-          typeof target?.system?.armorClass === "number"
-            ? target.system.armorClass
-            : this.baseAC
+        const targetAC = target?.system?.armorClass
         // Calculate the target number needed on d20
-        const targetNumber = thac0 - targetAC
+        // If no target, use baseAC for calculation but mark as untargeted
+        const targetNumber = thac0 - (targetAC ?? this.baseAC)
 
         let modifier = options?.modifier || 0
 
@@ -105,19 +103,20 @@ const registerBX = (registry) => {
         // Calculate the effective AC hit
         const acHit = thac0 - roll.total
 
-        // Determine if the attack hits
-        const isHit = roll.total >= targetNumber
+        // Determine if the attack hits (only meaningful with a target)
+        const isHit = targetAC !== undefined && roll.total >= targetNumber
 
         // Check for natural 1s and 20s
         const isCriticalHit = roll.total === 20
         const isCriticalMiss = roll.total === 1
 
         return {
-          success: isHit || isCriticalHit,
+          success: targetAC !== undefined ? (isHit || isCriticalHit) : true,
           roll,
           acHit,
           isCriticalHit,
           isCriticalMiss,
+          hasTarget: targetAC !== undefined,
         }
       } catch (error) {
         console.error("Error resolving attack:", error)
@@ -138,10 +137,7 @@ const registerBX = (registry) => {
         let modifier = 0
         modifier += options.modifier || 0
 
-        const targetAC =
-          typeof target?.system?.armorClass === "number"
-            ? target.system.armorClass
-            : this.baseAC
+        const targetAC = target?.system?.armorClass
 
         switch (options.attackType) {
           case "missile":
@@ -161,19 +157,20 @@ const registerBX = (registry) => {
           rollType: options.rollType,
         })
 
-        // Determine if the attack hits (total >= AC)
-        const isHit = roll.total >= targetAC
+        // Determine if the attack hits (total >= AC, only meaningful with target)
+        const isHit = targetAC !== undefined && roll.total >= targetAC
 
         // Check for natural 1s and 20s (before modifiers)
         const isCriticalHit = roll.terms[0].total === 20
         const isCriticalMiss = roll.terms[0].total === 1
 
         return {
-          success: isHit || isCriticalHit, // Hit on meeting AC or natural 20
+          success: targetAC !== undefined ? (isHit || isCriticalHit) : true,
           roll,
           acHit: roll.total,
           isCriticalHit,
           isCriticalMiss,
+          hasTarget: targetAC !== undefined,
         }
       } catch (error) {
         ui.notifications.error("Error resolving attack:", error)

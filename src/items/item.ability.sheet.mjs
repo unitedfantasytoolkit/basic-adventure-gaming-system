@@ -40,7 +40,7 @@ export default class BAGSAbilitySheet extends BAGSBaseItemSheet {
         break
       case "actions":
         context.actions = await Promise.all(
-          doc.system.actions.map(async (a) => ({
+          doc.system.actionList.map(async (a) => ({
             ...a,
             description: await TextEditor.enrichHTML(a.description),
           })),

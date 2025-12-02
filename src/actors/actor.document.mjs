@@ -250,11 +250,12 @@ export default class BAGSActor extends Actor {
   /**
    * Retrieves an action by its ID
    * @param {string} actionId - The unique identifier of the action
+   * @param {string} itemId - Optional item ID to search within
    * @returns {Object|undefined} The action object if found, undefined otherwise
    */
   getAction(actionId, itemId) {
     const actionSource = !itemId ? this.system : this.items.get(itemId)?.system
-    return actionSource?.actions.find(({ id }) => id === actionId)
+    return actionSource?.actionList?.find(({ id }) => id === actionId)
   }
 
   /**

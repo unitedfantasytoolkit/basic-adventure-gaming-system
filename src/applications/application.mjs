@@ -146,10 +146,10 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
    * @returns {HTMLULElement | null} Whatever we plan to render for actions.
    */
   #buildHeaderActionMenu() {
-    if (this.document.system.actions) {
+    if (this.document.system.actionList) {
       const actionMenu = document.createElement("menu")
       actionMenu.classList.add("window-header__actions")
-      this.document.system.actions.forEach((a) => {
+      this.document.system.actionList.forEach((a) => {
         const actionArt = document.createElement("img")
         actionArt.src = a.img
         const listItem = document.createElement("li")

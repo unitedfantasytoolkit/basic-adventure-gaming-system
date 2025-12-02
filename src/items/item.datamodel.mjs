@@ -35,6 +35,16 @@ class BaseItemDataModel extends foundry.abstract.TypeDataModel {
     return this.areActionsAvailableWhenUnequipped || this.isEquipped
   }
 
+  /**
+   * Returns the complete list of actions available for this item.
+   * By default, returns the actions array. Subclasses can override
+   * to include additional action sources (e.g., weapon default attack).
+   * @returns {Array} Array of action objects
+   */
+  get actionList() {
+    return this.actions
+  }
+
   // eslint-disable-next-line
   get _tooltipControlsHTML() {
     return `

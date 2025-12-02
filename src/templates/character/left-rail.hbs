@@ -245,8 +245,8 @@
       <h4 class="action-source__name">{{name}}</h4>
     </div>
     <div class="action-source__actions">
-      {{#each system.actions}}
-        {{> action-button parent=../parent}}
+      {{#each system.actionList}}
+        {{> action-button action=this parent=../parent}}
       {{/each}}
     </div>
   </div>
@@ -264,8 +264,8 @@
       <h4 class="action-source__name">{{name}}</h4>
     </summary>
     <div class="action-source__actions" role="list">
-      {{#each system.actions}}
-        {{> action-button parent=../parent}}
+      {{#each system.actionList}}
+        {{> action-button action=this parent=../parent}}
       {{/each}}
     </div>
   </details>
@@ -281,10 +281,10 @@
     role="listitem"
     data-action="use-action"
     data-item-id="{{parent.id}}"
-    data-action-id="{{id}}">
-    <img class="action-list-item__icon" src="{{img}}" alt="" role="presentation" />
+    data-action-id="{{action.id}}">
+    <img class="action-list-item__icon" src="{{action.img}}" alt="" role="presentation" />
     <span class="action-list-item__identity">
-      <span class="action-list-item__title">{{name}}</span>
+      <span class="action-list-item__title">{{action.name}}</span>
     </span>
   </button>
 {{/inline}}
@@ -396,7 +396,7 @@
     {{#if document.items.documentsByType.class.length}}
       <div class="left-rail__section">
         {{#each document.items.documentsByType.class}}
-          {{#if system.actions.length}}
+          {{#if system.actionList.length}}
             <h3 class="decorated">{{localize "BAGS.Actors.Character.Abilities.ClassAbilities" className=name}}</h3>
             <ul class="equipment">
 

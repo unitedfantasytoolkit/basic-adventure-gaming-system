@@ -103,7 +103,7 @@ export default class BAGSItem extends Item {
    * @returns {Object|undefined} The action object if found, undefined otherwise
    */
   getAction(actionId) {
-    return this.system.actions.find(({ id }) => id === actionId)
+    return this.system.actionList.find(({ id }) => id === actionId)
   }
 
   /**

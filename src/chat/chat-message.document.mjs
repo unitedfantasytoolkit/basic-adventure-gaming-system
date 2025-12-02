@@ -27,9 +27,9 @@ export default class BAGSChatMessage extends ChatMessage {
     const item = await fromUuid(this.system.item)
     let details
     try {
-      details = (item || actor).system.actions.find(
-        (a) => a.id === this.system.action,
-      )
+      const actionSource = item || actor
+      const actionList = actionSource.system.actionList || actionSource.system.actions
+      details = actionList.find((a) => a.id === this.system.action)
     } catch {
       // no-op
     }

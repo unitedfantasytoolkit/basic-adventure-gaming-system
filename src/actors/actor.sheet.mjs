@@ -532,7 +532,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         icon: "<i class='fa fa-bolt' />",
         condition: (element) => {
           const item = this.document.items.get(element.dataset.itemId)
-          return item.isOwner && item.system.actions.length
+          return item.isOwner && item.system.actionList.length
         },
         callback: (element) => {
           const item = this.document.items.get(element.dataset.itemId)

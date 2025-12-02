@@ -55,10 +55,10 @@
   </main>
 
   <aside class="scrollable">
-    {{#if document.system.actions.length}}
+    {{#if document.system.actionList.length}}
       <h3 class="decorated">{{localize "BAGS.CharacterClass.Information.ClassAbilities"}}</h3>
       <div class="ability-grid">
-        {{#each document.system.actions}}
+        {{#each document.system.actionList}}
           <button class="ability-grid__icon" data-action="use-action" data-action-id="{{id}}" data-tooltip="{{name}}">
             <img src="{{img}}" alt="{{name}}">
           </button>

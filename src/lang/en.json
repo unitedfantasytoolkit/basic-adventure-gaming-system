@@ -154,7 +154,7 @@
         "Attack": {
           "Heading": "Attack Configuration",
           "Hint": "Configure the type of attack and any bonuses",
-          "TypeHint": "<strong>Melee:</strong> Uses STR modifier. <strong>Missile:</strong> Uses DEX modifier. <strong>None:</strong> Just base attack bonus.",
+          "TypeHint": "Melee: Uses STR modifier. Missile: Uses DEX modifier. None: Just base attack bonus.",
           "BonusHint": "Add a flat bonus or penalty to the attack roll (e.g., +2 for a magic weapon, -2 for disadvantage)"
         },
         "CustomRoll": {
@@ -569,9 +569,30 @@
             "Label": "Slow Weapon",
             "Hint": "This weapon's wielder will go last in combat in some initiative schemes."
           },
+          "AttackName": {
+            "Hint": "The name of this attack action (e.g., 'Slash', 'Shoot', 'Strike')."
+          },
+          "AttackBonus": {
+            "Label": "Attack Bonus",
+            "Hint": "Bonus added to attack rolls (to-hit). For a +1 sword, enter 1."
+          },
           "DamageFormula": {
-            "Label": "Damage Roll Formula"
-          }
+            "Label": "Damage Dice",
+            "Hint": "Base damage dice (e.g., '1d8', '2d6', '1d6'). Don't include flat bonuses here - use Damage Bonus below."
+          },
+          "DamageBonus": {
+            "Label": "Damage Bonus",
+            "Hint": "Flat bonus added to damage rolls. For a +1 sword, enter 1."
+          },
+          "IsMagical": {
+            "Label": "Is Magical Weapon",
+            "Hint": "Whether this weapon's damage is considered magical (affects creatures immune to non-magical damage)."
+          },
+          "UsesDefaultAttack": {
+            "Label": "Enable Default Attack",
+            "Hint": "Whether this weapon uses the default attack action. Disable for weapons that only use custom actions (e.g., bolas that only inflict status effects)."
+          },
+          "AdvancedEditorHint": "For advanced features like saving throws, special effects, or conditional modifiers, use the 'Edit Actions' button in the window controls."
         },
         "Actions": {
           "DefaultName": "Attack"

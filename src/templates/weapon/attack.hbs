@@ -3,96 +3,79 @@
 <div class="scrollable">
   <div class="standard-form">
     {{formGroup
-      systemFields.attack.fields.name
-      value=document.system.attack.name
-      hint=""
+      systemFields.usesDefaultAttack
+      value=document.system.usesDefaultAttack
       localize=true
     }}
 
-    {{formGroup
-      systemFields.attack.fields.attempt.fields.attack.fields.type
-      value=document.system.attack.attempt.attack.type
-      hint=""
-      localize=true
-    }}
+    {{#if document.system.usesDefaultAttack}}
+      {{formGroup
+        systemFields.attack.fields.name
+        value=document.system.attack.name
+        hint="BAGS.Items.Weapon.Fields.AttackName.Hint"
+        localize=true
+      }}
 
-    {{formGroup
-      systemFields.attack.fields.attempt.fields.attack.fields.bonus
-      value=document.system.attack.attempt.attack.bonus
-      hint=""
-      localize=true
-    }}
-    
-    {{formGroup
-      systemFields.attack.fields.effects.element.fields.formula
-      value=document.system.attack.effects.0.formula
-      label="BAGS.Items.Weapon.Fields.DamageFormula.Label"
-      localize=true
-    }}
+      {{{formGroup
+        systemFields.attack.fields.attempt.fields.attack.fields.type
+        value=document.system.attack.attempt.attack.type
+        localize=true
+      }}}
 
-    {{#if (eq document.system.attack.attempt.attack.type "missile")}}
-      <fieldset>
-        <legend>{{localize "BAGS.Actions.Range.Label"}}</legend>
-        {{formGroup
-          systemFields.attack.fields.range.fields.short
-          value=document.system.attack.range.short
-          localize=true
-        }}
-        {{formGroup
-          systemFields.attack.fields.range.fields.medium
-          value=document.system.attack.range.medium
-          localize=true
-        }}
-        {{formGroup
-          systemFields.attack.fields.range.fields.long
-          value=document.system.attack.range.long
-          localize=true
-        }}
-      </fieldset>
-      <p>{{localize "BAGS.Actions.Range.Note"}}</p>
+      {{formGroup
+        systemFields.attack.fields.attempt.fields.attack.fields.bonus
+        value=document.system.attack.attempt.attack.bonus
+        label="BAGS.Items.Weapon.Fields.AttackBonus.Label"
+        hint="BAGS.Items.Weapon.Fields.AttackBonus.Hint"
+        localize=true
+      }}
+
+      {{formGroup
+        systemFields.attack.fields.effects.element.fields.formula
+        value=document.system.attack.effects.0.formula
+        label="BAGS.Items.Weapon.Fields.DamageFormula.Label"
+        hint="BAGS.Items.Weapon.Fields.DamageFormula.Hint"
+        localize=true
+      }}
+
+      {{formGroup
+        systemFields.damageBonus
+        value=document.system.damageBonus
+        localize=true
+      }}
+
+      {{formGroup
+        systemFields.isMagical
+        value=document.system.isMagical
+        localize=true
+      }}
+
+      {{#if (eq document.system.attack.attempt.attack.type "missile")}}
+        <fieldset>
+          <legend>{{localize "BAGS.Actions.Range.Label"}}</legend>
+          {{formGroup
+            systemFields.attack.fields.range.fields.short
+            value=document.system.attack.range.short
+            localize=true
+          }}
+          {{formGroup
+            systemFields.attack.fields.range.fields.medium
+            value=document.system.attack.range.medium
+            localize=true
+          }}
+          {{formGroup
+            systemFields.attack.fields.range.fields.long
+            value=document.system.attack.range.long
+            localize=true
+          }}
+        </fieldset>
+        <p>{{localize "BAGS.Actions.Range.Note"}}</p>
+      {{/if}}
     {{/if}}
 
-
-{{!--
-    {{formGroup
-      fields.attack.fields.name
-      value=document.system.attack.name
-      hint=""
-      localize=true
-    }}
-
-
-    {{formGroup
-      fields.attack.fields.name
-      value=document.system.attack.name
-      hint=""
-      localize=true
-    }}
-
-
-    {{formGroup
-      fields.attack.fields.name
-      value=document.system.attack.name
-      hint=""
-      localize=true
-    }}
-
-
-    {{formGroup
-      fields.attack.fields.name
-      value=document.system.attack.name
-      hint=""
-      localize=true
-    }}
-
-
-    {{formGroup
-      fields.attack.fields.name
-      value=document.system.attack.name
-      hint=""
-      localize=true
-    }}
---}}
+    <p class="hint-text">
+      {{localize "BAGS.Items.Weapon.Fields.AdvancedEditorHint"}}
+    </p>
   </div>
 </div>
 {{/sheetTab}}
