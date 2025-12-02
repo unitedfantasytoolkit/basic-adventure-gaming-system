@@ -13,7 +13,13 @@ import {
   findStackableMatches,
   mergeItemStacks,
   splitItemStack,
+  stackAllItems,
 } from "../utils/item-stacking.mjs"
+import {
+  INVENTORY_SORT_MODES,
+  INVENTORY_FILTER_MODES,
+} from "../config/inventory-modes.mjs"
+import { validateAddToContainer } from "../utils/container-utils.mjs"
 
 /**
  * @typedef {import('../types.mjs').SheetNavTab} SheetNavTab
@@ -83,6 +89,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
         "roll-saving-throw": this.rollSavingThrow,
         // Inventory management
         "reset-filters": this.resetFilters,
+        "stack-all-items": this.stackAllItems,
         // Actor document management
         "edit-actor": this.editActor,
         // Action management
@@ -115,6 +122,12 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
    * @type {{altKey: boolean, ctrlKey: boolean, metaKey: boolean}}
    */
   #dragModifiers = { altKey: false, ctrlKey: false, metaKey: false }
+
+  /**
+   * Track the currently dragged item (cached for dragover performance)
+   * @type {Item|null}
+   */
+  #draggedItem = null
 
   // --- Form Handling ---------------------------------------------------------
 
@@ -450,105 +463,9 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     )
   }
 
-  static INVENTORY_SORT_MODES = {
-    DEFAULT: {
-      icon: "fa fa-arrow-up-arrow-down",
-      id: 0,
-      label: "BAGS.Actors.Common.Inventory.Sort.Default",
-    },
-    NAME_ASCENDING: {
-      icon: "fa fa-arrow-down-a-z",
-      id: 1,
-      key: "name",
-      isDescending: false,
-      label: "BAGS.Actors.Common.Inventory.Sort.NameAscending",
-    },
-    NAME_DESCENDING: {
-      icon: "fa fa-arrow-up-z-a",
-      id: 2,
-      key: "name",
-      isDescending: true,
-      label: "BAGS.Actors.Common.Inventory.Sort.NameDescending",
-    },
-    ENCUMBRANCE_ASCENDING: {
-      icon: "fa fa-arrow-up-big-small",
-      id: 3,
-      key: "system.weight",
-      isDescending: false,
-      label: "BAGS.Actors.Common.Inventory.Sort.EncumbranceAscending",
-    },
-    ENCUMBRANCE_DESCENDING: {
-      icon: "fa fa-arrow-down-big-small",
-      id: 4,
-      key: "system.weight",
-      isDescending: true,
-      label: "BAGS.Actors.Common.Inventory.Sort.EncumbranceDescending",
-    },
-    VALUE_ASCENDING: {
-      icon: "fa fa-arrow-up-1-9",
-      id: 5,
-      key: "system.cost",
-      isDescending: false,
-      label: "BAGS.Actors.Common.Inventory.Sort.ValueAscending",
-    },
-    VALUE_DESCENDING: {
-      icon: "fa fa-arrow-down-9-1",
-      id: 6,
-      key: "system.cost",
-      isDescending: true,
-      label: "BAGS.Actors.Common.Inventory.Sort.ValueDescending",
-    },
-  }
+  #inventorySortMode = INVENTORY_SORT_MODES.DEFAULT
 
-  static INVENTORY_FILTER_MODES = {
-    DEFAULT: {
-      icon: "fa-regular fa-filter",
-      id: 0,
-      label: "BAGS.Actors.Common.Inventory.Filter.Default",
-      predicate: () => true,
-    },
-    TYPE_WEAPON: {
-      icon: "fa fa-sword",
-      id: 1,
-      label: "BAGS.Actors.Common.Inventory.Filter.Weapons",
-      predicate: (i) => i.type === "weapon",
-    },
-    TYPE_ARMOR: {
-      icon: "fa fa-shield",
-      id: 2,
-      label: "BAGS.Actors.Common.Inventory.Filter.Armor",
-      predicate: (i) => i.type === "armor",
-    },
-    TYPE_MISCELLANEOUS: {
-      icon: "fa fa-suitcase",
-      id: 3,
-      label: "BAGS.Actors.Common.Inventory.Filter.Miscellaneous",
-      predicate: (i) => i.type === "item",
-    },
-    CONTAINER: {
-      icon: "fa fa-sack",
-      id: 4,
-      label: "BAGS.Actors.Common.Inventory.Filter.Containers",
-      predicate: (i) => i.system.container.isContainer,
-    },
-    TREASURE: {
-      icon: "fa fa-coin",
-      id: 5,
-      label: "BAGS.Actors.Common.Inventory.Filter.Treasure",
-      predicate: (i) => i.system.countsAsTreasure,
-    },
-    WORTH_XP: {
-      icon: "fa fa-trophy",
-      id: 6,
-      label: "BAGS.Actors.Common.Inventory.Filter.WorthXP",
-      predicate: (i) =>
-        i.system.countsAsTreasure && !i.system.hasBeenCountedAsTreasure,
-    },
-  }
-
-  #inventorySortMode = BAGSActorSheet.INVENTORY_SORT_MODES.DEFAULT
-
-  #inventoryFilterMode = BAGSActorSheet.INVENTORY_FILTER_MODES.DEFAULT
+  #inventoryFilterMode = INVENTORY_FILTER_MODES.DEFAULT
 
   get inventorySortMode() {
     return this.#inventorySortMode
@@ -559,7 +476,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   }
 
   _getInventorySortOptions() {
-    return Object.values(this.constructor.INVENTORY_SORT_MODES).map((f) => ({
+    return Object.values(INVENTORY_SORT_MODES).map((f) => ({
       name: f.label,
       icon: `<i class="${f.icon}" role="presentation"></i>`,
       callback: () => {
@@ -570,7 +487,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   }
 
   _getInventoryFilterOptions() {
-    return Object.values(this.constructor.INVENTORY_FILTER_MODES).map((f) => ({
+    return Object.values(INVENTORY_FILTER_MODES).map((f) => ({
       name: f.label,
       icon: `<i class="${f.icon}" role="presentation"></i>`,
       callback: () => {
@@ -581,9 +498,31 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   }
 
   static resetFilters() {
-    this.#inventorySortMode = BAGSActorSheet.INVENTORY_SORT_MODES.DEFAULT
-    this.#inventoryFilterMode = BAGSActorSheet.INVENTORY_FILTER_MODES.DEFAULT
+    this.#inventorySortMode = INVENTORY_SORT_MODES.DEFAULT
+    this.#inventoryFilterMode = INVENTORY_FILTER_MODES.DEFAULT
     this.render()
+  }
+
+  static async stackAllItems() {
+    const items = this.actor.items.contents.filter(
+      (item) => item.system.isPhysicalItem && !item.system.isInContainer,
+    )
+
+    const count = await stackAllItems(items)
+
+    if (count === 0) {
+      ui.notifications.info(
+        game.i18n.localize(
+          "BAGS.Actors.Character.Inventory.NoStackableItems",
+        ),
+      )
+    } else {
+      ui.notifications.info(
+        game.i18n.format("BAGS.Actors.Character.Inventory.StackedItems", {
+          count,
+        }),
+      )
+    }
   }
 
   _getInventoryContextOptions() {
@@ -738,6 +677,9 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
   _onRender(context, options) {
     super._onRender(context, options)
+
+    // Manually attach dragend listener for cleanup (not auto-wired by Foundry)
+    this.element.addEventListener("dragend", this._onDragEnd.bind(this))
 
     if (options.parts.includes("inventory")) {
       new foundry.applications.ux.SearchFilter({
@@ -938,7 +880,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
   }
 
   /**
-   * Override dragstart to capture modifier keys
+   * Override dragstart to capture modifier keys and dragged item
    * @param {DragEvent} event - The drag event
    * @override
    */
@@ -950,8 +892,123 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
       metaKey: event.metaKey,
     }
 
+    // Capture the dragged item reference (for synchronous validation)
+    const itemTile = event.target.closest("[data-item-id]")
+    if (itemTile) {
+      const itemId = itemTile.dataset.itemId
+      this.#draggedItem = this.actor.items.get(itemId)
+
+      // Pre-highlight all containers to show valid/invalid drop zones
+      if (this.#draggedItem) {
+        this.#highlightContainers()
+      }
+    }
+
     // Call parent implementation
     return super._onDragStart(event)
+  }
+
+  /**
+   * Highlight all container tiles to show valid/invalid drop zones
+   * @private
+   */
+  #highlightContainers() {
+    if (!this.#draggedItem) return
+
+    // Find all container tiles in the inventory
+    const containerTiles = this.element.querySelectorAll(
+      "uft-item-tile[data-item-id]",
+    )
+
+    containerTiles.forEach((tile) => {
+      const containerId = tile.dataset.itemId
+      const container = this.actor.items.get(containerId)
+
+      // Skip non-containers
+      if (!container?.system.container?.isContainer) return
+
+      // Don't allow dropping container onto itself
+      if (this.#draggedItem.id === container.id) {
+        tile.classList.add("drop-invalid")
+        return
+      }
+
+      // Validate if this container can accept the item
+      try {
+        validateAddToContainer(this.#draggedItem, container)
+        tile.classList.add("drop-valid")
+      } catch (error) {
+        tile.classList.add("drop-invalid")
+      }
+    })
+  }
+
+  /**
+   * Handle drag over events to provide visual feedback for container drops.
+   * @param {DragEvent} event - The drag event
+   */
+  _onDragOver(event) {
+    // Call parent first to handle base behavior
+    super._onDragOver?.(event)
+
+    const tile = event.target.closest("uft-item-tile")
+    if (!tile) return
+
+    const containerId = tile.dataset.itemId
+    const container = this.actor.items.get(containerId)
+    
+    // Only handle containers
+    if (!container?.system.container?.isContainer) return
+
+    // Need a cached dragged item for synchronous validation
+    if (!this.#draggedItem) return
+
+    // Don't allow dropping container onto itself
+    if (this.#draggedItem.id === container.id) {
+      tile.classList.add("drop-invalid")
+      tile.dataset.dropFeedback = "ban"
+      event.preventDefault()
+      return
+    }
+
+    // Validate if this container can accept the item (synchronous)
+    try {
+      validateAddToContainer(this.#draggedItem, container)
+      tile.classList.add("drop-valid")
+      tile.dataset.dropFeedback = "box-arrow-in-down"
+      tile.dataset.dropTooltip = game.i18n.format(
+        "BAGS.Items.Physical.Container.AddTo",
+        { container: container.name },
+      )
+    } catch (error) {
+      tile.classList.add("drop-invalid")
+      tile.dataset.dropFeedback = "ban"
+      tile.dataset.dropTooltip = error.message
+    }
+
+    event.preventDefault()
+  }
+
+  /**
+   * Handle drag leave events to remove visual feedback.
+   * @param {DragEvent} event - The drag event
+   */
+  _onDragLeave(event) {
+    // No longer needed - we clean up everything in _onDragEnd
+  }
+
+  /**
+   * Clean up drag state when drag ends or drop completes
+   * @param {DragEvent} event - The drag event
+   */
+  _onDragEnd(event) {
+    // Clear stored drag item
+    this.#draggedItem = null
+
+    // Clean up all container drop feedback
+    this.element.querySelectorAll(".drop-valid, .drop-invalid").forEach((tile) => {
+      tile.classList.remove("drop-valid", "drop-invalid")
+    })
   }
 
   /**
@@ -970,9 +1027,44 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
     // Handle removing item from container
     if (doc.system?.isInContainer && doc.actor === this.actor) {
+      const container = doc.system.parentContainer
       await doc.removeFromContainer()
-      ui.notifications.info(`Removed ${doc.name} from container`)
+      ui.notifications.info(
+        game.i18n.format("BAGS.Items.Physical.Container.RemovedItem", {
+          item: doc.name,
+          container: container?.name || "container",
+        }),
+      )
       return doc
+    }
+
+    // Handle adding item to container (dragged onto container tile)
+    const dropTarget = event.target?.closest("uft-item-tile")
+    if (dropTarget) {
+      const containerId = dropTarget.dataset.itemId
+      const container = this.actor.items.get(containerId)
+      
+      if (container?.system.container?.isContainer && doc.id !== container.id) {
+        try {
+          const result = await doc.addToContainer(container)
+          if (result) {
+            ui.notifications.info(
+              game.i18n.format("BAGS.Items.Physical.Container.AddedItem", {
+                item: doc.name,
+                container: container.name,
+              }),
+            )
+          }
+          // Clean up drop feedback after successful drop
+          this._onDragEnd(event)
+          return result
+        } catch (error) {
+          animatedSheetError(this.element, error.message)
+          // Clean up drop feedback after failed drop
+          this._onDragEnd(event)
+          return false
+        }
+      }
     }
 
     // Handle class items specially (only one class allowed)

@@ -5,15 +5,16 @@
  */
 
 /**
- * Calculates effective weight of an item considering quantity and container modifiers.
- * If an item is stored in a container (like a Bag of Holding), the container's
- * weight modifier is applied. This ensures encumbrance is calculated correctly.
+ * Calculates effective weight of an item considering quantity and container contents.
+ * For containers, includes the weight of all contents (with modifiers already applied).
+ * Parent container modifiers are NOT applied here - they're applied by the parent's contentsWeight getter.
  * @param {Item} item - The Item to calculate weight for
  * @param {object} actorData - The actor's system data object (unused but kept for backwards compatibility)
- * @returns {number} The effective weight after applying quantity and container modifiers
+ * @returns {number} The effective weight
  * @example
  * // Item with quantity 5, weight 2 = 10 total
- * // If in Bag of Holding with 0.1 modifier = 1 total
+ * @example
+ * // Container (Backpack) weighing 2 coins, holding 50 coins of items = 52 coins total
  */
 export default (item, actorData) => {
   const { quantity } = item.system
@@ -21,10 +22,10 @@ export default (item, actorData) => {
 
   let { weight } = item.system
 
-  // Apply container modifiers if item is in a container
-  const container = item.system.parentContainer
-  if (container?.system.container?.weightModifier) {
-    weight *= container.system.container.weightModifier
+  // Add contents weight if this is a container
+  // (contentsWeight already has this container's modifier applied)
+  if (item.system.container?.isContainer) {
+    weight += item.system.contentsWeight
   }
 
   const totalWeight = weight * quantity

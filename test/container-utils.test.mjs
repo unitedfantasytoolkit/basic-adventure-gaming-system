@@ -9,6 +9,7 @@ import {
   getContainerContents,
   isItemInContainer,
   wouldCreateCircularRef,
+  addItemToContainer,
 } from "../src/utils/container-utils.mjs"
 
 // === Test Helpers ============================================================
@@ -339,6 +340,56 @@ test("wouldCreateCircularRef: allows container to contain itself in edge case ch
 
   // Trying to put a container into itself
   assert.is(wouldCreateCircularRef(container, container), true)
+})
+
+// === addItemToContainer Tests ================================================
+
+test("addItemToContainer: prevents duplicate entries (returns undefined)", async () => {
+  const item = createMockItem({ id: "item-1" })
+  const container = createMockItem({
+    id: "container-1",
+    container: {
+      isContainer: true,
+      contains: [item.uuid], // Item already in container
+    },
+  })
+
+  // Track update calls
+  let updateCalled = false
+  container.update = async (data) => {
+    updateCalled = true
+    return container
+  }
+
+  const result = await addItemToContainer(item, container)
+
+  // Should not call update if already in container
+  assert.is(updateCalled, false)
+  assert.is(result, undefined)
+})
+
+test("addItemToContainer: adds item when not already present", async () => {
+  const item = createMockItem({ id: "item-1" })
+  const container = createMockItem({
+    id: "container-1",
+    container: {
+      isContainer: true,
+      contains: [],
+    },
+  })
+
+  let updatedData = null
+  container.update = async (data) => {
+    updatedData = data
+    container.system.container.contains = data["system.container.contains"]
+    return container
+  }
+
+  const result = await addItemToContainer(item, container)
+
+  assert.ok(updatedData)
+  assert.equal(updatedData["system.container.contains"], [item.uuid])
+  assert.is(result, container)
 })
 
 test.run()

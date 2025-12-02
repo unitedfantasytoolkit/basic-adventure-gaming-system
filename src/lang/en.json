@@ -445,6 +445,10 @@
         "Media": "Media",
         "ContainerSettings": "Container Settings"
       },
+      "Common": {
+        "NoDescription": "No description",
+        "Actions": "Actions"
+      },
       "Physical": {
         "BaseItemId": {
           "Label": "Base Item ID",
@@ -500,7 +504,29 @@
           "WeightModifier": {
             "Label": "Weight Modifier",
             "Hint": "Multiplier applied to contents' weight (e.g., 0.5 for magical bags)"
-          }
+          },
+          "NotAContainer": "{container} is not a container",
+          "CrossActor": "Cannot add items from other actors to this container",
+          "SelfContainment": "Cannot add a container to itself",
+          "CircularReference": "Cannot add {item} to {container}: would create circular reference",
+          "OverCapacity": "Cannot add {item} to {container}: container would exceed weight capacity ({current}/{max} coins)",
+          "AddedItem": "Added {item} to {container}",
+          "RemovedItem": "Removed {item} from {container}",
+          "AddTo": "Add to {container}",
+          "Contents": "Contents",
+          "WeightUnit": "coins",
+          "SearchPlaceholder": "Search container",
+          "SearchLabel": "Search container items",
+          "ResetFiltersTooltip": "Reset filters",
+          "ResetFiltersLabel": "Reset container filters",
+          "NoMatchingItems": "No items match the current filter",
+          "Empty": "Container is empty",
+          "EmptyContainer": "Empty Container",
+          "EmptyContainerConfirm": "Remove all {count} items from {container}?",
+          "EmptiedContainer": "Removed {count} items from {container}",
+          "StackItems": "Stack Like Items",
+          "StackedItems": "Stacked {count} groups of items",
+          "NoStackableItems": "No stackable items found"
         },
         "Identification": {
           "IsIdentified": {

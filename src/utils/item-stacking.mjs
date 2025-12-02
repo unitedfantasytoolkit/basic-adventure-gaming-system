@@ -213,3 +213,65 @@ export async function splitItemStack(item, splitQuantity) {
 
   return newItem
 }
+
+/**
+ * Stack all stackable items in a collection.
+ * Groups items by their stacking identity and merges them into single stacks.
+ * @param {Item[]} items - Array of items to stack
+ * @returns {Promise<number>} Number of stacks consolidated
+ */
+export async function stackAllItems(items) {
+  // Filter to only stackable physical items
+  const stackableItems = items.filter(
+    (item) => item.system.isPhysicalItem && passesStackingExclusions(item),
+  )
+
+  if (stackableItems.length < 2) return 0
+
+  // Group items by stacking identity
+  const groups = new Map()
+
+  for (const item of stackableItems) {
+    // Find existing group this item can stack with
+    let foundGroup = false
+
+    for (const [key, group] of groups) {
+      if (canItemsStack(item, group[0])) {
+        group.push(item)
+        foundGroup = true
+        break
+      }
+    }
+
+    // Create new group if no match found
+    if (!foundGroup) {
+      const key = `${item.system.baseItemId || item.id}-${item.system.hasBeenCountedAsTreasure}`
+      groups.set(key, [item])
+    }
+  }
+
+  // Merge each group that has multiple items
+  let stackCount = 0
+
+  for (const group of groups.values()) {
+    if (group.length < 2) continue
+
+    // Keep first item, merge others into it
+    const [target, ...sources] = group
+    const totalQuantity = group.reduce(
+      (sum, item) => sum + item.system.quantity,
+      0,
+    )
+
+    // Update target with total quantity
+    await target.update({ "system.quantity": totalQuantity })
+
+    // Delete source items
+    const deleteIds = sources.map((item) => item.id)
+    await target.actor.deleteEmbeddedDocuments("Item", deleteIds)
+
+    stackCount++
+  }
+
+  return stackCount
+}

@@ -3,6 +3,7 @@
  */
 
 import BaseItemDataModel from "./item.datamodel.mjs"
+import getEffectiveItemWeight from "../utils/get-effective-item-weight.mjs"
 
 const {
   ArrayField,
@@ -165,13 +166,24 @@ class PhysicalItemDataModel extends BaseItemDataModel {
   /**
    * Current weight of all contents in this container.
    * Returns 0 for non-containers or empty containers.
-   * TODO: Implement recursive weight calculation with container modifiers
+   * Recursively calculates weight including nested containers.
+   * Applies this container's weight modifier to all contents.
    * @type {number}
    */
   get contentsWeight() {
     if (!this.container?.isContainer) return 0
-    // Placeholder - will implement proper weight calculation later
-    return 0
+
+    const baseWeight = this.contents.reduce((total, item) => {
+      // Get item's base weight (including ITS contents if it's a container)
+      const itemWeight = item.system.weight * item.system.quantity
+      const itemContents = item.system.container?.isContainer
+        ? item.system.contentsWeight
+        : 0
+      return total + itemWeight + itemContents
+    }, 0)
+
+    // Apply this container's weight modifier
+    return baseWeight * (this.container.weightModifier ?? 1)
   }
 
   /**

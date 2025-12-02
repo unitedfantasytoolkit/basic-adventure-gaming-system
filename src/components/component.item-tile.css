@@ -164,3 +164,17 @@ img {
   font-weight: bold;
   font-size: 0.85em;
 }
+
+/* === Drag & Drop Feedback ================================================= */
+
+/* Valid drop target */
+:host(.drop-valid) {
+  border: 2px solid rgb(76 175 80);
+  box-shadow: 0 0 8px rgb(76 175 80 / 50%);
+}
+
+/* Invalid drop target */
+:host(.drop-invalid) {
+  border: 2px dashed rgb(244 67 54);
+  box-shadow: 0 0 8px rgb(244 67 54 / 50%);
+}

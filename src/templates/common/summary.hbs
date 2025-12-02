@@ -12,16 +12,68 @@
   {{#if item.system.container.isContainer}}
     <section class="container-contents">
       <header class="container-contents__header">
-        <h2>Contents</h2>
+        <h2>{{localize "BAGS.Items.Physical.Container.Contents"}}</h2>
         {{#if item.system.container.weightMax}}
           <div class="container-capacity">
             <span class="capacity-current">{{containerData.currentWeight}}</span>
             /
             <span class="capacity-max">{{item.system.container.weightMax}}</span>
-            lbs
+            {{localize "BAGS.Items.Physical.Container.WeightUnit"}}
           </div>
         {{/if}}
       </header>
+
+      <search class="container-search">
+        <i class="fa fa-search" role="presentation"></i>
+        <input
+          type="search"
+          name="container-search"
+          autocomplete="off"
+          placeholder="{{localize 'BAGS.Items.Physical.Container.SearchPlaceholder'}}"
+          aria-label="{{localize 'BAGS.Items.Physical.Container.SearchLabel'}}"
+          data-container-search
+        />
+
+        <button
+          type="button"
+          class="inline-control sort icon {{ containerSortMode.icon }}"
+          data-tooltip="{{ containerSortMode.label }}"
+          aria-label="{{ localize containerSortMode.label }}"
+        ></button>
+
+        <button
+          type="button"
+          class="inline-control filter icon {{ containerFilterMode.icon }}"
+          data-tooltip="{{ containerFilterMode.label }}"
+          aria-label="{{ localize containerFilterMode.label }}"
+        ></button>
+
+        <button
+          type="button"
+          class="inline-control toggle-filter icon fa fa-arrow-rotate-left"
+          data-action="reset-container-filters"
+          data-tooltip="{{localize 'BAGS.Items.Physical.Container.ResetFiltersTooltip'}}"
+          aria-label="{{localize 'BAGS.Items.Physical.Container.ResetFiltersLabel'}}"
+        ></button>
+
+        {{#if containerData.contents.length}}
+          <button
+            type="button"
+            class="inline-control icon fa fa-layer-group"
+            data-action="stack-container-items"
+            data-tooltip="{{localize 'BAGS.Items.Physical.Container.StackItems'}}"
+            aria-label="{{localize 'BAGS.Items.Physical.Container.StackItems'}}"
+          ></button>
+
+          <button
+            type="button"
+            class="inline-control icon fa fa-box-open"
+            data-action="empty-container"
+            data-tooltip="{{localize 'BAGS.Items.Physical.Container.EmptyContainer'}}"
+            aria-label="{{localize 'BAGS.Items.Physical.Container.EmptyContainer'}}"
+          ></button>
+        {{/if}}
+      </search>
 
       {{#if containerData.contents.length}}
         <div class="item-grid item-grid--container" style="--item-grid-minimum-rows: 3">
@@ -35,7 +87,7 @@
           {{/each}}
         </div>
       {{else}}
-        <p class="empty">Container is empty</p>
+        <p class="empty">{{localize "BAGS.Items.Physical.Container.NoMatchingItems"}}</p>
       {{/if}}
     </section>
   {{/if}}
@@ -45,13 +97,13 @@
       {{#if item.system.description}}
         {{{formattedSystem.description}}}
       {{else}}
-        <p class="empty">No description</p>
+        <p class="empty">{{localize "BAGS.Items.Common.NoDescription"}}</p>
       {{/if}}
     </main>
 
     {{#if item.system.actions.length}}
       <aside>
-        <h2>Actions</h2>
+        <h2>{{localize "BAGS.Items.Common.Actions"}}</h2>
         <menu class="action-menu">
           {{#each item.system.actions}}
             <li data-action-id="{{id}}" data-action="use-action">

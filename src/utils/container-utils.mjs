@@ -7,32 +7,24 @@
 /**
  * Add an item to a container's contains array.
  * Does not perform validation - that should be done before calling this.
+ * Treats the contains array as a Set - won't add duplicates.
  * @param {Item} item - The item to add to the container
  * @param {Item} container - The container to add the item to
- * @returns {Promise<Item>} The updated container
+ * @returns {Promise<Item|undefined>} The updated container, or undefined if already present
  */
 export async function addItemToContainer(item, container) {
   if (!container.system.container?.isContainer) {
     throw new Error("Target item is not a container")
   }
 
-  const contains = [...(container.system.container.contains || []), item.uuid]
-  return container.update({ "system.container.contains": contains })
-}
+  const currentContains = container.system.container.contains || []
 
-/**
- * Remove an item from its parent container.
- * If the item is not in a container, this is a no-op.
- * @param {Item} item - The item to remove from its container
- * @returns {Promise<Item|null>} The updated container, or null if no container
- */
-export async function removeItemFromContainer(item) {
-  const container = getParentContainer(item)
-  if (!container) return null
+  // Only add if not already in the container (treat as a Set)
+  if (currentContains.includes(item.uuid)) {
+    return undefined // Already in container, no-op
+  }
 
-  const contains = (container.system.container.contains || []).filter(
-    (uuid) => uuid !== item.uuid,
-  )
+  const contains = [...currentContains, item.uuid]
   return container.update({ "system.container.contains": contains })
 }
 
@@ -53,6 +45,22 @@ export function getParentContainer(item) {
 }
 
 /**
+ * Remove an item from its parent container.
+ * If the item is not in a container, this is a no-op.
+ * @param {Item} item - The item to remove from its container
+ * @returns {Promise<Item|null>} The updated container, or null if no container
+ */
+export async function removeItemFromContainer(item) {
+  const container = getParentContainer(item)
+  if (!container) return null
+
+  const contains = (container.system.container.contains || []).filter(
+    (uuid) => uuid !== item.uuid,
+  )
+  return container.update({ "system.container.contains": contains })
+}
+
+/**
  * Get all items contained within a container.
  * Automatically filters out invalid/deleted items.
  * @param {Item} container - The container item
@@ -63,7 +71,7 @@ export function getContainerContents(container) {
     return []
   }
 
-  const actor = container.actor
+  const { actor } = container
   const uuids = container.system.container.contains || []
 
   return uuids
@@ -118,4 +126,71 @@ export function wouldCreateCircularRef(item, container) {
   }
 
   return false
+}
+
+// === Validation Functions ====================================================
+
+/**
+ * Validate whether an item can be added to a container.
+ * Throws an error with a localized message if validation fails.
+ * @param {Item} item - The item to add
+ * @param {Item} container - The container to add to
+ * @throws {Error} If validation fails, with localized error message
+ */
+export function validateAddToContainer(item, container) {
+  // Check if target is a container
+  if (!container.system.container?.isContainer) {
+    throw new Error(
+      game.i18n.format("BAGS.Items.Physical.Container.NotAContainer", {
+        container: container.name,
+      }),
+    )
+  }
+
+  // Check same actor
+  if (item.actor !== container.actor) {
+    throw new Error(
+      game.i18n.localize("BAGS.Items.Physical.Container.CrossActor"),
+    )
+  }
+
+  // Check self-containment
+  if (item.id === container.id) {
+    throw new Error(
+      game.i18n.localize("BAGS.Items.Physical.Container.SelfContainment"),
+    )
+  }
+
+  // Check circular reference
+  if (wouldCreateCircularRef(item, container)) {
+    throw new Error(
+      game.i18n.format("BAGS.Items.Physical.Container.CircularReference", {
+        item: item.name,
+        container: container.name,
+      }),
+    )
+  }
+
+  // Check weight capacity (only if max weight is set)
+  if (container.system.container.weightMax > 0) {
+    const currentWeight = container.system.contentsWeight
+    const maxWeight = container.system.container.weightMax
+
+    // Calculate item weight inline to avoid circular dependency
+    let itemWeight = item.system.weight * item.system.quantity
+    if (item.system.container?.isContainer) {
+      itemWeight += item.system.contentsWeight
+    }
+
+    if (currentWeight + itemWeight > maxWeight) {
+      throw new Error(
+        game.i18n.format("BAGS.Items.Physical.Container.OverCapacity", {
+          item: item.name,
+          container: container.name,
+          current: Math.round(currentWeight + itemWeight),
+          max: maxWeight,
+        }),
+      )
+    }
+  }
 }

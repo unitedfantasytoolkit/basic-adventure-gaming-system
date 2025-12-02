@@ -3,6 +3,14 @@
  */
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import animatedSheetAttention from "../utils/animated-sheet-attention.mjs"
+import animatedSheetError from "../utils/animated-sheet-error.mjs"
+import { validateAddToContainer } from "../utils/container-utils.mjs"
+import {
+  INVENTORY_SORT_MODES,
+  INVENTORY_FILTER_MODES,
+} from "../config/inventory-modes.mjs"
+import sortDocuments from "../utils/sort-documents.mjs"
+import { stackAllItems } from "../utils/item-stacking.mjs"
 
 const { HandlebarsApplicationMixin } = foundry.applications.api
 
@@ -70,6 +78,10 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
       "perform-action": this._onPerformAction,
       // Active effect management
       "edit-active-effects": this.editActiveEffects,
+      // Container controls
+      "reset-container-filters": this.resetContainerFilters,
+      "empty-container": this.emptyContainer,
+      "stack-container-items": this.stackContainerItems,
     },
     // Enable drag-drop for containers
     dragDrop: [
@@ -92,6 +104,20 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   }
 
   #subApps = {}
+
+  // --- Container filter/sort state -------------------------------------------
+
+  #containerSortMode = INVENTORY_SORT_MODES.DEFAULT
+
+  #containerFilterMode = INVENTORY_FILTER_MODES.DEFAULT
+
+  get containerSortMode() {
+    return this.#containerSortMode
+  }
+
+  get containerFilterMode() {
+    return this.#containerFilterMode
+  }
 
   // --- Tabs ------------------------------------------------------------------
 
@@ -147,6 +173,8 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
         // Prepare container data if this item is a container
         if (doc.system.container?.isContainer) {
           context.containerData = await this._prepareContainerData()
+          context.containerSortMode = this.#containerSortMode
+          context.containerFilterMode = this.#containerFilterMode
         }
         break
       case "effects":
@@ -181,7 +209,46 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
   }
 
   /**
-   * Set up drag-drop handlers after rendering.
+   * Set up context menus for container filter/sort on first render.
+   * @override
+   */
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options)
+
+    // Only set up container controls if this item is a container
+    if (!this.document.system.container?.isContainer) return
+
+    const { ContextMenu } = foundry.applications.ux
+
+    // Context menu for container filter button
+    new ContextMenu(
+      this.element,
+      ".container-search button.filter",
+      this._getContainerFilterOptions(),
+      {
+        hookName: "ContainerFilter",
+        jQuery: false,
+        fixed: true,
+        eventName: "click",
+      },
+    )
+
+    // Context menu for container sort button
+    new ContextMenu(
+      this.element,
+      ".container-search button.sort",
+      this._getContainerSortOptions(),
+      {
+        hookName: "ContainerSort",
+        jQuery: false,
+        fixed: true,
+        eventName: "click",
+      },
+    )
+  }
+
+  /**
+   * Set up drag-drop and search filter after rendering.
    * @override
    */
   async _onRender(context, options) {
@@ -202,6 +269,17 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
           drop: this._onDrop.bind(this),
         },
       }).bind(this.element)
+
+      // Set up search filter for container
+      const searchInput = this.element.querySelector("[data-container-search]")
+      if (searchInput) {
+        new foundry.applications.ux.SearchFilter({
+          inputSelector: "[data-container-search]",
+          contentSelector: ".item-grid--container",
+          callback: (...args) => this._onFilterContainer(...args),
+          initial: searchInput.value,
+        }).bind(this.element)
+      }
     }
   }
 
@@ -218,15 +296,28 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
 
   /**
    * Prepare data for container display in the summary tab.
+   * Applies filtering and sorting based on current mode.
    * @returns {Promise<object>} Container data including contents and weight
    * @private
    */
   async _prepareContainerData() {
     const doc = this.document
-    const contents = doc.system.contents || []
+    let contents = doc.system.contents || []
 
-    // Calculate current weight (placeholder - will implement properly later)
-    const currentWeight = 0
+    // Apply filter
+    contents = contents.filter(this.#containerFilterMode.predicate)
+
+    // Apply sort
+    if (this.#containerSortMode.key) {
+      contents = contents.sort(
+        sortDocuments(
+          this.#containerSortMode.key,
+          this.#containerSortMode.isDescending,
+        ),
+      )
+    }
+
+    const currentWeight = doc.system.contentsWeight
 
     return {
       contents: contents.map((item) => ({
@@ -235,7 +326,7 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
         name: item.name,
         img: item.img,
       })),
-      currentWeight,
+      currentWeight: Math.round(currentWeight),
       maxWeight: doc.system.container.weightMax || 0,
       itemCount: contents.length,
     }
@@ -306,31 +397,26 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
    */
   async _onDropItem(event, data) {
     const droppedItem = await fromUuid(data.uuid)
-    console.info(event, data)
     if (!droppedItem) return
 
-    // Can't add items from other actors
-    if (droppedItem.actor !== this.document.actor) {
-      ui.notifications.warn(
-        "Cannot add items from other actors to this container",
-      )
-      return
-    }
-
-    // Can't add the container to itself
-    if (droppedItem.id === this.document.id) {
-      ui.notifications.warn("Cannot add a container to itself")
-      return
-    }
-
-    // Use the document's addToContainer method which includes circular ref check
     try {
-      await droppedItem.addToContainer(this.document)
-      ui.notifications.info(
-        `Added ${droppedItem.name} to ${this.document.name}`,
-      )
+      // Validate the add operation (throws on failure)
+      validateAddToContainer(droppedItem, this.document)
+
+      // Validation passed - add the item
+      const result = await droppedItem.addToContainer(this.document)
+
+      // Only show notification if item was actually added (not already in container)
+      if (result) {
+        ui.notifications.info(
+          game.i18n.format("BAGS.Items.Physical.Container.AddedItem", {
+            item: droppedItem.name,
+            container: this.document.name,
+          }),
+        )
+      }
     } catch (error) {
-      ui.notifications.error(error.message)
+      animatedSheetError(this.element, error.message)
     }
   }
 
@@ -586,6 +672,114 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
 
   static editActiveEffects() {
     BAGSBaseItemSheet.#useSubApp(this.subApps.activeEffectEditor)
+  }
+
+  // === Container filter/sort =================================================
+
+  static resetContainerFilters() {
+    this.#containerSortMode = INVENTORY_SORT_MODES.DEFAULT
+    this.#containerFilterMode = INVENTORY_FILTER_MODES.DEFAULT
+    this.render()
+  }
+
+  static async emptyContainer() {
+    const contents = this.document.system.contents || []
+    if (!contents.length) return
+
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window: {
+        title: game.i18n.localize(
+          "BAGS.Items.Physical.Container.EmptyContainer",
+        ),
+      },
+      content: game.i18n.format(
+        "BAGS.Items.Physical.Container.EmptyContainerConfirm",
+        {
+          count: contents.length,
+          container: this.document.name,
+        },
+      ),
+      rejectClose: false,
+      modal: true,
+    })
+
+    if (!confirmed) return
+
+    // Remove all items from container
+    await this.document.update({ "system.container.contains": [] })
+
+    ui.notifications.info(
+      game.i18n.format("BAGS.Items.Physical.Container.EmptiedContainer", {
+        count: contents.length,
+        container: this.document.name,
+      }),
+    )
+  }
+
+  static async stackContainerItems() {
+    const items = this.document.system.contents || []
+
+    const count = await stackAllItems(items)
+
+    this.render()
+
+    if (count === 0) {
+      ui.notifications.info(
+        game.i18n.localize("BAGS.Items.Physical.Container.NoStackableItems"),
+      )
+    } else {
+      ui.notifications.info(
+        game.i18n.format("BAGS.Items.Physical.Container.StackedItems", {
+          count,
+        }),
+      )
+    }
+  }
+
+  _getContainerSortOptions() {
+    return Object.values(INVENTORY_SORT_MODES).map((f) => ({
+      name: f.label,
+      icon: `<i class="${f.icon}" role="presentation"></i>`,
+      callback: () => {
+        this.#containerSortMode = f
+        this.render()
+      },
+    }))
+  }
+
+  _getContainerFilterOptions() {
+    return Object.values(INVENTORY_FILTER_MODES).map((f) => ({
+      name: f.label,
+      icon: `<i class="${f.icon}" role="presentation"></i>`,
+      callback: () => {
+        this.#containerFilterMode = f
+        this.render()
+      },
+    }))
+  }
+
+  _onFilterContainer(event, query, rgx, html) {
+    const ids = new Set()
+
+    // Match items in container
+    if (query) this._matchContainerSearchItems(rgx, ids)
+
+    html
+      .querySelectorAll(".item-grid--container uft-item-tile")
+      .forEach((el) => {
+        if (el.hidden) return
+        el.classList.toggle("filtered", query && !ids.has(el.dataset.itemId))
+      })
+  }
+
+  _matchContainerSearchItems(query, entryIds) {
+    ;(this.document.system.contents || []).forEach((entry) => {
+      if (
+        query.test(foundry.applications.ux.SearchFilter.cleanQuery(entry.name))
+      ) {
+        entryIds.add(entry.id)
+      }
+    })
   }
 
   static #useSubApp(subApp) {

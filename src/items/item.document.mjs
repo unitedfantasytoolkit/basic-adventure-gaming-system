@@ -11,6 +11,11 @@ import {
   DEFAULT_ART_ITEM_WEAPON,
 } from "../config/constants.mjs"
 import ActionResolver from "../rules-engines/action-resolver.mjs"
+import {
+  addItemToContainer,
+  removeItemFromContainer,
+  validateAddToContainer,
+} from "../utils/container-utils.mjs"
 
 /**
  * Extends the base Foundry VTT Item document class with BAGS-specific
@@ -232,15 +237,8 @@ export default class BAGSItem extends Item {
    * @throws {Error} If target is not a container or would create circular ref
    */
   async addToContainer(container) {
-    const { addItemToContainer, wouldCreateCircularRef } = await import(
-      "../utils/container-utils.mjs"
-    )
-
-    if (wouldCreateCircularRef(this, container)) {
-      throw new Error(
-        "Cannot add item to container: would create circular reference",
-      )
-    }
+    // Validate before adding (throws on failure)
+    validateAddToContainer(this, container)
 
     return addItemToContainer(this, container)
   }
@@ -250,9 +248,6 @@ export default class BAGSItem extends Item {
    * @returns {Promise<Item|null>} The updated container, or null if not in a container
    */
   async removeFromContainer() {
-    const { removeItemFromContainer } = await import(
-      "../utils/container-utils.mjs"
-    )
     return removeItemFromContainer(this)
   }
 
