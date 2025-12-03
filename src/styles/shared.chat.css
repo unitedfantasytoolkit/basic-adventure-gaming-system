@@ -33,6 +33,7 @@
 
       &__result {
         font-size: 2rem;
+        pointer-events: auto;
         position: relative;
         width: fit-content;
         display: inline-block;
@@ -100,6 +101,8 @@
       }
 
       &__context {
+        pointer-events: auto; /* Allow interaction with context text if needed */
+
         &--attack {
           font-style: italic;
         }

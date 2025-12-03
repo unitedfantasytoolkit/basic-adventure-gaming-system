@@ -3,6 +3,7 @@
  */
 
 import ActionResolver from "../rules-engines/action-resolver.mjs"
+import buildRollTooltip from "../utils/build-roll-tooltip.mjs"
 
 export default class BAGSChatMessage extends ChatMessage {
   /**
@@ -28,7 +29,8 @@ export default class BAGSChatMessage extends ChatMessage {
     let details
     try {
       const actionSource = item || actor
-      const actionList = actionSource.system.actionList || actionSource.system.actions
+      const actionList =
+        actionSource.system.actionList || actionSource.system.actions
       details = actionList.find((a) => a.id === this.system.action)
     } catch {
       // no-op
@@ -150,6 +152,11 @@ export default class BAGSChatMessage extends ChatMessage {
     // Call hooks
     Hooks.call("renderChatMessageHTML", this, html, messageData)
 
+    // Add tooltips to action messages
+    if (this.type === "action") {
+      this.#attachActionTooltips(html, messageData)
+    }
+
     return html
   }
 
@@ -194,5 +201,82 @@ export default class BAGSChatMessage extends ChatMessage {
       html += await roll.render({ isPrivate, message: this })
     }
     return html
+  }
+
+  /**
+   * Attaches hover tooltips to roll results in action chat cards.
+   * Shows dice breakdown and modifiers when hovering over results.
+   * @param {HTMLElement} html - The rendered HTML element
+   * @param {object} messageData - The message data passed to the template
+   */
+  #attachActionTooltips(html, messageData) {
+    if (!messageData?.action?.outcome) return
+
+    // html is already the root element, not an array
+    const root = html
+
+    // Add tooltips to attack attempt results
+    const attemptResult = root.querySelector(".action__attempt__result")
+
+    if (attemptResult) {
+      const attemptData = messageData.action.outcome[0]?.attempt
+      if (attemptData?.tooltipData) {
+        this.#activateTooltipOnElement(attemptResult, attemptData.tooltipData)
+      }
+    }
+
+    // Add tooltips to damage/healing effects
+    messageData.action.outcome.forEach((outcome) => {
+      if (!outcome.effects) return
+
+      outcome.effects.forEach((effect, effectIdx) => {
+        if (!effect.tooltipData) return
+
+        // Determine the actual CSS class used in the template
+        // The template uses "damage" for attack effects, "healing" for healing effects
+        let effectClass
+        if (effect.type === "attack") {
+          effectClass = "damage"
+        } else if (effect.type === "healing") {
+          effectClass = "healing"
+        } else {
+          effectClass = effect.type
+        }
+
+        const effectSelector = `.action__effect--${effectClass}`
+        const effectElements = root.querySelectorAll(effectSelector)
+
+        if (effectElements?.[effectIdx]) {
+          this.#activateTooltipOnElement(
+            effectElements[effectIdx],
+            effect.tooltipData,
+          )
+        }
+      })
+    })
+  }
+
+  /**
+   * Activates game.tooltip on an element with roll breakdown data.
+   * @param {HTMLElement} element - The DOM element to attach tooltip to
+   * @param {object} tooltipData - The roll data for the tooltip
+   */
+  #activateTooltipOnElement(element, tooltipData) {
+    element.style.cursor = "help"
+    element.setAttribute("data-has-tooltip", "true")
+
+    console.info(tooltipData)
+
+    element.addEventListener("mouseenter", () => {
+      const content = buildRollTooltip(tooltipData)
+      game.tooltip.activate(element, {
+        content,
+        cssClass: "tooltip--roll-breakdown",
+      })
+    })
+
+    element.addEventListener("mouseleave", () => {
+      game.tooltip.deactivate()
+    })
   }
 }

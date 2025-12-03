@@ -794,6 +794,14 @@
             "ArmorClassOffset": {
               "Label": "Armor Class Modifier",
               "Hint": "Modifier to the character's base armor class"
+            },
+            "THAC0": {
+              "Label": "THAC0",
+              "Hint": "To Hit Armor Class 0 - the d20 roll needed to hit AC 0. Lower is better in descending AC systems."
+            },
+            "BaseAttackBonus": {
+              "Label": "Base Attack Bonus",
+              "Hint": "Bonus added to attack rolls in ascending AC systems. Higher is better."
             }
           },
           "Modifiers": {

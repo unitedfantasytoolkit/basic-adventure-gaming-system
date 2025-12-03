@@ -52,12 +52,25 @@ export default class AbilityScoreRoll extends Roll {
       this.rollMode === CONST.DICE_ROLL_MODES.PRIVATE ||
       this.rollMode === CONST.DICE_ROLL_MODES.BLIND
 
+    const abilityScoreSettings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.ABILITY_SCORES,
+      )
+    const abilityScores = abilityScoreSettings?.abilityScores || new Map()
+    const abilityLabel =
+      abilityScores.get(this.abilityName)?.label || this.abilityName
+
+    // Get actor name from roll data if available
+    const actorName = this.data?.name || null
+
     return {
       ...context,
       target: isPrivate ? "?" : this.target,
       isSuccess: isPrivate ? null : this.isSuccess,
       abilityName: this.abilityName,
+      abilityLabel,
       rollBelow: this.rollBelow,
+      actorName,
     }
   }
 

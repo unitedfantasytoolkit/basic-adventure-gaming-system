@@ -134,7 +134,11 @@ export class FoundryDocumentAdapter {
    */
   normalizeTargets(targets) {
     if (!targets) return []
-    if (targets instanceof UserTargets) return Array.from(targets.entries())
+    if (targets instanceof UserTargets) {
+      // UserTargets is a Map, entries() returns [key, token] pairs
+      // We only want the token (second element)
+      return Array.from(targets.values())
+    }
     if (!Array.isArray(targets)) return [targets]
     return targets.flat()
   }

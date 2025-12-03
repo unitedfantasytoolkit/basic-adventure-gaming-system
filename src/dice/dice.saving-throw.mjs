@@ -55,13 +55,26 @@ export default class SavingThrowRoll extends Roll {
       this.rollMode === CONST.DICE_ROLL_MODES.PRIVATE ||
       this.rollMode === CONST.DICE_ROLL_MODES.BLIND
 
+    const savingThrowSettings =
+      CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
+        CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
+      )
+    const saveLabel =
+      savingThrowSettings?.savingThrows?.[this.saveType]?.label ||
+      this.saveType
+
+    // Get actor name from roll data if available
+    const actorName = this.data?.name || null
+
     // Add our special context data
     return {
       ...context,
       target: isPrivate ? "?" : this.target,
       isSuccess: isPrivate ? null : this.isSuccess,
       saveType: this.saveType,
+      saveLabel,
       rollBelow: this.rollBelow,
+      actorName,
     }
   }
 

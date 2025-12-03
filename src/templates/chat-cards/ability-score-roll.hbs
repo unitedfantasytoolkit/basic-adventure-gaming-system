@@ -1,16 +1,24 @@
 <div class="action__attempt">
-  <span class="action__attempt__result action__attempt__result--{{#if (and message.blind (not isGM))}}blind{{else if isSuccess}}success{{else}}fail{{/if}}">
-    {{#if (and message.blind (not isGM))}}
+  <span class="action__attempt__result action__attempt__result--{{#if isSuccess}}success{{else if (eq isSuccess null)}}blind{{else}}fail{{/if}}">
+    {{#if (eq isSuccess null)}}
       <i class="fa-solid fa-eye-slash" aria-label="Blind Roll"></i>
     {{else}}
       {{total}}
     {{/if}}
   </span>
-  <span class="action__attempt__context action__attempt__context--static">{{formatRoll formula target}}</span>
+  <span class="action__attempt__context action__attempt__context--static">
+    {{formatRoll formula (ifThen rollBelow ">=" "<=") target.value}}
+  </span>
+</div>
 
+<div class="action__context">
+  {{#if actorName}}<h2>{{actorName}}</h2>{{/if}}
+  <h1>{{localize abilityLabel}}</h1>
+</div>
+
+<div class="action__result">
   <div class="action__attempt__dice-result">
     {{{tooltip}}}
   </div>
 </div>
-
 

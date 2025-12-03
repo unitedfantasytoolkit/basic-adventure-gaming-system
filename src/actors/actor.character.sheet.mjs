@@ -221,6 +221,50 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
           {},
         )
         
+        // Combat stat tooltips
+        context.combatTooltips = {
+          ac: effectListToTooltip(
+            this.document.appliedEffectsByAffectedKey.get("system.armorClass"),
+            "BAGS.Actors.Common.Fields.Base.ArmorClassOffset.Label",
+            "BAGS.Actors.Common.Fields.Base.ArmorClassOffset.Hint",
+          ),
+          thac0: effectListToTooltip(
+            this.document.appliedEffectsByAffectedKey.get("system.thac0"),
+            "BAGS.Actors.Common.Fields.Base.THAC0.Label",
+            "BAGS.Actors.Common.Fields.Base.THAC0.Hint",
+          ),
+          baseAttackBonus: effectListToTooltip(
+            this.document.appliedEffectsByAffectedKey.get("system.baseAttackBonus"),
+            "BAGS.Actors.Common.Fields.Base.BaseAttackBonus.Label",
+            "BAGS.Actors.Common.Fields.Base.BaseAttackBonus.Hint",
+          ),
+          movement: effectListToTooltip(
+            this.document.appliedEffectsByAffectedKey.get("system.modifiers.speed"),
+            "BAGS.Actors.Common.Fields.Base.Speed.Label",
+            "BAGS.Actors.Common.Fields.Base.Speed.Hint",
+          ),
+          meleeAttack: effectListToTooltip(
+            this.document.appliedEffectsByAffectedKey.get("system.modifiers.melee.attack"),
+            "BAGS.Actors.Common.Fields.Modifiers.Melee.Attack.Label",
+            "BAGS.Actors.Common.Fields.Modifiers.Melee.Attack.Hint",
+          ),
+          meleeDamage: effectListToTooltip(
+            this.document.appliedEffectsByAffectedKey.get("system.modifiers.melee.damage"),
+            "BAGS.Actors.Common.Fields.Modifiers.Melee.Damage.Label",
+            "BAGS.Actors.Common.Fields.Modifiers.Melee.Damage.Hint",
+          ),
+          missileAttack: effectListToTooltip(
+            this.document.appliedEffectsByAffectedKey.get("system.modifiers.missile.attack"),
+            "BAGS.Actors.Common.Fields.Modifiers.Missile.Attack.Label",
+            "BAGS.Actors.Common.Fields.Modifiers.Missile.Attack.Hint",
+          ),
+          missileDamage: effectListToTooltip(
+            this.document.appliedEffectsByAffectedKey.get("system.modifiers.missile.damage"),
+            "BAGS.Actors.Common.Fields.Modifiers.Missile.Damage.Label",
+            "BAGS.Actors.Common.Fields.Modifiers.Missile.Damage.Hint",
+          ),
+        }
+        
         // Combat stat modification states
         context.combatModifications = {
           hp: this.getFieldModificationState("system.hp.max"),

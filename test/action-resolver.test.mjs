@@ -1187,7 +1187,7 @@ test('performAttemptAsAttack: passes attack bonus to combat system', async () =>
 
   assert.ok(capturedOptions)
   assert.is(capturedOptions.attackType, 'melee')
-  assert.is(capturedOptions.bonus, 3)
+  assert.is(capturedOptions.modifier, 3)
 })
 
 test('performAttemptAsAttack: defaults bonus to 0 when not specified', async () => {
@@ -1216,7 +1216,7 @@ test('performAttemptAsAttack: defaults bonus to 0 when not specified', async () 
 
   await resolver.resolve()
 
-  assert.is(capturedOptions.bonus, 0)
+  assert.is(capturedOptions.modifier, 0)
 })
 
 test.run()

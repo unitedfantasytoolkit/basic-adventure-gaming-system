@@ -32,7 +32,8 @@ export default class ActionResolver {
    * @param {unknown} document - The Actions's source document.
    * @param {unknown} actor - The Action's owner, if any.
    * @param {unknown[]} targets - The Actors that are the target of the Action
-   * @param {FoundryDocumentAdapter} adapter - The Foundry document adapter (for testing)
+   * @param {FoundryDocumentAdapter} adapter - The Foundry document adapter (
+   * for testing)
    */
   constructor(action, document, actor, targets = [], adapter = null) {
     if (!action)
@@ -120,13 +121,13 @@ export default class ActionResolver {
 
     if (action.level?.min !== undefined && level < action.level.min) {
       errors.push(
-        `${actorData.name || 'Actor'} does not meet the minimum level for ${action.name || 'this action'} (requires level ${action.level.min}, is level ${level})`,
+        `${actorData.name || "Actor"} does not meet the minimum level for ${action.name || "this action"} (requires level ${action.level.min}, is level ${level})`,
       )
     }
 
     if (action.level?.max !== undefined && level > action.level.max) {
       errors.push(
-        `${actorData.name || 'Actor'} exceeds the maximum level for ${action.name || 'this action'} (max level ${action.level.max}, is level ${level})`,
+        `${actorData.name || "Actor"} exceeds the maximum level for ${action.name || "this action"} (max level ${action.level.max}, is level ${level})`,
       )
     }
 
@@ -143,7 +144,7 @@ export default class ActionResolver {
 
     if (action.uses?.max > 0 && action.uses.value <= 0) {
       errors.push(
-        `No uses remaining for ${action.name || 'this action'} (0 of ${action.uses.max})`,
+        `No uses remaining for ${action.name || "this action"} (0 of ${action.uses.max})`,
       )
     }
 
@@ -186,16 +187,16 @@ export default class ActionResolver {
    */
   #compareRoll(roll, operator, target) {
     switch (operator) {
-      case '=':
-      case '==':
+      case "=":
+      case "==":
         return roll === target
-      case '>=':
+      case ">=":
         return roll >= target
-      case '<=':
+      case "<=":
         return roll <= target
-      case '>':
+      case ">":
         return roll > target
-      case '<':
+      case "<":
         return roll < target
       default:
         return false
@@ -209,16 +210,16 @@ export default class ActionResolver {
    * @param {string} attackType - Type of attack (melee, missile, none)
    * @returns {string} Modified formula
    */
-  #buildDamageFormula(baseFormula, modifiers = {}, attackType = 'none') {
+  #buildDamageFormula(baseFormula, modifiers = {}, attackType = "none") {
     let formula = baseFormula
 
     switch (attackType) {
-      case 'melee':
+      case "melee":
         if (modifiers.meleeDamageBonus) {
           formula = `${formula}+${modifiers.meleeDamageBonus}`
         }
         break
-      case 'missile':
+      case "missile":
         if (modifiers.missileDamageBonus) {
           formula = `${formula}+${modifiers.missileDamageBonus}`
         }
@@ -239,10 +240,10 @@ export default class ActionResolver {
    */
   #formatEffectMessage(effectType, value, target) {
     if (!target) {
-      return `${effectType === 'attack' ? 'Damage' : 'Healing'}: ${value}`
+      return `${effectType === "attack" ? "Damage" : "Healing"}: ${value}`
     }
 
-    const verb = effectType === 'attack' ? 'takes' : 'heals'
+    const verb = effectType === "attack" ? "takes" : "heals"
     return `${target.name} ${verb} ${value} points`
   }
 
@@ -294,9 +295,7 @@ export default class ActionResolver {
             "system.uses.value": targetItem.system.uses.value - item.quantity,
           })
         } else {
-          throw new Error(
-            `Insufficient uses of ${targetItem?.name || "item"}`,
-          )
+          throw new Error(`Insufficient uses of ${targetItem?.name || "item"}`)
         }
         break
       }
@@ -328,9 +327,7 @@ export default class ActionResolver {
             [`${slotPath}.value`]: currentSlots - 1,
           })
         } else {
-          throw new Error(
-            `No level ${spellSlots.level} spell slots remaining`,
-          )
+          throw new Error(`No level ${spellSlots.level} spell slots remaining`)
         }
         break
       }
@@ -338,10 +335,8 @@ export default class ActionResolver {
       case "actionUse":
         if (this.action.uses.value > 0) {
           // Note: This updates the action within the parent document
-          const actions = this.document.system.actions
-          const actionIndex = actions.findIndex(
-            (a) => a.id === this.action.id,
-          )
+          const { actions } = this.document.system
+          const actionIndex = actions.findIndex((a) => a.id === this.action.id)
           if (actionIndex >= 0) {
             await this.#adapter.updateDocument(this.document, {
               [`system.actions.${actionIndex}.uses.value`]:
@@ -389,21 +384,51 @@ export default class ActionResolver {
     return {
       roll,
       target: parsedTarget ?? 1,
-      success: this.#compareRoll(
-        roll.total,
-        operator,
-        parsedTarget ?? 1,
-      ),
+      success: this.#compareRoll(roll.total, operator, parsedTarget ?? 1),
     }
   }
 
   async #performAttemptAsAttack(target) {
     const combatSettings = this.#adapter.getCombatSystem()
 
-    return combatSettings.resolveAttackRoll(this.actor, target?.actor, {
-      attackType: this.action.attempt.attack.type,
-      bonus: this.action.attempt.attack.bonus || 0,
-    })
+    const weaponBonus = this.action.attempt.attack.bonus || 0
+
+    const result = await combatSettings.resolveAttackRoll(
+      this.actor,
+      target?.actor,
+      {
+        attackType: this.action.attempt.attack.type,
+        modifier: weaponBonus,
+      },
+    )
+
+    // Build tooltip data for showing roll breakdown
+    // Note: The combat system adds actor bonuses to the weapon bonus,
+    // so we need to match that here for the tooltip
+    const modifiers = []
+
+    // Add weapon/action bonus first
+    if (weaponBonus) {
+      modifiers.push({ label: "Weapon", value: weaponBonus })
+    }
+
+    // Add actor's attack bonus based on attack type
+    if (this.action.attempt.attack.type === "melee") {
+      const meleeBonus = this.actor?.system?.meleeAttackBonus || 0
+      if (meleeBonus) modifiers.push({ label: "Melee", value: meleeBonus })
+    } else if (this.action.attempt.attack.type === "missile") {
+      const missileBonus = this.actor?.system?.missileAttackBonus || 0
+      if (missileBonus)
+        modifiers.push({ label: "Missile", value: missileBonus })
+    }
+
+    result.tooltipData = {
+      roll: result.roll,
+      modifiers,
+      type: "attack",
+    }
+
+    return result
   }
 
   /**
@@ -485,11 +510,7 @@ export default class ActionResolver {
 
       case "number": {
         const result = await this.#adapter.rollDice(target, roll.formula)
-        return this.#compareRoll(
-          result.total,
-          roll.operator,
-          staticTarget,
-        )
+        return this.#compareRoll(result.total, roll.operator, staticTarget)
       }
 
       default:
@@ -508,11 +529,21 @@ export default class ActionResolver {
       ? this.action.attempt.attack.type
       : "none"
 
+    const modifiers = []
+    const meleeDamageBonus = this.actor?.system?.meleeDamageBonus || 0
+    const missileDamageBonus = this.actor?.system?.missileDamageBonus || 0
+
+    if (attackType === "melee" && meleeDamageBonus) {
+      modifiers.push({ label: "Melee Damage", value: meleeDamageBonus })
+    } else if (attackType === "missile" && missileDamageBonus) {
+      modifiers.push({ label: "Missile Damage", value: missileDamageBonus })
+    }
+
     const formula = this.#buildDamageFormula(
       effect.formula,
       {
-        meleeDamageBonus: this.actor.system.meleeDamageBonus,
-        missileDamageBonus: this.actor.system.missileDamageBonus,
+        meleeDamageBonus,
+        missileDamageBonus,
       },
       attackType,
     )
@@ -525,11 +556,12 @@ export default class ActionResolver {
       target: target?.uuid,
       value,
       roll,
-      message: this.#formatEffectMessage(
-        effect.type,
-        value,
-        target,
-      ),
+      tooltipData: {
+        roll,
+        modifiers,
+        type: effect.type,
+      },
+      message: this.#formatEffectMessage(effect.type, value, target),
     }
   }
 
@@ -644,7 +676,7 @@ export default class ActionResolver {
 
     // isBlind flag overrides to force blind roll mode
     if (this.action.flags.isBlind) {
-      rollMode = 'blind'
+      rollMode = "blind"
     }
 
     // Apply roll mode properties via adapter

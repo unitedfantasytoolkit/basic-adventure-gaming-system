@@ -85,7 +85,7 @@
   <div class="left-rail__section number-showcase">
     <ul class="number-showcase__list">
       {{#each document.system.schema.fields.base.fields.abilityScores}}
-      <li data-action="roll-ability-score" data-ability-score="{{name}}" data-data-tooltip="{{lookup ../abilityScoreTooltips name}}" class="{{#if (lookup ../abilityScoreModifications name)}}field--{{lookup ../abilityScoreModifications name}}{{/if}}">
+      <li data-action="roll-ability-score" data-ability-score="{{name}}" data-tooltip="{{lookup ../abilityScoreTooltips name}}" class="{{#if (lookup ../abilityScoreModifications name)}}field--{{lookup ../abilityScoreModifications name}}{{/if}}">
         <span class="number-showcase__label">{{localize (replace label "Label" "Short") }}</span>
         <span class="number-showcase__value">{{lookup ../document.system.base.abilityScores name}}</span>
       </li>
@@ -111,17 +111,17 @@
         {{/with}}
       {{/if}}
       {{#if usesDescendingAC}}
-      <dt class="{{#if combatModifications.thac0}}field--{{combatModifications.thac0}}{{/if}}">THAC0</dt>
+      <dt data-tooltip="{{combatTooltips.thac0}}" class="{{#if combatModifications.thac0}}field--{{combatModifications.thac0}}{{/if}}">THAC0</dt>
       <dd class="{{#if combatModifications.thac0}}field--{{combatModifications.thac0}}{{/if}}">{{document.system.thac0}}</dd>
       {{else}}
-      <dt class="{{#if combatModifications.baseAttackBonus}}field--{{combatModifications.baseAttackBonus}}{{/if}}">Attack Bonus</dt>
+      <dt data-tooltip="{{combatTooltips.baseAttackBonus}}" class="{{#if combatModifications.baseAttackBonus}}field--{{combatModifications.baseAttackBonus}}{{/if}}">Attack Bonus</dt>
       <dd class="{{#if combatModifications.baseAttackBonus}}field--{{combatModifications.baseAttackBonus}}{{/if}}">{{signNumber document.system.baseAttackBonus forceSign=true}}</dd>
       {{/if}}
 
-      <dt class="{{#if combatModifications.ac}}field--{{combatModifications.ac}}{{/if}}">Armor Class</dt>
+      <dt data-tooltip="{{combatTooltips.ac}}" class="{{#if combatModifications.ac}}field--{{combatModifications.ac}}{{/if}}">Armor Class</dt>
       <dd class="{{#if combatModifications.ac}}field--{{combatModifications.ac}}{{/if}}">{{document.system.armorClass}}</dd>
 
-      <dt class="movement">Movement</dt>
+      <dt data-tooltip="{{combatTooltips.movement}}" class="movement">Movement</dt>
       {{#if (eq document.type "character")}}
         <dd>
           {{#with document.system.speed}}
@@ -147,12 +147,12 @@
     </header>
 
     <dl>
-      <dt class="rollable rollable--icon-before {{#if combatModifications.meleeAttack}}field--{{combatModifications.meleeAttack}}{{/if}}" data-action="roll-attack" data-attack-type="melee">{{localize "BAGS.Actors.Common.Combat.Melee"}}</dt>
+      <dt data-tooltip="{{combatTooltips.meleeAttack}}" class="rollable rollable--icon-before {{#if combatModifications.meleeAttack}}field--{{combatModifications.meleeAttack}}{{/if}}" data-action="roll-attack" data-attack-type="melee">{{localize "BAGS.Actors.Common.Combat.Melee"}}</dt>
       <dd class="{{#if combatModifications.meleeAttack}}field--{{combatModifications.meleeAttack}}{{/if}}">{{signNumber document.system.meleeAttackBonus forceSign=true}}</dd>
-      <dd class="{{#if combatModifications.meleeDamage}}field--{{combatModifications.meleeDamage}}{{/if}}">{{signNumber document.system.meleeDamageBonus forceSign=true}}</dd>
-      <dt class="rollable rollable--icon-before {{#if combatModifications.missileAttack}}field--{{combatModifications.missileAttack}}{{/if}}" data-action="roll-attack" data-attack-type="missile">{{localize "BAGS.Actors.Common.Combat.Missile"}}</dt>
+      <dd data-tooltip="{{combatTooltips.meleeDamage}}" class="{{#if combatModifications.meleeDamage}}field--{{combatModifications.meleeDamage}}{{/if}}">{{signNumber document.system.meleeDamageBonus forceSign=true}}</dd>
+      <dt data-tooltip="{{combatTooltips.missileAttack}}" class="rollable rollable--icon-before {{#if combatModifications.missileAttack}}field--{{combatModifications.missileAttack}}{{/if}}" data-action="roll-attack" data-attack-type="missile">{{localize "BAGS.Actors.Common.Combat.Missile"}}</dt>
       <dd class="{{#if combatModifications.missileAttack}}field--{{combatModifications.missileAttack}}{{/if}}">{{signNumber document.system.missileAttackBonus forceSign=true}}</dd>
-      <dd class="{{#if combatModifications.missileDamage}}field--{{combatModifications.missileDamage}}{{/if}}">{{signNumber document.system.missileDamageBonus forceSign=true}}</dd>
+      <dd data-tooltip="{{combatTooltips.missileDamage}}" class="{{#if combatModifications.missileDamage}}field--{{combatModifications.missileDamage}}{{/if}}">{{signNumber document.system.missileDamageBonus forceSign=true}}</dd>
     </dl>
   </div>
   {{/if}}

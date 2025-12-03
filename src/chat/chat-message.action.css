@@ -31,6 +31,7 @@
         z-index: 1;
         text-align: center;
         margin-bottom: 0.25rem;
+        pointer-events: auto; /* Re-enable pointer events for tooltips */
 
         &::before,
         &::after {
@@ -170,7 +171,96 @@
         font-size: 1.2rem;
         text-align: center;
         margin: 0;
+        cursor: help; /* Make it clear damage is hoverable */
       }
+    }
+
+    /* Tooltip indicators */
+    &__attempt__result[data-has-tooltip] {
+      cursor: help;
+      text-decoration: dotted underline;
+      text-underline-offset: 0.2em;
+      text-decoration-color: var(--border-color);
+      text-decoration-thickness: 1px;
+    }
+
+    &__effect--damage[data-has-tooltip] {
+      cursor: help;
+      text-decoration: dotted underline;
+      text-underline-offset: 0.2em;
+      text-decoration-color: var(--border-color);
+      text-decoration-thickness: 1px;
+    }
+  }
+}
+
+/* === Roll Tooltip Styling ================================================= */
+
+.tooltip--roll-breakdown {
+  .roll-tooltip {
+    min-width: 150px;
+    padding: 0.5rem;
+    font-family: var(--font-primary);
+
+    &--effect {
+      border-left: 3px solid var(--color-level-info);
+    }
+
+    &--attack {
+      border-left: 3px solid var(--color-level-error);
+    }
+
+    &--healing {
+      border-left: 3px solid var(--color-level-success);
+    }
+  }
+
+  .tooltip-dice {
+    font-size: 1.1em;
+    margin-bottom: 0.25rem;
+
+    &__formula {
+      font-weight: bold;
+      color: var(--color-text-emphatic);
+    }
+
+    &__results {
+      color: var(--color-text-primary);
+      margin-left: 0.25rem;
+    }
+  }
+
+  .tooltip-modifier {
+    font-size: 0.9em;
+    color: var(--color-text-light);
+    padding-left: 1rem;
+    margin: 0.125rem 0;
+
+    &__label {
+      font-style: italic;
+      opacity: 0.8;
+    }
+  }
+
+  .tooltip-divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 0.5rem 0;
+    opacity: 0.3;
+  }
+
+  .tooltip-total {
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 0.25rem;
+
+    &__label {
+      color: var(--color-text-light);
+    }
+
+    &__value {
+      color: var(--color-text-emphatic);
     }
   }
 }
