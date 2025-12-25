@@ -1,14 +1,11 @@
+import BAGSApplication from "../applications/application.mjs"
 import { SYSTEM_NAME, SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import WizardManager from "../common/wizard-step-manager.mjs"
 import animatedRoll from "../utils/animated-dice-roll.mjs"
 import createItemsFromUUIDs from "../utils/create-items-from-uuids.mjs"
 import getItemsFromSources from "../common/get-items-from-sources.mjs"
 
-const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api
-
-export default class CharacterCreationWizard extends HandlebarsApplicationMixin(
-  ApplicationV2,
-) {
+export default class CharacterCreationWizard extends BAGSApplication {
   actor
 
   #wizardManager
@@ -32,7 +29,7 @@ export default class CharacterCreationWizard extends HandlebarsApplicationMixin(
 
   constructor(options = {}) {
     super(options)
-    this.actor = options.actor
+    this.actor = options.actor || options.document
 
     this.#wizardManager = new WizardManager({
       abilityScores: { current: true },
@@ -61,11 +58,7 @@ export default class CharacterCreationWizard extends HandlebarsApplicationMixin(
   // === Application Setup =====================================================
   static DEFAULT_OPTIONS = {
     id: "character-wizard-{id}",
-    classes: [
-      "application--character-wizard",
-      "application--bags",
-      "scrollable",
-    ],
+    classes: ["application--character-wizard"],
     window: {
       minimizable: false,
       resizable: false,
@@ -93,6 +86,9 @@ export default class CharacterCreationWizard extends HandlebarsApplicationMixin(
     position: {
       width: 720,
       height: 640,
+    },
+    form: {
+      submitOnChange: false,
     },
   }
 
@@ -330,9 +326,10 @@ export default class CharacterCreationWizard extends HandlebarsApplicationMixin(
   }
 
   #calculateSpentMoney() {
-    return this.wizardData.equipment.reduce((total, item) => {
-      return total + item.value * item.quantity
-    }, 0)
+    return this.wizardData.equipment.reduce(
+      (total, item) => total + item.value * item.quantity,
+      0,
+    )
   }
 
   static async #onAddToCart(event) {
@@ -479,7 +476,7 @@ export default class CharacterCreationWizard extends HandlebarsApplicationMixin(
     const { search, types, sort } = this.wizardData.equipmentFilters
 
     // Filter by type and search
-    let filtered = items.filter((item) => {
+    const filtered = items.filter((item) => {
       const matchesType = types.includes(item.type)
       const matchesSearch =
         !search || item.name.toLowerCase().includes(search.toLowerCase())
@@ -512,7 +509,7 @@ export default class CharacterCreationWizard extends HandlebarsApplicationMixin(
 
   static #onToggleEquipmentType(event) {
     const type = event.target.value
-    const types = this.wizardData.equipmentFilters.types
+    const { types } = this.wizardData.equipmentFilters
 
     if (event.target.checked) {
       if (!types.includes(type)) types.push(type)
