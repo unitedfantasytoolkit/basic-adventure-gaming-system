@@ -15,7 +15,7 @@ export default class ActionEffectEditor extends BAGSApplication {
 
   constructor(options = {}) {
     super(options)
-    this.parent = options.parent
+    // this.parent = options.parent
   }
 
   // === App config ============================================================
@@ -149,12 +149,14 @@ export default class ActionEffectEditor extends BAGSApplication {
     if (!effect) return
 
     const confirmed = await foundry.applications.api.DialogV2.confirm({
-      window: { title: game.i18n.localize("BAGS.Actions.DeleteConditionChange.Title") },
+      window: {
+        title: game.i18n.localize("BAGS.Actions.DeleteConditionChange.Title"),
+      },
       content: `<p>${game.i18n.localize("BAGS.Actions.DeleteConditionChange.Content")}</p>`,
       rejectClose: false,
       modal: true,
     })
-    
+
     if (!confirmed) return
 
     const updatedChanges = [...effect.condition.changes]
