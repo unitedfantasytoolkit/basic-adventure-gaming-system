@@ -1,0 +1,58 @@
+{{!--
+  Foundry's combat tracker settings, with the system's turn-sequence
+  preferences added as a fieldset of their own.
+
+  The core half is reproduced rather than extended: the body is a single template
+  part, so there is nowhere to append to without replacing it.
+--}}
+<div class="standard-form scrollable">
+    {{#if canConfigure}}
+    <fieldset>
+        <legend>{{localize "COMBAT.CONFIG.SHEET.TURN_MARKERS"}}</legend>
+        {{formGroup fields.turnMarker.fields.enabled value=settings.turnMarker.enabled rootId=rootId}}
+        {{formGroup fields.turnMarker.fields.animation value=settings.turnMarker.animation options=animationChoices
+            blank=(localize "COMMON.None") disabled=(not settings.turnMarker.enabled) rootId=rootId}}
+        {{formGroup fields.turnMarker.fields.src value=settings.turnMarker.src disabled=(not settings.turnMarker.enabled)
+            rootId=rootId}}
+        {{formGroup fields.turnMarker.fields.disposition value=settings.turnMarker.disposition
+            disabled=(not settings.turnMarker.enabled) rootId=rootId}}
+    </fieldset>
+
+    <fieldset>
+        <legend>{{localize "BAGS.Settings.Combat.Legend"}}</legend>
+        {{#each bags}}
+        <div class="form-group" data-setting-id="{{ name }}">
+            <label for="{{ @root.rootId }}-{{ key }}">{{ localize label }}</label>
+            <div class="form-fields">
+                {{#if (eq type "checkbox")}}
+                <input type="checkbox" id="{{ @root.rootId }}-{{ key }}" name="{{ name }}"
+                       {{#if value}}checked{{/if}}>
+                {{else}}
+                <select id="{{ @root.rootId }}-{{ key }}" name="{{ name }}">
+                    {{#each options}}
+                    <option value="{{ value }}" {{#if (eq value ../value)}}selected{{/if}}>{{ label }}</option>
+                    {{/each}}
+                </select>
+                {{/if}}
+            </div>
+            {{#if hint}}<p class="hint">{{ localize hint }}</p>{{/if}}
+        </div>
+        {{/each}}
+    </fieldset>
+
+    {{formGroup fields.resource options=attributeChoices value=settings.resource blank=(localize "COMMON.None") rootId=rootId}}
+    {{formGroup fields.skipDefeated value=settings.skipDefeated rootId=rootId}}
+    {{/if}}
+
+    <div class="form-group" data-setting-id="core.combatTheme">
+        <label for="{{rootId}}-theme">{{localize combatTheme.name}}</label>
+        <div class="form-fields">
+            {{formInput combatTheme.type value=selectedTheme id=(concat rootId "-theme") localize=true}}
+            <button type="button" class="preview-theme" data-action="previewTheme"
+                    data-tooltip aria-label="COMMON.Preview">
+                <i class="fa-solid fa-play"></i>
+            </button>
+        </div>
+        <p class="hint">{{localize combatTheme.hint}}</p>
+    </div>
+</div>

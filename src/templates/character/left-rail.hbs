@@ -15,6 +15,7 @@
     </div>
     <uft-character-info-meter
       value="{{xpBar.current}}"
+      min="{{xpBar.min}}"
       max="{{xpBar.max}}"
       class="xp"
     >
@@ -200,17 +201,16 @@
 
       {{#if document.system.biographicalDetails.intelligence}}
       <dt>{{localize "BAGS.Actors.Monster.Details.Intelligence"}}</dt>
-      <dd>{{document.system.biogrpahicalDetails.intelligence}}</dd>
+      <dd>{{document.system.biographicalDetails.intelligence}}</dd>
       {{/if}}
 
-      <dt>{{localize "BAGS.Actors.Monster.Details.NumberAppearing"}}</dt>
-      <dd>TODO</dd>
-
+      {{!--
+        Number Appearing and Treasure Table are not in the monster schema yet,
+        so their rows are omitted rather than rendering placeholder text. Morale
+        is displayed but not rollable -- there is no roll-morale handler.
+      --}}
       <dt>{{localize "BAGS.Actors.Monster.Details.MoraleRating"}}</dt>
-      <dd class="rollable rollable--icon-before" data-action="roll-morale">{{document.system.morale.value}}</dd>
-
-      <dt>Treasure Table</dt>
-      <dd class="rollable" data-action="roll-morale">TODO</dd>
+      <dd>{{document.system.morale.value}}</dd>
     </dl>
   </div>
 {{/inline}}
@@ -236,56 +236,39 @@
 {{!-- ===================================================================== --}}
 
 {{!--
+  One row per thing you can do with the gear you're using.
 
+  Deliberately flat, with the source named on the row rather than in a header
+  above a group of rows. A weapon always has at least its attack, so grouping
+  spent two lines saying "Longsword" and then "Attack" -- while a shield with one
+  action and a halberd with three had to be laid out differently from each other
+  for no reason the reader cares about. Naming the source on the row costs a line
+  per action rather than a line per item, which is a little more vertical space
+  for the rare item with several actions and less for everything else.
 --}}
-{{#*inline "action-item"}}
-  <div class="action-source">
-    <div class="action-source__header">
-      <img class="action-source__icon" src="{{img}}" alt="">
-      <h4 class="action-source__name">{{name}}</h4>
-    </div>
-    <div class="action-source__actions">
-      {{#each system.actionList}}
-        {{> action-button action=this parent=../parent}}
-      {{/each}}
-    </div>
-  </div>
-{{/inline}}
-
-{{!-- ===================================================================== --}}
-
-{{!--
-
---}}
-{{#*inline "action-item-collapsible"}}
-  <details class="action-source" open>
-    <summary class="action-source__header">
-      <img class="action-source__icon" src="{{img}}" alt="">
-      <h4 class="action-source__name">{{name}}</h4>
-    </summary>
-    <div class="action-source__actions" role="list">
-      {{#each system.actionList}}
-        {{> action-button action=this parent=../parent}}
-      {{/each}}
-    </div>
-  </details>
-{{/inline}}
-
-{{!-- ===================================================================== --}}
-
-{{!--
-
---}}
-{{#*inline "action-button"}}
-  <button class="action-list-item action-list-item--single-action"
+{{#*inline "gear-action"}}
+  {{!--
+    A spent action stays clickable on purpose. Greying it says "not right now";
+    clicking it is how you find out why, because the resolver names the action
+    and its charge count when it refuses.
+  --}}
+  <button class="action-list-item"
     role="listitem"
     data-action="use-action"
-    data-item-id="{{parent.id}}"
-    data-action-id="{{action.id}}">
+    data-item-id="{{itemId}}"
+    data-action-id="{{action.id}}"
+    {{#if exhausted}}data-exhausted aria-disabled="true"{{/if}}>
     <img class="action-list-item__icon" src="{{action.img}}" alt="" role="presentation" />
     <span class="action-list-item__identity">
       <span class="action-list-item__title">{{action.name}}</span>
+      <span class="action-list-item__parent">
+        <img class="action-list-item__parent-icon" src="{{source.img}}" alt="" role="presentation" />
+        {{source.name}}
+      </span>
     </span>
+    {{#if action.uses.max}}
+      <span class="action-list-item__uses">{{action.uses.value}}/{{action.uses.max}}</span>
+    {{/if}}
   </button>
 {{/inline}}
 
@@ -371,47 +354,53 @@
             />
           </button>
           {{/each}}
-        </ul>
+        </div>
       </div>
     {{/if}}
 
+    {{!--
+      What the actor is holding. Weapons first, since that's what you reach for
+      when a fight starts, then armor, then everything else.
+    --}}
     <div class="left-rail__section">
-      <div class="action-list">
+      <div class="action-list" role="list">
         <div class="action-category">
           <h3 class="action-category__header decorated">{{localize "BAGS.Actors.Character.Equipment.Title"}}</h3>
-          {{#each document.equipped.weapon as |weapon index|}}
-            {{#if (eq @index 0)}}
-              {{> action-item parent=weapon}}
-            {{else}}
-              {{> action-item-collapsible parent=weapon}}
-            {{/if}}
+          {{#each document.usableActions.gear}}
+            {{> gear-action}}
           {{else}}
-            <p class="empty">{{localize "BAGS.Actors.Character.Equipment.NoWeaponActions"}}</p>
+            <p class="empty">{{localize "BAGS.Actors.Character.Equipment.NoGearActions"}}</p>
           {{/each}}
-
         </div>
       </div>
     </div>
 
-    {{#if document.items.documentsByType.class.length}}
+    {{!--
+      What the actor can do regardless of what they're holding: class abilities,
+      whatever their ancestry grants, and any loose abilities they've picked up.
+      A grid rather than a list, because these are icons you learn the shape of
+      and reach for -- the tooltip carries the detail when you need it.
+
+      Passive traits are not here on purpose. Anything that just *is* true about
+      a character belongs in Active Effects, and this section is only the things
+      you choose to do.
+    --}}
+    {{#if document.usableActions.abilities.length}}
       <div class="left-rail__section">
-        {{#each document.items.documentsByType.class}}
-          {{#if system.actionList.length}}
-            <h3 class="decorated">{{localize "BAGS.Actors.Character.Abilities.ClassAbilities" className=name}}</h3>
-            <ul class="equipment">
-
-            </ul>
-          {{/if}}
-        {{/each}}
+        <h3 class="decorated">{{localize "BAGS.Actors.Common.Actions.ActiveAbilities"}}</h3>
+        <div class="action-grid action-grid--abilities">
+          {{#each document.usableActions.abilities}}
+            <bags-action-tile
+              uuid="{{source.uuid}}"
+              action-id="{{action.id}}"
+              data-action="use-action"
+              data-item-id="{{itemId}}"
+              data-action-id="{{action.id}}"
+              {{#if exhausted}}exhausted{{/if}}
+            ></bags-action-tile>
+          {{/each}}
+        </div>
       </div>
-    {{/if}}
-
-    {{#if document.items.documentsByType.ability.length}}
-    <div class="left-rail__section">
-      <h3 class="decorated">{{localize "BAGS.Actors.Character.Abilities.OtherAbilities"}}</h3>
-      <ul class="equipment">
-      </ul>
-    </div>
     {{/if}}
   {{/sheetTab}}
 

@@ -19,7 +19,7 @@
  *   ["Compendium.bags.equipment.sword", "Compendium.bags.equipment.shield"],
  *   actor
  * )
- * 
+ *
  * // Create items with transformation
  * await createItemsFromUUIDs(
  *   ["Compendium.bags.equipment.sword"],

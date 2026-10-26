@@ -1,15 +1,19 @@
-import abilityScores from "../data/bx.ability-scores.mjs"
+/**
+ * @file Registers the Basic/Expert rules modules with the SystemRegistry, which
+ * is what makes B/X the default ruleset a new world plays under.
+ */
+
+import abilityScores, { modifierDisplay } from "../data/bx.ability-scores.mjs"
 import savingThrows from "../data/bx.saving-throws.mjs"
 import characterActions from "../data/bx.actions.character.mjs"
 import bxBasicEncumbrance from "../data/bx.encumbrance.basic.mjs"
 import bxDetailedEncumbrance from "../data/bx.encumbrance.detailed.mjs"
 import bxMonsterData from "../data/bx.monster-data.mjs"
+import initiativeModules from "../data/bx.initiative.mjs"
+import basicSpells from "../data/spells.basic.mjs"
 import rollDice from "../utils/roll-dice.mjs"
 
-import {
-  createMeleeAttackAction,
-  createRangedAttackAction,
-} from "../utils/create-attack-actions.mjs"
+import { createMeleeAttackAction } from "../utils/create-attack-actions.mjs"
 
 /**
  * @typedef {import("../config/system-registry.mjs").SystemRegistry} SystemRegistry
@@ -28,6 +32,7 @@ const registerBX = (registry) => {
     name: "Basic/Expert",
     default: true,
     abilityScores,
+    modifierDisplay,
     rollFormula: "3d6",
   })
 
@@ -111,7 +116,7 @@ const registerBX = (registry) => {
         const isCriticalMiss = roll.total === 1
 
         return {
-          success: targetAC !== undefined ? (isHit || isCriticalHit) : true,
+          success: targetAC !== undefined ? isHit || isCriticalHit : true,
           roll,
           acHit,
           isCriticalHit,
@@ -165,7 +170,7 @@ const registerBX = (registry) => {
         const isCriticalMiss = roll.terms[0].total === 1
 
         return {
-          success: targetAC !== undefined ? (isHit || isCriticalHit) : true,
+          success: targetAC !== undefined ? isHit || isCriticalHit : true,
           roll,
           acHit: roll.total,
           isCriticalHit,
@@ -179,18 +184,9 @@ const registerBX = (registry) => {
     },
   })
 
-  registry.register(registry.categories.INITIATIVE, {
-    id: "bx-group",
-    name: "BX, Group",
-    default: true,
-    formula: "1d6",
-  })
-
-  registry.register(registry.categories.INITIATIVE, {
-    id: "bx-individual",
-    name: "BX, Individual",
-    formula: "1d6+@initiative",
-  })
+  initiativeModules.forEach((initiativeModule) =>
+    registry.register(registry.categories.INITIATIVE, initiativeModule),
+  )
 
   registry.register(registry.categories.ENCUMBRANCE, {
     id: "bx-basic",
@@ -211,6 +207,8 @@ const registerBX = (registry) => {
     default: true,
     actions: characterActions,
   })
+
+  registry.register(registry.categories.SPELLS, basicSpells)
 
   registry.register(registry.categories.BASE_MONSTER_STATS, {
     id: "bx",
@@ -237,8 +235,13 @@ const registerBX = (registry) => {
         adjustedHDCount = this.stats.size - 1
       if (adjustedHDCount < 0) adjustedHDCount = 0
 
-      const { savingThrows, attackRollOffset, xp } =
-        this.stats.get(adjustedHDCount)
+      // Named apart from the imported B/X save table, which this shadowed.
+      // These are the monster's own saves, read from its Hit Dice row.
+      const {
+        savingThrows: monsterSavingThrows,
+        attackRollOffset,
+        xp,
+      } = this.stats.get(adjustedHDCount)
       const averageHP = (this.baseHDSize * hdCount) / 2
 
       const actionClaw = createMeleeAttackAction(clawLabel, clawDamage)
@@ -250,7 +253,7 @@ const registerBX = (registry) => {
         img: "icons/creatures/claws/claw-bear-paw-swipe-red.webp",
         system: {
           base: {
-            savingThrows,
+            savingThrows: monsterSavingThrows,
             attackRollOffset,
             speed: this.baseMoveSpeed,
           },

@@ -1,0 +1,41 @@
+{{#> sheetTab}}
+  <header class="tab__header">
+    <h2>{{localize "BAGS.CharacterCreation.Steps.identity.Label"}}</h2>
+    <p class="hint">{{localize "BAGS.CharacterCreation.Steps.identity.Hint"}}</p>
+  </header>
+
+  <div class="scrollable">
+    <ul class="choice-grid">
+      {{#each identities as |identity|}}
+        <li
+          class="choice-card{{#if identity.selected}} choice-card--selected{{/if}}{{#unless identity.eligible}} choice-card--ineligible{{/unless}}"
+          data-uuid="{{identity.uuid}}"
+        >
+          <button
+            type="button"
+            class="choice-card__button"
+            data-action="select-identity"
+            aria-pressed="{{identity.selected}}"
+          >
+            <img class="choice-card__art" src="{{identity.img}}" alt="" />
+            <span class="choice-card__name">{{identity.name}}</span>
+
+            {{#unless identity.eligible}}
+              <span class="choice-card__flag">{{localize
+                  "BAGS.CharacterCreation.PrerequisitesNotMet"
+                }}</span>
+            {{/unless}}
+          </button>
+
+          {{#if identity.description}}
+            <div class="choice-card__description">{{{identity.description}}}</div>
+          {{/if}}
+        </li>
+      {{else}}
+        <li class="choice-grid__empty">
+          <p class="hint">{{localize "BAGS.CharacterCreation.NoOptions"}}</p>
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+{{/sheetTab}}

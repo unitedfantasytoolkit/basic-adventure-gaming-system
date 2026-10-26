@@ -4,13 +4,12 @@
 
 /**
  * Determine if two items can be stacked together.
- * 
+ *
  * Items can stack if they share the same base identity and are not in special
  * states that make them unique (equipped, enchanted, partially used, etc.).
- * 
+ *
  * This is used when dropping items on actors, transferring between actors, or
  * placing items in containers to determine if the items should be merged.
- * 
  * @param {Item} itemA - First item to compare
  * @param {Item} itemB - Second item to compare
  * @returns {boolean} True if items can be stacked together
@@ -40,7 +39,7 @@ export function canItemsStack(itemA, itemB) {
 
 /**
  * Check if an item passes all stacking exclusions (not in a "unique" state).
- * 
+ *
  * Items in these states are considered unique and cannot be stacked:
  * - Containers (never stack regardless of contents)
  * - Unidentified items (prevents information leakage)
@@ -48,7 +47,6 @@ export function canItemsStack(itemA, itemB) {
  * - Items with active effects (enchanted/modified)
  * - Partially depleted items (used items are separate)
  * - Items explicitly marked as non-stackable
- * 
  * @param {Item} item - The item to check
  * @returns {boolean} True if item can potentially stack
  * @private
@@ -79,20 +77,19 @@ function passesStackingExclusions(item) {
 
 /**
  * Check if two items have the same base identity.
- * 
+ *
  * Items are considered to have the same identity if they match on all
  * properties that define "what this item is" rather than "what state it's in".
- * 
+ *
  * Items without a baseItemId are treated as unique - they cannot stack with
  * anything, even if properties match. This ensures items don't accidentally
  * merge when they shouldn't.
- * 
+ *
  * Note: We intentionally skip deep action comparison for performance reasons.
  * Actions are complex nested structures. Instead, we rely on baseItemId and
  * basic property matching. If items have different actions but the same
  * baseItemId, they likely represent different versions/modifications and
  * shouldn't stack anyway.
- * 
  * @param {Item} itemA - First item to compare
  * @param {Item} itemB - Second item to compare
  * @returns {boolean} True if items have the same identity
@@ -127,7 +124,6 @@ function haveSameIdentity(itemA, itemB) {
 
 /**
  * Find all items in an actor's inventory that can stack with the given item.
- * 
  * @param {Item} item - The item to find matches for
  * @param {Actor} actor - The actor whose inventory to search
  * @returns {Item[]} Array of items that can stack with the given item
@@ -145,10 +141,9 @@ export function findStackableMatches(item, actor) {
 
 /**
  * Merge two item stacks by transferring quantity from source to target.
- * 
+ *
  * This increases the target's quantity and can optionally delete the source.
  * Both items must be stackable with each other for this to work safely.
- * 
  * @param {Item} targetItem - The item to merge into (keeps existing)
  * @param {Item} sourceItem - The item to merge from (will be deleted if deleteSource is true)
  * @param {object} options - Merge options
@@ -179,10 +174,9 @@ export async function mergeItemStacks(
 
 /**
  * Split an item stack into two stacks.
- * 
+ *
  * Creates a new item with the specified quantity and reduces the original
  * item's quantity accordingly.
- * 
  * @param {Item} item - The item to split
  * @param {number} splitQuantity - How many to split off (must be less than item's quantity)
  * @returns {Promise<Item>} The newly created item with the split quantity
@@ -228,32 +222,27 @@ export async function stackAllItems(items) {
 
   if (stackableItems.length < 2) return 0
 
-  // Group items by stacking identity
-  const groups = new Map()
+  // Group items by stacking identity.
+  //
+  // `canItemsStack` is the only thing that decides which group an item belongs
+  // to, so the groups are held as a plain list of lists. They used to live in a
+  // Map keyed by base item ID, which quietly lost items: two items that share a
+  // base item but *can't* stack -- one equipped and one not, or one that's been
+  // counted as treasure -- produced the same key, and the second one's group
+  // replaced the first one's, taking every item already collected in it along.
+  const groups = []
 
-  for (const item of stackableItems) {
-    // Find existing group this item can stack with
-    let foundGroup = false
+  stackableItems.forEach((item) => {
+    const group = groups.find((candidate) => canItemsStack(item, candidate[0]))
 
-    for (const [key, group] of groups) {
-      if (canItemsStack(item, group[0])) {
-        group.push(item)
-        foundGroup = true
-        break
-      }
-    }
-
-    // Create new group if no match found
-    if (!foundGroup) {
-      const key = `${item.system.baseItemId || item.id}-${item.system.hasBeenCountedAsTreasure}`
-      groups.set(key, [item])
-    }
-  }
+    if (group) group.push(item)
+    else groups.push([item])
+  })
 
   // Merge each group that has multiple items
   let stackCount = 0
 
-  for (const group of groups.values()) {
+  for (const group of groups) {
     if (group.length < 2) continue
 
     // Keep first item, merge others into it

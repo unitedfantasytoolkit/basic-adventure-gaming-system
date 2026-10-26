@@ -84,14 +84,20 @@ export default class BAGSItem extends Item {
 
   /**
    * Creates a new action for this item
+   * @param {object} [data] - Values for the new action, applied on top of the
+   * schema's defaults. The action editor uses this to name each action it adds
+   * something the player can tell apart ("New Action", "New Action 2").
    * @returns {Promise<Item>} A Promise that resolves to the updated Item
    */
-  async createAction() {
+  async createAction(data = {}) {
     const actions = [
       ...this.system.actions,
       {
         ...this.system.schema.fields.actions.element.getInitialValue(),
-        id: foundry.utils.randomID(),
+        ...data,
+        // An action's ID is how everything else refers to it, so it's generated
+        // here unless the caller has one in mind -- duplicating an action, say.
+        id: data.id ?? foundry.utils.randomID(),
       },
     ]
     return this.update({ "system.actions": actions })
@@ -100,7 +106,7 @@ export default class BAGSItem extends Item {
   /**
    * Retrieves an action by its ID
    * @param {string} actionId - The unique identifier of the action
-   * @returns {Object|undefined} The action object if found, undefined otherwise
+   * @returns {object | undefined} The action object if found, undefined otherwise
    */
   getAction(actionId) {
     return this.system.actionList.find(({ id }) => id === actionId)
@@ -118,9 +124,9 @@ export default class BAGSItem extends Item {
   /**
    * Resolves an action using the ActionResolver
    * @see {@link ../rules-engines/action-resolver.mjs}
-   * @param {string|Object} action - Either an action ID or the action object
+   * @param {string | object} action - Either an action ID or the action object
    * itself
-   * @returns {Promise<Object>} The result of the action resolution
+   * @returns {Promise<object>} The result of the action resolution
    */
   async resolveAction(action) {
     const fetchedAction =
@@ -139,7 +145,7 @@ export default class BAGSItem extends Item {
   /**
    * Updates an existing action with new data
    * @param {string} actionId - The unique identifier of the action to update
-   * @param {Object} updates - The properties to update on the action
+   * @param {object} updates - The properties to update on the action
    * @returns {Promise<Item>} A Promise that resolves to the updated Item
    * @throws {Error} If the action is not found
    */
@@ -184,7 +190,7 @@ export default class BAGSItem extends Item {
   /**
    * Handles the consumption of resources when an action is used
    * @param {string} actionId - The unique identifier of the action being used
-   * @param {Object} attempt - The attempt object containing roll results
+   * @param {object} attempt - The attempt object containing roll results
    * @param {Actor} target - The target of the action
    * @returns {Promise<void>} A Promise that resolves when consumption is
    * handled
@@ -213,7 +219,7 @@ export default class BAGSItem extends Item {
 
   /**
    * Set a physical item's equipped state.
-   * @param setState {Boolean} - A state to force this item's isEquipped
+   * @param setState - {Boolean} - A state to force this item's isEquipped
    * property to.
    * @returns {Promise} The attempt to update this Item document.
    */

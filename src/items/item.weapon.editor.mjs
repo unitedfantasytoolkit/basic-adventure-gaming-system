@@ -1,4 +1,5 @@
 import BAGSBaseItemEditor from "./item.editor.mjs"
+import { resolveInitiativeConfig } from "../combat/initiative-config.mjs"
 
 export default class BAGSWeaponEditor extends BAGSBaseItemEditor {
   // === App config ============================================================
@@ -44,5 +45,37 @@ export default class BAGSWeaponEditor extends BAGSBaseItemEditor {
     attack: {
       template: `${this.TEMPLATE_ROOT}/attack.hbs`,
     },
+  }
+
+  /**
+   * Add which initiative properties the world's rules actually read.
+   *
+   * A weapon carries fields for every game BAGS models, but no single table
+   * plays all of them: a slow weapon means something in B/X and nothing in AD&D,
+   * and a speed factor is the reverse. Showing all of them everywhere asks a
+   * referee to fill in numbers their rules will never look at, and invites the
+   * reasonable assumption that filling them in *does* something.
+   *
+   * Resolved without a combat, so this is the world's selected ruleset. A
+   * per-encounter override is a property of that encounter, not of a weapon
+   * sitting in someone's pack.
+   * @inheritDoc
+   */
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options)
+    const initiative = resolveInitiativeConfig()
+
+    return {
+      ...context,
+      initiativeFields: {
+        isSlow: initiative.usesSlowWeapons,
+        speedFactor: initiative.usesWeaponSpeed,
+        rateOfFire: initiative.usesRateOfFire,
+        any:
+          initiative.usesSlowWeapons ||
+          initiative.usesWeaponSpeed ||
+          initiative.usesRateOfFire,
+      },
+    }
   }
 }

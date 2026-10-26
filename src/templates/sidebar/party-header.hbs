@@ -1,0 +1,41 @@
+{{!--
+  Laid out like the combat tracker's header: controls left, status centre, the one
+  party-wide number right. No title -- the sidebar tab's icon and tooltip already
+  name the tab.
+--}}
+<header class="party-header">
+  <div class="party-controls">
+
+    <div class="control-buttons left flexrow">
+      {{#if isGM}}
+        <button
+          type="button"
+          class="inline-control icon fa-solid fa-user-plus"
+          data-action="addMember"
+          data-tooltip
+          aria-label="{{localize 'BAGS.Party.Members.Add'}}"
+        ></button>
+      {{else}}
+        <div class="spacer"></div>
+      {{/if}}
+    </div>
+
+    <strong class="party-title">{{title}}</strong>
+
+    <div class="control-buttons right flexrow">
+      {{#if marchingRate}}
+        <span
+          class="marching-rate"
+          data-tooltip
+          aria-label="{{localize 'BAGS.Party.MarchingRate.Tooltip' name=marchingRate.slowest speed=marchingRate.speed}}"
+        >
+          <i class="fa-solid fa-person-walking" inert></i>
+          <span class="value">{{marchingRate.speed}}</span>
+        </span>
+      {{else}}
+        <div class="spacer"></div>
+      {{/if}}
+    </div>
+
+  </div>
+</header>

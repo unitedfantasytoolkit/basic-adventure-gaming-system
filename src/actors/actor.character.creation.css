@@ -1,0 +1,427 @@
+/**
+ * Character creation flow.
+ *
+ * Laid out as a progress rail across the top, the current step's panel filling
+ * the middle, and navigation pinned to the bottom.
+ */
+.application--character-creation {
+  .window-content {
+    display: grid;
+    grid-template-rows: max-content 1fr max-content;
+    gap: 0.75em;
+    overflow: hidden;
+  }
+
+  /* Only the active step is on screen. Core hides `.tab`, but this flow builds
+     its own navigation, so it states the rule outright rather than depending on
+     sheet-specific core styles. */
+  .tab {
+    display: none;
+
+    &.active {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      overflow: hidden;
+    }
+  }
+
+  .tab__header {
+    h2 {
+      margin: 0;
+    }
+
+    .hint {
+      margin: 0.25em 0 0;
+    }
+  }
+
+  .tab__footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.5em;
+  }
+
+  .scrollable {
+    overflow-y: auto;
+    flex: 1;
+  }
+}
+
+/* --- Progress rail --------------------------------------------------------- */
+
+.creation-steps {
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+.creation-step {
+  flex: 1 1 0;
+  min-width: max-content;
+
+  &__button {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+    padding: 0.4em 0.75em;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    background: var(--application-filler-gradient);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  &__icon {
+    opacity: 0.7;
+  }
+
+  &--complete &__icon {
+    opacity: 1;
+    color: var(--color-level-success, #2f8f4e);
+  }
+
+  &--active &__button {
+    background: var(--application-filler-gradient-highlight);
+    font-weight: bold;
+  }
+
+  &--active &__icon {
+    opacity: 1;
+  }
+}
+
+/* --- Ability scores ------------------------------------------------------- */
+
+.ability-score-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.75em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ability-score {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  padding: 0.5em;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+
+  &__label {
+    font-weight: bold;
+  }
+
+  &__fields {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    gap: 0.5em;
+    align-items: center;
+  }
+
+  /* The input is the score readout, so it's sized to be read at a glance
+     rather than to look like a form field. */
+  &__input {
+    font-size: var(--font-size-24, 1.5rem);
+    text-align: center;
+    line-height: 1;
+  }
+
+  /* One description per line: these are short sentences, and wrapping them
+     into a single flowing row makes it unclear where one ends. */
+  &__modifiers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--font-size-11, 0.7rem);
+    opacity: 0.85;
+  }
+}
+
+/* --- Selectable option grids ---------------------------------------------- */
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 0.75em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &--compact {
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  }
+
+  &__empty {
+    grid-column: 1 / -1;
+  }
+}
+
+.choice-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
+
+  &__button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.6em;
+    border: 0;
+    background: var(--application-filler-gradient);
+    cursor: pointer;
+    text-align: center;
+  }
+
+  &__art {
+    width: 3rem;
+    height: 3rem;
+    object-fit: contain;
+    border: 0;
+  }
+
+  &__name {
+    font-weight: bold;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25em;
+  }
+
+  &__tag {
+    padding: 0 0.4em;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    font-size: var(--font-size-11, 0.7rem);
+  }
+
+  &__flag {
+    font-size: var(--font-size-11, 0.7rem);
+    font-style: italic;
+    opacity: 0.8;
+  }
+
+  &__description {
+    padding: 0.5em;
+    font-size: var(--font-size-12, 0.75rem);
+    max-height: 6rem;
+    overflow-y: auto;
+  }
+
+  &--selected {
+    outline: 2px solid var(--color-warm-2, #c9a227);
+  }
+
+  &--ineligible {
+    opacity: 0.55;
+  }
+}
+
+/* --- Spells --------------------------------------------------------------- */
+
+.spell-level {
+  margin-bottom: 1em;
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5em;
+
+    h3 {
+      margin: 0;
+    }
+  }
+
+  &__count--full {
+    font-weight: bold;
+  }
+}
+
+/* --- Equipment ------------------------------------------------------------ */
+
+.equipment-gold-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75em;
+  flex: 1;
+  text-align: center;
+}
+
+.equipment-purse {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  padding: 0.5em 0.75em;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+
+  dl {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    margin: 0;
+  }
+
+  dt {
+    font-weight: bold;
+
+    &::after {
+      content: ":";
+    }
+  }
+
+  dd {
+    margin: 0 1em 0 0;
+  }
+
+  &__remaining {
+    font-size: var(--font-size-18, 1.1rem);
+  }
+}
+
+.equipment-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 0.75em;
+  overflow: hidden;
+  flex: 1;
+}
+
+.equipment-shop,
+.equipment-cart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  overflow: hidden;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.equipment-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__empty {
+    padding: 0.5em;
+  }
+}
+
+.equipment-row {
+  display: grid;
+  grid-template-columns: 2rem 1fr max-content 4rem max-content;
+  gap: 0.5em;
+  align-items: center;
+  padding: 0.25em;
+  border-bottom: 1px solid var(--border-color);
+
+  &__art {
+    width: 2rem;
+    height: 2rem;
+    object-fit: contain;
+    border: 0;
+  }
+
+  &__cost::after {
+    content: " gp";
+    opacity: 0.7;
+  }
+
+  &--unaffordable {
+    opacity: 0.5;
+  }
+}
+
+.equipment-cart .equipment-row {
+  grid-template-columns: 2rem 1fr max-content max-content max-content;
+}
+
+/* --- Summary and navigation ----------------------------------------------- */
+
+.creation-summary {
+  margin-top: 1em;
+
+  h3 {
+    margin: 0 0 0.5em;
+  }
+
+  dl {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.75em;
+    margin: 0 0 0.5em;
+  }
+
+  dt {
+    font-weight: bold;
+
+    &::after {
+      content: ":";
+    }
+  }
+
+  dd {
+    margin: 0;
+  }
+
+  &__ability {
+    text-transform: uppercase;
+  }
+}
+
+.creation-missing {
+  margin-top: 1em;
+
+  ul {
+    margin: 0.25em 0 0;
+  }
+}
+
+.creation-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding-top: 0.5em;
+  border-top: 1px solid var(--border-color);
+
+  &__spacer {
+    flex: 1;
+  }
+
+  button {
+    flex: 0 0 max-content;
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+
+    /* Without this, "Back" on the first step and a blocked "Finish" look
+       exactly like buttons that work. */
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+}

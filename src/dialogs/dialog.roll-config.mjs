@@ -1,11 +1,11 @@
 /**
  * A specialized dialog for configuring and executing dice rolls.
- * @extends {DialogV2}
+ * @augments {DialogV2}
  */
 const { DialogV2 } = foundry.applications.api
 
 const generateDiceRollModes = (rollMode) =>
-  Object.entries(CONFIG.Dice.rollModes)
+  Object.entries(CONFIG.ChatMessage.modes)
     .map(
       ([key, { label }]) =>
         `<option value="${key}" ${rollMode === key ? "selected" : ""}>${game.i18n.localize(label)}</option>`,
@@ -292,7 +292,7 @@ export default class RollDialog extends DialogV2 {
 
   /**
    * Convenience method to create a roll formula from parameters
-   * @param {Object} params - Roll parameters
+   * @param {object} params - Roll parameters
    * @returns {string} The roll formula
    */
   static getRollFormula(params) {

@@ -7,6 +7,8 @@ import BAGSChatMessage from "../chat/chat-message.document.mjs"
 import BAGSActionMessageDataModel from "../chat/chat-message.action.datamodel.mjs"
 import BAGSChatCheckDataModel from "../chat/chat-message.check.datamodel.mjs"
 import BAGSChatLevelUpDataModel from "../chat/chat-message.level-up.datamodel.mjs"
+import BAGSChatRoundDataModel from "../chat/chat-message.round.datamodel.mjs"
+import BAGSChatCombatEndDataModel from "../chat/chat-message.combat-end.datamodel.mjs"
 
 Hooks.once("init", async () => {
   CONFIG.ChatMessage.documentClass = BAGSChatMessage
@@ -14,5 +16,7 @@ Hooks.once("init", async () => {
     action: BAGSActionMessageDataModel,
     check: BAGSChatCheckDataModel,
     levelup: BAGSChatLevelUpDataModel,
+    round: BAGSChatRoundDataModel,
+    "combat-end": BAGSChatCombatEndDataModel,
   }
 })

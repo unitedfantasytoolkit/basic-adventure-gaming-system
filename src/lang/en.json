@@ -11,7 +11,88 @@
       "Title": "Party",
       "XP": "Distribute XP",
       "Treasure": "Distribute Treasure",
-      "Empty": "No one has been added to the party."
+      "Empty": "No one has been added to the party.",
+      "EmptyHint": "Drag a character here, or use the button above.",
+      "MemberCount": {
+        "One": "{count} member",
+        "Many": "{count} members"
+      },
+      "MarchingRate": {
+        "Tooltip": "The party moves at {speed} — {name} is the slowest"
+      },
+      "Members": {
+        "Add": "Add to Party",
+        "Character": "Character",
+        "ClassLabel": "{className} {level}",
+        "NoCandidates": "Every character is already in the party.",
+        "ViewSheet": "View Character Sheet",
+        "PanTo": "Pan to Token",
+        "Ping": "Ping Token",
+        "NotOnScene": "{name} has no token on this scene.",
+        "Load": "Load: {value} of {max}",
+        "Remove": "Remove from Party",
+        "OnlyCharacters": "Only characters can join the party.",
+        "Granted": "Gave {item} to {name}.",
+        "CannotGrant": "You do not have permission to give items to {name}."
+      }
+    },
+    "Rewards": {
+      "Title": "Rewards",
+      "Empty": "No rewards are waiting to be handed out.",
+      "EmptyHint": "Record treasure, monsters, and bonuses as the party earns them, then hand them all over at once.",
+      "PendingTotal": "{xp} XP pending",
+      "XPAmount": "{xp} XP",
+      "Split": "split",
+      "Remove": "Remove Reward",
+      "Recipients": {
+        "WholeParty": "The whole party",
+        "One": "One character",
+        "Some": "{count} characters"
+      },
+      "Kinds": {
+        "Treasure": "Treasure",
+        "Monsters": "Monsters",
+        "Gear": "Magic Item",
+        "Manual": "Bonus"
+      },
+      "Fields": {
+        "Label": "What was it?",
+        "LabelPlaceholder": "e.g. the dragon's hoard",
+        "Kind": "Kind",
+        "KindHint": "Only changes how the reward is labelled and sorted, not what it is worth.",
+        "XP": "Experience",
+        "Split": "Split between recipients",
+        "SplitHint": "On: the experience is one pot, divided by share. Off: each recipient receives the full amount.",
+        "Recipients": "Who earns it",
+        "WholePartyHint": "Resolved when the reward is handed out, so anyone who joins in the meantime is included.",
+        "NoRecipients": "Choose at least one character, or give the reward to the whole party."
+      },
+      "Editor": {
+        "Title": "Record a Reward",
+        "EditTitle": "Edit Reward",
+        "Edit": "Edit Reward",
+        "Record": "Record",
+        "Save": "Save"
+      },
+      "Clear": {
+        "Title": "Clear the Ledger",
+        "Prompt": "Throw away every reward waiting to be handed out? Nobody receives anything, and this cannot be undone."
+      },
+      "Award": {
+        "Button": "Award Everything",
+        "Heading": "Experience Awarded",
+        "RowWithBonus": "{xp} XP (including a {bonus} XP bonus)",
+        "LogNote": "Awarded from the rewards ledger",
+        "NobodyToAward": "Nothing in the ledger would reach anyone. Check that the recipients are still in the party.",
+        "NoClass": "{names} cannot receive experience yet, because experience is recorded on a character's class and they have not chosen one. They will be skipped.",
+        "NoClassShort": "{names} will be skipped — no class yet.",
+        "Confirm": {
+          "Title": "Award Everything",
+          "Prompt": "Hand out {xp} XP between {count} characters, and empty the ledger?",
+          "Row": "<li>{name} &mdash; {xp} XP</li>",
+          "Yes": "Award"
+        }
+      }
     },
     "SpellManager": {
       "Tabs": {
@@ -35,7 +116,13 @@
       "Unprepare": "Unprepare Spell",
       "NewSpell": "New Spell",
       "DeleteSpellTitle": "Delete Spell",
-      "SlotsFull": "This actor can't prepare any more spells of this level."
+      "SlotsFull": "This actor can't prepare any more spells of this level.",
+      "GrantHeading": "Add a whole level:",
+      "GrantTooltip": "Add every level {level} spell on the {className} list",
+      "GrantedSpells": "Added {count} level {level} spells.",
+      "NoNewSpellsAtLevel": "Nothing new to add -- this caster already has every spell their list offers at that level.",
+      "AddedSpells": "Added {count} spells from {folder}.",
+      "DropHint": "Drop a spell or a folder of spells here to add them."
     },
     "Actions": {
       "TabLabel": "Actions",
@@ -198,11 +285,26 @@
             "SavingThrow": "Saving Throw",
             "Number": "Number"
           },
-          "SavingThrow": { "Label": "Saving Throw", "Hint": "" },
-          "AbilityScore": { "Label": "Ability Score", "Hint": "" },
-          "StaticTarget": { "Label": "Target", "Hint": "" },
-          "Formula": { "Label": "Dice Formula", "Hint": "" },
-          "Operator": { "Label": "Operator", "Hint": "" }
+          "SavingThrow": {
+            "Label": "Saving Throw",
+            "Hint": ""
+          },
+          "AbilityScore": {
+            "Label": "Ability Score",
+            "Hint": ""
+          },
+          "StaticTarget": {
+            "Label": "Target",
+            "Hint": ""
+          },
+          "Formula": {
+            "Label": "Dice Formula",
+            "Hint": ""
+          },
+          "Operator": {
+            "Label": "Operator",
+            "Hint": ""
+          }
         },
         "Flags": {
           "IsMagical": {
@@ -272,8 +374,14 @@
           }
         },
         "Macro": {
-          "Document": { "Label": "Macro Document", "Hint": "" },
-          "Editor": { "Label": "Custom Code", "Hint": "" }
+          "Document": {
+            "Label": "Macro Document",
+            "Hint": ""
+          },
+          "Editor": {
+            "Label": "Custom Code",
+            "Hint": ""
+          }
         }
       },
       "Consumption": {
@@ -378,6 +486,10 @@
         "Maximum": {
           "Label": "Maximum Level",
           "Hint": "The maximum character level that can use this action"
+        },
+        "HideWhenUnmet": {
+          "Label": "Hide until available",
+          "Hint": "Leave this off for an ability worth looking forward to — it shows greyed out, labelled with the level it arrives at. Turn it on for one band of a per-level ladder, like Turn Undead 4-6, so the bands that don't apply stay out of the way."
         }
       },
       "DeleteAction": {
@@ -592,7 +704,15 @@
             "Label": "Enable Default Attack",
             "Hint": "Whether this weapon uses the default attack action. Disable for weapons that only use custom actions (e.g., bolas that only inflict status effects)."
           },
-          "AdvancedEditorHint": "For advanced features like saving throws, special effects, or conditional modifiers, use the 'Edit Actions' button in the window controls."
+          "AdvancedEditorHint": "For advanced features like saving throws, special effects, or conditional modifiers, use the 'Edit Actions' button in the window controls.",
+          "SpeedFactor": {
+            "Label": "Speed Factor",
+            "Hint": "Segments this weapon adds to its wielder's initiative in the Advanced games. Lower is faster. Leave at zero for games that do not use weapon speed."
+          },
+          "RateOfFire": {
+            "Label": "Rate of Fire",
+            "Hint": "Shots per round for a missile weapon. Halves are allowed -- 1.5 means three shots across two rounds. A weapon's rate replaces its wielder's attacks per round rather than adding to it. Zero for weapons that are not loosed."
+          }
         },
         "Actions": {
           "DefaultName": "Attack"
@@ -621,6 +741,118 @@
             "Hint": "This armor's wearer will have their speed reduced in some encumbrance schemes."
           }
         }
+      },
+      "Spells": {
+        "Tabs": {
+          "Summary": "Spell",
+          "Actions": "Actions",
+          "Details": "Details"
+        },
+        "Fields": {
+          "Level": {
+            "Label": "Spell Level",
+            "Hint": "What level this spell is for any class that doesn't list it separately."
+          },
+          "Tradition": {
+            "Label": "Tradition",
+            "Hint": "Which kind of magic this spell belongs to. Leave it unset in games that sort spells by class list, and it will be taken from the classes that list it.",
+            "FromClasses": "-- From the classes that list it --"
+          },
+          "Range": {
+            "Label": "Range",
+            "Hint": "How far the spell reaches -- \"120 ft\", \"Touch\", \"Special\"."
+          },
+          "Duration": {
+            "Label": "Duration",
+            "Hint": "How long the spell lasts -- \"1 turn/level\", \"Instantaneous\", \"Permanent\"."
+          },
+          "CastingTime": {
+            "Label": "Casting Time",
+            "Hint": "How long the spell takes to cast -- \"1 round\", \"6 segments\", \"1 turn\"."
+          },
+          "AreaOfEffect": {
+            "Label": "Area of Effect",
+            "Hint": "What the spell covers -- \"30-ft. cube\", \"1 creature\", \"10-ft. radius\"."
+          },
+          "SavingThrow": {
+            "Label": "Saving Throw",
+            "Hint": "What save the target gets, if any -- \"None\", \"Negates\", \"1/2\"."
+          },
+          "Components": {
+            "Label": "Components",
+            "Verbal": {
+              "Label": "Verbal",
+              "Hint": "The caster must speak. A silenced caster can't cast this spell."
+            },
+            "Somatic": {
+              "Label": "Somatic",
+              "Hint": "The caster must gesture. A bound caster can't cast this spell."
+            },
+            "Material": {
+              "Label": "Material",
+              "Hint": "The spell consumes a physical component, described below."
+            }
+          },
+          "Materials": {
+            "Label": "Material Components",
+            "Hint": "What the spell consumes when cast -- \"a bit of sponge\", \"a pinch of sulphur\"."
+          },
+          "Schools": {
+            "Label": "Schools",
+            "Hint": "Schools of magic, separated by commas -- \"Alteration, Necromancy\"."
+          },
+          "Spheres": {
+            "Label": "Spheres",
+            "Hint": "Spheres of influence for divine casters, separated by commas -- \"Divination, Healing\"."
+          },
+          "Source": {
+            "Label": "Source",
+            "Hint": "Where this spell was published."
+          },
+          "IsReversible": {
+            "Label": "Reversible",
+            "Hint": "This spell can be cast in reverse, producing an opposite effect."
+          },
+          "ReversedSpell": {
+            "Label": "Reversed Spell",
+            "Hint": "The spell this one reverses into."
+          }
+        },
+        "Components": {
+          "Verbal": "V",
+          "Somatic": "S",
+          "Material": "M"
+        },
+        "ClassLists": {
+          "Heading": "Learned By"
+        },
+        "Learning": {
+          "NoClass": "This character has no class to learn spells with.",
+          "LevelTooHigh": "This caster can't cast spells of that level yet.",
+          "CannotLearnSpells": "This caster isn't clever enough to learn spells.",
+          "TooManyKnown": "This caster already knows as many spells of that level as they can hold.",
+          "AlreadyKnown": "This caster already has that spell.",
+          "Failed": "The spell proves beyond them."
+        },
+        "Classification": {
+          "Heading": "Classification"
+        },
+        "Reversal": {
+          "Heading": "Reversal",
+          "ReversesInto": "This spell reverses into",
+          "NoPair": "This spell is reversible, but no reversed spell has been linked to it yet."
+        },
+        "Editor": {
+          "Title": "Spell Editor: {name}",
+          "Control": "Edit Spell"
+        },
+        "Actions": {
+          "Control": "Edit Actions"
+        },
+        "ActiveEffects": {
+          "Control": "Manage Active Effects"
+        },
+        "LevelAbbreviation": "Lv. {level}"
       }
     },
     "Actors": {
@@ -631,42 +863,33 @@
           "Alignment": "Alignment",
           "Unaligned": "Unaligned"
         },
-        "CreationWizard": {
-          "Title": "Character Creation: {name}",
-          "Previous": "Previous",
-          "Next": "Next",
-          "AbilityScores": {
-            "Title": "Ability Scores",
-            "Roll": "Roll",
-            "Reroll": "Reroll"
-          },
-          "Class": {
-            "Title": "Character Class",
-            "Recommended": "Recommended"
-          },
-          "Equipment": {
-            "Cart": "Purchased Items",
-            "Title": "Starting Gear",
-            "StartingGold": "Starting Gold",
-            "RemainingGold": "Gold Remaining"
-          }
-        },
         "Tabs": {
           "Identity": "Identity"
         },
         "Editor": {
           "Tabs": {
             "Stats": "Character Stats",
-            "ClassAndAbilities": "Classes and Abilities"
+            "ClassAndAbilities": "Classes and Abilities",
+            "BasicInfo": "Basic Information"
+          },
+          "Class": {
+            "View": "View Class",
+            "EditEffects": "Edit this class's passive effects",
+            "EditActions": "Edit this class's actions",
+            "OfMaxLevel": "of {level}",
+            "PassiveEffects": "Passive Effects",
+            "NoPassiveEffects": "This class grants no passive effects.",
+            "NoActions": "This class grants no actions.",
+            "EffectSuppressed": "Off",
+            "UnlocksAtLevel": "At {level} level",
+            "LostAfterLevel": "Until {level} level",
+            "NoClassTitle": "This character has no class.",
+            "NoClassHint": "Drag a class onto the character sheet to add one."
           }
         },
         "Equipment": {
           "Title": "Equipment",
-          "NoWeaponActions": "None of your weapons have actions."
-        },
-        "Abilities": {
-          "ClassAbilities": "{className} Abilities",
-          "OtherAbilities": "Other Abilities"
+          "NoGearActions": "None of the gear you're using has actions."
         },
         "ExplorationSkills": "Exploration Skills",
         "SheetRolls": {
@@ -767,7 +990,8 @@
           "THAC0": "THAC0",
           "AttackBonus": "Attack Bonus",
           "ArmorClass": "Armor Class",
-          "Movement": "Movement"
+          "Movement": "Movement",
+          "Encumbrance": "Encumbrance"
         },
         "Combat": {
           "Modifiers": "Modifiers",
@@ -794,6 +1018,10 @@
             "ArmorClassOffset": {
               "Label": "Armor Class Modifier",
               "Hint": "Modifier to the character's base armor class"
+            },
+            "AttacksPerRound": {
+              "Label": "Attacks per Round",
+              "Hint": "How many attacks this creature makes each round. The Advanced games allow halves -- 3/2 means three attacks across two rounds, with the extra one falling on even rounds."
             },
             "THAC0": {
               "Label": "THAC0",
@@ -920,6 +1148,7 @@
           }
         },
         "Actions": {
+          "ActiveAbilities": "Active Abilities",
           "Use": "Use",
           "View": "View",
           "Edit": "Edit",
@@ -964,6 +1193,7 @@
             }
           },
           "Result": {
+            "success": "... and they connect!",
             "fail": "... but they fail!"
           }
         },
@@ -974,6 +1204,99 @@
         }
       }
     },
+    "CharacterCreation": {
+      "Title": "Create Character: {name}",
+      "StepsLabel": "Character creation steps",
+      "NoOptions": "Nothing to choose from. Add a folder or compendium in the character creation data source settings.",
+      "PrerequisitesNotMet": "Ability scores too low",
+      "Failed": "Something went wrong while building this character. Check the console for details.",
+      "Steps": {
+        "scores": {
+          "Label": "Ability Scores",
+          "Hint": "Roll your scores, or type them in if your table rolls at the table."
+        },
+        "identity": {
+          "Label": "Ancestry",
+          "Hint": "Choose who your character is before they took up adventuring."
+        },
+        "class": {
+          "Label": "Class",
+          "Hint": "Classes you don't qualify for are shown greyed out."
+        },
+        "abilities": {
+          "Label": "Abilities",
+          "Hint": "Optional extras. Your class already grants its own abilities."
+        },
+        "spells": {
+          "Label": "Spells",
+          "Hint": "Pick the spells your character begins play knowing."
+        },
+        "equipment": {
+          "Label": "Equipment",
+          "Hint": "Roll for money, then spend it. Anything left over becomes coin."
+        },
+        "details": {
+          "Label": "Details",
+          "Hint": "Name your character and review everything before finishing."
+        }
+      },
+      "Scores": {
+        "RollAll": "Roll Ability Scores",
+        "RerollAll": "Reroll All Scores",
+        "Reroll": "Reroll this score",
+        "NoAbilityScoreSystem": "No ability score rules are active, so there's nothing to roll. Check the system's rules settings."
+      },
+      "Offer": {
+        "Title": "Build This Character?",
+        "Content": "Walk through character creation for {name}, or open a blank sheet and fill it in by hand?",
+        "Yes": "Walk Me Through It",
+        "No": "Open the Sheet"
+      },
+      "Class": {
+        "Caster": "Spellcaster"
+      },
+      "Spells": {
+        "LevelHeading": "{level} Level Spells",
+        "NoneAvailable": "No spells of this level are available from the configured sources.",
+        "NoSlotsLeft": "No level {level} spell slots left. Deselect another spell first."
+      },
+      "Equipment": {
+        "RollPrompt": "Roll {formula} to determine your starting money.",
+        "RollGold": "Roll Starting Money",
+        "RerollGold": "Reroll",
+        "RerollGoldHint": "Roll starting money again. This empties your cart.",
+        "StartingGold": "Starting Money",
+        "BadGoldFormula": "\"{formula}\" isn't a formula the dice roller understands.",
+        "Starting": "Rolled",
+        "Spent": "Spent",
+        "Remaining": "Remaining",
+        "Search": "Search equipment...",
+        "Quantity": "Quantity",
+        "Buy": "Add to cart",
+        "Remove": "Remove from cart",
+        "Cart": "Cart",
+        "CartEmpty": "Nothing bought yet.",
+        "CannotAfford": "Not enough money left for that."
+      },
+      "Details": {
+        "Name": "Character Name"
+      },
+      "Summary": {
+        "Heading": "Summary",
+        "ItemCount": "{count} items"
+      },
+      "Requirements": {
+        "Heading": "Still to do before you can finish:",
+        "Incomplete": "This character isn't finished yet.",
+        "AbilityScores": "Roll or enter every ability score.",
+        "Class": "Choose a class."
+      },
+      "Navigation": {
+        "Previous": "Back",
+        "Next": "Next",
+        "Finish": "Create Character"
+      }
+    },
     "CharacterClass": {
       "Tabs": {
         "Summary": "Summary",
@@ -982,12 +1305,14 @@
         "Description": "Description",
         "Restrictions": "Restrictions",
         "Information": "Details",
+        "Requisites": "Prerequisites & Prime Requisites",
         "XP": "Experience",
         "Resources": "Resources",
         "SpellList": "Spell List",
         "SpellSlots": "Spell Slots",
         "Features": "Features",
-        "History": "History"
+        "History": "History",
+        "Spellcasting": "Spellcasting"
       },
       "XPTable": {
         "EditorTitle": "Advancement Table Editor",
@@ -1025,7 +1350,16 @@
         "Restrictions": "Restrictions",
         "AdditionalRestrictions": "Additional Restrictions",
         "ClassAbilities": "Class Abilities",
-        "Spellcasting": "Spellcasting"
+        "Spellcasting": "Spellcasting",
+        "HitDice": "Hit Dice",
+        "THAC0": "THAC0",
+        "AttackBonus": "Attack Bonus",
+        "SavingThrows": "Saving Throws",
+        "LevelAbbreviation": "Lv. {level}",
+        "LevelUp": "Level Up",
+        "ReadyToLevel": "Ready to level up",
+        "AddXPHint": "Click to add XP — {xp} more to the next level",
+        "MaxLevelReached": "Maximum level reached ({level})"
       },
       "ClassResources": {
         "Category": {
@@ -1039,6 +1373,34 @@
           "Add": "Add Resource",
           "Remove": "Remove Resource",
           "Empty": "No resources exist for this category."
+        }
+      },
+      "Spellcasting": {
+        "Tradition": {
+          "Label": "Magical Tradition",
+          "Hint": "Which kind of magic this class practises. The world's spell rules decide what is on offer.",
+          "None": "-- Not a spellcaster --"
+        },
+        "Access": {
+          "Label": "How spells are learned",
+          "Hint": "Leave this alone unless the class breaks with its tradition. A homebrew priest who keeps a spellbook is exactly what it is for.",
+          "FromTradition": "However the tradition does it",
+          "Full": "Receives the whole list",
+          "Repertoire": "Learns spells one at a time"
+        },
+        "NoTraditions": "The world's spell rules define no traditions, so there is nothing to choose."
+      },
+      "SpellList": {
+        "Heading": "Spell List",
+        "Hint": "Drop spells here to put them on this class's list. A spell's level here overrides the level printed on the spell, which is how the same spell sits at different levels for different classes. Rulesets that sort spells by tradition rather than by class list can leave this empty.",
+        "Empty": "No spells are on this class's list.",
+        "Remove": "Remove from list",
+        "Spell": {
+          "Label": "Spell"
+        },
+        "Level": {
+          "Label": "Level",
+          "Hint": "What level this spell is on this class's list."
         }
       },
       "SpellSlots": {
@@ -1066,6 +1428,10 @@
         "gearTable": {
           "hint": "The Roll Table to roll on when determining starting equipment for this class.",
           "label": "Gear Table"
+        },
+        "startingGold": {
+          "hint": "A dice formula for this class's starting money, such as \"5d4 * 10\". Leave blank to use the world's default starting gold formula.",
+          "label": "Starting Gold Formula"
         },
         "isAncestryClass": {
           "hint": "This class represents an ancestry, rather than a class",
@@ -1162,27 +1528,116 @@
         "Encumbrance": {
           "Name": "Encumbrance Rules",
           "Hint": "The encumbrance scheme to use"
+        },
+        "Spells": {
+          "Name": "Spell Rules",
+          "Hint": "Which parts of a spell entry this game prints, how spells are classified, and how casters come by them. Spells keep everything they were imported with either way -- this only decides what is shown."
         }
       },
       "TagManager": {
         "Empty": "No custom tags have been defined.",
-        "Add": "Add a new tag"
+        "Add": "Add a new tag",
+        "TagIcon": "Icon for the {tag} tag"
       },
       "CharacterCreation": {
+        "Mode": {
+          "Name": "Character Creation for New Characters",
+          "Hint": "What should happen when someone creates a new, blank character. This doesn't affect imported or duplicated characters, which are never treated as blank.",
+          "Choices": {
+            "always": "Always open character creation",
+            "offer": "Ask whether to open character creation",
+            "never": "Never open character creation"
+          }
+        },
         "Sources": {
           "Name": "Data Sources for Character Creation",
-          "Hint": "The folders and compendiums that the Character Wizard pulls classes and equipment from.",
+          "Hint": "The folders and compendiums that character creation pulls classes, equipment, ancestries, spells, and abilities from.",
           "Configure": "Configure Data Sources",
           "Title": "Character Creation: Data Sources",
           "AddSource": "Add an additional data source...",
+          "Folders": "Folders",
+          "Compendiums": "Compendiums",
+          "Remove": "Remove this data source",
+          "Missing": "Missing source (folder or compendium is unavailable)",
+          "Empty": "No sources configured. Characters can still be built by hand.",
           "Categories": {
             "classes": "Character Classes",
-            "equipment": "Basic Equipment"
+            "equipment": "Basic Equipment",
+            "identity": "Ancestries & Identities",
+            "spells": "Spells",
+            "abilities": "Abilities"
           }
+        }
+      },
+      "Combat": {
+        "TurnGranularity": {
+          "Name": "Turn Advances By",
+          "Hint": "With side initiative, stepping a whole side at a time saves a lot of clicking. Rulesets where combatants on one side act at different moments always step one combatant at a time.",
+          "Choices": {
+            "auto": "Match the ruleset",
+            "unit": "A whole side at a time",
+            "combatant": "One combatant at a time"
+          }
+        },
+        "RerollCadence": {
+          "Name": "Per-Round Initiative",
+          "Hint": "Every game BAGS models rerolls initiative each round, but a table that prefers to roll once per fight can say so here.",
+          "Choices": {
+            "reroll": "Reroll each round",
+            "keep": "Keep the first roll",
+            "reset": "Clear, and wait to be told to roll"
+          }
+        },
+        "DeclarationMode": {
+          "Name": "Declared Actions",
+          "Hint": "Some games have everyone say what they intend to do before initiative is rolled. Declarations are never required -- a combatant that says nothing is always allowed.",
+          "Choices": {
+            "off": "Don't use declarations",
+            "optional": "Offer declarations"
+          }
+        },
+        "AttackSpacing": {
+          "Name": "Extra Attacks Land",
+          "Hint": "Where a combatant's second and third attacks fall in the round. Tables read this rule differently, and all of these readings are in print.",
+          "Choices": {
+            "default": "However this ruleset prefers",
+            "initiative": "All on their own segment",
+            "initiativeThenEnd": "On their segment, then at the end of the round",
+            "spread": "Spread across the round, ignoring the roll",
+            "even": "Evenly, dividing the round by the attack count"
+          }
+        },
+        "BlindDeclarations": {
+          "Name": "Blind Declarations",
+          "Hint": "Until a round begins, players see that others have declared but not what. Everyone commits before seeing what anyone else will do."
+        },
+        "PostRoundCard": {
+          "Name": "Announce Rounds",
+          "Hint": "Post a card at the start of each round showing the turn order, and what everyone has declared. Players can declare from the card."
+        },
+        "Legend": "Turn Sequence",
+        "ShowMovementBudget": {
+          "Name": "Show Movement Left",
+          "Hint": "Show each combatant's remaining movement for the round in the tracker. Movement is an allowance per round, not per turn, so it refills when a new round opens."
         }
       }
     },
     "Systems": {
+      "Spells": {
+        "Basic": {
+          "Name": "Basic"
+        },
+        "Advanced1e": {
+          "Name": "Advanced, 1st Edition"
+        },
+        "Advanced2e": {
+          "Name": "Advanced, 2nd Edition"
+        },
+        "Traditions": {
+          "Arcane": "Arcane",
+          "Divine": "Divine"
+        }
+      },
       "BX": {
         "AbilityScores": {
           "str": {
@@ -1214,6 +1669,26 @@
             "Short": "Cha",
             "Label": "Charisma",
             "Hint": "Garner better reactions from hirelings and monsters; inspire loyalty."
+          },
+          "Modifiers": {
+            "meleeAttack": "{signed} to hit in melee",
+            "meleeDamage": "{signed} to melee damage",
+            "missileAttack": "{signed} to hit at range",
+            "missileDamage": "{signed} to missile damage",
+            "ac": "{signed} to Armor Class",
+            "initiative": "{signed} to initiative",
+            "magicSave": "{signed} to saves against magic",
+            "bonusHP": "{signed} hit points per Hit Die",
+            "reaction": "{signed} to monster reactions",
+            "openDoors": "Forces stuck doors on {value} in 6",
+            "languages": "Additional languages: {value}",
+            "maxRetainers": "Retainer limit: {value}",
+            "baseLoyalty": "Retainer loyalty: {value}",
+            "literacy": {
+              "Illiterate": "Cannot read or write",
+              "Basic": "Reads and writes simple words",
+              "Literate": "Reads and writes fluently"
+            }
           }
         },
         "SavingThrows": {
@@ -1319,17 +1794,177 @@
         "system.modifiers.speed": "Speed: {mod}",
         "system.biographicalDetails.alignment": "Alignment Change: {mod}"
       }
-    }
-  },
-  "COMBAT": {
-    "UseGroupInitiative": "Use Group Initiative",
-    "UseGroupInitiativeHint": "Should the tracker group combatants? Note: groups are, by default, grouped by disposition, but an individual combatant's group can be changed.",
-    "RerollBehavior": "Per-Round Initiative",
-    "RerollBehaviorHint": "Should the tracker reroll initiative, keep rolled initiative between rounds, or reset initiative to an unrolled state?",
-    "RerollBehaviorOptions": {
-      "Reroll": "Reroll",
-      "Keep": "Keep",
-      "Reset": "reset"
+    },
+    "Combat": {
+      "Sides": {
+        "Party": "Party",
+        "Hostile": "Enemies",
+        "Neutral": "Bystanders"
+      },
+      "Groups": {
+        "NewGroup": "New Group",
+        "Manage": "Manage Groups",
+        "Create": "New Group",
+        "Delete": "Delete this group",
+        "Empty": "Take everyone out of this group",
+        "Ungroup": "Take out of its group",
+        "Assign": "Which group this rolls with",
+        "Name": "Group name",
+        "None": "Rolls for itself",
+        "Ungrouped": "Rolling for themselves",
+        "NoMembers": "Nobody is in this group yet.",
+        "NoneLoose": "Everyone is in a group.",
+        "RollUnit": "Roll initiative for this group",
+        "RolledInitiative": "This group's initiative roll",
+        "ResetColor": "Use the side's colour",
+        "ActingNow": "Acting now"
+      },
+      "Fields": {
+        "Side": {
+          "Label": "Side",
+          "Hint": "Which faction this fights for. Sides do not affect turn order; they matter for morale and for who counts as an enemy."
+        },
+        "InitiativePreset": {
+          "Label": "Initiative Rules",
+          "Hint": "Override the world's initiative rules for this encounter only. Leave empty to use the world setting."
+        },
+        "TurnGranularity": {
+          "Label": "Turn Advances By",
+          "Hint": "Whether 'next turn' steps past a whole side at once or one combatant at a time."
+        },
+        "RerollCadence": {
+          "Label": "Per-Round Initiative",
+          "Hint": "What happens to initiative scores when a round ends."
+        },
+        "Color": {
+          "Label": "Colour",
+          "Hint": "How this group is marked in the tracker. Leave it alone to use the side's colour."
+        },
+        "Declaration": {
+          "Type": {
+            "Label": "Declared action"
+          }
+        },
+        "DeclarationMode": {
+          "Label": "Declarations",
+          "Hint": "Whether combatants say what they are about to do, for this encounter only."
+        }
+      },
+      "Declarations": {
+        "Title": "Declare an Action",
+        "TitleFor": "What is {name} doing?",
+        "Declare": "Declare an action",
+        "Submit": "Declare",
+        "Clear": "Say nothing for now",
+        "Hidden": "Declared",
+        "ClearAll": "Clear All Declarations",
+        "Inherited": "Following {group}. Choosing here speaks for this combatant alone.",
+        "Fields": {
+          "CastingTime": {
+            "Label": "Casting time (segments)",
+            "Hint": "Added to your side's roll to find the segment the spell goes off on."
+          },
+          "Distance": {
+            "Label": "Distance moved (feet)",
+            "Hint": "Moving costs a segment for every 10 feet."
+          }
+        },
+        "None": {
+          "Label": "Undeclared"
+        },
+        "Melee": {
+          "Label": "Melee attack"
+        },
+        "Missile": {
+          "Label": "Missile attack"
+        },
+        "Cast": {
+          "Label": "Cast a spell"
+        },
+        "Move": {
+          "Label": "Move"
+        },
+        "Withdraw": {
+          "Label": "Withdraw"
+        },
+        "Delay": {
+          "Label": "Hold back"
+        },
+        "Other": {
+          "Label": "Something else"
+        },
+        "Locked": "The round has begun, so the declaration for {name} is settled until it ends. Ask your GM if it needs changing."
+      },
+      "Round": {
+        "Title": "Round",
+        "Speaker": "Initiative",
+        "DeclareCTA": "Declare your action",
+        "Undeclared": "—",
+        "Empty": "Nobody has joined the fight yet.",
+        "UnitInitiative": "initiative",
+        "Segment": "Segment {number}",
+        "Pending": "Waiting on",
+        "ExtraAttacks": "Also acts on these segments",
+        "BetweenTitle": "Round {round} is about to begin",
+        "WaitingOnNames": "Waiting on {names} to declare",
+        "WaitingOnRoll": "Waiting for initiative",
+        "WaitingOnReferee": "Waiting on the referee",
+        "Begin": "Begin Round",
+        "NeedsGM": "A GM needs to be connected to start the next round."
+      },
+      "End": {
+        "Title": "Combat Ended",
+        "Rounds": "{rounds} rounds"
+      },
+      "Initiative": {
+        "Adjust": "Adjust Initiative",
+        "AdjustHint": "Shift the initiative of {name}, currently {current}. Negative numbers are allowed.",
+        "AdjustGroupHint": "Shift the initiative of {name}, currently {current}. Everyone in the group moves together. Negative numbers are allowed.",
+        "Apply": "Apply"
+      },
+      "Movement": {
+        "Tooltip": "{remaining} left of {max} this round ({used} used)"
+      },
+      "Surprise": {
+        "Title": "Surprise",
+        "Roll": "Roll Surprise",
+        "Reroll": "Roll Again",
+        "Clear": "Clear Surprise",
+        "NotRolled": "Surprise has not been rolled.",
+        "SurprisedNames": "Surprised: {names}",
+        "Nobody": "Nobody is surprised.",
+        "Ready": "Ready",
+        "LosesRound": "Surprised: loses the first round",
+        "LosesSegments": "Surprised: loses {segments} segments",
+        "Tag": "Surprised",
+        "Mark": "Mark Surprised",
+        "Unmark": "Not Surprised"
+      },
+      "Spillover": {
+        "Spills": "Still casting at the end of the round: goes off in round {round}, segment {segment}",
+        "Carried": "Still casting from last round: goes off on segment {segment}"
+      },
+      "Phases": {
+        "Movement": "Movement",
+        "Missile": "Missiles",
+        "Magic": "Magic",
+        "Melee": "Melee",
+        "Other": "Everything else"
+      },
+      "Morale": {
+        "Title": "Morale",
+        "Failure": "Morale Failure",
+        "Waiting": "Morale checks are owed",
+        "Roll": "Roll Morale",
+        "Skip": "Skip",
+        "Check": "Check Morale",
+        "Held": "Held (morale {rating})",
+        "Broke": "Broke (morale {rating})",
+        "Triggers": {
+          "Death": "an important ally fell",
+          "Half": "half of them are down"
+        }
+      }
     }
   },
   "TYPES": {

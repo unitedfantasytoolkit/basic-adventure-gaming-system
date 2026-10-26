@@ -16,6 +16,7 @@ import {
 
 /**
  * Create a mock item for testing
+ * @param overrides
  */
 function createMockItem(overrides = {}) {
   const id = overrides.id || `item-${Math.random().toString(36).substring(7)}`
@@ -43,6 +44,7 @@ function createMockItem(overrides = {}) {
 
 /**
  * Create a mock actor with items
+ * @param items
  */
 function createMockActor(items = []) {
   const actor = {
@@ -64,6 +66,7 @@ function createMockActor(items = []) {
 /**
  * Mock fromUuidSync for testing
  * In real code, Foundry provides this globally
+ * @param uuid
  */
 globalThis.fromUuidSync = function (uuid) {
   // Extract item ID from UUID format: Actor.actorId.Item.itemId

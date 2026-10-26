@@ -92,16 +92,21 @@
     }
   }
 
-  &:has(.xp-meter) .window-title {
+  &:has(.class-standing) .window-title {
     text-align: left !important; /* @todo fix this specificity issue */
     padding-left: 1em;
   }
 
-  &:has(.xp-meter):has(.window-header__banner) .window-title {
+  &:has(.class-standing):has(.window-header__banner) .window-title {
     padding-left: var(--art-size);
   }
 
-  .xp-meter {
+  /*
+   * Where the class stands: its level, how far off the next one is, and the way
+   * to take it. All three belong together, and the header keeps them in view
+   * while the body scrolls.
+   */
+  .class-standing {
     display: flex;
     font-size: 1.2em;
     padding: 0.5em 1em 0;
@@ -109,8 +114,47 @@
     align-items: center;
     gap: 1em;
 
-    .level {
-      font-weight: bold;
+    uft-character-info-meter {
+      flex: 1;
+      min-width: 8em;
+    }
+  }
+
+  .class-standing__level {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /*
+   * Only rendered when there's a level waiting to be taken, so its presence is
+   * the notification. The pulse is what draws the eye to it.
+   */
+  .class-standing__level-up {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 0.15em 0.75em;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    white-space: nowrap;
+    animation: pulse-gold 2s ease-in-out infinite;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  @keyframes pulse-gold {
+    0%,
+    100% {
+      text-shadow: 0 0 4px rgb(255 215 0 / 30%);
+    }
+
+    50% {
+      text-shadow:
+        0 0 12px rgb(255 215 0 / 80%),
+        0 0 20px rgb(255 215 0 / 40%);
     }
   }
 
@@ -146,127 +190,6 @@
 
       .flavor {
         grid-column: 1/3;
-      }
-
-      .current-level-hero {
-        grid-column: 1/3;
-        display: flex;
-        gap: 1.5em;
-        align-items: start;
-        margin: 0 auto;
-      }
-
-      .hero__badge {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: auto;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
-        transition: all 200ms ease;
-
-        &:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgb(0 0 0 / 25%);
-        }
-
-        &:disabled {
-          cursor: not-allowed;
-        }
-
-        &--can-level-up {
-          animation: pulse-gold 2s ease-in-out infinite;
-        }
-
-        &-label {
-          font-size: 0.7em;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          opacity: 0.85;
-          font-weight: 600;
-        }
-
-        &-value {
-          font-size: 1.75em;
-          font-weight: 700;
-          line-height: 1;
-        }
-      }
-
-      @keyframes pulse-gold {
-        0%,
-        100% {
-          text-shadow: 0 0 4px rgb(255 215 0 / 30%);
-        }
-
-        50% {
-          text-shadow:
-            0 0 12px rgb(255 215 0 / 80%),
-            0 0 20px rgb(255 215 0 / 40%);
-        }
-      }
-
-      .hero__core-stats {
-        display: flex;
-        gap: 1.5em;
-        align-items: center;
-      }
-
-      .hero__stat {
-        display: flex;
-        flex-direction: column;
-        gap: 0.15em;
-
-        &-label {
-          font-size: 0.7em;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          opacity: 0.65;
-          font-weight: 600;
-          white-space: nowrap;
-        }
-
-        &-value {
-          font-size: 1.1em;
-          font-weight: 700;
-          white-space: nowrap;
-        }
-      }
-
-      .hero__saves {
-        display: flex;
-        padding-left: 1.5em;
-        border-left: 1px solid var(--color-border-light-tertiary);
-        gap: 0.6em;
-
-        &-label {
-          font-size: 0.7em;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          opacity: 0.65;
-          font-weight: 600;
-        }
-      }
-
-      .hero__save {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.1em;
-
-        &-initial {
-          font-size: 0.65em;
-          text-transform: uppercase;
-          opacity: 0.6;
-          font-weight: 600;
-        }
-
-        &-value {
-          font-size: 1em;
-          font-weight: 700;
-        }
       }
 
       .ability-grid {

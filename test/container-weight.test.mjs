@@ -10,6 +10,7 @@ import getEffectiveItemWeight from "../src/utils/get-effective-item-weight.mjs"
 
 /**
  * Create a mock item for testing
+ * @param overrides
  */
 function createMockItem(overrides = {}) {
   const id = overrides.id || `item-${Math.random().toString(36).substring(7)}`
@@ -50,7 +51,7 @@ function createMockItem(overrides = {}) {
   Object.defineProperty(item.system, "contents", {
     get() {
       if (!item.system.container?.isContainer || !item.actor) return []
-      const actor = item.actor
+      const { actor } = item
       return (item.system.container.contains || [])
         .map((uuid) => actor.items.find((i) => i.uuid === uuid))
         .filter((i) => i && i.actor === actor)
@@ -78,11 +79,12 @@ function createMockItem(overrides = {}) {
 
 /**
  * Create a mock actor with items
+ * @param items
  */
 function createMockActor(items = []) {
   const actor = {
     id: "actor-123",
-    items: items,
+    items,
   }
 
   items.forEach((item) => {

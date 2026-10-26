@@ -4,48 +4,6 @@
     <div class="flavor">{{{item.system.flavorText}}}</div>
   {{/if}}
 
-  {{#if document.system.currentLevelDetails}}
-  {{#with document.system.currentLevelDetails}}
-  <div class="current-level-hero">
-    <button
-      class="hero__badge {{#if @root.document.system.canLevelUp}}hero__badge--can-level-up{{/if}}"
-      data-action="level-up"
-      {{#unless @root.document.system.canLevelUp}}disabled{{/unless}}
-      data-tooltip="{{#if @root.document.system.canLevelUp}}Click to level up!{{else}}Need {{@root.document.system.xpRemaining}} more XP{{/if}}"
-    >
-      <span class="hero__badge-label">Level</span>
-      <span class="hero__badge-value">{{level}}</span>
-    </button>
-
-    <div class="hero__stat">
-      <span class="hero__stat-label">Hit Dice</span>
-      <span class="hero__stat-value">{{hd.count}}d{{@root.document.system.hitDieSize}}{{ifThen hd.modifier (signNumber hd.modifier) ""}}</span>
-    </div>
-
-    {{#if @root.usesDescendingAC}}
-      <div class="hero__stat">
-        <span class="hero__stat-label">THAC0</span>
-        <span class="hero__stat-value">{{thac0}}</span>
-      </div>
-    {{else}}
-      <div class="hero__stat">
-        <span class="hero__stat-label">Attack Bonus</span>
-        <span class="hero__stat-value">{{signNumber attackBonus forceSign=true}}</span>
-      </div>
-    {{/if}}
-
-    <div class="hero__saves">
-      {{#each savingThrows}}
-        <div class="hero__save" data-tooltip="{{localize (lookup (lookup @root.savingThrows @key) "label")}}">
-          <span class="hero__save-initial">{{localize (lookup (lookup @root.savingThrows @key) "initial")}}</span>
-          <span class="hero__save-value">{{this}}</span>
-        </div>
-      {{/each}}
-    </div>
-  </div>
-  {{/with}}
-  {{/if}}
-
   <main>
     {{#if item.system.description}}
     {{{item.system.description}}}
@@ -55,6 +13,51 @@
   </main>
 
   <aside class="scrollable">
+    {{!--
+      What this class is right now. The leading list carries no heading, the way
+      the character sheet's rail leads with THAC0 and armour class before its
+      first `decorated` rule -- a heading on the first thing in a column is a
+      rule against the top of the pane and nothing else.
+
+      These are reference, not play: what next level brings is the advancement
+      tab's job, and rolling a save is the character sheet's, because a
+      multi-classed character rolls their best save rather than one class's.
+    --}}
+    {{#if document.system.currentLevelDetails}}
+      {{#with document.system.currentLevelDetails}}
+        <dl class="class-vitals">
+          <dt>{{localize "BAGS.CharacterClass.Information.HitDice"}}</dt>
+          <dd>{{hd.count}}d{{@root.document.system.hitDieSize}}{{ifThen
+              hd.modifier
+              (signNumber hd.modifier)
+              ""
+            }}</dd>
+
+          {{#if @root.usesDescendingAC}}
+            <dt>{{localize "BAGS.CharacterClass.Information.THAC0"}}</dt>
+            <dd>{{thac0}}</dd>
+          {{else}}
+            <dt>{{localize "BAGS.CharacterClass.Information.AttackBonus"}}</dt>
+            <dd>{{signNumber attackBonus forceSign=true}}</dd>
+          {{/if}}
+        </dl>
+
+        <h3 class="decorated">{{localize
+            "BAGS.CharacterClass.Information.SavingThrows"
+          }}</h3>
+        <dl class="saving-throws-list">
+          {{#each savingThrows}}
+            <dt data-tooltip="{{localize
+                (lookup (lookup @root.savingThrows @key) 'hint')
+              }}">{{localize
+                (lookup (lookup @root.savingThrows @key) "short")
+              }}</dt>
+            <dd>{{this}}</dd>
+          {{/each}}
+        </dl>
+      {{/with}}
+    {{/if}}
+
     {{#if document.system.actionList.length}}
       <h3 class="decorated">{{localize "BAGS.CharacterClass.Information.ClassAbilities"}}</h3>
       <div class="ability-grid">

@@ -37,6 +37,26 @@ export default class BAGSItemArmorDataModel extends PhysicalItemDataModel {
     }
   }
 
+  /**
+   * What this piece of armor does to its wearer's Armor Class.
+   *
+   * Two different kinds of answer come out of here, depending on the item:
+   *
+   * - A **suit of armor** reports an absolute Armor Class -- the AC of someone
+   *   wearing it and nothing else. Which way that runs depends on the rules in
+   *   play: descending AC counts down from the base (B/X leather is 7), ascending
+   *   AC counts up (leather is 12).
+   * - A **bonus** item -- a shield, a ring of protection, anything with
+   *   `shouldTreatAsBonus` set -- reports how much it *improves* AC by, and
+   *   nothing more. It stays a plain positive number in both directions, because
+   *   the actor is the one that knows which way to apply it: see
+   *   `#calculateArmorBonuses` in the character and monster data models, which
+   *   subtract the total under descending AC and add it under ascending.
+   *
+   * Signing the bonus here as well was a double negative under ascending rules,
+   * and a shield made its wearer easier to hit.
+   * @returns {number} An absolute AC, or an improvement to one
+   */
   get armorClass() {
     const combatSettings = CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
       CONFIG.BAGS.SystemRegistry.categories.COMBAT,
@@ -44,11 +64,7 @@ export default class BAGSItemArmorDataModel extends PhysicalItemDataModel {
 
     const { descending, baseAC } = combatSettings
 
-    if (this.shouldTreatAsBonus)
-      return (
-        this.armorClassOffset +
-        (descending ? this.armorBonus : this.armorBonus * -1)
-      )
+    if (this.shouldTreatAsBonus) return this.armorClassOffset + this.armorBonus
     if (descending) return baseAC - this.armorClassOffset - this.armorBonus
     return baseAC + this.armorClassOffset + this.armorBonus
   }
@@ -57,10 +73,8 @@ export default class BAGSItemArmorDataModel extends PhysicalItemDataModel {
    * Converts an absolute Armor Class value to an offset from the base AC
    * For descending AC (like AD&D): offset = baseAC - ac
    * For ascending AC: offset = ac - baseAC
-   *
    * @param {number} ac - The absolute Armor Class value to convert
    * @returns {number} The AC offset value (positive numbers are beneficial)
-   *
    * @example
    * // Descending AC (AD&D style, baseAC = 10)
    * acToOffset(5) // returns 5 (improves AC by 5)
@@ -88,10 +102,8 @@ export default class BAGSItemArmorDataModel extends PhysicalItemDataModel {
    * Converts an AC offset value to an absolute Armor Class value
    * For descending AC (like AD&D): ac = baseAC - offset
    * For ascending AC: ac = baseAC + offset
-   *
    * @param {number} offset - The AC offset value (positive numbers are beneficial)
    * @returns {number} The absolute Armor Class value
-   *
    * @example
    * // Descending AC (AD&D style, baseAC = 10)
    * offsetToAC(5) // returns 5 (improves AC by 5)

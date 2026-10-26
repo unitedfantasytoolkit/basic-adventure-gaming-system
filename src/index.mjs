@@ -6,6 +6,11 @@
 
 // === Libraries ===============================================================
 
+// === E2E Tests ===============================================================
+// Registers the Quench batches if Quench is installed. The tests themselves are
+// a separate chunk, loaded on demand -- see src/quench/register.mjs.
+import "./quench/register.mjs"
+
 // === Utils ===================================================================
 
 import { devOnly } from "./utils/dev-helpers.mjs"
@@ -17,6 +22,7 @@ import { devOnly } from "./utils/dev-helpers.mjs"
  *
  */
 import "./hooks/bags.register-systems.bx.mjs"
+import "./hooks/bags.register-systems.advanced.mjs"
 
 /* --- Init --------------------------------------------------------------------
  * - Prepare rules modules
@@ -44,26 +50,68 @@ import "./hooks/setup.ui.mjs"
 
 /* --- Document lifecycle ------------------------------------------------------
  * - Update active effect editors when a Document's effects are altered
+ * - Offer character creation when a blank character is created
  */
 import "./hooks/updateActiveEffect.mjs"
+import "./hooks/updateToken.movement-budget.mjs"
+import "./hooks/spell-vocabulary.invalidation.mjs"
+import "./hooks/createActor.character-creation.mjs"
 
 /* === DEV HELPERS =============================================================
  * This code will only be included in development builds
  */
 devOnly(() => {
   Hooks.once("ready", async () => {
+    /*
+     * A party to test against, built on demand rather than at startup so a dev
+     * world isn't refilled with sample documents on every reload.
+     *
+     *   game.bags.createSampleData()
+     *   game.bags.deleteSampleData()
+     */
+    const { createSampleData, deleteSampleData } = await import(
+      "./dev/sample-data.mjs"
+    )
+    game.bags = { ...game.bags, createSampleData, deleteSampleData }
+
     try {
       fromUuidSync("Item.qhXlV5bYHMkuCfY6").sheet.render(true)
     } catch {
       // noop -- use your own UUIDs above if this breaks
     }
 
-    // Add livereload script in development mode
-    const src = `${window.location.protocol}/${(window.location.host || "localhost").split(":")[0]}:9999/livereload.js?snipver=1`
-    const script = document.createElement("script")
-    script.src = src
-    document.body.appendChild(script)
+    /*
+     * Connect to the livereload server that `rollup --watch` starts on port
+     * 9999.
+     *
+     * `location.hostname` is used rather than splitting `location.host` on ":",
+     * because an IPv6 host arrives as "[::1]:30000" and splitting on the colon
+     * mangles it. The protocol is taken from the page so that a Foundry served
+     * over https doesn't try to load this over http, which the browser would
+     * block as mixed content.
+     */
+    const livereloadURL = new URL(
+      "/livereload.js?snipver=1",
+      `${window.location.protocol}//${window.location.hostname || "localhost"}:9999`,
+    )
 
-    ui.sidebar.toggleExpanded()
+    if (!document.querySelector(`script[src^="${livereloadURL.origin}"]`)) {
+      const script = document.createElement("script")
+      script.src = livereloadURL.href
+      script.addEventListener("error", () =>
+        console.warn(
+          `BAGS | Could not reach the livereload server at ${livereloadURL.origin}. Is "npm start" running?`,
+        ),
+      )
+      document.body.appendChild(script)
+    }
+
+    // Dev convenience only, and not worth breaking startup over if a future
+    // Foundry version renames it.
+    try {
+      ui.sidebar.toggleExpanded()
+    } catch {
+      // noop
+    }
   })
 })

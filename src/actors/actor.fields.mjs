@@ -54,6 +54,27 @@ export const baseFactory = (fields) =>
       label: "BAGS.Actors.Common.Fields.Base.ArmorClassOffset.Label",
       hint: "BAGS.Actors.Common.Fields.Base.ArmorClassOffset.Hint",
     }),
+    /**
+     * How many attacks this creature makes in a round.
+     *
+     * Halves are real values rather than sloppiness: the Advanced games give
+     * fighters 3/2 and 5/2 attacks, meaning three attacks across two rounds. The
+     * combat code turns a fraction into a whole number of attacks for a given
+     * round -- BAGS grants the extra one on even rounds -- so nothing downstream
+     * ever has to deal with half an attack.
+     *
+     * One in every game that has no such rule, which is all of the Basic/Expert
+     * family, so leaving it alone costs nothing.
+     */
+    attacksPerRound: new NumberField({
+      min: 1,
+      max: 10,
+      step: 0.5,
+      nullable: false,
+      initial: 1,
+      label: "BAGS.Actors.Common.Fields.Base.AttacksPerRound.Label",
+      hint: "BAGS.Actors.Common.Fields.Base.AttacksPerRound.Hint",
+    }),
     ...fields,
   })
 

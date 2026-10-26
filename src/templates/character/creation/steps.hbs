@@ -1,0 +1,30 @@
+{{!--
+  The progress rail. Steps are generated from the world's configured sources,
+  so this list is deliberately not a fixed set.
+--}}
+<nav class="creation-steps" aria-label="{{localize "BAGS.CharacterCreation.StepsLabel"}}">
+  <ol class="creation-steps__list">
+    {{#each steps as |step|}}
+      <li
+        class="creation-step{{#if step.active}} creation-step--active{{/if}}{{#if step.complete}} creation-step--complete{{/if}}"
+      >
+        <button
+          type="button"
+          class="creation-step__button"
+          data-action="goto-step"
+          data-step="{{step.id}}"
+          aria-current="{{#if step.active}}step{{else}}false{{/if}}"
+        >
+          <span class="creation-step__icon">
+            {{#if step.complete}}
+              <i class="fa-solid fa-check"></i>
+            {{else}}
+              <i class="{{step.icon}}"></i>
+            {{/if}}
+          </span>
+          <span class="creation-step__label">{{localize step.label}}</span>
+        </button>
+      </li>
+    {{/each}}
+  </ol>
+</nav>

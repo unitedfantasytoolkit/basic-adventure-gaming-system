@@ -16,12 +16,22 @@ import html from "./html.mjs"
  * @returns {string} The tooltip to display.
  */
 export default (effects, heading = "", flavor = "") => {
+  /**
+   * The readable name of a change type, e.g. "Add" for `add`.
+   * @param {string} type - The change type
+   * @returns {string} Its label, or the type itself if nothing knows it
+   */
+  const changeTypeLabel = (type) => {
+    const label = foundry.documents.ActiveEffect.CHANGE_TYPES[type]?.label
+    return label ? game.i18n.localize(label) : type
+  }
+
   const entryToListItem = ({ img, name, parent, modification }) => html`
     <div class="effect-modification">
       <img src="${img}" />
       <span class="effect-name">${name}</span>
       <span class="modification"
-        >${modification.mode}: ${modification.value}</span
+        >${changeTypeLabel(modification.type)}: ${modification.value}</span
       >
       ${parent.name ? `<span class="source">(from ${parent.name})</span>` : ""}
     </div>

@@ -50,10 +50,11 @@ export default function buildRollTooltip(tooltipData) {
   const modifierRows = modifiers
     .filter((m) => m.value !== 0)
     .map(
-      (m) => html`<div class="tooltip-modifier">
-        ${m.value > 0 ? "+" : ""}${m.value}
-        <span class="tooltip-modifier__label">(${m.label})</span>
-      </div>`,
+      (m) =>
+        html`<div class="tooltip-modifier">
+          ${m.value > 0 ? "+" : ""}${m.value}
+          <span class="tooltip-modifier__label">(${m.label})</span>
+        </div>`,
     )
     .join("")
 

@@ -70,9 +70,7 @@ export default class TagManager extends BAGSApplication {
    */
   static mergeTags(tag) {
     const tags = game.settings.get(SYSTEM_NAME, "tags") || []
-    return tags.reduce((arr, t) => {
-      return t
-    }, [])
+    return tags.reduce((arr, t) => t, [])
   }
 
   get tags() {

@@ -12,6 +12,12 @@
       {{formGroup systemFields.armor value=document.system.armor}}
       {{formGroup systemFields.languages value=document.system.languages}}
 
+      {{formGroup
+        systemFields.startingGold
+        value=document.system.startingGold
+        placeholder=defaultStartingGold
+      }}
+
       {{!--
         This looks a little weird, and is due an explanation:
 

@@ -1,4 +1,9 @@
 /**
+ * @file The Basic/Expert ability score rules: which scores exist, what each one
+ * gives you at every value, and how to phrase those results for a player.
+ */
+
+/**
  * A Map of possible strength scores to modifiers.
  */
 export const strengthModifiers = new Map()
@@ -238,6 +243,68 @@ charismaModifiers.set(17, { reaction: 1, maxRetainers: 6, baseLoyalty: 9 })
 charismaModifiers.set(18, { reaction: 2, maxRetainers: 7, baseLoyalty: 10 })
 
 // =============================================================================
+
+/** Where the phrasing for each modifier lives in the translation files. */
+const MODIFIER_PREFIX = "BAGS.Systems.BX.AbilityScores.Modifiers"
+
+/**
+ * How to phrase each value inside an ability score's modifier record.
+ *
+ * The records above are a mix of three different kinds of number, and reading
+ * them all as "+2" gets two of the three wrong:
+ * - Bonuses and penalties, like `meleeAttack`, which do want a sign.
+ * - Plain quantities, like `maxRetainers` (a headcount) and `openDoors` (a
+ *   target number on d6), which read as nonsense with a sign attached.
+ * - States, like `literacy`, which isn't really a number at all -- -1, 0, and 1
+ *   mean illiterate, semi-literate, and literate.
+ *
+ * Each entry names the translation key that phrases its value. Those strings
+ * receive two placeholders, `{value}` (the raw number) and `{signed}` (the same
+ * number with an explicit + or -), so a translator picks whichever reads better
+ * without any code change.
+ * @typedef {object} ModifierDisplay
+ * @property {string} [label] - Translation key phrasing this modifier
+ * @property {Record<number, string>} [values] - Translation keys chosen by
+ * value, for modifiers that name a state rather than an amount. Takes
+ * precedence over `label`.
+ * @property {boolean} [showZero] - Show this modifier even when it's zero. Zero
+ * is hidden by default, because a +0 bonus isn't worth the space, but for
+ * something like literacy zero is a meaningful reading.
+ */
+
+/**
+ * Display rules for every key that appears in a B/X modifier record.
+ * @type {Record<string, ModifierDisplay>}
+ */
+export const modifierDisplay = {
+  meleeAttack: { label: `${MODIFIER_PREFIX}.meleeAttack` },
+  meleeDamage: { label: `${MODIFIER_PREFIX}.meleeDamage` },
+  missileAttack: { label: `${MODIFIER_PREFIX}.missileAttack` },
+  missileDamage: { label: `${MODIFIER_PREFIX}.missileDamage` },
+  ac: { label: `${MODIFIER_PREFIX}.ac` },
+  initiative: { label: `${MODIFIER_PREFIX}.initiative` },
+  magicSave: { label: `${MODIFIER_PREFIX}.magicSave` },
+  bonusHP: { label: `${MODIFIER_PREFIX}.bonusHP` },
+  reaction: { label: `${MODIFIER_PREFIX}.reaction` },
+
+  // Quantities. `openDoors` shows its zero because "0 in 6" means the character
+  // cannot force a door at all, which is worth saying out loud.
+  openDoors: { label: `${MODIFIER_PREFIX}.openDoors`, showZero: true },
+  languages: { label: `${MODIFIER_PREFIX}.languages` },
+  maxRetainers: { label: `${MODIFIER_PREFIX}.maxRetainers` },
+  baseLoyalty: { label: `${MODIFIER_PREFIX}.baseLoyalty` },
+
+  // A state rather than an amount.
+  literacy: {
+    showZero: true,
+    values: {
+      "-1": `${MODIFIER_PREFIX}.literacy.Illiterate`,
+      0: `${MODIFIER_PREFIX}.literacy.Basic`,
+      1: `${MODIFIER_PREFIX}.literacy.Literate`,
+    },
+  },
+}
+
 /**
  * A map of ability score keys to modifiers, labels, field hints, and other
  * related data.

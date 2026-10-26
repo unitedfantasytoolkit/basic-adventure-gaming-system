@@ -21,7 +21,7 @@ export default class AbilityScoreRoll extends Roll {
 
     this.target = options.target ?? null
     this.rollBelow = options.rollBelow ?? true
-    this.rollMode = options.rollMode ?? game.settings.get("core", "rollMode")
+    this.rollMode = options.rollMode ?? game.settings.get("core", "messageMode")
     this.abilityName = options.abilityName ?? ""
 
     if (this.target === null)
@@ -48,9 +48,8 @@ export default class AbilityScoreRoll extends Roll {
   /** @override */
   async _prepareChatRenderContext(options = {}) {
     const context = await super._prepareChatRenderContext(options)
-    const isPrivate =
-      this.rollMode === CONST.DICE_ROLL_MODES.PRIVATE ||
-      this.rollMode === CONST.DICE_ROLL_MODES.BLIND
+    // A card the players can't see shouldn't give the target number away.
+    const isPrivate = this.rollMode === "gm" || this.rollMode === "blind"
 
     const abilityScoreSettings =
       CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
@@ -76,12 +75,12 @@ export default class AbilityScoreRoll extends Roll {
 
   async toMessage(messageData = {}, { rollMode, create = true } = {}) {
     if (rollMode === "roll") rollMode = undefined
-    rollMode ||= game.settings.get("core", "rollMode")
+    rollMode ||= game.settings.get("core", "messageMode")
 
     // Perform the roll, if it has not yet been rolled
     if (!this._evaluated)
       await this.evaluate({
-        allowInteractive: rollMode !== CONST.DICE_ROLL_MODES.BLIND,
+        allowInteractive: rollMode !== "blind",
       })
 
     // Prepare chat data

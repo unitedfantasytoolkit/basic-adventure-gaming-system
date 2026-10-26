@@ -1,0 +1,37 @@
+{{!--
+  One combatant's line, shared by both of the round card's layouts.
+
+  In blocks mode the block above already names the side, so a row carries no
+  colour of its own. On a ladder there is no such block -- sides interleave,
+  which is the reason the ladder exists -- so the row paints its own accent and
+  the eye can pick out one side by glancing down a column.
+--}}
+<li class="bags-round__member" data-side="{{ side }}"
+    {{#if color}}style="--bags-unit-accent: {{ color }};"{{/if}}>
+    {{#if img}}
+    <img class="bags-round__member-image" src="{{ img }}" alt="{{ name }}" loading="lazy">
+    {{/if}}
+    <span class="bags-round__member-name">{{ name }}</span>
+
+    {{#if declarationLabel}}
+    <span class="bags-round__declaration {{#if inherited}}bags-round__declaration--inherited{{/if}}">
+        <i class="{{ declarationIcon }}" inert></i>
+        <span>{{ declarationLabel }}</span>
+    </span>
+
+    {{!--
+      The invitation only shows on rows this viewer can speak for, and only
+      while the round is still the current one -- a card scrolled back to is a
+      record, not a prompt.
+    --}}
+    {{else if canDeclare}}
+    <button type="button" class="bags-round__declare"
+            data-declare-combatant="{{ combatantId }}">
+        {{ localize "BAGS.Combat.Round.DeclareCTA" }}
+    </button>
+    {{else if awaited}}
+    <span class="bags-round__declaration bags-round__declaration--none">
+        {{ localize "BAGS.Combat.Round.Undeclared" }}
+    </span>
+    {{/if}}
+</li>

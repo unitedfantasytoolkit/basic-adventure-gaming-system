@@ -1,0 +1,86 @@
+{{!--
+  What a combatant is about to do.
+
+  A radio list rather than a row of buttons, because some actions need a number
+  along with them -- a spell's casting time, how far someone means to move. A
+  button commits the moment it is pressed, which leaves nowhere to ask. Radios
+  let a choice be made, adjusted, and then submitted.
+
+  Each option carries its own fields, hidden until it is chosen. The fields come
+  from the declaration type itself rather than from a check against its id, so a
+  module contributing "set weapon against charge" can ask for a number without
+  this template knowing anything about it.
+--}}
+<form class="bags-declaration__wrap">
+    {{#if inherited}}
+    <p class="bags-declaration__inherited">
+        {{ localize "BAGS.Combat.Declarations.Inherited" group=inherited }}
+    </p>
+    {{/if}}
+
+    <ol class="bags-declaration__types plain">
+        {{#each types}}
+        <li class="bags-declaration__type {{#if selected}}bags-declaration__type--selected{{/if}}">
+            <label class="bags-declaration__choice">
+                <input type="radio" name="type" value="{{ id }}"
+                       {{#if selected}}checked{{/if}}>
+                <i class="{{ icon }}" inert></i>
+                <span class="bags-declaration__choice-label">{{ label }}</span>
+            </label>
+
+            {{#if fields}}
+            {{!--
+              Kept in the DOM rather than rendered on demand so that a half-typed
+              casting time survives clicking a different option and clicking back.
+              `hidden` is toggled by the dialog as the selection changes.
+            --}}
+            <div class="bags-declaration__fields" data-fields-for="{{ id }}"
+                 {{#unless selected}}hidden{{/unless}}>
+                {{#each fields}}
+                <div class="bags-declaration__field">
+                    <label for="bags-decl-{{ @../index }}-{{ name }}">
+                        {{ localize label }}
+                    </label>
+
+                    {{!--
+                      Foundry's own slider-and-number pair for anything with a
+                      real span to it, so a distance can be dragged rather than
+                      typed. It is a form element like any other -- the dialog
+                      reads its `value` by name along with everything else.
+                    --}}
+                    {{#if isRange}}
+                    <range-picker id="bags-decl-{{ @../index }}-{{ name }}"
+                                  name="values.{{ name }}" value="{{ value }}"
+                                  min="{{ min }}" max="{{ max }}" step="{{ step }}">
+                    </range-picker>
+                    {{else}}
+                    <input type="number" id="bags-decl-{{ @../index }}-{{ name }}"
+                           name="values.{{ name }}" value="{{ value }}"
+                           min="{{ min }}" max="{{ max }}" step="{{ step }}">
+                    {{/if}}
+
+                    {{#if hint}}
+                    <p class="bags-declaration__field-hint">{{ localize hint }}</p>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+        </li>
+        {{/each}}
+    </ol>
+
+    <footer class="bags-declaration__footer">
+        {{#if hasDeclaration}}
+        <button type="button" data-action="clearDeclaration">
+            <i class="fa-solid fa-xmark" inert></i>
+            <span>{{ localize "BAGS.Combat.Declarations.Clear" }}</span>
+        </button>
+        {{/if}}
+
+        <button type="button" class="bags-declaration__submit" data-action="declare">
+            <i class="fa-solid fa-check" inert></i>
+            <span>{{ localize "BAGS.Combat.Declarations.Submit" }}</span>
+        </button>
+    </footer>
+</form>

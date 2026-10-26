@@ -23,7 +23,19 @@
           name="level.max"
           localize=true
         }}
-        
+
+        {{!--
+          Presentation, not a rule. Reference views use it to decide whether an
+          out-of-range action is worth previewing; what the character can
+          actually do is decided by the range above, either way.
+        --}}
+        {{formGroup
+          fields.level.fields.hideWhenUnmet
+          value=action.level.hideWhenUnmet
+          name="level.hideWhenUnmet"
+          localize=true
+        }}
+
         <div class="example-box">
           <strong>{{localize "BAGS.Actions.Restrictions.LevelRestrictions.Example"}}</strong>
         </div>

@@ -6,9 +6,10 @@
     "test": "uvu test",
     "test:coverage": "c8 --reporter=text --reporter=html uvu test",
     "build": "npm-run-all -p  build:js build:css",
+    "build:dev": "BAGS_DEV=1 npm-run-all -p build:js build:css",
     "build:js": "rollup --config ./rollup.config.js",
     "build:css": "postcss src/index.css -o dist/bags.css",
-    "start": "npm-run-all -p watch:js watch:css",
+    "start": "BAGS_DEV=1 npm-run-all -p watch:js watch:css",
     "watch:js": "rollup --config ./rollup.config.js --watch",
     "watch:css": "postcss src/index.css -o dist/bags.css --watch --verbose --poll",
     "prepare": "husky install"

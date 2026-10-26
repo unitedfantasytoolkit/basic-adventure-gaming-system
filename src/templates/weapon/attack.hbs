@@ -30,8 +30,21 @@
         localize=true
       }}
 
+      {{!--
+        `name` has to be given explicitly. Every other field on this tab takes its
+        name from the schema field's own path, but this one is the `element` of an
+        ArrayField, whose path is `...effects.element.formula` -- no index, and
+        nothing that submits anywhere.
+
+        Foundry replaces an array wholesale on update, so submitting one index
+        rewrites `effects[0]` and resets its other fields to their schema
+        initials. Harmless here: `actionList` rebuilds the damage effect from
+        scratch and reads only `formula` back out. An editor that needed the rest
+        of a stored effect to survive would have to submit the whole array.
+      --}}
       {{formGroup
         systemFields.attack.fields.effects.element.fields.formula
+        name="system.attack.effects.0.formula"
         value=document.system.attack.effects.0.formula
         label="BAGS.Items.Weapon.Fields.DamageFormula.Label"
         hint="BAGS.Items.Weapon.Fields.DamageFormula.Hint"

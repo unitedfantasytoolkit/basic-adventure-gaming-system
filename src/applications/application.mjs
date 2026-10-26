@@ -11,6 +11,14 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
 
     this.document = options?.document
 
+    /**
+     * The application that owns this one, when it was built as a sub-app.
+     *
+     * Deliberately not called `parent`: ApplicationV2 defines `parent` as a
+     * getter, so assigning to it throws.
+     */
+    this.parentApp = options?.parentApp ?? null
+
     this.#subApps = Object.keys(this.constructor.SUB_APPS).reduce(
       (obj, key) => {
         const App = this.constructor.SUB_APPS[key]
@@ -18,7 +26,7 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
           ...obj,
           [key]: new App({
             document: this.document,
-            parent: this,
+            parentApp: this,
           }),
         }
       },
@@ -172,9 +180,22 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
         this.document.img
   }
 
+  /**
+   * Render this application, keeping an owning application in step with it.
+   *
+   * Editing an action effect, for instance, should refresh the action editor
+   * behind it.
+   *
+   * The return value matters: callers await `render()` to know the window is on
+   * screen, and anything that renders and then immediately closes -- which the
+   * character creation flow does -- depends on it, because `close()` on an
+   * application that has no element yet returns without tearing anything down.
+   * @param {...any} args - Whatever ApplicationV2#render takes
+   * @returns {Promise<BAGSApplication>} This application, once it is rendered
+   */
   render(...args) {
-    if (this.parent?.rendered) this.parent.render()
-    super.render(...args)
+    if (this.parentApp?.rendered) this.parentApp.render()
+    return super.render(...args)
   }
 
   // --- Tabs ------------------------------------------------------------------
@@ -272,8 +293,19 @@ export default class BAGSApplication extends HandlebarsApplicationMixin(
     await this.document.update(formData.object)
   }
 
-  async close() {
-    await Promise.all(Object.values(this.subApps).map((a) => a.close()))
-    super.close()
+  /**
+   * Close this application, and any sub-application it owns along with it.
+   *
+   * The options have to be passed on and the result has to be awaited. A closing
+   * window animates out over as much as a second, and `_onClose` -- where
+   * anything that has to happen on the way out lives -- doesn't run until that
+   * animation is done. Dropping the options meant `close({ animate: false })`
+   * still animated, and not awaiting meant a caller carried on regardless.
+   * @param {object} [options] - Options which modify how the application closes
+   * @returns {Promise<BAGSApplication>} This application, once it is closed
+   */
+  async close(options = {}) {
+    await Promise.all(Object.values(this.subApps).map((a) => a.close(options)))
+    return super.close(options)
   }
 }

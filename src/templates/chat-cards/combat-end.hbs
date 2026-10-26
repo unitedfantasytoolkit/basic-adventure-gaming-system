@@ -1,0 +1,28 @@
+{{!--
+  The end of a fight.
+
+  Uses the same divider the round card opens with, so a session scrolled back
+  through reads as a series of divisions rather than a stack of panels. It
+  carries no chrome of its own -- no header, no timestamp -- because it is a
+  break in the conversation rather than another entry in it.
+--}}
+<li class="chat-message chat-message--bags chat-message--combat-end message"
+    data-message-id="{{ message._id }}">
+  <div class="bags-divider bags-divider--combat-end">
+    <span class="bags-divider__rule" aria-hidden="true"></span>
+
+    <span class="bags-divider__label">
+      <i class="fa-solid fa-flag-checkered" inert></i>
+      <span>
+        {{#if combatEnd.name}}{{ combatEnd.name }}{{else}}{{ localize "BAGS.Combat.End.Title" }}{{/if}}
+      </span>
+      {{#if combatEnd.rounds}}
+      <span class="bags-combat-end__rounds">
+        {{ localize "BAGS.Combat.End.Rounds" rounds=combatEnd.rounds }}
+      </span>
+      {{/if}}
+    </span>
+
+    <span class="bags-divider__rule" aria-hidden="true"></span>
+  </div>
+</li>

@@ -1,0 +1,80 @@
+{{!--
+  Spell Summary
+  ---
+  A spell's point is its text, so the text gets the room. Everything a referee
+  skims -- level, range, duration, what it's made of, who learns it -- runs down
+  the aside beside it, in the same `decorated` heading and definition list
+  pattern the character sheet's rail uses.
+
+  Which rows appear is the world's business, not the spell's; see
+  `config/spell-rules.mjs`.
+--}}
+{{#> sheetTab}}
+
+  {{#if item.system.flavorText}}
+    <div class="flavor">{{{formattedSystem.flavorText}}}</div>
+  {{/if}}
+
+  <main>
+    {{#if item.system.description}}
+      {{{formattedSystem.description}}}
+    {{else}}
+      <p class="empty">{{localize "BAGS.Items.Common.NoDescription"}}</p>
+    {{/if}}
+  </main>
+
+  <aside class="scrollable">
+    <h3 class="decorated">{{localize "BAGS.Items.Spells.Tabs.Details"}}</h3>
+    <dl class="spell-entry">
+      {{#each entryStats}}
+        <dt>{{label}}</dt>
+        <dd class="spell-entry__value spell-{{key}}__value">{{value}}</dd>
+      {{/each}}
+    </dl>
+
+    {{#if showMaterials}}
+      <h3 class="decorated">{{localize
+          "BAGS.Items.Spells.Fields.Materials.Label"
+        }}</h3>
+      <p class="spell-materials">{{item.system.entry.materials}}</p>
+    {{/if}}
+
+    {{#if classification.length}}
+      <h3 class="decorated">{{localize
+          "BAGS.Items.Spells.Classification.Heading"
+        }}</h3>
+      <dl class="spell-classification">
+        {{#each classification}}
+          <dt>{{label}}</dt>
+          <dd>{{value}}</dd>
+        {{/each}}
+      </dl>
+    {{/if}}
+
+    {{#if classListings.length}}
+      <h3 class="decorated">{{localize "BAGS.Items.Spells.ClassLists.Heading"}}</h3>
+      <dl class="spell-class-lists">
+        {{#each classListings}}
+          <dt>
+            <img src="{{img}}" alt="" role="presentation" />
+            <span>{{name}}</span>
+          </dt>
+          <dd>{{localize "BAGS.Items.Spells.LevelAbbreviation" level=level}}</dd>
+        {{/each}}
+      </dl>
+    {{/if}}
+
+    {{#if item.system.isReversible}}
+      <h3 class="decorated">{{localize "BAGS.Items.Spells.Reversal.Heading"}}</h3>
+      <div class="spell-reversal">
+        {{#if reversedSpell}}
+          <a class="content-link" data-uuid="{{item.system.reversedSpellUUID}}">
+            <i class="fa-solid fa-scroll" role="presentation"></i>{{reversedSpell.name}}
+          </a>
+        {{else}}
+          <p class="empty">{{localize "BAGS.Items.Spells.Reversal.NoPair"}}</p>
+        {{/if}}
+      </div>
+    {{/if}}
+  </aside>
+{{/sheetTab}}

@@ -92,11 +92,10 @@ export default class BaseComponent extends HTMLElement {
 
   /**
    * Set the component's value on its internals and in its attributes.
-   * 
+   *
    * Note: This does NOT dispatch a change event automatically. Components should
    * dispatch change events themselves when appropriate (e.g., after user interaction
    * is complete, similar to how native form elements work).
-   * 
    * @param newValue - The new value that we'll use to update the component's value.
    */
   set value(newValue) {

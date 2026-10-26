@@ -1,0 +1,275 @@
+/*
+ * The character editor's class tab.
+ *
+ * Everything here is scoped to the tab rather than to the application, because
+ * the other tabs in this editor are plain `standard-form` panes and should keep
+ * looking like the rest of the system's forms.
+ */
+.application--bags.application--character-editor {
+  .tab--class-and-abilities {
+    /*
+     * The tab's own scroll container. No ceiling of its own on purpose: the
+     * editor is already bounded by `.application--editor`'s `max-height`, so a
+     * second limit here only ever made the window smaller than it was allowed
+     * to be, and cost a multi-classed character a class and a half of the list.
+     */
+    > .scrollable {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+      padding-right: 0.25em;
+    }
+  }
+
+  /* === A class the character has ============================================ */
+
+  .class-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+    padding: 0.75em;
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    background: rgb(0 0 0 / 10%);
+  }
+
+  .class-card__header {
+    display: grid;
+    grid-template-columns: var(--document-icon-size) 1fr min-content;
+    align-items: center;
+    gap: 0.75em;
+  }
+
+  .class-card__art {
+    width: var(--document-icon-size);
+    height: var(--document-icon-size);
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    object-fit: cover;
+  }
+
+  .class-card__name {
+    font-family: var(--font-family-document-name);
+    font-size: var(--font-size-18);
+    line-height: 1.1;
+    margin: 0;
+    border: none;
+  }
+
+  .class-card__standing {
+    display: block;
+    font-size: var(--font-size-12);
+    color: var(--color-text-subtle);
+  }
+
+  /*
+   * The class's ceiling sits next to its level rather than on a line of its
+   * own. "Lv. 3 of 14" is one fact -- how far along this class is -- and
+   * splitting it into two rows made the card read as though the maximum were
+   * something separate you also had to keep track of.
+   */
+  .class-card__max-level {
+    opacity: 0.8;
+  }
+
+  .class-card__controls {
+    display: flex;
+    gap: 0.25em;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* --- Experience ---------------------------------------------------------- */
+
+  .class-card__advancement {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+
+    uft-character-info-meter {
+      flex: 1;
+      min-width: 8em;
+
+      /*
+       * The gold the rest of the system uses for experience. The actor sheet
+       * declares the same hue, but scoped to itself, and this editor is not an
+       * actor sheet.
+       */
+      &.xp {
+        --info-meter-base-hue: 54;
+      }
+
+      &.clickable {
+        cursor: pointer;
+      }
+    }
+  }
+
+  /*
+   * Only rendered when there's a level waiting to be taken, so its presence is
+   * the notification -- the same bargain the class sheet's header makes, and
+   * the same pulse, so the two read as the same control.
+   */
+  .class-card__level-up {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 0.15em 0.75em;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    white-space: nowrap;
+    animation: pulse-gold 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-gold {
+    0%,
+    100% {
+      text-shadow: 0 0 4px rgb(255 215 0 / 30%);
+    }
+
+    50% {
+      text-shadow:
+        0 0 12px rgb(255 215 0 / 80%),
+        0 0 20px rgb(255 215 0 / 40%);
+    }
+  }
+
+  /* --- What the class grants ----------------------------------------------- */
+
+  .class-card__grants-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    border-bottom: 1px solid var(--color-text-subtle);
+    margin-bottom: 0.5em;
+
+    h4 {
+      flex: 1;
+      margin: 0;
+      border: none;
+      font-family: var(--font-primary);
+      font-size: var(--font-size-13);
+      font-variant: small-caps;
+      text-transform: lowercase;
+      opacity: 0.9;
+    }
+
+    button {
+      flex: 0 0 auto;
+    }
+  }
+
+  .class-grant-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .class-grant {
+    display: grid;
+    grid-template-columns: 24px 1fr min-content;
+    align-items: center;
+    gap: 0.5em;
+  }
+
+  /*
+   * Suppressed effects and abilities the character hasn't reached yet are dimmed
+   * rather than dropped. Both are part of what the class is worth; one is off
+   * right now and the other is still ahead, and a row that isn't there can't say
+   * either of those things.
+   */
+  .class-grant--inactive {
+    opacity: 0.5;
+  }
+
+  .class-grant__icon {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    object-fit: cover;
+  }
+
+  .class-grant__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    min-width: 0;
+  }
+
+  .class-grant__name {
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .class-grant__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25em;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .class-grant__tag {
+    padding: 1px 0.25rem;
+    font-size: var(--font-size-11);
+    border-radius: 4px;
+    background-color: var(--color-cool-4);
+    border: 1px solid var(--color-border);
+
+    .theme-light & {
+      background-color: var(--color-light-4);
+    }
+  }
+
+  .class-grant__flag {
+    font-size: var(--font-size-11);
+    color: var(--color-text-subtle);
+    white-space: nowrap;
+  }
+
+  .class-grant__flag--spent {
+    color: var(--color-level-error);
+  }
+
+  /* === No class yet ========================================================= */
+
+  /*
+   * The nudge. Given the whole pane rather than a corner of it, because on a
+   * character with no class there is nothing else on this tab to look at, and a
+   * small note in a large empty box reads as a rendering failure.
+   */
+  .class-card-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    padding: 3em 1em;
+    text-align: center;
+    border: 1px dashed var(--color-border);
+    border-radius: 0.25rem;
+  }
+
+  .class-card-empty__icon {
+    font-size: 2.5em;
+    opacity: 0.35;
+  }
+
+  .class-card-empty__title {
+    font-family: var(--font-family-document-name);
+    font-size: var(--font-size-16);
+    margin: 0;
+  }
+
+  .class-card-empty .hint {
+    margin: 0;
+    max-width: 32ch;
+  }
+}

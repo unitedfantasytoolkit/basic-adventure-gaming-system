@@ -10,6 +10,34 @@
     </div>
   </div>
 
+  {{!--
+    Classes that hand over their whole list -- clerics and the like -- get a
+    button per castable level instead of adding spells one at a time.
+  --}}
+  {{#if grantableLevels.length}}
+    <div class="spell-management__grants">
+      <span class="spell-management__grants-label">
+        {{localize "BAGS.SpellManager.GrantHeading"}}
+      </span>
+      {{#each grantableLevels}}
+        <button
+          type="button"
+          data-action="grant-spell-level"
+          data-class-id="{{classId}}"
+          data-level="{{level}}"
+          data-tooltip="{{localize 'BAGS.SpellManager.GrantTooltip' className=className level=level}}"
+        >
+          <i class="fa-solid fa-layer-group"></i>
+          {{localize "BAGS.SpellManager.LevelNumber" level=level}}
+        </button>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  <p class="hint spell-management__drop-hint">
+    {{localize "BAGS.SpellManager.DropHint"}}
+  </p>
+
   <search>
     <i class="fa fa-search" role="presentation"></i>
     <input

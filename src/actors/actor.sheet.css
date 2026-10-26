@@ -101,6 +101,24 @@
       right: -1px;
     }
 
+    /*
+     * The rail is a fixed-height column, so whichever tab is showing has to take
+     * what's left and scroll inside it. Without this the meters and the tab bar
+     * hold their size, the panel grows past the bottom of the window, and the
+     * rail's own `overflow: hidden` quietly cuts the rest off -- a character
+     * with enough gear simply loses actions off the end.
+     *
+     * `min-height: 0` is the part that actually does the work: a flex item won't
+     * shrink below its content without it, so `overflow-y` would never have
+     * anything to scroll.
+     */
+    > .tab.active {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      scrollbar-gutter: stable;
+    }
+
     &__section {
       --character-info-columns: 1fr 12ch;
 
@@ -276,11 +294,39 @@
           border-radius: 2px;
         }
       }
+
+      /* Charges left, pushed to the trailing edge away from the identity. */
+      &__uses {
+        margin-left: auto;
+        padding-right: 0.25em;
+        font-variant-numeric: tabular-nums;
+        color: var(--color-text-secondary);
+        white-space: nowrap;
+      }
+
+      /*
+       * Used up for now. Drained of colour rather than removed: the charge
+       * comes back, and a control that vanishes takes the explanation with it.
+       */
+      &[data-exhausted] {
+        filter: grayscale(100%);
+        opacity: 0.5;
+
+        &:hover {
+          opacity: 0.75;
+        }
+      }
     }
   }
 
   .action-grid {
     display: flex;
+
+    /*
+     * Exploration skills are a fixed four, but the abilities grid is however
+     * many a character has collected, so the row has to be able to break.
+     */
+    flex-wrap: wrap;
     justify-content: center;
     gap: 1em;
     padding: 0;
@@ -474,31 +520,6 @@
       margin: 0;
       font-size: 0.9rem;
       font-weight: 500;
-    }
-  }
-
-  details.action-source {
-    &[open] {
-      > summary {
-        margin-bottom: 0.25em;
-      }
-    }
-
-    > summary {
-      list-style: none;
-
-      &::after {
-        content: "▼";
-        float: right;
-        font-size: 0.8em;
-        transform: translateY(25%);
-        opacity: 0.6;
-        transition: transform 150ms ease;
-      }
-    }
-
-    &[open] > summary::after {
-      transform: translateY(25%) rotate(180deg);
     }
   }
 

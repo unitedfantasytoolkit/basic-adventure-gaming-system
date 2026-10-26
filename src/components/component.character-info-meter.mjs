@@ -25,7 +25,7 @@ export default class CharacterInfoMeter extends BaseElement {
   }
 
   static get observedAttributes() {
-    return ["value", "max", "editable"]
+    return ["value", "min", "max", "editable"]
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -97,6 +97,12 @@ export default class CharacterInfoMeter extends BaseElement {
     return value
   }
 
+  get #min() {
+    const min = parseInt(this.getAttribute("min") || "")
+    if (isNaN(min)) return 0
+    return min
+  }
+
   get #max() {
     const max = parseInt(this.getAttribute("max") || "")
     if (isNaN(max)) return 100
@@ -104,8 +110,8 @@ export default class CharacterInfoMeter extends BaseElement {
   }
 
   get #progress() {
-    const pct = (this.#value / this.#max) * 100 || 0
-    if (pct < 0) return 0
+    const pct = ((this.#value - this.#min) / (this.#max - this.#min)) * 100 || 0
+    if (pct < 0) return this.#min
     if (pct > 100) return 100
     return pct
   }
@@ -127,21 +133,22 @@ export default class CharacterInfoMeter extends BaseElement {
         class="${meterClasses.join(" ")}"
         style="--meter-fill-pct: ${this.#progress}%"
       >
-        <span class="value-display ${this.#isEditable ? "value-display--editable" : ""}"
+        <span
+          class="value-display ${this.#isEditable
+            ? "value-display--editable"
+            : ""}"
           >${this.#value}/${this.#max}</span
         >
-        ${
-          this.#isEditable
-            ? html`<input
-                type="number"
-                name="${this.getAttribute("name") || ""}"
-                value="${this.#value}"
-                min="0"
-                max="${this.#max}"
-                class="value-input"
-              />`
-            : ""
-        }
+        ${this.#isEditable
+          ? html`<input
+              type="number"
+              name="${this.getAttribute("name") || ""}"
+              value="${this.#value}"
+              min="0"
+              max="${this.#max}"
+              class="value-input"
+            />`
+          : ""}
       </div>
     `
   }

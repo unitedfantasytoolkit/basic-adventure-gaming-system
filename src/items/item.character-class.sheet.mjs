@@ -136,43 +136,107 @@ export default class BAGSCharacterClassSheet extends BAGSBaseItemSheet {
     },
   }
 
+  /**
+   * Put the class's standing -- what level it is, how close the next one is,
+   * and whether it can be taken -- into the window header.
+   *
+   * Level and experience are the same fact, so they live together, and the
+   * header keeps them visible while the body is scrolled. Levelling up gets a
+   * control of its own rather than sharing the meter, because clicking the
+   * meter already means "add experience".
+   * @param {HTMLDivElement} titleBarContainer - The header's title area
+   * @override
+   */
   customizeTitleArea(titleBarContainer) {
-    // If this is attached to a character, we should display an XP bar.
-    if (!this.document.parent) {
-      const xpBarContainer = document.createElement("div")
-      xpBarContainer.classList.add("xp-meter")
+    const meta = document.createElement("div")
+    meta.classList.add("class-standing")
 
+    const level = document.createElement("span")
+    level.classList.add("class-standing__level")
+    meta.append(level)
+
+    if (!this.document.parent) {
       const xpBar = document.createElement("uft-character-info-meter")
-      xpBar.setAttribute("value", this.document.system.xp)
-      xpBar.setAttribute("max", this.document.system.xpToNext)
       xpBar.classList.add("clickable")
       xpBar.dataset.action = "add-xp"
-      xpBar.dataset.tooltip = this.document.system.canAddXP
-        ? "Click to add XP"
-        : `Maximum level reached (${this.document.system.maxLevel})`
-
-      xpBarContainer.append(xpBar)
-
-      titleBarContainer
-        .querySelector(".window-header__text")
-        .append(xpBarContainer)
+      meta.append(xpBar)
     }
+
+    const levelUp = document.createElement("button")
+    levelUp.type = "button"
+    levelUp.classList.add("class-standing__level-up")
+    levelUp.dataset.action = "level-up"
+    levelUp.textContent = game.i18n.localize(
+      "BAGS.CharacterClass.Information.LevelUp",
+    )
+    meta.append(levelUp)
+
+    titleBarContainer.querySelector(".window-header__text").append(meta)
+
+    this.#refreshStanding(meta)
   }
 
   _replaceHTML(...args) {
     super._replaceHTML(...args)
+    this.#refreshStanding(this.element.querySelector(".class-standing"))
+  }
 
-    const xpBar = this.element.querySelector(
-      ".window-header__text uft-character-info-meter",
+  /**
+   * Bring the header's standing up to date after a render.
+   *
+   * The level-up control is hidden rather than disabled when there's nothing
+   * to spend: a header with no button is quieter than one with a dead button,
+   * and the meter's own tooltip already explains how far off the next level is.
+   * @param {HTMLElement|null} meta - The standing container, if it exists
+   */
+  #refreshStanding(meta) {
+    if (!meta) return
+
+    const { system } = this.document
+
+    const level = meta.querySelector(".class-standing__level")
+    level.textContent = game.i18n.format(
+      "BAGS.CharacterClass.Information.LevelAbbreviation",
+      { level: system.level },
     )
 
+    const xpBar = meta.querySelector("uft-character-info-meter")
     if (xpBar) {
-      xpBar.setAttribute("value", this.document.system.xp)
-      xpBar.setAttribute("max", this.document.system.xpToNext)
-      xpBar.dataset.tooltip = this.document.system.canAddXP
-        ? "Click to add XP"
-        : `Maximum level reached (${this.document.system.maxLevel})`
+      xpBar.setAttribute("value", system.currentLevelDetails.xp.current)
+      xpBar.setAttribute("min", system.currentLevelDetails.xp.prev || 0)
+      xpBar.setAttribute("max", system.currentLevelDetails.xp.next)
+      xpBar.dataset.tooltip = this.#experienceHint()
     }
+
+    const levelUp = meta.querySelector(".class-standing__level-up")
+    levelUp.hidden = !system.canLevelUp
+  }
+
+  /**
+   * What the experience meter says when you hover it.
+   *
+   * The meter carries the "how far off is the next level" answer, because the
+   * level-up control isn't there to carry it -- that only appears once there's
+   * a level waiting.
+   * @returns {string} The tooltip text
+   */
+  #experienceHint() {
+    const { system } = this.document
+
+    if (!system.canAddXP) {
+      return game.i18n.format(
+        "BAGS.CharacterClass.Information.MaxLevelReached",
+        { level: system.maxLevel },
+      )
+    }
+
+    if (system.canLevelUp) {
+      return game.i18n.localize("BAGS.CharacterClass.Information.ReadyToLevel")
+    }
+
+    return game.i18n.format("BAGS.CharacterClass.Information.AddXPHint", {
+      xp: system.xpRemaining,
+    })
   }
 
   static async addXP() {

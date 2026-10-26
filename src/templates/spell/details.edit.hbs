@@ -1,0 +1,187 @@
+{{!--
+  Spell Details Editor
+  ---
+  Which fields appear depends on the world's spell rules module. A Basic game
+  asks for a range and a duration; the Advanced games ask for the rest of the
+  printed entry too. Anything not asked for is still stored -- a spell keeps
+  what it was imported with.
+
+  The entry fields are free text on purpose: published spells say things like
+  "1 rd./level" and "Special", which no number can hold.
+--}}
+{{#> sheetTab}}
+  <h2>{{localize "BAGS.Items.Spells.Tabs.Details"}}</h2>
+  <div class="scrollable">
+    <div class="standard-form">
+      {{formGroup fields.name value=document.name hint=""}}
+
+      {{formGroup systemFields.level
+        value=document.system.level
+        localize=true
+      }}
+
+      {{#if traditionOptions.length}}
+        <div class="form-group">
+          <label for="spell-tradition">{{localize
+              "BAGS.Items.Spells.Fields.Tradition.Label"
+            }}</label>
+          <div class="form-fields">
+            <select id="spell-tradition" name="system.traditionId">
+              <option value="">{{localize
+                  "BAGS.Items.Spells.Fields.Tradition.FromClasses"
+                }}</option>
+              {{selectOptions traditionOptions
+                selected=document.system.traditionId
+                valueAttr="value"
+                labelAttr="label"
+              }}
+            </select>
+          </div>
+          <p class="hint">{{localize "BAGS.Items.Spells.Fields.Tradition.Hint"}}</p>
+        </div>
+      {{/if}}
+
+      {{#if (or shows.range shows.duration)}}
+        <div class="standard-form__field-group">
+          {{#if shows.range}}
+            {{formGroup systemFields.entry.fields.range
+              value=document.system.entry.range
+              localize=true
+            }}
+          {{/if}}
+          {{#if shows.duration}}
+            {{formGroup systemFields.entry.fields.duration
+              value=document.system.entry.duration
+              localize=true
+            }}
+          {{/if}}
+        </div>
+      {{/if}}
+
+      {{#if (or shows.castingTime shows.areaOfEffect)}}
+        <div class="standard-form__field-group">
+          {{#if shows.castingTime}}
+            {{formGroup systemFields.entry.fields.castingTime
+              value=document.system.entry.castingTime
+              localize=true
+            }}
+          {{/if}}
+          {{#if shows.areaOfEffect}}
+            {{formGroup systemFields.entry.fields.areaOfEffect
+              value=document.system.entry.areaOfEffect
+              localize=true
+            }}
+          {{/if}}
+        </div>
+      {{/if}}
+
+      {{#if shows.savingThrow}}
+        {{formGroup systemFields.entry.fields.savingThrow
+          value=document.system.entry.savingThrow
+          localize=true
+        }}
+      {{/if}}
+
+      {{#if shows.components}}
+        <h3>{{localize "BAGS.Items.Spells.Fields.Components.Label"}}</h3>
+
+        <div class="standard-form__field-group">
+          {{formGroup systemFields.entry.fields.components.fields.verbal
+            value=document.system.entry.components.verbal
+            localize=true
+          }}
+          {{formGroup systemFields.entry.fields.components.fields.somatic
+            value=document.system.entry.components.somatic
+            localize=true
+          }}
+          {{formGroup systemFields.entry.fields.components.fields.material
+            value=document.system.entry.components.material
+            localize=true
+          }}
+        </div>
+
+        {{#if document.system.entry.components.material}}
+          {{formGroup systemFields.entry.fields.materials
+            value=document.system.entry.materials
+            localize=true
+          }}
+        {{/if}}
+      {{/if}}
+
+      {{#if (or shows.schools shows.spheres)}}
+        <h3>{{localize "BAGS.Items.Spells.Classification.Heading"}}</h3>
+
+        {{!--
+          Schools and spheres are arrays edited as comma-separated text, the way
+          spell entries are written. The suggestions are seeded by the rules
+          module and harvested from the spells already in play, and nothing here
+          refuses a name that isn't on the list.
+        --}}
+        {{#if shows.schools}}
+          <div class="form-group">
+            <label for="spell-schools">{{localize
+                "BAGS.Items.Spells.Fields.Schools.Label"
+              }}</label>
+            <div class="form-fields">
+              <input
+                type="text"
+                id="spell-schools"
+                name="schoolsText"
+                value="{{schoolsValue}}"
+                list="spell-school-suggestions"
+              />
+            </div>
+            <datalist id="spell-school-suggestions">
+              {{#each schoolSuggestions}}
+                <option value="{{this}}"></option>
+              {{/each}}
+            </datalist>
+            <p class="hint">{{localize "BAGS.Items.Spells.Fields.Schools.Hint"}}</p>
+          </div>
+        {{/if}}
+
+        {{#if shows.spheres}}
+          <div class="form-group">
+            <label for="spell-spheres">{{localize
+                "BAGS.Items.Spells.Fields.Spheres.Label"
+              }}</label>
+            <div class="form-fields">
+              <input
+                type="text"
+                id="spell-spheres"
+                name="spheresText"
+                value="{{spheresValue}}"
+                list="spell-sphere-suggestions"
+              />
+            </div>
+            <datalist id="spell-sphere-suggestions">
+              {{#each sphereSuggestions}}
+                <option value="{{this}}"></option>
+              {{/each}}
+            </datalist>
+            <p class="hint">{{localize "BAGS.Items.Spells.Fields.Spheres.Hint"}}</p>
+          </div>
+        {{/if}}
+      {{/if}}
+
+      <h3>{{localize "BAGS.Items.Spells.Reversal.Heading"}}</h3>
+
+      {{formGroup systemFields.isReversible
+        value=document.system.isReversible
+        localize=true
+      }}
+
+      {{#if document.system.isReversible}}
+        {{formGroup systemFields.reversedSpellUUID
+          value=document.system.reversedSpellUUID
+          localize=true
+        }}
+      {{/if}}
+
+      {{formGroup systemFields.source
+        value=document.system.source
+        localize=true
+      }}
+    </div>
+  </div>
+{{/sheetTab}}

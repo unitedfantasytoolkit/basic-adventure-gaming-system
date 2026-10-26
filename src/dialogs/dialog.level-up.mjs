@@ -4,7 +4,7 @@
 
 /**
  * Show a dialog to level up a character class
- * @param {Object} classItem - The character class item
+ * @param {object} classItem - The character class item
  * @returns {Promise<{note: string}|null>} The note for the level up, or null if cancelled
  */
 export async function showLevelUpDialog(classItem) {
@@ -46,7 +46,7 @@ export async function showLevelUpDialog(classItem) {
 
 /**
  * Level up a character class with HP rolling and chat card
- * @param {Object} classItem - The character class item
+ * @param {object} classItem - The character class item
  * @param {string} note - Optional note for the audit log
  */
 export async function levelUpClass(classItem, note = "") {
@@ -57,8 +57,8 @@ export async function levelUpClass(classItem, note = "") {
 
   // Roll HP for the new level
   const conMod = classItem.parent?.system?.abilityScores?.con?.hpBonus || 0
-  const hitDieSize = classItem.system.hitDieSize
-  const canUseConMod = newLevelData.hd.canUseConMod
+  const { hitDieSize } = classItem.system
+  const { canUseConMod } = newLevelData.hd
   const hpRoll = await new Roll(
     `1d${hitDieSize}${canUseConMod && conMod ? `+${conMod}` : ""}`,
   ).evaluate()

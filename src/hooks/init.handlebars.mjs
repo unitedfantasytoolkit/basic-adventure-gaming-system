@@ -47,6 +47,11 @@ Hooks.once("init", async () => {
     sheetTab: `${SYSTEM_TEMPLATE_PATH}/common/sheet-tab.hbs`,
 
     /* ======================================================================
+     * Combat
+     * ====================================================================== */
+    bagsGroupManagerRow: `${SYSTEM_TEMPLATE_PATH}/combat/group-manager-row.hbs`,
+
+    /* ======================================================================
      * Applications
      * ====================================================================== */
 
@@ -84,5 +89,18 @@ Hooks.once("init", async () => {
     chatActionEffectDamage: `${SYSTEM_TEMPLATE_PATH}/chat-cards/partials/effect-damage.hbs`,
     chatActionEffectGeneric: `${SYSTEM_TEMPLATE_PATH}/chat-cards/partials/effect-generic.hbs`,
     chatActionEffectMessage: `${SYSTEM_TEMPLATE_PATH}/chat-cards/partials/effect-message.hbs`,
+
+    // === Rounds ==============================================================
+
+    // One combatant's line. Shared by the round card's two layouts -- a block
+    // per side for the Basic/Expert family, a ladder of segments for AD&D.
+    chatRoundMember: `${SYSTEM_TEMPLATE_PATH}/chat-cards/partials/round-member.hbs`,
+
+    // === Combat tracker ======================================================
+
+    // One combatant's row. Shared by the tracker's two layouts -- blocks per
+    // rolling unit, or a flat list once members of a unit act at different
+    // moments and there are no contiguous blocks left to draw.
+    combatTrackerRow: `${SYSTEM_TEMPLATE_PATH}/combat/partials/combatant-row.hbs`,
   })
 })

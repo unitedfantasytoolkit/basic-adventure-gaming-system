@@ -1,0 +1,221 @@
+/* === Rewards sidebar =======================================================
+
+   Deliberately the same skeleton as the Party tab next door, which is in turn the
+   combat tracker's: header, scrolling list, footer holding the one action that
+   finishes the job.
+   ========================================================================== */
+
+.rewards-sidebar {
+  --element-spacing: 8px;
+  --element-spacing-half: 4px;
+
+  overflow: hidden;
+
+  &.active,
+  &.sidebar-popout .window-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--element-spacing);
+  }
+}
+
+.rewards-sidebar .window-content {
+  padding: 0;
+}
+
+/* --- Header ---------------------------------------------------------------- */
+
+.rewards-header {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  padding: var(--element-spacing) var(--element-spacing) 0;
+}
+
+.rewards-controls {
+  align-items: center;
+  display: flex;
+  gap: var(--element-spacing-half);
+}
+
+.rewards-controls .control-buttons {
+  align-items: center;
+  display: flex;
+  gap: var(--element-spacing-half);
+}
+
+/* Hidden rather than greyed, matching how the combat tracker treats a control
+   that has nothing to act on. */
+.rewards-controls .inline-control:disabled {
+  visibility: hidden;
+}
+
+.rewards-title {
+  color: var(--color-text-secondary);
+  flex: 1;
+  font-size: var(--font-size-15);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* --- The ledger ----------------------------------------------------------- */
+
+.rewards-list {
+  flex: 1;
+  overflow: hidden auto;
+}
+
+.reward-entry {
+  align-items: center;
+  color: var(--color-text-primary);
+  display: flex;
+  font-size: var(--font-size-14);
+  gap: var(--element-spacing);
+  margin: 0;
+  padding: var(--element-spacing);
+}
+
+.reward-entry:hover {
+  background: var(--entry-hover-bg, rgb(255 255 255 / 10%));
+}
+
+.reward-entry.context {
+  background: var(--entry-active-bg, rgb(255 255 255 / 15%));
+}
+
+.reward-icon {
+  color: var(--color-text-subtle);
+  flex: 0 0 1rem;
+  text-align: center;
+}
+
+.reward-details {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.reward-details .name {
+  cursor: var(--cursor-pointer);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reward-recipients {
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-11);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reward-recipients .separator {
+  opacity: 0.5;
+}
+
+.reward-xp {
+  color: var(--color-text-secondary);
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.reward-entry .inline-control {
+  --button-text-color: var(--color-text-subtle);
+
+  font-size: var(--font-size-12);
+}
+
+.reward-entry .inline-control:hover {
+  --button-text-color: var(--color-level-error);
+}
+
+/* --- Footer --------------------------------------------------------------- */
+
+.rewards-controls-footer {
+  align-items: stretch;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--element-spacing-half);
+  padding: 0 var(--element-spacing) var(--element-spacing);
+}
+
+.rewards-controls-footer:empty {
+  display: none;
+}
+
+.rewards-warning {
+  align-items: baseline;
+  color: var(--color-level-warning);
+  display: flex;
+  font-size: var(--font-size-11);
+  gap: var(--element-spacing-half);
+  margin: 0;
+}
+
+/* Full width, the same shape as the combat tracker's "Begin Combat" -- the one
+   thing this tab is for should look like it. */
+.rewards-award-all {
+  flex: 1;
+}
+
+.rewards-award-all span {
+  line-height: var(--sidebar-header-height);
+}
+
+/* --- Empty state ---------------------------------------------------------- */
+
+.rewards-empty {
+  align-items: center;
+  color: var(--color-text-subtle);
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--element-spacing-half);
+  justify-content: center;
+  padding: var(--element-spacing) calc(var(--element-spacing) * 2);
+  text-align: center;
+}
+
+.rewards-empty > i {
+  font-size: 2rem;
+  opacity: 0.35;
+}
+
+.rewards-empty p {
+  margin: 0;
+}
+
+.rewards-empty .hint {
+  font-size: var(--font-size-12);
+}
+
+/* --- The reward editor ---------------------------------------------------- */
+
+/* The member checkboxes mean nothing while the reward is going to the whole
+   party, so they're dimmed and switched off rather than left to be misread. */
+.bags-reward-recipients.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.bags-reward-recipients {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* --- The award chat card -------------------------------------------------- */
+
+.bags-rewards-award ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bags-rewards-award li + li {
+  border-top: 1px solid var(--color-border-light-tertiary, rgb(0 0 0 / 10%));
+}

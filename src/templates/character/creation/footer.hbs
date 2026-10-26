@@ -1,0 +1,30 @@
+<footer class="creation-footer">
+  <button
+    type="button"
+    data-action="previous-step"
+    {{#if isFirstStep}}disabled{{/if}}
+  >
+    <i class="fa-solid fa-chevron-left"></i>
+    {{localize "BAGS.CharacterCreation.Navigation.Previous"}}
+  </button>
+
+  <div class="creation-footer__spacer"></div>
+
+  {{#if isLastStep}}
+    <button
+      type="button"
+      class="creation-footer__finish"
+      data-action="finish"
+      {{#unless canFinish}}disabled{{/unless}}
+      data-tooltip="{{#unless canFinish}}{{localize "BAGS.CharacterCreation.Requirements.Incomplete"}}{{/unless}}"
+    >
+      <i class="fa-solid fa-check"></i>
+      {{localize "BAGS.CharacterCreation.Navigation.Finish"}}
+    </button>
+  {{else}}
+    <button type="button" data-action="next-step">
+      {{localize "BAGS.CharacterCreation.Navigation.Next"}}
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+  {{/if}}
+</footer>

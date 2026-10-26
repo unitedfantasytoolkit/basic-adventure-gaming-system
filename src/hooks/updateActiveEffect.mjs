@@ -4,4 +4,3 @@ Hooks.on("updateActiveEffect", (effect) => {
 
   if (effectListEditor.rendered) effectListEditor.render(true)
 })
-

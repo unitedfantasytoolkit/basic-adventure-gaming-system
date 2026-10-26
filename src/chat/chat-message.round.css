@@ -1,0 +1,205 @@
+/**
+ * The round card.
+ *
+ * A stack of rules rather than a panel: the round is announced with a divider,
+ * and each side within it gets its own, carrying the initiative that put the
+ * sides in this order. The shared divider styling lives in chat-divider.css;
+ * everything here is what sits between the rules.
+ */
+
+.chat-message--round {
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+.bags-round {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-block-end: 0.25rem;
+}
+
+.bags-divider--round {
+  font-size: var(--font-size-14, 0.875rem);
+}
+
+/* === A side within the round ============================================= */
+
+.bags-round__units {
+  display: flex;
+  flex-direction: column;
+
+  /* Each side's gem is pulled up above its panel by the shared card styling, so
+     the space between blocks has to clear the diamond as well as separate the
+     cards -- otherwise a gem sits on top of the block above it.
+   *
+   * `gap` applies only between items, which is what is wanted: the first block
+   * sits directly under the header and needs no such clearance, because there
+   * is no card above it for its gem to collide with. */
+  gap: 1.75rem;
+  margin: 0;
+  padding: 0;
+}
+
+.bags-round__unit {
+  /* Each side colours its own rules, so the eye can follow one side down the
+     card without reading a single name. */
+  --bags-divider-color: var(--bags-unit-accent, var(--border-color, #b78846));
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.1875rem;
+  list-style: none;
+}
+
+/* Each side's block is one of this system's cards, so its gem, its ruled title
+   and its panel all come from shared.chat.css. Only the side's own colour is
+   set here, which is what lets the eye follow one side down the card. */
+.bags-round__unit .action {
+  --border-color: var(--bags-unit-accent, #b78846);
+
+  padding-block-end: 0.5rem;
+}
+
+.bags-round__unit .action__attempt__context {
+  font-size: var(--font-size-11, 0.6875rem);
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* === The segment ladder ==================================================
+ * The Advanced games' layout. Sides interleave, so there are no per-side blocks
+ * to draw -- instead the round is listed in the order it happens, with a rule
+ * down the left that the segment numbers sit on.
+ */
+
+/* The ladder needs a ground of its own.
+ *
+ * `.chat-message--round` deliberately has no background, because in block mode
+ * every side is drawn as an `.action` card that brings its own panel. A ladder
+ * has no such cards, so without this the rows are bare text -- and chat renders
+ * every message twice, once in the sidebar and once in the `#chat-notifications`
+ * overlay that floats above the canvas. Over a light or busy map that is
+ * unreadable rather than merely plain. Matches the panel `.action` uses in
+ * shared.chat.css, so the two layouts read as the same card. */
+.bags-round__panel {
+  backdrop-filter: blur(4px);
+  background: var(--color-cool-5-90, #1b1610);
+  border: 1px solid #383531;
+  border-radius: 4px;
+  box-shadow: 0 0 3px #000;
+  padding: 0.625rem 0.75rem;
+}
+
+/* The rail, the stops on it and the pending block all come from
+   styles/shared.ladder.css, which the combat tracker uses too -- one definition
+   of what a segment ladder looks like, so the sidebar and the card do not become
+   two things to learn. Only the spacing above it is the card's own. */
+.bags-round__panel .bags-ladder {
+  margin-block-start: 0.25rem;
+}
+
+/* === Members ============================================================= */
+
+.bags-round__members {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  margin: 0;
+  padding: 0;
+}
+
+/* The chat column is narrow, and a name plus an invitation to declare does not
+   always fit on one line. Wrapping lets the button drop underneath rather than
+   being clipped at the sidebar's edge. */
+.bags-round__member {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.125rem 0.375rem;
+  list-style: none;
+  padding-inline: 0.25rem;
+}
+
+/* On a ladder a row is the only thing carrying its side's colour, since there is
+   no block above it to do so. A left edge is enough to follow one side down the
+   card without reading a single name. */
+.bags-ladder .bags-round__member,
+.bags-ladder-pending .bags-round__member {
+  border-inline-start: 2px solid
+    var(--bags-unit-accent, var(--border-color, #b78846));
+  padding-inline-start: 0.375rem;
+}
+
+.bags-round__member-image {
+  block-size: 1.25rem;
+  border: 1px solid var(--bags-unit-accent, var(--border-color, #b78846));
+  border-radius: 3px;
+  flex: 0 0 1.25rem;
+  inline-size: 1.25rem;
+  object-fit: cover;
+}
+
+.bags-round__member-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bags-round__declaration {
+  align-items: center;
+  display: inline-flex;
+  font-size: var(--font-size-11, 0.6875rem);
+  gap: 0.1875rem;
+  opacity: 0.85;
+}
+
+/* Taken from the mob rather than said by this combatant. */
+.bags-round__declaration--inherited {
+  font-style: italic;
+  opacity: 0.55;
+}
+
+.bags-round__declaration--none {
+  opacity: 0.4;
+}
+
+.bags-round__empty {
+  margin: 0;
+  opacity: 0.6;
+  text-align: center;
+}
+
+/* Foundry's default button colours assume the light ground its own interface
+   uses -- its text lands at #111, which on this dark card is invisible. The
+   button keeps Foundry's shape and takes its colours from the card instead. */
+.bags-round__declare {
+  background: color-mix(in srgb, var(--border-color) 20%, transparent);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  color: var(--text-color-primary, #e7d1b1);
+  cursor: pointer;
+
+  /* Allowed to shrink, and pushed to the end of whichever line it lands on. */
+  flex: 0 1 auto;
+  font-size: var(--font-size-11, 0.6875rem);
+  inline-size: auto;
+  line-height: 1.6;
+  margin-inline-start: auto;
+
+  /* Foundry gives buttons a 32px height, far too tall for a control sitting on
+     one line of a list. */
+  block-size: auto;
+  min-block-size: 0;
+  padding-block: 0.0625rem;
+  padding-inline: 0.5rem;
+  white-space: nowrap;
+  width: auto;
+}
+
+.bags-round__declare:hover {
+  background: color-mix(in srgb, var(--border-color) 38%, transparent);
+  color: var(--text-color-highlight, #fff);
+}

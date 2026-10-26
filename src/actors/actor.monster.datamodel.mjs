@@ -163,6 +163,19 @@ export default class BAGSMonsterDataModel extends BaseActorDataMixin(
 ) {
   prepareDerivedData() {}
 
+  /**
+   * What a monster amounts to, in levels.
+   *
+   * Hit dice are a monster's level in every edition this system covers -- it's
+   * what their saves, their attack rolls and their experience award are all read
+   * off. An ability restricted to "5th level and up" therefore means five hit
+   * dice when a monster is the one using it.
+   * @returns {number} The monster's hit dice count
+   */
+  get level() {
+    return this.hp.hitDice.count
+  }
+
   get encumbrance() {
     const encumbranceSettings =
       CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(

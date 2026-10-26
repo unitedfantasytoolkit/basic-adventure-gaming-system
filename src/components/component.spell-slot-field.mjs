@@ -1,39 +1,39 @@
 /**
  * @file A custom element that represents item that can be clicked or summon a tooltip
  */
-import BaseElement from "../_BaseElement";
-import styles from "./SpellSlotField.css" assert { type: "css" };
-import { component } from "../decorators";
-import { html } from "../utils";
+import BaseElement from "../_BaseElement"
+import styles from "./SpellSlotField.css" assert { type: "css" }
+import { component } from "../decorators"
+import { html } from "../utils"
 
 @component("uft-spell-slot-field")
 export default class SpellSlotField extends BaseElement {
   static get styles() {
-    return [styles];
+    return [styles]
   }
 
   events() {
-    this.setAttribute("data-dtype", "Number");
+    this.setAttribute("data-dtype", "Number")
 
     this.shadowRoot
       .querySelector("#max")
-      ?.addEventListener("change", this.onInput?.bind(this));
+      ?.addEventListener("change", this.onInput?.bind(this))
   }
 
   get #ordinalLabel() {
-    const number = parseInt(this.getAttribute("level") || "0", 10);
-    if (!number) return "";
-    const plurals = new Intl.PluralRules("en-US", { type: "ordinal" });
+    const number = parseInt(this.getAttribute("level") || "0", 10)
+    if (!number) return ""
+    const plurals = new Intl.PluralRules("en-US", { type: "ordinal" })
     const suffixes = new Map([
       ["one", "st"],
       ["two", "nd"],
       ["few", "rd"],
       ["other", "th"],
-    ]);
-    const rule = plurals.select(number);
-    const suffix = suffixes.get(rule);
+    ])
+    const rule = plurals.select(number)
+    const suffix = suffixes.get(rule)
     return html`<span>${number}</span
-      ><span class="ordinal-suffix">${suffix}</span>`;
+      ><span class="ordinal-suffix">${suffix}</span>`
   }
 
   get template() {
@@ -54,10 +54,10 @@ export default class SpellSlotField extends BaseElement {
         min="0"
         step="1"
       />
-    `;
+    `
   }
 
   onInput(e) {
-    this.value = e.target.value || "";
+    this.value = e.target.value || ""
   }
 }

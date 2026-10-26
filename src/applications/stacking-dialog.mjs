@@ -6,15 +6,13 @@ import { mergeItemStacks } from "../utils/item-stacking.mjs"
 
 /**
  * Dialog to confirm whether a dropped item should be stacked with an existing item.
- * 
+ *
  * Shows both items' details and allows the user to choose between stacking them
  * together or keeping them separate.
  */
-export default class StackingDialog extends foundry.applications.api
-  .DialogV2 {
+export default class StackingDialog extends foundry.applications.api.DialogV2 {
   /**
    * Show a dialog asking if items should be stacked.
-   * 
    * @param {Item} droppedItem - The item being dropped
    * @param {Item} existingItem - The existing item to potentially stack with
    * @returns {Promise<boolean>} True if user chose to stack, false otherwise
@@ -80,7 +78,6 @@ export default class StackingDialog extends foundry.applications.api
 
   /**
    * Show a dialog for splitting a stack.
-   * 
    * @param {Item} item - The item stack to split
    * @returns {Promise<number|null>} The quantity to split off, or null if cancelled
    */

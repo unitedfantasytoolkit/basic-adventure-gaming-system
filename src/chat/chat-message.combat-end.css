@@ -1,0 +1,22 @@
+/**
+ * The card that closes a fight.
+ *
+ * Almost all of this now lives in chat-divider.css, which the round card shares.
+ * What remains is the absence of chrome: no ground, no border, no header, so the
+ * line reads as a break between encounters rather than another entry in the log.
+ */
+
+.chat-message--combat-end {
+  background: none;
+  border: none;
+  box-shadow: none;
+  margin-block: 0.75rem;
+  padding: 0;
+}
+
+.bags-combat-end__rounds {
+  font-size: var(--font-size-11, 0.6875rem);
+  font-variant: normal;
+  letter-spacing: normal;
+  opacity: 0.7;
+}

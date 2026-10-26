@@ -1,0 +1,47 @@
+{{#> sheetTab}}
+  <header class="tab__header">
+    <h2>{{localize "BAGS.CharacterCreation.Steps.spells.Label"}}</h2>
+    <p class="hint">{{localize "BAGS.CharacterCreation.Steps.spells.Hint"}}</p>
+  </header>
+
+  <div class="scrollable">
+    {{#each spellLevels as |spellLevel|}}
+      <section class="spell-level">
+        <header class="spell-level__header">
+          <h3>{{localize "BAGS.CharacterCreation.Spells.LevelHeading"
+              level=(ordinal spellLevel.level)
+            }}</h3>
+          <span
+            class="spell-level__count{{#if spellLevel.full}} spell-level__count--full{{/if}}"
+          >{{spellLevel.chosen}} / {{spellLevel.slots}}</span>
+        </header>
+
+        <ul class="choice-grid choice-grid--compact">
+          {{#each spellLevel.spells as |spell|}}
+            <li
+              class="choice-card{{#if spell.selected}} choice-card--selected{{/if}}"
+              data-uuid="{{spell.uuid}}"
+              data-spell-level="{{spell.level}}"
+            >
+              <button
+                type="button"
+                class="choice-card__button"
+                data-action="toggle-spell"
+                aria-pressed="{{spell.selected}}"
+              >
+                <img class="choice-card__art" src="{{spell.img}}" alt="" />
+                <span class="choice-card__name">{{spell.name}}</span>
+              </button>
+            </li>
+          {{else}}
+            <li class="choice-grid__empty">
+              <p class="hint">{{localize
+                  "BAGS.CharacterCreation.Spells.NoneAvailable"
+                }}</p>
+            </li>
+          {{/each}}
+        </ul>
+      </section>
+    {{/each}}
+  </div>
+{{/sheetTab}}

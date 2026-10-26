@@ -15,6 +15,8 @@ import {
 
 /**
  * Simple deep merge for test purposes (no Foundry dependency)
+ * @param target
+ * @param source
  */
 function simpleMerge(target, source) {
   const result = { ...target }
@@ -36,6 +38,7 @@ function simpleMerge(target, source) {
 
 /**
  * Create a mock physical item for testing
+ * @param overrides
  */
 function createMockItem(overrides = {}) {
   const defaults = {
@@ -64,6 +67,7 @@ function createMockItem(overrides = {}) {
 
 /**
  * Create a mock actor for testing
+ * @param items
  */
 function createMockActor(items = []) {
   return {

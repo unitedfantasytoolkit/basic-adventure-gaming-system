@@ -1,0 +1,40 @@
+{{!--
+  One row per unawarded reward: what it was, who it's for, what it's worth.
+  Clicking the name edits it; the control on the right removes it.
+--}}
+{{#if hasEntries}}
+  <ol class="rewards-list plain">
+    {{#each entries}}
+      <li class="reward-entry" data-entry-id="{{id}}">
+        <i class="reward-icon fa-solid {{icon}}" inert></i>
+
+        <div class="reward-details">
+          <a class="name" data-action="editReward">{{label}}</a>
+          <span class="reward-recipients">
+            {{recipientLabel}}
+            {{#if split}}
+              <span class="separator">&middot;</span>
+              {{localize "BAGS.Rewards.Split"}}
+            {{/if}}
+          </span>
+        </div>
+
+        <span class="reward-xp">{{localize "BAGS.Rewards.XPAmount" xp=xp}}</span>
+
+        <button
+          type="button"
+          class="inline-control icon fa-solid fa-xmark"
+          data-action="removeReward"
+          data-tooltip
+          aria-label="{{localize 'BAGS.Rewards.Remove'}}"
+        ></button>
+      </li>
+    {{/each}}
+  </ol>
+{{else}}
+  <div class="rewards-empty">
+    <i class="fa-solid fa-trophy" inert></i>
+    <p>{{localize "BAGS.Rewards.Empty"}}</p>
+    <p class="hint">{{localize "BAGS.Rewards.EmptyHint"}}</p>
+  </div>
+{{/if}}

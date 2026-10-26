@@ -1,0 +1,272 @@
+/* === Party sidebar ======================================================== */
+
+.party-sidebar {
+  --element-spacing: 8px;
+  --element-spacing-half: 4px;
+
+  overflow: hidden;
+
+  &.active,
+  &.sidebar-popout .window-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--element-spacing);
+  }
+}
+
+.party-sidebar .window-content {
+  padding: 0;
+}
+
+/* --- Header ---------------------------------------------------------------- */
+
+.party-header {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--element-spacing);
+  padding: var(--element-spacing) var(--element-spacing) 0;
+}
+
+.party-controls {
+  align-items: center;
+  display: flex;
+  gap: var(--element-spacing-half);
+}
+
+.party-controls .control-buttons {
+  align-items: center;
+  display: flex;
+  gap: var(--element-spacing-half);
+}
+
+/* Keeps the title optically centered when one side has no control to show. */
+.party-controls .spacer {
+  flex: 0 0 24px;
+  width: 24px;
+}
+
+.party-title {
+  color: var(--color-text-secondary);
+  flex: 1;
+  font-size: var(--font-size-15);
+  text-align: center;
+}
+
+.marching-rate {
+  align-items: center;
+  color: var(--color-text-secondary);
+  display: flex;
+  font-size: var(--font-size-13);
+  gap: var(--element-spacing-half);
+}
+
+.marching-rate .value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Roster --------------------------------------------------------------- */
+
+.party-list {
+  flex: 1;
+  overflow: hidden auto;
+}
+
+/* Highlighted while an Actor is dragged over it, so the drop has a target the
+   referee can see rather than one they have to know about. */
+.party-list.droptarget,
+.party-empty.droptarget {
+  box-shadow: inset 0 0 0 1px var(--color-warm-2);
+}
+
+.party-member {
+  align-items: center;
+  color: var(--color-text-primary);
+  cursor: var(--cursor-grab);
+  display: flex;
+  font-size: var(--font-size-14);
+  gap: var(--element-spacing);
+  margin: 0;
+  padding: var(--element-spacing);
+}
+
+.party-member:hover {
+  background: var(--entry-hover-bg, rgb(255 255 255 / 10%));
+}
+
+.party-member.context {
+  background: var(--entry-active-bg, rgb(255 255 255 / 15%));
+}
+
+.member-image {
+  border: none;
+  border-radius: 4px;
+  flex: 0 0 var(--sidebar-item-height);
+  height: var(--sidebar-item-height);
+  object-fit: cover;
+  object-position: center 0;
+  width: var(--sidebar-item-height);
+}
+
+.member-details {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.member-heading {
+  align-items: center;
+  display: flex;
+  gap: var(--element-spacing-half);
+}
+
+.member-heading .name {
+  cursor: var(--cursor-pointer);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-controls {
+  align-items: center;
+  display: flex;
+  gap: var(--element-spacing-half);
+}
+
+.member-controls .inline-control {
+  --button-text-color: var(--color-text-subtle);
+
+  font-size: var(--font-size-12);
+}
+
+.member-controls .inline-control:hover {
+  --button-text-color: var(--color-text-emphatic);
+}
+
+/* --- The numbers ---------------------------------------------------------- */
+
+.member-stats {
+  align-items: center;
+  color: var(--color-text-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--font-size-11);
+  gap: var(--element-spacing-half) var(--element-spacing);
+}
+
+.member-class {
+  margin-right: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-stats .stat {
+  align-items: center;
+  display: flex;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.member-stats .stat .value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Carrying significant treasure is what slows a character down in B/X, so the
+   load reads as a warning well before it's actually at the maximum. */
+.member-stats .stat.slowed {
+  color: var(--color-warm-2);
+}
+
+.member-stats .stat.full {
+  color: var(--color-warm-3);
+}
+
+/* --- Hit points ----------------------------------------------------------- */
+
+/* A bar rather than a `<meter>`: a meter's native rendering can't be themed
+   reliably, and this needs to sit correctly in all four of Foundry's themes. The
+   fill is driven by `--hp-fraction`, set on the element by the template. */
+.member-hp {
+  align-items: center;
+  display: flex;
+  gap: var(--element-spacing-half);
+}
+
+.hp-track {
+  background: rgb(0 0 0 / 35%);
+  border-radius: 2px;
+  flex: 1;
+  height: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.hp-fill {
+  background: var(--hp-color, var(--color-level-success));
+  height: 100%;
+  transition: width 250ms ease;
+  width: calc(var(--hp-fraction, 0) * 100%);
+}
+
+.hp-value {
+  color: var(--color-text-subtle);
+  flex: 0 0 auto;
+  font-size: var(--font-size-11);
+  font-variant-numeric: tabular-nums;
+}
+
+.hp-value .separator {
+  opacity: 0.5;
+}
+
+/* --- Member state --------------------------------------------------------- */
+
+.party-member.hurt {
+  --hp-color: var(--color-level-warning);
+}
+
+/* Matches how the combat tracker marks a defeated combatant, so a character at
+   zero hit points reads the same way in both tabs. */
+.party-member.dead {
+  --hp-color: var(--color-level-error);
+}
+
+.party-member.dead .member-image {
+  opacity: 0.4;
+}
+
+.party-member.dead .name {
+  color: var(--color-warm-3);
+  text-decoration: line-through;
+}
+
+/* --- Empty state ---------------------------------------------------------- */
+
+.party-empty {
+  align-items: center;
+  color: var(--color-text-subtle);
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--element-spacing-half);
+  justify-content: center;
+  padding: var(--element-spacing) calc(var(--element-spacing) * 2);
+  text-align: center;
+}
+
+.party-empty > i {
+  font-size: 2rem;
+  opacity: 0.35;
+}
+
+.party-empty p {
+  margin: 0;
+}
+
+.party-empty .hint {
+  font-size: var(--font-size-12);
+}

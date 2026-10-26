@@ -1,0 +1,35 @@
+{{#> sheetTab}}
+  <header class="tab__header">
+    <h2>{{localize "BAGS.CharacterCreation.Steps.abilities.Label"}}</h2>
+    <p class="hint">{{localize "BAGS.CharacterCreation.Steps.abilities.Hint"}}</p>
+  </header>
+
+  <div class="scrollable">
+    <ul class="choice-grid">
+      {{#each abilityItems as |ability|}}
+        <li
+          class="choice-card{{#if ability.selected}} choice-card--selected{{/if}}"
+          data-uuid="{{ability.uuid}}"
+        >
+          <button
+            type="button"
+            class="choice-card__button"
+            data-action="toggle-ability"
+            aria-pressed="{{ability.selected}}"
+          >
+            <img class="choice-card__art" src="{{ability.img}}" alt="" />
+            <span class="choice-card__name">{{ability.name}}</span>
+          </button>
+
+          {{#if ability.description}}
+            <div class="choice-card__description">{{{ability.description}}}</div>
+          {{/if}}
+        </li>
+      {{else}}
+        <li class="choice-grid__empty">
+          <p class="hint">{{localize "BAGS.CharacterCreation.NoOptions"}}</p>
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+{{/sheetTab}}

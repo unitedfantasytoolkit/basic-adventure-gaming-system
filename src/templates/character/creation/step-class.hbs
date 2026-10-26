@@ -1,0 +1,53 @@
+{{#> sheetTab}}
+  <header class="tab__header">
+    <h2>{{localize "BAGS.CharacterCreation.Steps.class.Label"}}</h2>
+    <p class="hint">{{localize "BAGS.CharacterCreation.Steps.class.Hint"}}</p>
+  </header>
+
+  <div class="scrollable">
+    <ul class="choice-grid">
+      {{#each classes as |class|}}
+        <li
+          class="choice-card{{#if class.selected}} choice-card--selected{{/if}}{{#unless class.eligible}} choice-card--ineligible{{/unless}}"
+          data-uuid="{{class.uuid}}"
+        >
+          <button
+            type="button"
+            class="choice-card__button"
+            data-action="select-class"
+            aria-pressed="{{class.selected}}"
+            {{#unless class.eligible}}disabled{{/unless}}
+          >
+            <img class="choice-card__art" src="{{class.img}}" alt="" />
+            <span class="choice-card__name">{{class.name}}</span>
+
+            <span class="choice-card__meta">
+              {{#if class.hitDieSize}}
+                <span class="choice-card__tag">d{{class.hitDieSize}}</span>
+              {{/if}}
+              {{#if class.isCaster}}
+                <span class="choice-card__tag">{{localize
+                    "BAGS.CharacterCreation.Class.Caster"
+                  }}</span>
+              {{/if}}
+            </span>
+
+            {{#unless class.eligible}}
+              <span class="choice-card__flag">{{localize
+                  "BAGS.CharacterCreation.PrerequisitesNotMet"
+                }}</span>
+            {{/unless}}
+          </button>
+
+          {{#if class.description}}
+            <div class="choice-card__description">{{{class.description}}}</div>
+          {{/if}}
+        </li>
+      {{else}}
+        <li class="choice-grid__empty">
+          <p class="hint">{{localize "BAGS.CharacterCreation.NoOptions"}}</p>
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+{{/sheetTab}}

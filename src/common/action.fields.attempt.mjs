@@ -14,13 +14,17 @@ const { StringField, NumberField, BooleanField, SchemaField } =
   foundry.data.fields
 
 /**
- * Roll modes, adopted from Foundry's configuration.
+ * The chat modes an attempt roll can be posted with, using Foundry's own names
+ * and labels.
+ *
+ * Foundry's full set also includes `ic`, which is for spoken chat rather than
+ * for rolls, so it isn't offered here.
  * @type {Record<string, string>}
  */
-const rollModes = Object.keys(CONFIG.Dice.rollModes).reduce(
-  (obj, key) => ({
+const rollModes = ["public", "gm", "blind", "self"].reduce(
+  (obj, mode) => ({
     ...obj,
-    [key]: CONFIG.Dice.rollModes[key].label,
+    [mode]: CONFIG.ChatMessage.modes[mode].label,
   }),
   {},
 )
@@ -81,7 +85,7 @@ export function attemptFieldFactory() {
     }),
     roll: new SchemaField({
       type: new StringField({
-        initial: CONST.DICE_ROLL_MODES.PUBLIC,
+        initial: "public",
         label: "BAGS.Actions.Attempt.Roll.Formula.Label",
         choices: rollModes,
       }),

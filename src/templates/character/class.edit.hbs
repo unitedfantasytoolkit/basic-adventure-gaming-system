@@ -1,0 +1,245 @@
+{{!--
+  The character's class, what it is worth, and how to get one.
+
+  Three questions, in the order a player asks them: who am I, how far along am
+  I, and what does that get me. The last is split between Active Effects, which
+  are true whether or not you think about them, and Actions, which are things
+  you choose to do -- the same division the character sheet's left rail draws,
+  and worth drawing again here, because "why is my armour class better than the
+  armour says" and "what can I do this round" are different questions.
+
+  Nothing on this tab edits in place. Every control hands off to the class
+  Item's own application, so the class is edited in one set of windows no matter
+  which sheet you opened them from.
+--}}
+
+{{!-- ===================================================================== --}}
+
+{{!--
+  One Active Effect the class applies, and what it changes.
+
+  A disabled effect stays listed, marked. It is still part of what the class
+  confers -- something has switched it off, and hiding it would leave the player
+  hunting for a bonus that appears to have never existed.
+--}}
+{{#*inline "class-effect"}}
+  <li class="class-grant{{ifThen disabled ' class-grant--inactive' ''}}">
+    <img class="class-grant__icon" src="{{img}}" alt="" role="presentation" />
+    <div class="class-grant__body">
+      <span class="class-grant__name">{{name}}</span>
+      {{#if changes.length}}
+        <ul class="class-grant__tags">
+          {{#each changes}}
+            <li class="class-grant__tag">{{this}}</li>
+          {{/each}}
+        </ul>
+      {{/if}}
+    </div>
+    {{#if disabled}}
+      <span class="class-grant__flag">{{localize
+          "BAGS.Actors.Character.Editor.Class.EffectSuppressed"
+        }}</span>
+    {{/if}}
+  </li>
+{{/inline}}
+
+{{!-- ===================================================================== --}}
+
+{{!--
+  One Action the class confers.
+
+  An action the character isn't far enough along for is listed, dimmed, with the
+  level it arrives at -- see `describeActionGate` in the editor for why. These
+  rows are deliberately inert: this is an editor, and using an ability belongs
+  on the sheet you play from.
+--}}
+{{#*inline "class-action"}}
+  <li class="class-grant{{ifThen available '' ' class-grant--inactive'}}">
+    <img class="class-grant__icon" src="{{img}}" alt="" role="presentation" />
+    <div class="class-grant__body">
+      <span class="class-grant__name">{{name}}</span>
+      {{!--
+        Unescaped because `numberToOrdinal` returns markup, the way it does
+        everywhere else it's used. The string is built entirely from a localized
+        template and an integer, so there's nothing here that came from a user.
+      --}}
+      {{#if gate}}
+        <ul class="class-grant__tags">
+          <li class="class-grant__tag">{{{gate}}}</li>
+        </ul>
+      {{/if}}
+    </div>
+    {{#if uses.max}}
+      <span
+        class="class-grant__flag{{ifThen exhausted ' class-grant__flag--spent' ''}}"
+      >{{uses.value}}/{{uses.max}}</span>
+    {{/if}}
+  </li>
+{{/inline}}
+
+{{!-- ===================================================================== --}}
+
+{{!--
+  A section of things the class grants, with the button that edits them.
+
+  The heading carries the edit control rather than each row doing so, because
+  there is one editor per section -- the action editor opens on the class's
+  actions, not on the action you clicked.
+--}}
+{{#*inline "class-grants"}}
+  <section class="class-card__grants">
+    <header class="class-card__grants-header">
+      <h4>{{localize heading}}</h4>
+      <button
+        type="button"
+        class="icon inline-control"
+        data-action="{{editAction}}"
+        data-tooltip="{{localize editLabel}}"
+        aria-label="{{localize editLabel}}"
+      ><i class="fa fa-pencil" role="presentation"></i></button>
+    </header>
+
+    {{#if entries.length}}
+      <ul class="class-grant-list">
+        {{> @partial-block}}
+      </ul>
+    {{else}}
+      <p class="empty">{{localize emptyLabel}}</p>
+    {{/if}}
+  </section>
+{{/inline}}
+
+{{!-- ===================================================================== --}}
+
+{{#> sheetTab}}
+  <h2>{{localize "BAGS.Actors.Character.Editor.Tabs.ClassAndAbilities"}}</h2>
+
+  <div class="scrollable">
+    {{#each classes}}
+      <article class="class-card" data-item-id="{{id}}">
+        <header class="class-card__header">
+          <img
+            class="class-card__art"
+            src="{{img}}"
+            alt=""
+            role="presentation"
+          />
+
+          <div class="class-card__identity">
+            <h3 class="class-card__name">{{name}}</h3>
+            <span class="class-card__standing">{{localize
+                "BAGS.CharacterClass.Information.LevelAbbreviation"
+                level=level
+              }}
+              {{#if maxLevel}}
+                <span class="class-card__max-level">{{localize
+                    "BAGS.Actors.Character.Editor.Class.OfMaxLevel"
+                    level=maxLevel
+                  }}</span>
+              {{/if}}
+            </span>
+          </div>
+
+          <menu class="class-card__controls">
+            <li>
+              <button
+                type="button"
+                class="icon inline-control"
+                data-action="view-class"
+                data-tooltip="{{localize
+                  'BAGS.Actors.Character.Editor.Class.View'
+                }}"
+                aria-label="{{localize
+                  'BAGS.Actors.Character.Editor.Class.View'
+                }}"
+              ><i class="fa fa-book-open" role="presentation"></i></button>
+            </li>
+            <li>
+              <button
+                type="button"
+                class="icon inline-control"
+                data-action="edit-class"
+                data-tooltip="{{localize
+                  'BAGS.CharacterClass.Information.ActionLabel'
+                }}"
+                aria-label="{{localize
+                  'BAGS.CharacterClass.Information.ActionLabel'
+                }}"
+              ><i class="fa fa-pencil" role="presentation"></i></button>
+            </li>
+          </menu>
+        </header>
+
+        {{!--
+          Experience, and the one thing you can do about it.
+
+          The meter is the control for awarding experience, the way it is on a
+          world class's own header. Levelling up gets a button of its own that
+          only appears once there is a level waiting, because a permanently
+          visible, permanently disabled button reads as broken rather than as
+          "not yet".
+        --}}
+        <div class="class-card__advancement">
+          <uft-character-info-meter
+            class="xp{{ifThen canAddXP ' clickable' ''}}"
+            value="{{xp.value}}"
+            min="{{xp.min}}"
+            max="{{xp.max}}"
+            data-tooltip="{{xp.hint}}"
+            {{#if canAddXP}}data-action="add-class-xp"{{/if}}
+          ></uft-character-info-meter>
+
+          {{#if canLevelUp}}
+            <button
+              type="button"
+              class="class-card__level-up"
+              data-action="level-up-class"
+            >{{localize "BAGS.CharacterClass.Information.LevelUp"}}</button>
+          {{/if}}
+        </div>
+
+        {{#> class-grants
+          entries=effects
+          heading="BAGS.Actors.Character.Editor.Class.PassiveEffects"
+          emptyLabel="BAGS.Actors.Character.Editor.Class.NoPassiveEffects"
+          editAction="edit-class-effects"
+          editLabel="BAGS.Actors.Character.Editor.Class.EditEffects"
+        }}
+          {{#each effects}}
+            {{> class-effect}}
+          {{/each}}
+        {{/class-grants}}
+
+        {{#> class-grants
+          entries=actions
+          heading="BAGS.CharacterClass.Information.ClassAbilities"
+          emptyLabel="BAGS.Actors.Character.Editor.Class.NoActions"
+          editAction="edit-class-actions"
+          editLabel="BAGS.Actors.Character.Editor.Class.EditActions"
+        }}
+          {{#each actions}}
+            {{> class-action}}
+          {{/each}}
+        {{/class-grants}}
+      </article>
+    {{else}}
+      {{!--
+        The nudge. This editor is a plain application rather than an actor
+        sheet, so it has no drop handling of its own -- the character sheet
+        does, which is where the player is pointed.
+      --}}
+      <div class="class-card-empty">
+        <i
+          class="class-card-empty__icon fa-solid fa-shield-halved"
+          role="presentation"
+        ></i>
+        <p class="class-card-empty__title">{{localize
+            "BAGS.Actors.Character.Editor.Class.NoClassTitle"
+          }}</p>
+        <p class="hint">{{localize
+            "BAGS.Actors.Character.Editor.Class.NoClassHint"
+          }}</p>
+      </div>
+    {{/each}}
+  </div>
+{{/sheetTab}}

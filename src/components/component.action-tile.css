@@ -6,9 +6,35 @@
   border-radius: 4px;
   overflow: hidden;
   background-color: #383531;
-
-  /* box-shadow: 0 0 2px 6px inset #00000077; */
   position: relative;
+  cursor: pointer;
+  transition:
+    transform ease-in-out 150ms,
+    border-color ease-in-out 150ms;
+}
+
+:host(:hover),
+:host(:focus-visible) {
+  border-color: var(--color-border-highlight, #b78846);
+  transform: translateY(-2px);
+}
+
+/*
+ * Used up for now. Drained of colour rather than removed, because the charge
+ * comes back and the player needs to see that the ability is still theirs.
+ */
+:host([exhausted]) {
+  filter: grayscale(100%);
+  opacity: 0.45;
+}
+
+:host([exhausted]:hover) {
+  opacity: 0.7;
+}
+
+:host(:focus-visible) {
+  outline: 2px solid var(--color-border-highlight, #b78846);
+  outline-offset: 1px;
 }
 
 img {

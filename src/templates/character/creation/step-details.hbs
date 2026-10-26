@@ -1,0 +1,106 @@
+{{#> sheetTab}}
+  <header class="tab__header">
+    <h2>{{localize "BAGS.CharacterCreation.Steps.details.Label"}}</h2>
+    <p class="hint">{{localize "BAGS.CharacterCreation.Steps.details.Hint"}}</p>
+  </header>
+
+  <div class="scrollable">
+    <div class="standard-form">
+      <div class="form-group">
+        <label for="creation-name">{{localize
+            "BAGS.CharacterCreation.Details.Name"
+          }}</label>
+        <div class="form-fields">
+          <input
+            type="text"
+            id="creation-name"
+            name="name"
+            value="{{document.name}}"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="creation-alignment">{{localize
+            "BAGS.Actors.Common.Fields.BiographicalDetails.Alignment.Label"
+          }}</label>
+        <div class="form-fields">
+          <input
+            type="text"
+            id="creation-alignment"
+            name="alignment"
+            value="{{choices.alignment}}"
+          />
+        </div>
+        <p class="hint">{{localize
+            "BAGS.Actors.Common.Fields.BiographicalDetails.Alignment.Hint"
+          }}</p>
+      </div>
+
+      <div class="form-group">
+        <label for="creation-description">{{localize
+            "BAGS.Actors.Common.Fields.BiographicalDetails.Description.Label"
+          }}</label>
+        <div class="form-fields">
+          <textarea id="creation-description" name="description" rows="4">{{choices.description}}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <section class="creation-summary">
+      <h3>{{localize "BAGS.CharacterCreation.Summary.Heading"}}</h3>
+
+      <dl>
+        {{#each summary.abilityScores as |score key|}}
+          <dt class="creation-summary__ability">{{key}}</dt>
+          <dd>{{score}}</dd>
+        {{/each}}
+      </dl>
+
+      <dl>
+        {{#if summary.identity}}
+          <dt>{{localize "BAGS.CharacterCreation.Steps.identity.Label"}}</dt>
+          <dd>{{summary.identity}}</dd>
+        {{/if}}
+
+        {{#if summary.class}}
+          <dt>{{localize "BAGS.CharacterCreation.Steps.class.Label"}}</dt>
+          <dd>{{summary.class}}</dd>
+        {{/if}}
+
+        {{#unless (isEmptyArray summary.abilities)}}
+          <dt>{{localize "BAGS.CharacterCreation.Steps.abilities.Label"}}</dt>
+          <dd>{{#each summary.abilities}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</dd>
+        {{/unless}}
+
+        {{#unless (isEmptyArray summary.spells)}}
+          <dt>{{localize "BAGS.CharacterCreation.Steps.spells.Label"}}</dt>
+          <dd>{{#each summary.spells}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</dd>
+        {{/unless}}
+
+        {{#if summary.itemCount}}
+          <dt>{{localize "BAGS.CharacterCreation.Steps.equipment.Label"}}</dt>
+          <dd>{{localize "BAGS.CharacterCreation.Summary.ItemCount"
+              count=summary.itemCount
+            }}</dd>
+        {{/if}}
+
+        {{#if summary.gold}}
+          <dt>{{localize "BAGS.CharacterCreation.Equipment.Remaining"}}</dt>
+          <dd>{{summary.gold}}</dd>
+        {{/if}}
+      </dl>
+    </section>
+
+    {{#unless (isEmptyArray missingRequirements)}}
+      <section class="creation-missing notification warning">
+        <p>{{localize "BAGS.CharacterCreation.Requirements.Heading"}}</p>
+        <ul>
+          {{#each missingRequirements as |requirement|}}
+            <li>{{localize requirement}}</li>
+          {{/each}}
+        </ul>
+      </section>
+    {{/unless}}
+  </div>
+{{/sheetTab}}

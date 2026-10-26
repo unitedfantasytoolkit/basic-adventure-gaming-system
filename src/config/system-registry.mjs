@@ -27,6 +27,7 @@ class SystemRegistry {
     ENCUMBRANCE: "Encumbrance",
     CHARACTER_ACTIONS: "CharacterActions",
     BASE_MONSTER_STATS: "BaseMonsterStats",
+    SPELLS: "Spells",
   }
 
   /**

@@ -70,6 +70,48 @@ export default class BAGSItemWeaponDataModel extends PhysicalItemDataModel {
         label: "BAGS.Items.Weapon.Fields.IsSlow.Label",
         hint: "BAGS.Items.Weapon.Fields.IsSlow.Hint",
       }),
+      /**
+       * How many segments this weapon adds to its wielder's initiative.
+       *
+       * The Advanced games' weapon speed factor: a dagger is quick, a two-handed
+       * sword is not, and the difference decides who lands first when a round is
+       * measured in segments. Counts upward, like every other segment offset.
+       *
+       * Deliberately unrelated to `isSlow`, which is the Basic/Expert family's
+       * much coarser rule about losing initiative ties. The two are never read by
+       * the same ruleset, so a weapon written for one game is simply silent in
+       * the other rather than half-translated into it.
+       */
+      speedFactor: new NumberField({
+        min: 0,
+        max: 20,
+        integer: true,
+        nullable: false,
+        initial: 0,
+        label: "BAGS.Items.Weapon.Fields.SpeedFactor.Label",
+        hint: "BAGS.Items.Weapon.Fields.SpeedFactor.Hint",
+      }),
+      /**
+       * How many times this weapon can be loosed in a round.
+       *
+       * A property of the weapon rather than of its wielder, which is what makes
+       * it distinct from an actor's attacks per round: a bow's rate of fire is
+       * the bow's, and a fighter entitled to two attacks does not get to multiply
+       * it. Halves are meaningful here for the same reason they are on an actor
+       * -- 3/2 is three shots across two rounds.
+       *
+       * Zero means "this weapon has no rate of fire of its own", which is the
+       * ordinary case for anything held rather than loosed.
+       */
+      rateOfFire: new NumberField({
+        min: 0,
+        max: 10,
+        step: 0.5,
+        nullable: false,
+        initial: 0,
+        label: "BAGS.Items.Weapon.Fields.RateOfFire.Label",
+        hint: "BAGS.Items.Weapon.Fields.RateOfFire.Hint",
+      }),
     }
   }
 

@@ -4,6 +4,13 @@
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import BAGSApplication from "./application.mjs"
 import animatedSheetError from "../utils/animated-sheet-error.mjs"
+import {
+  addSpellsToActor,
+  castableSpellLevels,
+  grantSpellsAtLevel,
+  grantsEntireList,
+  learnSpell,
+} from "../utils/spell-acquisition.mjs"
 
 /**
  * Application for managing a character's spells, including preparation and
@@ -22,6 +29,7 @@ export default class SpellManager extends BAGSApplication {
       "create-spell": this.createSpell,
       "edit-spell": this.editSpell,
       "delete-spell": this.deleteSpell,
+      "grant-spell-level": this.grantSpellLevel,
     },
     form: {
       handler: null,
@@ -108,7 +116,31 @@ export default class SpellManager extends BAGSApplication {
       maxSlots,
       sortMode: this.inventorySortMode,
       filterMode: this.inventoryFilterMode,
+      grantableLevels: this.#prepareGrantableLevels(),
     }
+  }
+
+  /**
+   * The "add every spell of level N" offers to show.
+   *
+   * Only classes that hand over their whole list get these -- a magic-user
+   * earns their spellbook one spell at a time -- and only for levels the class
+   * can currently cast.
+   * @returns {{classId: string, className: string, level: number}[]} The offers
+   * @private
+   */
+  #prepareGrantableLevels() {
+    const classes = this.document.items.documentsByType.class || []
+
+    return classes
+      .filter((classItem) => grantsEntireList(classItem))
+      .flatMap((classItem) =>
+        castableSpellLevels(classItem).map((level) => ({
+          classId: classItem.id,
+          className: classItem.name,
+          level,
+        })),
+      )
   }
 
   /**
@@ -130,6 +162,19 @@ export default class SpellManager extends BAGSApplication {
       callbacks: {
         dragover: this._onDragOver.bind(this),
         dragstart: this._onDragStart.bind(this),
+        drop: this._onDrop.bind(this),
+      },
+    }).bind(this.element)
+
+    // A second, wider drop zone so spells and folders can be brought in from a
+    // compendium or the sidebar, not only shuffled between the two lists.
+    new DragDrop({
+      dropSelector: ".spell-management",
+      permissions: {
+        drop: this._canDragDrop.bind(this),
+      },
+      callbacks: {
+        dragover: this._onDragOver.bind(this),
         drop: this._onDrop.bind(this),
       },
     }).bind(this.element)
@@ -193,7 +238,12 @@ export default class SpellManager extends BAGSApplication {
   }
 
   /**
-   * Handle drop event
+   * Handle drop event.
+   *
+   * Two quite different drops land here. Dragging a spell the caster already
+   * has between the two lists prepares or unprepares it. Dragging a spell -- or
+   * a whole folder of them -- in from a compendium or the sidebar adds them to
+   * the caster instead.
    * @param {Event} event - The drop event
    */
   async _onDrop(event) {
@@ -201,21 +251,78 @@ export default class SpellManager extends BAGSApplication {
 
     try {
       const data = JSON.parse(event.dataTransfer.getData("text/plain"))
-      if (data.type !== "Item") return
+
+      if (data.type === "Folder") return this.#onDropFolder(data)
+      if (data.type !== "Item") return undefined
+
       const item = await fromUuid(data.uuid)
-      if (item.type !== "spell") return
-      // Handle drop based on the target area
+      if (item?.type !== "spell") return undefined
+
+      // A spell the caster doesn't own yet is being brought in from outside
+      // rather than moved between lists.
+      if (!this.document.items.has(item.id)) return this.#onDropNewSpell(item)
+
       const dropTarget = event.currentTarget
-      if (data.dragSource === dropTarget.dataset.spellListType) return
+      if (data.dragSource === dropTarget.dataset.spellListType) return undefined
       if (dropTarget.dataset.spellListType === "prepared")
         await this.prepareSpell(item.id)
       else if (dropTarget.dataset.spellListType === "available")
         await this.unprepareSpell(item.id)
 
       this.render(true)
+      return undefined
     } catch (error) {
       console.error("Error handling drop:", error)
+      return undefined
     }
+  }
+
+  /**
+   * Add a spell dropped in from outside, going through the world's learning
+   * rules.
+   * @param {Item} spell - The spell being added
+   * @returns {Promise<void>} Resolves once the attempt is over
+   * @private
+   */
+  async #onDropNewSpell(spell) {
+    const [classItem] = this.document.items.documentsByType.class || []
+
+    const result = await learnSpell(this.document, spell, classItem)
+
+    if (!result.added && result.reason) {
+      animatedSheetError(this.element, game.i18n.localize(result.reason))
+    }
+
+    this.render(true)
+  }
+
+  /**
+   * Add every spell in a dropped folder.
+   *
+   * Bulk adds skip the learning rules on purpose: dropping a folder is a
+   * referee handing over a spell list, not a character studying. Spells the
+   * caster already has are left alone.
+   * @param {object} data - The drag payload
+   * @returns {Promise<void>} Resolves once the spells are added
+   * @private
+   */
+  async #onDropFolder(data) {
+    const folder = await fromUuid(data.uuid)
+    if (folder?.type !== "Item") return
+
+    const spells = folder.contents.filter((item) => item.type === "spell")
+    if (!spells.length) return
+
+    const created = await addSpellsToActor(this.document, spells)
+
+    ui.notifications.info(
+      game.i18n.format("BAGS.SpellManager.AddedSpells", {
+        count: created.length,
+        folder: folder.name,
+      }),
+    )
+
+    this.render(true)
   }
 
   // === Spell Management Actions ==============================================
@@ -248,6 +355,7 @@ export default class SpellManager extends BAGSApplication {
   /**
    * Edit an existing spell
    * @param {Event} event - The triggering event
+   * @param button
    */
   static async editSpell(event, button) {
     const { itemId } = button.closest("[data-item-id]").dataset
@@ -256,8 +364,43 @@ export default class SpellManager extends BAGSApplication {
   }
 
   /**
+   * Give the caster every spell their class list offers at one level.
+   * @param {Event} event - The triggering event
+   * @param {HTMLElement} button - The button that was clicked
+   */
+  static async grantSpellLevel(event, button) {
+    const target = button || event.target.closest("[data-level]")
+    const { classId, level } = target.dataset
+
+    const classItem = this.document.items.get(classId)
+    if (!classItem) return
+
+    const created = await grantSpellsAtLevel(
+      this.document,
+      classItem,
+      Number(level),
+    )
+
+    if (!created.length) {
+      ui.notifications.info(
+        game.i18n.localize("BAGS.SpellManager.NoNewSpellsAtLevel"),
+      )
+    } else {
+      ui.notifications.info(
+        game.i18n.format("BAGS.SpellManager.GrantedSpells", {
+          count: created.length,
+          level,
+        }),
+      )
+    }
+
+    this.render(true)
+  }
+
+  /**
    * Delete a spell from the character
    * @param {Event} event - The triggering event
+   * @param button
    */
   static async deleteSpell(event, button) {
     const { itemId } = button.closest("[data-item-id]").dataset

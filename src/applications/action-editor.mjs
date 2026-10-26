@@ -312,7 +312,7 @@ export default class ActionEditor extends BAGSApplication {
    * If the deleted action was active, selects the next available action.
    */
   static async deleteAction(event) {
-    const actionId = event.target.closest("[data-action-id]").dataset.actionId
+    const { actionId } = event.target.closest("[data-action-id]").dataset
     const action = this.document.getAction(actionId)
 
     const confirmed = await foundry.applications.api.DialogV2.confirm({
@@ -324,7 +324,7 @@ export default class ActionEditor extends BAGSApplication {
 
     if (!confirmed) return
 
-    const actions = this.document.system.actions
+    const { actions } = this.document.system
 
     // If we're deleting the active action, we need to update the selection
     if (this._activeAction === actionId) {
@@ -377,7 +377,7 @@ export default class ActionEditor extends BAGSApplication {
     const action = this.document.getAction(this._activeAction)
     if (!action) return
 
-    const effectId = button.dataset.effectId
+    const { effectId } = button.dataset
     const effect = action.effects.find(({ id }) => id === effectId)
 
     const confirmed = await foundry.applications.api.DialogV2.confirm({
@@ -414,12 +414,19 @@ export default class ActionEditor extends BAGSApplication {
 
   /**
    * Attempt to update the active action.
+   *
+   * This editor submits on every change, so it gets called for reasons that
+   * have nothing to do with the form's fields -- an item with no actions yet
+   * has nothing selected, and there's nothing to write. Saving the form in that
+   * state isn't an error, it's a no-op, so it shouldn't be reported as one.
    * @param {SubmitEvent} _event - Todo
    * @param {HTMLFormElement} _form - Todo
    * @param {FormData} formData - Data from this Application's form.
    * @this {ActionEditor}
    */
   static async save(_event, _form, formData) {
+    if (!this._activeAction) return
+
     try {
       await this.document.updateAction(this._activeAction, formData.object)
       this.render()
@@ -665,7 +672,7 @@ export default class ActionEditor extends BAGSApplication {
 
   _onDragStartAction(event) {
     const actionItem = event.currentTarget
-    const actionId = actionItem.dataset.actionId
+    const { actionId } = actionItem.dataset
     event.dataTransfer.setData(
       "text/plain",
       JSON.stringify({

@@ -1,0 +1,140 @@
+{{!--
+  The round's record: who acts in what order, and what each of them said they
+  were going to do.
+
+  Laid out as a stack of rules rather than a panel with a headline. A round is a
+  division of time, and each side within it is a division of the round, so the
+  same divider that closes a fight is used to open a round and again to head each
+  side -- with the side's initiative set into its rule, since that number is the
+  reason the sides appear in the order they do.
+
+  The `<li class="chat-message" data-message-id>` wrapper is not decoration: the
+  chat log finds an existing message by that id when it re-renders one. A card
+  that renders only its body cannot be matched, so every update appends another
+  copy instead of replacing the old one.
+--}}
+<li class="chat-message chat-message--bags chat-message--round message flexcol"
+    data-message-id="{{ message._id }}">
+<div class="bags-round">
+
+    {{!-- The round itself, announced the way a fight's end is announced. --}}
+    <div class="bags-divider bags-divider--round">
+        <span class="bags-divider__rule" aria-hidden="true"></span>
+        <span class="bags-divider__label">
+            {{ localize "BAGS.Combat.Round.Title" }} {{ round.round }}
+        </span>
+        <span class="bags-divider__rule" aria-hidden="true"></span>
+    </div>
+
+    {{!--
+      The timestamp and delete control sit under the round's rule rather than
+      above it. The rule is what announces the round, so anything above it reads
+      as belonging to the message before this one.
+    --}}
+    {{> chatActionHeader}}
+
+    {{#if round.isLadder}}
+    {{!--
+      The Advanced games measure a round in segments, and sides interleave --
+      a caster's spell going off after the orcs have swung is the rule working,
+      not a sorting accident. So the round is listed in the order it happens
+      rather than one block per side, and each row carries its side's colour.
+
+      A combatant with more than one attack appears once per segment they act
+      on. This is captured display data with no bearing on the turn cursor, so
+      it costs nothing here -- and it is the only place a second attack shows up
+      at all.
+    --}}
+    {{!--
+      Wrapped in a panel of its own. The card as a whole has no background --
+      block mode gets one from each side's `.action` card -- and a ladder drawn
+      without one is bare text over whatever the map happens to be, in the chat
+      overlay that floats above the canvas.
+    --}}
+    <div class="bags-round__panel">
+    {{#if round.segments.length}}
+    <ol class="bags-ladder plain">
+        {{#each round.segments}}
+        <li class="bags-ladder__segment">
+            <span class="bags-ladder__stop" aria-hidden="true">{{ segment }}</span>
+            <span class="bags-ladder__label">
+                {{ localize "BAGS.Combat.Round.Segment" number=segment }}
+            </span>
+            <ol class="bags-ladder__members bags-round__members plain">
+                {{#each members}}
+                {{> chatRoundMember }}
+                {{/each}}
+            </ol>
+        </li>
+        {{/each}}
+    </ol>
+    {{/if}}
+
+    {{!--
+      Nobody can be placed on the ladder until they have said what they are
+      doing, because the action is what decides when it happens. Waiting here
+      rather than at a made-up segment is also what makes the gating legible:
+      the ladder stays empty and this stays full until the table has committed.
+    --}}
+    {{#if round.pending.length}}
+    <section class="bags-ladder-pending">
+        <h2 class="bags-ladder-pending__title">
+            {{ localize "BAGS.Combat.Round.Pending" }}
+        </h2>
+        <ol class="bags-round__members plain">
+            {{#each round.pending}}
+            {{> chatRoundMember }}
+            {{/each}}
+        </ol>
+    </section>
+    {{/if}}
+
+    {{#unless round.segments.length}}
+    {{#unless round.pending.length}}
+    <p class="bags-round__empty">{{ localize "BAGS.Combat.Round.Empty" }}</p>
+    {{/unless}}
+    {{/unless}}
+    </div>
+
+    {{else}}
+    <ol class="bags-round__units plain">
+        {{#each round.units}}
+        <li class="bags-round__unit" data-side="{{ side }}"
+            {{#if color}}style="--bags-unit-accent: {{ color }};"{{/if}}>
+
+          {{!--
+            Each side is drawn as one of this system's cards, because that is
+            what it is: a result with a name and a readout under it. The gem
+            carries the side's initiative -- a dash while the table is still
+            waiting on its declarations -- and the ruled title names the side.
+          --}}
+          <div class="action">
+            <div class="action__attempt">
+                <div class="action__attempt__result">
+                    {{#if initiative includeZero=true}}{{ initiative }}{{else}}&mdash;{{/if}}
+                </div>
+                <div class="action__attempt__context">
+                    {{ localize "BAGS.Combat.Round.UnitInitiative" }}
+                </div>
+            </div>
+
+            <div class="action__context">
+                <h1>{{ name }}</h1>
+            </div>
+
+            <ol class="bags-round__members plain">
+                {{#each members}}
+                {{> chatRoundMember }}
+                {{/each}}
+            </ol>
+          </div>
+        </li>
+        {{/each}}
+    </ol>
+
+    {{#unless round.units.length}}
+    <p class="bags-round__empty">{{ localize "BAGS.Combat.Round.Empty" }}</p>
+    {{/unless}}
+    {{/if}}
+</div>
+</li>

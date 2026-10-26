@@ -73,8 +73,10 @@ export default {
       maximum: 1600,
     }
 
+    // Zero, not one: this modifier is added to each threshold, so an actor with
+    // nothing modifying it has to come out with the thresholds B/X prints.
     const encumbranceModifier =
-      getModifiersOfKey(actorData, "system.modifiers.encumbranceModifier") ?? 1
+      getModifiersOfKey(actorData, "system.modifiers.encumbranceModifier") ?? 0
 
     const maximumModifier =
       getModifiersOfKey(

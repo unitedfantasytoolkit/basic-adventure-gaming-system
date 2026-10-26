@@ -1,0 +1,29 @@
+{{!--
+  The action that finishes the job, shaped like the combat tracker's "Begin
+  Combat". The warning above it names characters the award would skip: experience
+  lives on a character's class item, so one without a class has nowhere to put it.
+--}}
+<nav class="rewards-controls-footer">
+  {{#if hasEntries}}
+    {{#if hasUnclassed}}
+      <p class="rewards-warning">
+        <i class="fa-solid fa-triangle-exclamation" inert></i>
+        {{localize "BAGS.Rewards.Award.NoClassShort" names=unclassed}}
+      </p>
+    {{/if}}
+
+    <button
+      type="button"
+      class="rewards-award-all"
+      data-action="awardAll"
+      {{#unless canAward}}disabled{{/unless}}
+      {{#unless canAward}}
+        data-tooltip
+        aria-label="{{localize 'BAGS.Rewards.Award.NobodyToAward'}}"
+      {{/unless}}
+    >
+      <i class="fa-solid fa-award" inert></i>
+      <span>{{localize "BAGS.Rewards.Award.Button"}}</span>
+    </button>
+  {{/if}}
+</nav>

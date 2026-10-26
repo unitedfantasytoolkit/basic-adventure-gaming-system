@@ -155,7 +155,7 @@ class PhysicalItemDataModel extends BaseItemDataModel {
       return []
     }
 
-    const actor = this.parent.actor
+    const { actor } = this.parent
     const uuids = this.container.contains || []
 
     return uuids

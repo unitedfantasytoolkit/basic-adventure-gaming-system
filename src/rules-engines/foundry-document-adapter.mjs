@@ -134,7 +134,7 @@ export class FoundryDocumentAdapter {
    */
   normalizeTargets(targets) {
     if (!targets) return []
-    if (targets instanceof UserTargets) {
+    if (targets instanceof foundry.canvas.placeables.tokens.UserTargets) {
       // UserTargets is a Map, entries() returns [key, token] pairs
       // We only want the token (second element)
       return Array.from(targets.values())
@@ -144,27 +144,16 @@ export class FoundryDocumentAdapter {
   }
 
   /**
-   * Applies roll mode to message data
-   * @param {object} messageData - The message data to modify
-   * @param {string} rollMode - The roll mode (public, private, blind, self)
+   * Applies a chat mode to message data, deciding who can see the card.
+   *
+   * This hands the work to Foundry rather than working out the whisper list
+   * here. Foundry is the thing that decides what `gm` means, it accounts for
+   * modes a module has registered a handler for, and it stays right when those
+   * rules change.
+   * @param {object} messageData - The message data to modify, in place
+   * @param {string} rollMode - The chat mode to apply
    */
   applyRollMode(messageData, rollMode) {
-    switch (rollMode) {
-      case CONST.DICE_ROLL_MODES.PRIVATE:
-      case 'private':
-        messageData.whisper = [game.user.id]
-        break
-      case CONST.DICE_ROLL_MODES.BLIND:
-      case 'blind':
-        messageData.whisper = game.users.filter(u => u.isGM).map(u => u.id)
-        messageData.blind = true
-        break
-      case CONST.DICE_ROLL_MODES.SELF:
-      case 'self':
-        messageData.whisper = [game.user.id]
-        messageData.blind = true
-        break
-      // PUBLIC is default, no additional properties needed
-    }
+    CONFIG.ChatMessage.documentClass.applyMode(messageData, rollMode)
   }
 }

@@ -1,35 +1,61 @@
 <div class="character-creation-sources">
   {{#each sources as |categorySources category|}}
     <div class="source-category" data-category="{{category}}">
-      <h2>{{localize (concat "BAGS.Settings.CharacterCreation.Sources.Categories." category)}}</h2>
+      <h2>{{localize
+          (concat "BAGS.Settings.CharacterCreation.Sources.Categories." category)
+        }}</h2>
+
       <div class="source-list">
         {{#each categorySources as |source index|}}
-          <div class="source-item" data-source-id="{{source.id}}" data-source-index="{{index}}" data-category="{{category}}">
+          <div
+            class="source-item{{#if source.missing}} source-item--missing{{/if}}"
+            data-source-id="{{source.id}}"
+            data-source-index="{{index}}"
+            data-category="{{category}}"
+          >
             <span class="source-name">
-              {{#if (eq source.type "folder")}}
+              {{#if source.missing}}
+                <i class="fas fa-triangle-exclamation"></i>
+              {{else if (eq source.type "folder")}}
                 <i class="fas fa-folder"></i>
               {{else}}
                 <i class="fas fa-book"></i>
               {{/if}}
               {{source.name}}
             </span>
-            <button type="button" data-action="remove-source">
+            <button
+              type="button"
+              data-action="remove-source"
+              data-tooltip="{{localize "BAGS.Settings.CharacterCreation.Sources.Remove"}}"
+              aria-label="{{localize "BAGS.Settings.CharacterCreation.Sources.Remove"}}"
+            >
               <i class="fas fa-times"></i>
             </button>
           </div>
+        {{else}}
+          <p class="hint source-list__empty">{{localize
+              "BAGS.Settings.CharacterCreation.Sources.Empty"
+            }}</p>
         {{/each}}
       </div>
 
       <div class="source-add" data-category="{{category}}">
-        <select name="{{category}}">
-          <option value="">{{localize "BAGS.Settings.CharacterCreation.Sources.AddSource"}}</option>
-          <optgroup label="{{localize 'BAGS.Settings.CharacterCreation.Sources.Folders'}}">
+        <select name="{{category}}" aria-label="{{localize "BAGS.Settings.CharacterCreation.Sources.AddSource"}}">
+          <option value="">{{localize
+              "BAGS.Settings.CharacterCreation.Sources.AddSource"
+            }}</option>
+
+          <optgroup
+            label="{{localize 'BAGS.Settings.CharacterCreation.Sources.Folders'}}"
+          >
             {{#each (lookup (lookup ../availableSources category) "folders") as |folder|}}
               <option value="{{folder.id}}" data-type="folder">{{folder.name}}</option>
             {{/each}}
           </optgroup>
 
-          <optgroup label="{{localize 'BAGS.Settings.CharacterCreation.Sources.Compendiums'}}">
+          <optgroup
+            label="{{localize 'BAGS.Settings.CharacterCreation.Sources.Compendiums'}}"
+          >
             {{#each (lookup (lookup ../availableSources category) "compendiums") as |pack|}}
               <option value="{{pack.id}}" data-type="compendium">{{pack.name}}</option>
             {{/each}}

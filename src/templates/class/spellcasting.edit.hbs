@@ -1,0 +1,103 @@
+{{!--
+  Class Spellcasting Editor
+  ---
+  What tradition this class practises, how it comes by its spells, and which
+  spells are on its list.
+
+  The list lives here rather than on the spells because spells usually come from
+  a compendium nobody can edit. Rulesets that don't do class lists at all --
+  2nd Edition sorts spells into wizard and priest and stops there -- can leave
+  it empty and let each spell's own tradition decide.
+--}}
+{{#> sheetTab}}
+  <h2>{{localize "BAGS.CharacterClass.Tabs.Spellcasting"}}</h2>
+
+  <div class="scrollable">
+    <div class="standard-form">
+      {{#if traditionOptions.length}}
+        <div class="form-group">
+          <label for="class-tradition">{{localize
+              "BAGS.CharacterClass.Spellcasting.Tradition.Label"
+            }}</label>
+          <div class="form-fields">
+            <select id="class-tradition" name="system.traditionId">
+              <option value="">{{localize
+                  "BAGS.CharacterClass.Spellcasting.Tradition.None"
+                }}</option>
+              {{selectOptions traditionOptions
+                selected=document.system.traditionId
+                valueAttr="value"
+                labelAttr="label"
+              }}
+            </select>
+          </div>
+          <p class="hint">{{localize
+              "BAGS.CharacterClass.Spellcasting.Tradition.Hint"
+            }}</p>
+        </div>
+
+        {{formGroup systemFields.spellAccess
+          value=document.system.spellAccess
+          localize=true
+        }}
+      {{else}}
+        <p class="empty">{{localize
+            "BAGS.CharacterClass.Spellcasting.NoTraditions"
+          }}</p>
+      {{/if}}
+    </div>
+
+    <section class="class-spell-list">
+      <header class="class-spell-list__header">
+        <h3>{{localize "BAGS.CharacterClass.SpellList.Heading"}}</h3>
+        <p class="hint">{{localize "BAGS.CharacterClass.SpellList.Hint"}}</p>
+      </header>
+
+      {{#if listedSpells.length}}
+        <ul class="class-spell-list__list">
+          {{#each listedSpells}}
+            <li
+              class="class-spell-list__row{{#if missing}} class-spell-list__row--missing{{/if}}"
+              data-listing-index="{{index}}"
+            >
+              {{#if img}}
+                <img src="{{img}}" alt="" role="presentation" />
+              {{else}}
+                <i class="fa-solid fa-triangle-exclamation" role="presentation"></i>
+              {{/if}}
+
+              <span class="class-spell-list__name">{{name}}</span>
+
+              <label class="class-spell-list__level">
+                <span>{{localize "BAGS.CharacterClass.SpellList.Level.Label"}}</span>
+                <input
+                  type="number"
+                  name="system.spellList.{{index}}.level"
+                  value="{{level}}"
+                  min="0"
+                  step="1"
+                />
+              </label>
+
+              <input
+                type="hidden"
+                name="system.spellList.{{index}}.uuid"
+                value="{{uuid}}"
+              />
+
+              <button
+                type="button"
+                class="inline-control icon fa-solid fa-trash"
+                data-action="remove-listed-spell"
+                data-tooltip="{{localize 'BAGS.CharacterClass.SpellList.Remove'}}"
+                aria-label="{{localize 'BAGS.CharacterClass.SpellList.Remove'}}"
+              ></button>
+            </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <p class="empty">{{localize "BAGS.CharacterClass.SpellList.Empty"}}</p>
+      {{/if}}
+    </section>
+  </div>
+{{/sheetTab}}

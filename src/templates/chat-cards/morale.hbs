@@ -1,0 +1,29 @@
+{{!--
+  The result of a round of morale checks: one line per monster, with its roll
+  against its rating and whether it held.
+
+  Whispered to the referee. Shares the surprise card's layout, since both are
+  a short list of "who rolled what, and what it means".
+--}}
+<div class="bags-surprise-card bags-morale-card">
+  <h3 class="bags-surprise-card__title">
+    <i class="fa-solid fa-person-running" inert></i>
+    {{ localize "BAGS.Combat.Morale.Title" }}
+  </h3>
+
+  <ul class="bags-surprise-card__sides plain">
+    {{#each results}}
+    <li class="bags-surprise-card__side {{#if failed}}bags-surprise-card__side--surprised{{/if}}">
+      <span class="bags-surprise-card__label">{{ name }}</span>
+      <span class="bags-surprise-card__total">{{ total }}</span>
+      <span class="bags-surprise-card__outcome">
+        {{#if failed}}
+        {{ localize "BAGS.Combat.Morale.Broke" rating=rating }}
+        {{else}}
+        {{ localize "BAGS.Combat.Morale.Held" rating=rating }}
+        {{/if}}
+      </span>
+    </li>
+    {{/each}}
+  </ul>
+</div>

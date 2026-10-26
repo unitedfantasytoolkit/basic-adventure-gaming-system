@@ -1,0 +1,204 @@
+/**
+ * Styles for the spell sheet and spell editor.
+ *
+ * The sheet borrows the character class sheet's summary layout -- flavour
+ * across the top, the document's own text on the left, an aside on the right
+ * with `decorated` headings over definition lists -- but not its hero band. A
+ * class's headline stats are the point of that sheet; a spell's point is its
+ * text, and the entry beside it is reference to skim rather than a banner.
+ */
+
+.application--spell-sheet {
+  --application-height: 560px;
+
+  container-name: sheet;
+  container-type: inline-size;
+
+  &:not(.minimized) {
+    min-width: 480px;
+  }
+
+  .empty {
+    text-align: center;
+    font-style: italic;
+    color: var(--color-text-dark-3);
+  }
+
+  .flavor {
+    max-width: 60ch;
+    font-style: italic;
+    opacity: 0.8;
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .tab {
+    padding-top: 0.5em;
+
+    &--summary {
+      &.active {
+        display: grid;
+      }
+
+      /*
+       * The aside carries the whole printed entry, so it gets more room than
+       * the class sheet gives its own -- but the spell's text still leads.
+       */
+      grid-template-columns: 3fr 2fr;
+      grid-template-rows: min-content;
+      gap: 1em;
+
+      .flavor {
+        grid-column: 1/3;
+      }
+
+      main {
+        min-width: 0;
+      }
+
+      /* --- Aside ----------------------------------------------------------- */
+
+      aside {
+        :is(h1, h2, h3, h4, h5, h6) {
+          font-family: var(--font-primary);
+          opacity: 0.9;
+          font-variant: small-caps;
+          text-transform: lowercase;
+          margin: 0 0 0.25em;
+          color: inherit;
+          overflow: hidden;
+
+          &.decorated {
+            &::before,
+            &::after {
+              content: "";
+              display: inline-block;
+              width: 50%;
+              margin: 0 0.5em 0 -55%;
+              vertical-align: middle;
+              border-bottom: 1px solid var(--color-text-subtle);
+            }
+
+            &::after {
+              margin: 0 -55% 0 0.5em;
+            }
+          }
+        }
+
+        dl {
+          display: grid;
+          gap: 0.1em 0.5em;
+          margin: 0 0 0.75em;
+          grid-template-columns: 1fr auto;
+
+          :is(dd, dt) {
+            margin: 0;
+          }
+
+          dt {
+            color: var(--color-light-3);
+          }
+
+          dd {
+            text-align: right;
+          }
+        }
+
+        /*
+         * Entry and classification values are prose -- "10 yds. + 10 yds./level",
+         * "Enchantment/Charm" -- so they get room to wrap rather than being
+         * held to one line and truncated.
+         */
+        .spell-entry,
+        .spell-classification {
+          grid-template-columns: minmax(6ch, auto) 1fr;
+
+          dd {
+            text-align: right;
+            text-wrap: pretty;
+          }
+        }
+
+        /* The level is the one number worth spotting without reading. */
+        .spell-level__value {
+          font-weight: 700;
+        }
+
+        /* Each class gets its icon beside its name, then its level. */
+        .spell-class-lists {
+          grid-template-columns: 1fr 5ch;
+          align-items: center;
+
+          dt {
+            display: flex;
+            align-items: center;
+            gap: 0.375em;
+            min-width: 0;
+
+            img {
+              flex: 0 0 auto;
+              width: 1.25em;
+              height: 1.25em;
+              border: 0;
+              border-radius: 50%;
+              object-fit: cover;
+            }
+
+            span {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+          }
+        }
+
+        .spell-materials {
+          margin: 0 0 0.75em;
+          font-style: italic;
+          opacity: 0.85;
+          text-wrap: pretty;
+        }
+
+        .spell-reversal {
+          margin-bottom: 0.75em;
+
+          p {
+            margin: 0;
+          }
+
+          .content-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375em;
+          }
+        }
+      }
+    }
+  }
+
+  /*
+   * Narrow windows can't carry two columns. Below the breakpoint the aside
+   * drops under the text rather than being squeezed into a gutter.
+   */
+  @container sheet (width < 460px) {
+    .tab--summary {
+      grid-template-columns: 1fr;
+
+      .flavor,
+      .spell-hero {
+        grid-column: 1/2;
+      }
+    }
+  }
+}
+
+/* ========================================================================== */
+
+.application--spell-editor {
+  .standard-form h3 {
+    font-variant: small-caps;
+    text-transform: lowercase;
+    opacity: 0.9;
+    margin: 0.75em 0 0.25em;
+  }
+}

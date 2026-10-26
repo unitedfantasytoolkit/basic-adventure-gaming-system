@@ -108,6 +108,9 @@ export function flagsFieldFactory() {
  * The character levels in which this Action is available.
  * @property {number} min - Self-explanatory.
  * @property {number} max - Self-explanatory.
+ * @property {boolean} hideWhenUnmet - Whether reference views should leave this
+ * Action out entirely when the level range isn't met, rather than showing it
+ * greyed with the level it applies at.
  * @returns {SchemaField} The level restriction schema
  */
 export function levelFieldFactory() {
@@ -121,6 +124,27 @@ export function levelFieldFactory() {
       min: 1,
       label: "BAGS.Actions.Level.Maximum.Label",
       hint: "BAGS.Actions.Restrictions.LevelRestrictions.MaxHint",
+    }),
+
+    /**
+     * Whether an out-of-range Action is worth previewing.
+     *
+     * Two different things get written as a level range. An ability that
+     * arrives later -- a paladin's warhorse at 4th -- is worth advertising, so
+     * the default is to show it greyed with the level it turns up at. A ladder
+     * of per-level variants of one ability -- Turn Undead banded 1-3, 4-6, 7-9
+     * -- is not: every band but one is redundant at any given level, and
+     * showing them all buries the one that counts.
+     *
+     * Only reference views consult this. Play surfaces drop anything the
+     * character can't use regardless, because a tile you can't click is worse
+     * than no tile at all.
+     * @see {@link ../utils/action-availability.mjs}
+     */
+    hideWhenUnmet: new BooleanField({
+      initial: false,
+      label: "BAGS.Actions.Level.HideWhenUnmet.Label",
+      hint: "BAGS.Actions.Level.HideWhenUnmet.Hint",
     }),
   })
 }

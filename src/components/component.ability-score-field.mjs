@@ -1,10 +1,10 @@
 /**
  * @file A custom element that represents an Ability Score and its modifier
  */
-import BaseElement from "../_BaseElement";
-import styles from "./AbilityScoreField.css" assert { type: "css" };
-import { component } from "../decorators";
-import { html } from "../utils";
+import BaseElement from "../_BaseElement"
+import styles from "./AbilityScoreField.css" assert { type: "css" }
+import { component } from "../decorators"
+import { html } from "../utils"
 
 /**
  * @ignore until we find a way to get Foundry to shift focus
@@ -13,25 +13,25 @@ import { html } from "../utils";
 @component("uft-ability-score-field")
 export default class AbilityScoreField extends BaseElement {
   static get styles() {
-    return [styles];
+    return [styles]
   }
 
   events() {
     this.shadowRoot
       ?.querySelector(".score-field")
       ?.addEventListener("change", (e) => {
-        this.onInput(e);
-      });
+        this.onInput(e)
+      })
 
     if (!this.hasAttribute("readonly") && !this.hasAttribute("disabled"))
       this.shadowRoot
         ?.querySelector("label")
         ?.addEventListener("click", (e) => {
-          const evt = new Event("roll");
-          evt.metaKey = e.metaKey;
-          evt.ctrlKey = e.ctrlKey;
-          this.dispatchEvent(evt);
-        });
+          const evt = new Event("roll")
+          evt.metaKey = e.metaKey
+          evt.ctrlKey = e.ctrlKey
+          this.dispatchEvent(evt)
+        })
   }
 
   get template() {
@@ -43,7 +43,7 @@ export default class AbilityScoreField extends BaseElement {
         readonly
         tabindex="-1"
       />
-    `;
+    `
 
     return html` <uft-labeled-section>
       <label
@@ -67,16 +67,16 @@ export default class AbilityScoreField extends BaseElement {
         />
         ${this.getAttribute("modifier-value") ? modifierInput : ""}
       </div>
-    </uft-labeled-section>`;
+    </uft-labeled-section>`
   }
 
   onInput(e) {
-    const oldValue = parseInt(this.getAttribute("value") || "", 10);
-    let newValue = parseInt(e.target.value || "", 10);
+    const oldValue = parseInt(this.getAttribute("value") || "", 10)
+    let newValue = parseInt(e.target.value || "", 10)
 
-    if (newValue < 0) newValue = 0;
-    if (Number.isNaN(newValue)) newValue = oldValue;
+    if (newValue < 0) newValue = 0
+    if (Number.isNaN(newValue)) newValue = oldValue
 
-    super.value = newValue.toString();
+    super.value = newValue.toString()
   }
 }

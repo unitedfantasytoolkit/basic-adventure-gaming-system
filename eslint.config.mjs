@@ -31,9 +31,21 @@ const compat = new FlatCompat({
 // === ... and finally, our config ============================================
 export default [
   {
-    ignores: ["**/rollup.config.mjs", "**/lang/**/*.json", "**/*.d.ts"],
+    // Anything not authored by hand. Without these, eslint walks the build
+    // output and the editor's vendored bundles, which produces tens of
+    // thousands of messages and crashes the formatter outright.
+    ignores: [
+      "**/rollup.config.mjs",
+      "**/lang/**/*.json",
+      "**/*.d.ts",
+      "dist/**",
+      "coverage/**",
+      "_scratch/**",
+      ".vscode/**",
+      ".aider*/**",
+    ],
   },
-  ...compat.extends("plugin:promise/recommended", "prettier"),
+  ...compat.extends("plugin:promise/recommended"),
   {
     plugins: {
       jsdoc,
@@ -47,4 +59,12 @@ export default [
     },
     rules,
   },
+  // `eslint-config-prettier` must be applied LAST, after our own rules. Our
+  // rules are harvested from AirBnB and re-enable ~19 layout rules (indent,
+  // function-paren-newline, comma-spacing, quotes, ...) that prettier also
+  // owns. When both are active, the two fixers rewrite the same character
+  // ranges and `--fix` can corrupt code -- it has silently deleted a `.map(`
+  // call and joined closing parens into `,)`. Letting prettier win makes it
+  // the single authority on layout, so `--fix` is safe to run.
+  ...compat.extends("prettier"),
 ]

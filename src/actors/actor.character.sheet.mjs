@@ -8,16 +8,22 @@ import SpellManager from "../applications/spell-manager.mjs"
 import { SYSTEM_TEMPLATE_PATH } from "../config/constants.mjs"
 import effectListToTooltip from "../utils/effect-list-to-tooltip.mjs"
 import BAGSCharacterEditor from "./actor.character.editor.mjs"
+import { isSheetHeld } from "./actor.character.creation-gate.mjs"
 
 export default class BAGSCharacterSheet extends BAGSActorSheet {
   /**
-   * @todo Delete this later
+   * Refuse to open while character creation has a hold on this Actor.
+   *
+   * Foundry opens a brand new Actor's sheet on its own, in a way no hook can
+   * intercept. Declining here is what keeps the sheet from appearing in front of
+   * the character creation window. See `actor.character.creation-gate.mjs` for
+   * the full explanation.
+   * @param {...any} args - Whatever Foundry passed to `render`
+   * @returns {Promise<BAGSCharacterSheet>} This sheet, rendered or not
    */
-  constructor(options = {}) {
-    super(options)
-    setTimeout(() => {
-      this.subApps.actorEditor.render(true)
-    }, 500)
+  async render(...args) {
+    if (isSheetHeld(this.document)) return this
+    return super.render(...args)
   }
 
   // === App config ============================================================
@@ -159,8 +165,9 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
         context.classes = doc.itemTypes.class.map((cls) => ({
           ...cls,
           xpBar: {
-            current: cls.system.xp,
-            max: cls.system.xpTable[cls.system.level - 1].value,
+            current: cls.system.xp || 0,
+            min: cls.system.xpTable[cls.system.level - 1]?.value || 0,
+            max: cls.system.xpTable[cls.system.level].value,
           },
         }))
         context.hp = doc.system.hp
@@ -172,7 +179,7 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
           CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
             CONFIG.BAGS.SystemRegistry.categories.COMBAT,
           )?.descending
-        
+
         // Ability score tooltips and modification states
         context.abilityScoreTooltips = Object.entries(
           this.document.system.schema.fields.base.fields.abilityScores.fields,
@@ -194,7 +201,7 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
           }),
           {},
         )
-        
+
         // Saving throw tooltips and modification states
         context.savingThrowTooltips = Object.keys(
           savingThrowSettings.savingThrows,
@@ -216,11 +223,13 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
         ).reduce(
           (obj, key) => ({
             ...obj,
-            [key]: this.getFieldModificationState(`system.modifiers.savingThrows.${key}`),
+            [key]: this.getFieldModificationState(
+              `system.modifiers.savingThrows.${key}`,
+            ),
           }),
           {},
         )
-        
+
         // Combat stat tooltips
         context.combatTooltips = {
           ac: effectListToTooltip(
@@ -234,49 +243,71 @@ export default class BAGSCharacterSheet extends BAGSActorSheet {
             "BAGS.Actors.Common.Fields.Base.THAC0.Hint",
           ),
           baseAttackBonus: effectListToTooltip(
-            this.document.appliedEffectsByAffectedKey.get("system.baseAttackBonus"),
+            this.document.appliedEffectsByAffectedKey.get(
+              "system.baseAttackBonus",
+            ),
             "BAGS.Actors.Common.Fields.Base.BaseAttackBonus.Label",
             "BAGS.Actors.Common.Fields.Base.BaseAttackBonus.Hint",
           ),
           movement: effectListToTooltip(
-            this.document.appliedEffectsByAffectedKey.get("system.modifiers.speed"),
+            this.document.appliedEffectsByAffectedKey.get(
+              "system.modifiers.speed",
+            ),
             "BAGS.Actors.Common.Fields.Base.Speed.Label",
             "BAGS.Actors.Common.Fields.Base.Speed.Hint",
           ),
           meleeAttack: effectListToTooltip(
-            this.document.appliedEffectsByAffectedKey.get("system.modifiers.melee.attack"),
+            this.document.appliedEffectsByAffectedKey.get(
+              "system.modifiers.melee.attack",
+            ),
             "BAGS.Actors.Common.Fields.Modifiers.Melee.Attack.Label",
             "BAGS.Actors.Common.Fields.Modifiers.Melee.Attack.Hint",
           ),
           meleeDamage: effectListToTooltip(
-            this.document.appliedEffectsByAffectedKey.get("system.modifiers.melee.damage"),
+            this.document.appliedEffectsByAffectedKey.get(
+              "system.modifiers.melee.damage",
+            ),
             "BAGS.Actors.Common.Fields.Modifiers.Melee.Damage.Label",
             "BAGS.Actors.Common.Fields.Modifiers.Melee.Damage.Hint",
           ),
           missileAttack: effectListToTooltip(
-            this.document.appliedEffectsByAffectedKey.get("system.modifiers.missile.attack"),
+            this.document.appliedEffectsByAffectedKey.get(
+              "system.modifiers.missile.attack",
+            ),
             "BAGS.Actors.Common.Fields.Modifiers.Missile.Attack.Label",
             "BAGS.Actors.Common.Fields.Modifiers.Missile.Attack.Hint",
           ),
           missileDamage: effectListToTooltip(
-            this.document.appliedEffectsByAffectedKey.get("system.modifiers.missile.damage"),
+            this.document.appliedEffectsByAffectedKey.get(
+              "system.modifiers.missile.damage",
+            ),
             "BAGS.Actors.Common.Fields.Modifiers.Missile.Damage.Label",
             "BAGS.Actors.Common.Fields.Modifiers.Missile.Damage.Hint",
           ),
         }
-        
+
         // Combat stat modification states
         context.combatModifications = {
           hp: this.getFieldModificationState("system.hp.max"),
           ac: this.getFieldModificationState("system.armorClass"),
           thac0: this.getFieldModificationState("system.thac0"),
-          baseAttackBonus: this.getFieldModificationState("system.baseAttackBonus"),
-          meleeAttack: this.getFieldModificationState("system.meleeAttackBonus"),
-          meleeDamage: this.getFieldModificationState("system.meleeDamageBonus"),
-          missileAttack: this.getFieldModificationState("system.missileAttackBonus"),
-          missileDamage: this.getFieldModificationState("system.missileDamageBonus"),
+          baseAttackBonus: this.getFieldModificationState(
+            "system.baseAttackBonus",
+          ),
+          meleeAttack: this.getFieldModificationState(
+            "system.meleeAttackBonus",
+          ),
+          meleeDamage: this.getFieldModificationState(
+            "system.meleeDamageBonus",
+          ),
+          missileAttack: this.getFieldModificationState(
+            "system.missileAttackBonus",
+          ),
+          missileDamage: this.getFieldModificationState(
+            "system.missileDamageBonus",
+          ),
         }
-        
+
         context.encumbranceMeter = encumbranceSettings.encumbranceMeter(
           doc.system,
         )

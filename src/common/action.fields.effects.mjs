@@ -22,6 +22,19 @@ const {
 } = foundry.data.fields
 
 /**
+ * The units a condition's duration can be measured in, taken from Foundry's own
+ * set so the two never drift apart, and mapped to labels Foundry already ships.
+ * @type {Record<string, string>}
+ */
+const DURATION_UNIT_CHOICES = CONST.ACTIVE_EFFECT_DURATION_UNITS.reduce(
+  (choices, unit) => ({
+    ...choices,
+    [unit]: `EFFECT.DURATION.UNITS.${unit}`,
+  }),
+  {},
+)
+
+/**
  * Schema for action effects.
  * @typedef ActionEffect
  * Represents an effect that an action can apply to targets.
@@ -165,44 +178,57 @@ export function effectFieldFactory() {
       description: new HTMLField({
         label: "EFFECT.FIELDS.description.label",
       }),
+      // This mirrors Foundry's own ActiveEffect change schema, because that's
+      // exactly where these end up. `type` and `phase` are left unconstrained
+      // for the same reason Foundry leaves them so: systems and modules can
+      // register change types and phases of their own, and the editor is what
+      // decides which ones to offer.
       changes: new ArrayField(
         new SchemaField({
           key: new StringField({
             blank: false,
-            label: "EFFECT.ChangeKey",
+            label: "EFFECT.FIELDS.changes.element.key.label",
           }),
           value: new StringField({
-            label: "EFFECT.ChangeValue",
+            label: "EFFECT.FIELDS.changes.element.value.label",
           }),
-          mode: new NumberField({
+          type: new StringField({
             required: true,
-            nullable: false,
-            integer: true,
-            initial: CONST.ACTIVE_EFFECT_MODES.ADD,
-            label: "EFFECT.ChangeMode",
+            blank: false,
+            initial: "add",
+            label: "EFFECT.FIELDS.changes.element.type.label",
+          }),
+          phase: new StringField({
+            required: true,
+            blank: false,
+            initial: "initial",
+            label: "EFFECT.FIELDS.changes.element.phase.label",
+            hint: "EFFECT.FIELDS.changes.element.phase.hint",
           }),
           priority: new NumberField({
             min: 0,
-            label: "EFFECT.ChangePriority",
+            label: "EFFECT.FIELDS.changes.element.priority.label",
           }),
         }),
         { initial: [] },
       ),
+      // A duration is one amount and one unit, matching Foundry. A null value
+      // means the condition lasts until somebody removes it; Foundry works out
+      // the expiry event itself once there's a number here.
       duration: new SchemaField({
-        rounds: new NumberField({
+        value: new NumberField({
           min: 0,
-          initial: 0,
-          label: "COMBAT.Rounds",
+          integer: true,
+          nullable: true,
+          initial: null,
+          label: "EFFECT.FIELDS.duration.value.label",
         }),
-        seconds: new NumberField({
-          min: 0,
-          initial: 0,
-          label: "Seconds",
-        }),
-        turns: new NumberField({
-          min: 0,
-          initial: 0,
-          label: "COMBAT.Turns",
+        units: new StringField({
+          required: true,
+          blank: false,
+          initial: "rounds",
+          choices: DURATION_UNIT_CHOICES,
+          label: "EFFECT.FIELDS.duration.units.label",
         }),
       }),
     }),

@@ -1,7 +1,7 @@
 /**
  * @file A custom element that represents an Ability Score and its modifier
  */
-import { dom, icon } from "@fortawesome/fontawesome-svg-core";
+import { dom, icon } from "@fortawesome/fontawesome-svg-core"
 import {
   faWeightHanging,
   faTrash,
@@ -13,91 +13,89 @@ import {
   faScroll,
   faPlus,
   faMinus,
-} from "@fortawesome/free-solid-svg-icons";
-import BaseElement from "../_BaseElement";
+} from "@fortawesome/free-solid-svg-icons"
+import BaseElement from "../_BaseElement"
 // @ts-expect-error
-import styles from "./ItemRow.css" assert { type: "css" };
-import { abbreviateNumber } from "../../module/helpers-numbers";
-import { component } from "../decorators";
+import styles from "./ItemRow.css" assert { type: "css" }
+import { abbreviateNumber } from "../../module/helpers-numbers"
+import { component } from "../decorators"
 
 @component("uft-item-row")
 export default class ItemRow extends BaseElement {
   static get styles() {
-    const iconSheet = new CSSStyleSheet();
-    iconSheet.replaceSync(dom.css());
-    return [styles, iconSheet];
+    const iconSheet = new CSSStyleSheet()
+    iconSheet.replaceSync(dom.css())
+    return [styles, iconSheet]
   }
 
-  static formAssociated = false;
-  static delegatesFocus = false;
-  static shadowMode = "closed";
+  static formAssociated = false
+  static delegatesFocus = false
+  static shadowMode = "closed"
 
   static get contextMenu() {
-    return {};
+    return {}
   }
 
-  item;
+  item
 
   async prepareData() {
     if (this.getAttribute("uuid"))
-      this.item = await fromUuid(this.getAttribute("uuid"));
+      this.item = await fromUuid(this.getAttribute("uuid"))
   }
 
   events() {
     const hasAlwaysExpandedNodes = !!this.querySelectorAll(
       "[slot='always-expanded']",
-    ).length;
+    ).length
     if (!hasAlwaysExpandedNodes) {
+      this.shadowRoot?.querySelector(".always-expanded")?.classList.add("empty")
       this.shadowRoot
         ?.querySelector(".always-expanded")
-        ?.classList.add("empty");
-      this.shadowRoot
-        ?.querySelector(".always-expanded")
-        ?.setAttribute("aria-hidden", "true");
+        ?.setAttribute("aria-hidden", "true")
     }
 
-    this.#bindSystemEvents();
-    this.#bindModuleIntegrationEvents();
+    this.#bindSystemEvents()
+    this.#bindModuleIntegrationEvents()
   }
 
   #bindSystemEvents() {
-    this.tabIndex = 0;
-    this.setAttribute("draggable", "true");
+    this.tabIndex = 0
+    this.setAttribute("draggable", "true")
 
-    this.addEventListener("dragstart", this.#onDrag.bind(this));
-    this.addEventListener("dragend", this.#onDragEnd.bind(this));
+    this.addEventListener("dragstart", this.#onDrag.bind(this))
+    this.addEventListener("dragend", this.#onDragEnd.bind(this))
 
-    this.addEventListener("click", this.#onExpand.bind(this));
+    this.addEventListener("click", this.#onExpand.bind(this))
 
     // Item thumbnail
     this.shadowRoot
       ?.querySelector(".icon")
-      ?.addEventListener("click", this.#onRoll.bind(this));
+      ?.addEventListener("click", this.#onRoll.bind(this))
 
     // Right side controls
     this.shadowRoot
       ?.querySelector(".favorite")
-      ?.addEventListener("click", this.#onFavorite.bind(this));
+      ?.addEventListener("click", this.#onFavorite.bind(this))
     this.shadowRoot
       ?.querySelector(".equip")
-      ?.addEventListener("click", this.#onEquip.bind(this));
+      ?.addEventListener("click", this.#onEquip.bind(this))
     this.shadowRoot
       ?.querySelector(".show-chat")
-      ?.addEventListener("click", this.#onShow.bind(this));
+      ?.addEventListener("click", this.#onShow.bind(this))
     this.shadowRoot
       ?.querySelector(".edit")
-      ?.addEventListener("click", this.#onEdit.bind(this));
+      ?.addEventListener("click", this.#onEdit.bind(this))
     this.shadowRoot
       ?.querySelector(".delete")
-      ?.addEventListener("click", this.#onDelete.bind(this));
+      ?.addEventListener("click", this.#onDelete.bind(this))
 
     // Charges (spell slots)
     this.shadowRoot
       ?.querySelector(".charge-control--increment")
-      ?.addEventListener("click", this.#onAddCharge.bind(this));
+      ?.addEventListener("click", this.#onAddCharge.bind(this))
     this.shadowRoot
       ?.querySelector(".charge-control--decrement")
-      ?.addEventListener("click", this.#onRemoveCharge.bind(this));
+      ?.addEventListener("click", this.#onRemoveCharge.bind(this))
   }
 
   /**
@@ -107,78 +105,73 @@ export default class ItemRow extends BaseElement {
     // Forien's Unidentified Items
     this.shadowRoot
       ?.querySelector(".identify")
-      ?.addEventListener("pointerdown", this.#onIdentify.bind(this));
+      ?.addEventListener("pointerdown", this.#onIdentify.bind(this))
     this.shadowRoot
       ?.querySelector(".mystify")
-      ?.addEventListener("pointerdown", this.#onMystify.bind(this));
+      ?.addEventListener("pointerdown", this.#onMystify.bind(this))
   }
 
   #onAddCharge(e) {
-    e.stopPropagation();
+    e.stopPropagation()
     // The sheet can decide what happens when an increment is requested
-    this.dispatchEvent(new Event("charge-increment"));
+    this.dispatchEvent(new Event("charge-increment"))
   }
 
   #onRemoveCharge(e) {
-    e.stopPropagation();
+    e.stopPropagation()
     // The sheet can decide what happens when a decrement is requested
-    this.dispatchEvent(new Event("charge-decrement"));
+    this.dispatchEvent(new Event("charge-decrement"))
   }
 
   #onExpand(e) {
-    const slot = this.shadowRoot?.querySelector("slot:not([name])");
+    const slot = this.shadowRoot?.querySelector("slot:not([name])")
     const nodes = slot
       ?.assignedNodes()
-      ?.filter((node) => node.nodeType === Node.ELEMENT_NODE);
+      ?.filter((node) => node.nodeType === Node.ELEMENT_NODE)
     // @ts-expect-error - e.target could be one of this component
     if (!!nodes?.length && e.target?.localName === this.localName)
-      this.toggleAttribute("aria-expanded");
+      this.toggleAttribute("aria-expanded")
   }
 
   #onDrag(e) {
-    e.stopPropagation();
-    if (!this.item) return;
+    e.stopPropagation()
+    if (!this.item) return
 
-    if (e?.dataTransfer?.getData("text/plain")) return;
+    if (e?.dataTransfer?.getData("text/plain")) return
 
-    this.toggleAttribute("dragging", true);
+    this.toggleAttribute("dragging", true)
     // @ts-expect-error - toDragData isn't picked up by TS types
-    const dragData = this.item.toDragData();
-    dragData.fromContainer = !!this.item.system.containerId;
+    const dragData = this.item.toDragData()
+    dragData.fromContainer = !!this.item.system.containerId
     if (!!this.shadowRoot?.querySelector(".icon"))
-      e.dataTransfer?.setDragImage(
-        this.shadowRoot.querySelector(".icon"),
-        0,
-        0,
-      );
-    e.dataTransfer?.setData("text/plain", JSON.stringify(dragData));
+      e.dataTransfer?.setDragImage(this.shadowRoot.querySelector(".icon"), 0, 0)
+    e.dataTransfer?.setData("text/plain", JSON.stringify(dragData))
   }
 
   #onDragEnd(_e) {
-    this.toggleAttribute("dragging", false);
+    this.toggleAttribute("dragging", false)
   }
 
   #onShow(e) {
-    e.stopPropagation();
-    if (!this.item) return;
-    this.item.show();
+    e.stopPropagation()
+    if (!this.item) return
+    this.item.show()
   }
 
   #onRoll(e) {
-    e.stopPropagation();
-    if (!this.item) return;
-    this.item.roll();
+    e.stopPropagation()
+    if (!this.item) return
+    this.item.roll()
   }
 
   #onFavorite(e) {
-    e.stopPropagation();
-    if (!this.item) return;
+    e.stopPropagation()
+    if (!this.item) return
 
-    const favoriteItemKey = "favorite-items";
+    const favoriteItemKey = "favorite-items"
 
-    const owner = this.item.parent;
-    const ownerFavorites =
-      owner?.getFlag(game.system.id, favoriteItemKey) || [];
+    const owner = this.item.parent
+    const ownerFavorites = owner?.getFlag(game.system.id, favoriteItemKey) || []
     // eslint-disable-next-line consistent-return
     return !ownerFavorites || !ownerFavorites.includes(this.item.uuid)
       ? owner?.setFlag(game.system.id, favoriteItemKey, [
@@ -189,65 +182,65 @@ export default class ItemRow extends BaseElement {
           game.system.id,
           favoriteItemKey,
           ownerFavorites.filter((i) => i !== this.item?.uuid),
-        );
+        )
   }
 
   #onEquip(e) {
-    e.stopPropagation();
-    if (!this.item) return;
+    e.stopPropagation()
+    if (!this.item) return
     this.item?.update({
       "system.equipped": !this.item.system.equipped,
-    });
+    })
   }
 
   #onEdit(e) {
-    e.stopPropagation();
-    if (!this.item) return;
-    this.item?.sheet?.render(true);
+    e.stopPropagation()
+    if (!this.item) return
+    this.item?.sheet?.render(true)
   }
 
   #onDelete(e) {
-    e.stopPropagation();
-    if (!this.item) return;
-    this.item?.deleteDialog();
+    e.stopPropagation()
+    if (!this.item) return
+    this.item?.deleteDialog()
   }
 
   #onMystify(e) {
     // @ts-expect-error - isMystified is a mutation of the OseItem type
     //                    caused by Forien's Unidentified Items
-    if (this.item?.isMystified()) return;
+    if (this.item?.isMystified()) return
 
     if (e.ctrlKey || e.metaKey)
       // @ts-expect-error - ForienIdentification is a global
-      ForienIdentification.mystifyAdvancedDialog(this.getAttribute("uuid"));
+      ForienIdentification.mystifyAdvancedDialog(this.getAttribute("uuid"))
     // @ts-expect-error - ForienIdentification is a global
-    else ForienIdentification.mystifyReplace(this.getAttribute("uuid"));
+    else ForienIdentification.mystifyReplace(this.getAttribute("uuid"))
   }
 
   #onIdentify(_e) {
     // @ts-expect-error - isMystified is a mutation of the OseItem type
     //                    caused by Forien's Unidentified Items
-    if (!this.item?.isMystified()) return;
+    if (!this.item?.isMystified()) return
     // @ts-expect-error - ForienIdentification is a global
-    ForienIdentification.identify(this.item);
+    ForienIdentification.identify(this.item)
   }
 
   /**
    * Can this item be mystified/identified?
    */
   get #canIdentify() {
-    if (!game.user?.isGM) return false;
-    if (!this.hasAttribute("can-mystify")) return false;
-    if (!game.modules.has("forien-unidentified-items")) return false;
-    if (!this.item) return false;
+    if (!game.user?.isGM) return false
+    if (!this.hasAttribute("can-mystify")) return false
+    if (!game.modules.has("forien-unidentified-items")) return false
+    if (!this.item) return false
 
     // @ts-expect-error - game.modules.find does, indeed, work.
     return game.modules.find((m) => m.id === "forien-unidentified-items")
-      ?.active;
+      ?.active
   }
 
   get #identifyButton() {
-    if (!this.#canIdentify) return "";
+    if (!this.#canIdentify) return ""
     // @ts-expect-error - isMystified is a mutation of the OseItem type
     //                    caused by Forien's Unidentified Items
     if (!this.item?.isMystified())
@@ -255,16 +248,16 @@ export default class ItemRow extends BaseElement {
         title="${game.i18n.localize("forien-unidentified-items.Mystify")}"
         aria-label="${game.i18n.localize("forien-unidentified-items.Mystify")}">
         ${icon(faEyeSlash).html}
-      </button>`;
+      </button>`
     return /* html */ `<button class="identify"
       title="${game.i18n.localize("forien-unidentified-items.Identify")}"
       aria-label="${game.i18n.localize("forien-unidentified-items.Identify")}">
       ${icon(faEye).html}
-    </button>`;
+    </button>`
   }
 
   get #controls() {
-    if (!this.item?.sheet?.isEditable) return "";
+    if (!this.item?.sheet?.isEditable) return ""
 
     return /* html */ `
     ${this.#identifyButton}
@@ -309,31 +302,31 @@ export default class ItemRow extends BaseElement {
       title="${game.i18n.localize("OSE.Delete")}"
       aria-label="${game.i18n.localize("OSE.Delete")}">
       ${icon(faTrash).html}
-    </button>`;
+    </button>`
   }
 
   get #weightLabel() {
-    if (!this.hasAttribute("has-weight")) return "";
+    if (!this.hasAttribute("has-weight")) return ""
 
-    const name = this.item?.name || "";
+    const name = this.item?.name || ""
     const weight = this.item?.system.quantity.value
       ? this.item?.system.weight * this.item?.system.quantity.value || 0
-      : this.item?.system.weight || 0;
-    const label = game.i18n.format("OSE.items.WeightLong", { name, weight });
+      : this.item?.system.weight || 0
+    const label = game.i18n.format("OSE.items.WeightLong", { name, weight })
 
     return /* html */ `
     <span aria-label="${label}" title="${label}">
       ${icon(faWeightHanging).html}
       ${weight || 0}
-    </span>`;
+    </span>`
   }
 
   get #chargesLabel() {
-    if (!this.hasAttribute("charges")) return "";
+    if (!this.hasAttribute("charges")) return ""
 
     // @ts-expect-error - We're checking for if we have charges above.
-    const charges = parseInt(this.getAttribute("charges"), 10);
-    const label = "Charges";
+    const charges = parseInt(this.getAttribute("charges"), 10)
+    const label = "Charges"
 
     return /*html*/ `
       <span aria-label="${label}" title="${label}" class="charges">
@@ -341,19 +334,19 @@ export default class ItemRow extends BaseElement {
         ${charges}
         <button class="charge-control charge-control--increment" title="Increase">${icon(faPlus).html}</button>
       </span>
-    `;
+    `
   }
 
   get #quantityLabel() {
-    if (!this.hasAttribute("has-quantity")) return "";
+    if (!this.hasAttribute("has-quantity")) return ""
 
-    let quantity = abbreviateNumber(this.item?.system.quantity.value);
+    let quantity = abbreviateNumber(this.item?.system.quantity.value)
     let max = this.item?.system.quantity.max
       ? `/${this.item?.system.quantity.max}`
-      : "";
+      : ""
     return /* html */ `<uft-tag-chip class="quantity">
       ${quantity}${max}
-    </uft-tag-chip>`;
+    </uft-tag-chip>`
   }
 
   /**
@@ -390,6 +383,6 @@ export default class ItemRow extends BaseElement {
       <div class="always-expanded" part="always-expanded">
         <slot name="always-expanded"></slot>
       </div>
-      `;
+      `
   }
 }

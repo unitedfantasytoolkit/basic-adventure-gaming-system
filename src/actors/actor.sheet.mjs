@@ -49,7 +49,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
           ...obj,
           [key]: new App({
             document: this.document,
-            parent: this,
+            parentApp: this,
           }),
         }
       },
@@ -143,7 +143,6 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
    * This approach properly handles form-associated custom elements (FACEs) via
    * the FormDataExtended constructor, which calls the native FormData
    * constructor that automatically includes FACE values set via setFormValue().
-   *
    * @param {object} _formConfig - Form configuration object
    * @param {Event} event - The form submission event
    * @returns {Promise<void>}
@@ -227,7 +226,6 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
    *
    * The method automatically determines "improvement direction" based on common
    * patterns, but can be overridden with the forcedDirection parameter.
-   *
    * @param {string} key - The dot-notation path to the field (e.g., "system.hp.
    * max")
    * @param {'ascending'|'descending'} [forcedDirection] - Override the default
@@ -247,17 +245,21 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     const totalMod = modifications.reduce((sum, mod) => {
       const value = Number(mod.modification.value) || 0
 
-      // Handle different Foundry modification modes
-      switch (mod.modification.mode) {
-        case CONST.ACTIVE_EFFECT_MODES.ADD: // 2
+      // Handle the ways Foundry can apply a change. These are the change types
+      // it ships; a type registered by a module lands in the default case, where
+      // the safest thing to say is that we don't know which way it moved.
+      switch (mod.modification.type) {
+        case "add":
           return sum + value
-        case CONST.ACTIVE_EFFECT_MODES.MULTIPLY: // 1
+        case "subtract":
+          return sum - value
+        case "multiply":
           return sum * value
-        case CONST.ACTIVE_EFFECT_MODES.OVERRIDE: // 5
+        case "override":
           // For override, treat as the value itself (not additive)
           return value
-        case CONST.ACTIVE_EFFECT_MODES.UPGRADE: // 3
-        case CONST.ACTIVE_EFFECT_MODES.DOWNGRADE: // 4
+        case "upgrade":
+        case "downgrade":
           // These compare and take max/min, so just use the value
           return value
         default:
@@ -281,7 +283,6 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
    * Returns "ascending" if higher values are better, "descending" if lower
    * values
    * are better. This uses heuristics based on common field naming patterns.
-   *
    * @param {string} key - The dot-notation path to the field
    * @returns {'ascending'|'descending'} The improvement direction
    * @private
@@ -512,9 +513,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
     if (count === 0) {
       ui.notifications.info(
-        game.i18n.localize(
-          "BAGS.Actors.Character.Inventory.NoStackableItems",
-        ),
+        game.i18n.localize("BAGS.Actors.Character.Inventory.NoStackableItems"),
       )
     } else {
       ui.notifications.info(
@@ -895,7 +894,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     // Capture the dragged item reference (for synchronous validation)
     const itemTile = event.target.closest("[data-item-id]")
     if (itemTile) {
-      const itemId = itemTile.dataset.itemId
+      const { itemId } = itemTile.dataset
       this.#draggedItem = this.actor.items.get(itemId)
 
       // Pre-highlight all containers to show valid/invalid drop zones
@@ -956,7 +955,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
 
     const containerId = tile.dataset.itemId
     const container = this.actor.items.get(containerId)
-    
+
     // Only handle containers
     if (!container?.system.container?.isContainer) return
 
@@ -1006,9 +1005,11 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     this.#draggedItem = null
 
     // Clean up all container drop feedback
-    this.element.querySelectorAll(".drop-valid, .drop-invalid").forEach((tile) => {
-      tile.classList.remove("drop-valid", "drop-invalid")
-    })
+    this.element
+      .querySelectorAll(".drop-valid, .drop-invalid")
+      .forEach((tile) => {
+        tile.classList.remove("drop-valid", "drop-invalid")
+      })
   }
 
   /**
@@ -1017,7 +1018,6 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
    * This method intercepts item drops to check if the dropped item can be
    * stacked with an existing item. If so, it prompts the user to choose
    * between stacking them or keeping them separate.
-   *
    * @param {DragEvent} event - The browser event fired when dropping the item
    * @param {Item} doc - The Foundry Item to handle
    * @returns {Promise<Item|false>} The created/merged item, or false if not owner
@@ -1043,7 +1043,7 @@ export default class BAGSActorSheet extends HandlebarsApplicationMixin(
     if (dropTarget) {
       const containerId = dropTarget.dataset.itemId
       const container = this.actor.items.get(containerId)
-      
+
       if (container?.system.container?.isContainer && doc.id !== container.id) {
         try {
           const result = await doc.addToContainer(container)

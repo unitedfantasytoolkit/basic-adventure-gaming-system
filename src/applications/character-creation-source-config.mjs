@@ -66,25 +66,57 @@ class CharacterCreationSourceConfig extends HandlebarsApplicationMixin(
   }
 
   // === Context Preparation ================================================
+  /**
+   * Build the list of configured sources, resolving each stored `{ id, type }`
+   * entry into something we can label in the UI.
+   *
+   * A source can go missing between sessions -- someone deletes the folder, or
+   * disables the module that supplied the compendium. Those entries are kept
+   * and flagged as missing rather than dropped, so the GM can see what broke
+   * and remove it deliberately.
+   * @returns {object} Context for the template
+   */
   async _prepareContext() {
     const sourceData = game.settings.get(
       SYSTEM_NAME,
       "characterCreationSources",
     )
 
-    const enrichSource = (s) => {
-      const sourceObj = { ...s }
-      if (s.type === "folder") sourceObj.name = game.folders.get(s.id).name
-      if (s.type === "compendium")
-        sourceObj.name = game.packs.get(s.id).metadata.label
-      return sourceObj
+    /**
+     * Attach a display name to a stored source entry.
+     * @param {object} source - A stored `{ id, type }` source entry
+     * @returns {object} The entry with `name` and `missing` added
+     */
+    const enrichSource = (source) => {
+      const name =
+        source.type === "folder"
+          ? game.folders.get(source.id)?.name
+          : game.packs.get(source.id)?.metadata?.label
+
+      return {
+        ...source,
+        name:
+          name ??
+          game.i18n.localize("BAGS.Settings.CharacterCreation.Sources.Missing"),
+        missing: !name,
+      }
     }
 
-    const sources = {}
+    // Drive the category list from the registered default rather than from the
+    // stored value, so categories added in a later version still show up for
+    // worlds whose saved setting predates them.
+    const categories = Object.keys(
+      game.settings.settings.get(`${SYSTEM_NAME}.characterCreationSources`)
+        .default,
+    )
 
-    Object.keys(sourceData).forEach(async (key) => {
-      await Promise.all(sourceData[key].map(enrichSource))
-    })
+    const sources = categories.reduce(
+      (obj, category) => ({
+        ...obj,
+        [category]: (sourceData[category] || []).map(enrichSource),
+      }),
+      {},
+    )
 
     return {
       sources,
@@ -104,95 +136,128 @@ class CharacterCreationSourceConfig extends HandlebarsApplicationMixin(
   }
 
   // === Source Management =================================================
-  async #getAvailableSources() {
-    const sources = {
-      classes: {
-        folders: game.folders
-          .filter(
-            (f) =>
-              f.type === "Item" && f.contents.some((i) => i.type === "class"),
-          )
-          .map((f) => ({
-            id: f.id,
-            name: f.name,
-            type: "folder",
-          })),
-        compendiums: game.packs
-          .filter((p) => p.documentName === "Item")
-          .map((p) => ({
-            id: p.collection,
-            name: p.metadata.label,
-            type: "compendium",
-          })),
-      },
-      equipment: {
-        folders: game.folders
-          .filter(
-            (f) =>
-              f.type === "Item" &&
-              f.contents.some((i) =>
-                ["weapon", "armor", "gear"].includes(i.type),
-              ),
-          )
-          .map((f) => ({
-            id: f.id,
-            name: f.name,
-            type: "folder",
-          })),
-        compendiums: game.packs
-          .filter((p) => p.documentName === "Item")
-          .map((p) => ({
-            id: p.collection,
-            name: p.metadata.label,
-            type: "compendium",
-          })),
-      },
-    }
-    return sources
+
+  /**
+   * The Item types that belong to each source category. Folders are only
+   * offered for a category when they actually contain a matching Item, which
+   * keeps the dropdowns short in a busy world.
+   * @type {Record<string, string[]>}
+   */
+  static CATEGORY_ITEM_TYPES = {
+    classes: ["class"],
+    equipment: ["weapon", "armor", "item"],
+    identity: ["identity"],
+    spells: ["spell"],
+    abilities: ["ability"],
   }
 
+  /**
+   * Gather every folder and compendium that could serve as a source, grouped
+   * by category.
+   *
+   * Compendiums are offered regardless of contents. Unlike folders, a pack's
+   * documents aren't loaded until requested, and loading every Item pack just
+   * to populate a dropdown is too slow to justify.
+   * @returns {Promise<object>} Available sources, keyed by category
+   */
+  async #getAvailableSources() {
+    const itemPacks = game.packs
+      .filter((p) => p.documentName === "Item")
+      .map((p) => ({
+        id: p.collection,
+        name: p.metadata.label,
+        type: "compendium",
+      }))
+
+    const foldersContaining = (types) =>
+      game.folders
+        .filter(
+          (f) =>
+            f.type === "Item" && f.contents.some((i) => types.includes(i.type)),
+        )
+        .map((f) => ({
+          id: f.id,
+          name: f.name,
+          type: "folder",
+        }))
+
+    return Object.entries(this.constructor.CATEGORY_ITEM_TYPES).reduce(
+      (obj, [category, types]) => ({
+        ...obj,
+        [category]: {
+          folders: foldersContaining(types),
+          compendiums: itemPacks,
+        },
+      }),
+      {},
+    )
+  }
+
+  /** @override */
   _onRender(context, options) {
     super._onRender(context, options)
-    for (const select of this.element.querySelectorAll("select")) {
-      select.addEventListener("change", this.#onAddSource.bind(this))
-    }
+    this.element
+      .querySelectorAll("select")
+      .forEach((select) =>
+        select.addEventListener("change", this.#onAddSource.bind(this)),
+      )
     this.element.addEventListener("change", this._updateObject)
   }
 
+  /**
+   * Add the chosen folder or compendium to a category.
+   *
+   * The same source is allowed in more than one category (a single "Basics"
+   * pack can supply both classes and equipment), but adding it twice to the
+   * same category is ignored, since that would duplicate every item in the
+   * creation lists.
+   * @param {Event} event - The select element's change event
+   */
   async #onAddSource(event) {
     const target = event.currentTarget
     const id = target?.value
     if (!id) return
-    if (!target.closest("[data-category]")) return
 
-    try {
-      const { category } = target.closest("[data-category]").dataset
-      const { type } = target.querySelector(`[value="${id}"]`).dataset
-      if (!type) return
+    const categoryElement = target.closest("[data-category]")
+    if (!categoryElement) return
 
-      const sources = game.settings.get(SYSTEM_NAME, "characterCreationSources")
-      sources[category].push({
-        id,
-        type,
-      })
+    const { category } = categoryElement.dataset
+    const { type } = target.querySelector(`[value="${id}"]`)?.dataset ?? {}
+    if (!type) return
 
-      await game.settings.set(SYSTEM_NAME, "characterCreationSources", sources)
-    } catch {
-      /* noop */
-    }
+    const sources = game.settings.get(SYSTEM_NAME, "characterCreationSources")
+
+    // Worlds saved before a category existed won't have a key for it.
+    const existing = sources[category] || []
+    if (existing.some((s) => s.id === id)) return
+
+    await game.settings.set(SYSTEM_NAME, "characterCreationSources", {
+      ...sources,
+      [category]: [...existing, { id, type }],
+    })
 
     this.render()
   }
 
+  /**
+   * Remove a configured source from a category.
+   * @param {Event} event - The click event from the remove button
+   */
   static async #onRemoveSource(event) {
-    const { category, index } = event.target.closest(
-      "[data-source-index]",
-    ).dataset
+    const sourceElement = event.target.closest("[data-source-index]")
+    if (!sourceElement) return
 
+    const { category, sourceIndex } = sourceElement.dataset
     const sources = game.settings.get(SYSTEM_NAME, "characterCreationSources")
-    sources[category].splice(index, 1)
+    const existing = [...(sources[category] || [])]
 
-    await game.settings.set(SYSTEM_NAME, "characterCreationSources", sources)
+    existing.splice(Number(sourceIndex), 1)
+
+    await game.settings.set(SYSTEM_NAME, "characterCreationSources", {
+      ...sources,
+      [category]: existing,
+    })
+
     this.render()
   }
 }

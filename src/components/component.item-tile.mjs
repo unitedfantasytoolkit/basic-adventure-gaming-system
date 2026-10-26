@@ -100,9 +100,15 @@ class ItemTile extends BaseElement {
     const containerBadge =
       this.document.system.container?.isContainer &&
       this.document.system.contents?.length > 0
-        ? html`<span class="container-badge" data-tooltip="Container (${this.document.system.contents.length} items)">
+        ? html`<span
+            class="container-badge"
+            data-tooltip="Container (${this.document.system.contents
+              .length} items)"
+          >
             <i class="fa fa-box"></i>
-            <span class="container-count">${this.document.system.contents.length}</span>
+            <span class="container-count"
+              >${this.document.system.contents.length}</span
+            >
           </span>`
         : ""
 

@@ -4,7 +4,7 @@
 
 /**
  * Show a dialog to add XP to a character class
- * @param {Object} classItem - The character class item
+ * @param {object} classItem - The character class item
  * @returns {Promise<{xp: number, note: string}|null>} The XP amount and note, or null if cancelled
  */
 export async function showAddXPDialog(classItem) {
@@ -47,11 +47,21 @@ export async function showAddXPDialog(classItem) {
 
 /**
  * Add XP to a character class with audit logging
- * @param {Object} classItem - The character class item
+ * @param {object} classItem - The character class item
  * @param {number} xpAmount - Amount of XP to add
  * @param {string} note - Optional note for the audit log
+ * @param {object} [options] - Options which configure the change
+ * @param {boolean} [options.notify] - Whether to announce the change with a
+ * notification. Pass false when awarding several characters at once, so the
+ * referee gets one summary rather than one notification per character.
  */
-export async function addXPToClass(classItem, xpAmount, note = "") {
+export async function addXPToClass(
+  classItem,
+  xpAmount,
+  note = "",
+  options = {},
+) {
+  const { notify = true } = options
   const currentXP = classItem.system.xp
   const newXP = currentXP + xpAmount
 
@@ -68,7 +78,8 @@ export async function addXPToClass(classItem, xpAmount, note = "") {
     "system.xpLog": [...classItem.system.xpLog, logEntry],
   })
 
-  ui.notifications.info(
-    `Added ${xpAmount} XP to ${classItem.name}. Total: ${newXP}`,
-  )
+  if (notify)
+    ui.notifications.info(
+      `Added ${xpAmount} XP to ${classItem.name}. Total: ${newXP}`,
+    )
 }

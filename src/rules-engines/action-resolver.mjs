@@ -5,6 +5,7 @@
  */
 
 import { FoundryDocumentAdapter } from "./foundry-document-adapter.mjs"
+import { levelForAction } from "../utils/action-availability.mjs"
 
 /**
  * @typedef {import('../common/actions.fields.mjs').Action} Action
@@ -102,6 +103,10 @@ export default class ActionResolver {
 
   /**
    * Validates level requirements
+   *
+   * The level is worked out from the action's *source* rather than from the
+   * actor alone, because a class ability is gated on that class's level. See
+   * {@link levelForAction} for why that distinction matters.
    * @param {object} action - The action configuration
    * @param {object} actorData - Plain object with actor data
    * @returns {{valid: boolean, errors: string[]}}
@@ -113,9 +118,17 @@ export default class ActionResolver {
       return { valid: true, errors }
     }
 
-    const level = actorData.system?.details?.level
+    // Restrictions apply only when the action says it has them. The editor
+    // leaves whatever was last typed in `level` behind when the restrictions
+    // checkbox is cleared, so enforcing it regardless would apply limits the
+    // author turned off.
+    if (!action.flags?.usesRestrictions) {
+      return { valid: true, errors }
+    }
 
-    if (level === undefined || level === null) {
+    const level = levelForAction(this.document, this.actor)
+
+    if (level === null) {
       return { valid: true, errors }
     }
 
@@ -568,27 +581,46 @@ export default class ActionResolver {
   /**
    * Processes condition/status effects
    * @param {object} effect - The effect to process
-   * @param {Actor} target - The target of the effect
+   * @param {Token} target - The token the effect is being applied to
    * @returns {Promise<object>} The result of processing the effect
    */
   async #processActiveEffect(effect, target) {
-    if (!target) return null
+    // Active Effects live on Actors, so reach through the token for one -- which
+    // is what every other branch in here does with a target. Handing Foundry the
+    // token itself asked it to put an ActiveEffect inside a TokenDocument, and a
+    // TokenDocument can only hold an ActorDelta.
+    const targetActor = target?.actor
+
+    if (!targetActor) return null
 
     const effectData = {
-      label: effect.note || effect.condition?.name || "New Effect",
-      icon: effect.condition?.img || effect.icon,
+      // `name` and `img`, not `label` and `icon`: ActiveEffect renamed both
+      // fields (in v11 and v12 respectively). `name` is required and cannot be
+      // blank, so sending `label` meant validation refused the whole document
+      // and nothing was ever applied.
+      name: effect.note || effect.condition?.name || "New Effect",
+      img: effect.condition?.img || effect.icon,
       description: effect.condition?.description,
       duration: effect.condition?.duration || effect.duration,
-      changes: effect.condition?.changes || [],
-      flags: {
-        core: {
-          statusId: effect.condition?.name,
-        },
+      // `system.changes`, not `changes`: v14 moved an ActiveEffect's changes
+      // into its type data, where the default "base" type defines them. Writing
+      // the old top-level key still works, but only because Foundry migrates it
+      // on the way in -- and that migration disappears in v16.
+      system: {
+        changes: effect.condition?.changes ?? [],
       },
+      // Where the condition came from, so a GM can tell at a glance which action
+      // put it there -- and so Foundry can clean it up with the source.
+      //
+      // No `statuses` and no `flags.core.statusId`: a condition on an action is
+      // a bespoke thing with a free-text name, not one of the status effects
+      // registered in `CONFIG.statusEffects`, and claiming otherwise would put a
+      // status marker on the token for a status that doesn't exist.
+      origin: this.document?.uuid ?? this.actor?.uuid,
     }
 
     const createdEffect = await this.#adapter.createActiveEffect(effectData, {
-      parent: target,
+      parent: targetActor,
     })
 
     return {

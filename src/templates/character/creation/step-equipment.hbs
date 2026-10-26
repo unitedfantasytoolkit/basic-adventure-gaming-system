@@ -1,0 +1,126 @@
+{{#> sheetTab}}
+  <header class="tab__header">
+    <h2>{{localize "BAGS.CharacterCreation.Steps.equipment.Label"}}</h2>
+    <p class="hint">{{localize "BAGS.CharacterCreation.Steps.equipment.Hint"}}</p>
+  </header>
+
+  {{!--
+    Nothing can be bought until money has been rolled, so the shop stays hidden
+    behind the roll rather than showing a list of things marked unaffordable.
+  --}}
+  {{#unless hasRolledGold}}
+    <div class="equipment-gold-prompt">
+      <p>{{localize "BAGS.CharacterCreation.Equipment.RollPrompt"
+          formula=goldFormula
+        }}</p>
+      <button type="button" data-action="roll-starting-gold">
+        <i class="fa-solid fa-coins"></i>
+        {{localize "BAGS.CharacterCreation.Equipment.RollGold"}}
+      </button>
+    </div>
+  {{else}}
+    <div class="equipment-purse">
+      <dl>
+        <dt>{{localize "BAGS.CharacterCreation.Equipment.Starting"}}</dt>
+        <dd>{{gold.starting}}</dd>
+        <dt>{{localize "BAGS.CharacterCreation.Equipment.Spent"}}</dt>
+        <dd>{{gold.spent}}</dd>
+        <dt>{{localize "BAGS.CharacterCreation.Equipment.Remaining"}}</dt>
+        <dd class="equipment-purse__remaining">{{gold.remaining}}</dd>
+      </dl>
+
+      <button
+        type="button"
+        data-action="roll-starting-gold"
+        data-tooltip="{{localize "BAGS.CharacterCreation.Equipment.RerollGoldHint"}}"
+      >
+        <i class="fa-solid fa-rotate"></i>
+        {{localize "BAGS.CharacterCreation.Equipment.RerollGold"}}
+      </button>
+    </div>
+
+    <div class="equipment-layout">
+      <section class="equipment-shop">
+        <header class="equipment-shop__header">
+          <input
+            type="search"
+            name="search"
+            value="{{search}}"
+            placeholder="{{localize "BAGS.CharacterCreation.Equipment.Search"}}"
+            aria-label="{{localize "BAGS.CharacterCreation.Equipment.Search"}}"
+          />
+        </header>
+
+        <div class="scrollable">
+          <ul class="equipment-list">
+            {{#each availableItems as |item|}}
+              <li
+                class="equipment-row{{#unless item.affordable}} equipment-row--unaffordable{{/unless}}"
+                data-uuid="{{item.uuid}}"
+              >
+                <img class="equipment-row__art" src="{{item.img}}" alt="" />
+                <span class="equipment-row__name">{{item.name}}</span>
+                <span class="equipment-row__cost">{{item.cost}}</span>
+
+                <input
+                  type="number"
+                  class="equipment-row__quantity"
+                  data-quantity
+                  value="1"
+                  min="1"
+                  aria-label="{{localize "BAGS.CharacterCreation.Equipment.Quantity"}}"
+                />
+
+                <button
+                  type="button"
+                  data-action="add-to-cart"
+                  {{#unless item.affordable}}disabled{{/unless}}
+                  data-tooltip="{{localize "BAGS.CharacterCreation.Equipment.Buy"}}"
+                  aria-label="{{localize "BAGS.CharacterCreation.Equipment.Buy"}}"
+                >
+                  <i class="fa-solid fa-cart-plus"></i>
+                </button>
+              </li>
+            {{else}}
+              <li class="equipment-list__empty">
+                <p class="hint">{{localize "BAGS.CharacterCreation.NoOptions"}}</p>
+              </li>
+            {{/each}}
+          </ul>
+        </div>
+      </section>
+
+      <section class="equipment-cart">
+        <h3>{{localize "BAGS.CharacterCreation.Equipment.Cart"}}</h3>
+
+        <div class="scrollable">
+          <ul class="equipment-list">
+            {{#each cart as |entry|}}
+              <li class="equipment-row" data-index="{{entry.index}}">
+                <img class="equipment-row__art" src="{{entry.img}}" alt="" />
+                <span class="equipment-row__name">{{entry.name}}</span>
+                <span class="equipment-row__quantity-label">&times;{{entry.quantity}}</span>
+                <span class="equipment-row__cost">{{entry.subtotal}}</span>
+
+                <button
+                  type="button"
+                  data-action="remove-from-cart"
+                  data-tooltip="{{localize "BAGS.CharacterCreation.Equipment.Remove"}}"
+                  aria-label="{{localize "BAGS.CharacterCreation.Equipment.Remove"}}"
+                >
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </li>
+            {{else}}
+              <li class="equipment-list__empty">
+                <p class="hint">{{localize
+                    "BAGS.CharacterCreation.Equipment.CartEmpty"
+                  }}</p>
+              </li>
+            {{/each}}
+          </ul>
+        </div>
+      </section>
+    </div>
+  {{/unless}}
+{{/sheetTab}}

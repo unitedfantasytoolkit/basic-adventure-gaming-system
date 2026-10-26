@@ -17,6 +17,8 @@ export class MockFoundryAdapter {
 
   /**
    * Mock document update - records the update for inspection
+   * @param document
+   * @param updateData
    */
   async updateDocument(document, updateData) {
     this.updates.push({ document, updateData })
@@ -25,6 +27,7 @@ export class MockFoundryAdapter {
 
   /**
    * Mock UUID resolution - uses pre-configured map
+   * @param uuid
    */
   async resolveUuid(uuid) {
     return this.resolvedUuids.get(uuid) || null
@@ -32,13 +35,16 @@ export class MockFoundryAdapter {
 
   /**
    * Mock property getter - simple nested property access
+   * @param obj
+   * @param path
    */
   getProperty(obj, path) {
-    return path.split('.').reduce((current, key) => current?.[key], obj)
+    return path.split(".").reduce((current, key) => current?.[key], obj)
   }
 
   /**
    * Mock chat message creation
+   * @param messageData
    */
   async createChatMessage(messageData) {
     const message = { ...messageData, id: `msg-${this.createdMessages.length}` }
@@ -48,6 +54,8 @@ export class MockFoundryAdapter {
 
   /**
    * Mock active effect creation
+   * @param effectData
+   * @param options
    */
   async createActiveEffect(effectData, options) {
     const effect = {
@@ -61,10 +69,11 @@ export class MockFoundryAdapter {
 
   /**
    * Mock roll table rolling
+   * @param table
    */
   async rollTable(table) {
     const roll = {
-      results: [{ text: 'Mock table result' }],
+      results: [{ text: "Mock table result" }],
     }
     this.rolledTables.push({ table, roll })
     return roll
@@ -72,6 +81,8 @@ export class MockFoundryAdapter {
 
   /**
    * Mock macro execution
+   * @param macro
+   * @param context
    */
   async executeMacro(macro, context) {
     this.executedMacros.push({ macro, context })
@@ -80,16 +91,18 @@ export class MockFoundryAdapter {
 
   /**
    * Mock error notification
+   * @param message
    */
   notifyError(message) {
-    this.notifications.push({ type: 'error', message })
+    this.notifications.push({ type: "error", message })
   }
 
   /**
    * Mock warning notification
+   * @param message
    */
   notifyWarning(message) {
-    this.notifications.push({ type: 'warning', message })
+    this.notifications.push({ type: "warning", message })
   }
 
   /**
@@ -108,6 +121,8 @@ export class MockFoundryAdapter {
 
   /**
    * Helper: Set up a UUID to resolve to a specific object
+   * @param uuid
+   * @param object
    */
   setUuidResolution(uuid, object) {
     this.resolvedUuids.set(uuid, object)
@@ -115,6 +130,7 @@ export class MockFoundryAdapter {
 
   /**
    * Helper: Set up the combat system
+   * @param system
    */
   setCombatSystem(system) {
     this.combatSystem = system
@@ -122,6 +138,7 @@ export class MockFoundryAdapter {
 
   /**
    * Helper: Set up the saving throw system
+   * @param system
    */
   setSavingThrowSystem(system) {
     this.savingThrowSystem = system
@@ -142,9 +159,10 @@ export class MockFoundryAdapter {
 
   /**
    * Gets the speaker data for a chat message
+   * @param options
    */
   getSpeaker(options) {
-    return { alias: 'Test Speaker' }
+    return { alias: "Test Speaker" }
   }
 
   /**
@@ -163,6 +181,7 @@ export class MockFoundryAdapter {
 
   /**
    * Normalizes targets from various formats to an array
+   * @param targets
    */
   normalizeTargets(targets) {
     if (!targets) return []
@@ -171,25 +190,28 @@ export class MockFoundryAdapter {
   }
 
   /**
-   * Applies roll mode to message data (mock version)
+   * Applies a chat mode to message data (mock version).
+   *
+   * The real adapter hands this to `ChatMessage.applyMode`, so this stands in
+   * for it with the same rules Foundry uses: only `blind` is blind, and both
+   * `gm` and `blind` go to the gamemasters rather than to the author.
    * @param {object} messageData - The message data to modify
-   * @param {string} rollMode - The roll mode
+   * @param {string} rollMode - The chat mode
    */
   applyRollMode(messageData, rollMode) {
-    // Mock implementation - just sets properties for testing
     switch (rollMode) {
-      case 'private':
-        messageData.whisper = ['user1']
+      case "gm":
+        messageData.whisper = ["gm1"]
         break
-      case 'blind':
-        messageData.whisper = ['gm1']
+      case "blind":
+        messageData.whisper = ["gm1"]
         messageData.blind = true
         break
-      case 'self':
-        messageData.whisper = ['user1']
-        messageData.blind = true
+      case "self":
+        messageData.whisper = ["user1"]
         break
-      // public is default, no changes
+      default:
+        messageData.whisper = []
     }
   }
 }

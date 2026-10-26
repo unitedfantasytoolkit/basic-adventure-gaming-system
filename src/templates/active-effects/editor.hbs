@@ -18,37 +18,24 @@
           <img class="effects__card__icon" src="{{img}}" role="presentation" />
           <div class="effects__card__summary">
             <span class="effects__card__name">{{name}}</span>
-            {{#if (or duration.seconds duration.rounds duration.turns)}}
+            {{!
+              A duration is one amount and one unit from v14 on, so there's a
+              single badge to show rather than one per unit.
+            }}
+            {{#if duration.value}}
               <div class="effects__card__duration">
-                {{#if duration.seconds}}
-                  {{!
-                TODO: I think it'd be cool to use duration.remaining here
-                though I have no clue how that'll interact with round- and
-                turn-based durations
-              }}
-                  <span
-                    class="effects__card__duration-unit effects__card__duration-unit--seconds"
-                  ><i
-                      class="fa fa-clock"
-                      role="presentation"
-                    ></i>{{secondsToFriendlyTime duration.seconds}}</span>
-                {{/if}}
-                {{#if duration.rounds}}
-                  <span
-                    class="effects__card__duration-unit effects__card__duration-unit--rounds"
-                  ><i
-                      class="fa fa-dice-d20"
-                      role="presentation"
-                    ></i>{{duration.rounds}}</span>
-                {{/if}}
-                {{#if duration.turns}}
-                  <span
-                    class="effects__card__duration-unit effects__card__duration-unit--turns"
-                  ><i
-                      class="fa fa-user-clock"
-                      role="presentation"
-                    ></i>{{duration.turns}}</span>
-                {{/if}}
+                <span
+                  class="effects__card__duration-unit effects__card__duration-unit--{{duration.units}}"
+                ><i
+                    class="fa
+                      {{#if (eq duration.units 'rounds')}}
+                        fa-dice-d20
+                      {{else if (eq duration.units 'turns')}}
+                        fa-user-clock
+                      {{else}}fa-clock{{/if}}"
+                    role="presentation"
+                  ></i>{{duration.value}}
+                  {{localize (concat "EFFECT.DURATION.UNITS." duration.units)}}</span>
               </div>
             {{/if}}
 

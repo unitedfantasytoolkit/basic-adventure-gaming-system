@@ -33,10 +33,11 @@ const buildSchema = () => {
     modifiers: modifiersFactory({
       // ...parentSchema.modifiers.fields,
       xp: new SchemaField({
+        // A percentage of a full share. Retainers customarily take half, so 50.
         share: new NumberField({
           min: 0,
           nullable: false,
-          initial: 0,
+          initial: 100,
           label: "",
           hint: "",
         }),
@@ -284,6 +285,28 @@ export default class BAGSCharacterDataModel extends BaseActorDataMixin(
       this.parent.items.documentsByType.class?.[0]?.system
         .currentLevelDetails || null
     )
+  }
+
+  /**
+   * What this character amounts to overall, in levels.
+   *
+   * A character has no level of its own -- levels belong to classes, which is
+   * why the sheet shows one per class rather than one for the character. This is
+   * the answer for the questions that need a single number anyway, such as
+   * whether a wand's "5th level or better" restriction is met, and it takes the
+   * best class rather than the sum: a fighter 5 / thief 1 is a 5th-level
+   * adventurer, not a 6th-level one.
+   *
+   * A character with no class yet returns null rather than 0, so nothing reads
+   * "not yet built" as "too junior".
+   * @returns {number|null} The character's best class level, or null
+   */
+  get level() {
+    const levels = this.parent.items.documentsByType.class.map(
+      (item) => item.system.level,
+    )
+
+    return levels.length ? Math.max(...levels) : null
   }
 
   get spellSlots() {

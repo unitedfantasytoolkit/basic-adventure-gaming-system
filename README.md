@@ -1,6 +1,6 @@
 # Basic Adventure Gaming System (BAGS)
 
-![Foundry v13](https://img.shields.io/badge/Foundry-v13-informational)
+![Foundry v14](https://img.shields.io/badge/Foundry-v14-informational)
 ![License](https://img.shields.io/github/license/wyrmisis/basic-adventure-gaming-system)
 
 A hackable implementation of the classic Basic/Expert adventure game (and derivatives!) for Foundry Virtual Tabletop.
@@ -34,7 +34,7 @@ See our [Contributing Guide](CONTRIBUTING.md) for detailed setup instructions.
 
 ## Compatibility
 
-- Foundry VTT: v13.x
+- Foundry VTT: v14.x
 - Browsers: Chrome, Firefox, Safari, Edge (latest versions)
 
 ## Configuration
@@ -67,4 +67,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) f
 ## Dependencies
 
 - Node.js v18 or later
-- Foundry VTT v13+
+- Foundry VTT v14

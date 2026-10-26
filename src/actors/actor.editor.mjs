@@ -29,6 +29,17 @@ export default class BAGSBaseActorEditor extends BAGSApplication {
 
   // --- Tabs ------------------------------------------------------------------
 
+  /**
+   * Which tab each group opens on.
+   *
+   * Setting this here rather than through each subclass's `TABS.initial` is
+   * load-bearing in a way that's easy to miss: `_prepareTabs` only applies
+   * `initial` when `tabGroups` has no entry for the group yet, so an instance
+   * field declared on this class wins over every subclass's `initial`. Any
+   * subclass whose tab list doesn't include the tab named here has to override
+   * this, or it opens on a tab it has no navigation for and shows nothing.
+   * @see {@link ./actor.monster.editor.mjs}
+   */
   tabGroups = {
     sheet: "class-and-abilities",
   }
@@ -64,12 +75,12 @@ export default class BAGSBaseActorEditor extends BAGSApplication {
 
   static TAB_PARTS = {}
 
+  // Classes belong to characters, so the class tab is declared by the character
+  // editor rather than here. While it lived on this class every actor editor
+  // rendered it, including the monster editor, which has no tab to reach it by.
   static get PARTS() {
     return {
       ...this.TAB_PARTS,
-      "class-and-abilities": {
-        template: `${SYSTEM_TEMPLATE_PATH}/common/editor-tab-class-and-abilities.hbs`,
-      },
       media: {
         template: `${SYSTEM_TEMPLATE_PATH}/common/editor-tab-media.hbs`,
       },

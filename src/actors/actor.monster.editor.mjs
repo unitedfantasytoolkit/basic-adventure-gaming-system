@@ -27,6 +27,20 @@ export default class BAGSMonsterEditor extends BAGSBaseActorEditor {
 
   // --- Tabs ------------------------------------------------------------------
 
+  /**
+   * Monsters have no class tab, so they can't inherit the base editor's default.
+   *
+   * `_prepareTabs` only falls back to a tab group's `initial` when `tabGroups`
+   * has no entry for that group, and the base editor declares one pointing at
+   * the character editor's class tab. Without this override the monster editor
+   * opened on a tab that isn't in its list, which meant it opened showing no
+   * content at all until you clicked something.
+   * @see {@link ./actor.editor.mjs}
+   */
+  tabGroups = {
+    sheet: "details",
+  }
+
   static TABS = {
     sheet: {
       tabs: [

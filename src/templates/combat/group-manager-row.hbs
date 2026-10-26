@@ -1,0 +1,15 @@
+{{!--
+  One combatant in the group manager, with the dropdown that moves it. Shared by
+  the group cards and the ungrouped holding area so both behave identically.
+--}}
+<li class="bags-group-row" data-combatant-id="{{ id }}">
+    <img class="bags-group-row__image" src="{{ img }}" alt="{{ name }}" loading="lazy">
+    <span class="bags-group-row__name">{{ name }}</span>
+
+    <select class="bags-group-row__assign" data-change="assign"
+            aria-label="{{ localize "BAGS.Combat.Groups.Assign" }}">
+        {{#each @root.groupChoices}}
+        <option value="{{ value }}" {{#if (eq value ../groupId)}}selected{{/if}}>{{ label }}</option>
+        {{/each}}
+    </select>
+</li>

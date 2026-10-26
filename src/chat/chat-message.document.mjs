@@ -45,7 +45,7 @@ export default class BAGSChatMessage extends ChatMessage {
       })),
     )
 
-    if (details?.attempt.flags.isLikeAttack)
+    if (details?.attempt?.flags?.isLikeAttack)
       details.attempt.usesDescendingAC =
         CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
           CONFIG.BAGS.SystemRegistry.categories.COMBAT,
@@ -56,6 +56,73 @@ export default class BAGSChatMessage extends ChatMessage {
       item,
       details,
       outcome,
+    }
+  }
+
+  /**
+   * Given a message of type "round", prepare the round summary for display.
+   *
+   * The card carries its own record of the round, so almost everything here is
+   * a straight read. The exception is the invitation to declare, which depends
+   * on who is looking and on whether the round is still the current one -- a
+   * card scrolled back to is a record, not a prompt.
+   * @returns {object} the round details to display
+   */
+  async #prepareRoundDetails() {
+    const combat = game.combats.get(this.system.combatId)
+    const isCurrentRound =
+      !!combat && combat.round === this.system.round && combat.started
+
+    /**
+     * Decide whether this viewer is being invited to declare for this row.
+     * @param {object} member - A stored member payload.
+     * @returns {object} The member, with the invitation resolved.
+     */
+    const withInvitation = (member) => {
+      const combatant = combat?.combatants.get(member.combatantId)
+      return {
+        ...member,
+        color: member.color?.css ?? null,
+        canDeclare:
+          isCurrentRound &&
+          this.system.declarationsOpen &&
+          // Players only. A GM owns every row, so the card would invite them
+          // to declare for every monster -- which is not how declarations are
+          // played, and buries the players' own invitations among the orcs'.
+          // A referee correcting a declaration does it from the tracker.
+          !game.user.isGM &&
+          !!combatant?.isOwner &&
+          // Withdrawn once the round begins: a declaration is a commitment
+          // made before the round is played.
+          !combatant.declarationsLocked,
+        // Whether a blank here means someone has yet to answer. Only player
+        // characters are asked to declare; a monster with nothing declared is
+        // the normal case, and marking it would make every orc look overdue.
+        awaited: !!combatant?.hasPlayerOwner,
+      }
+    }
+
+    const units = this.system.units.map((unit) => ({
+      ...unit,
+      color: unit.color?.css ?? null,
+      members: unit.members.map(withInvitation),
+    }))
+
+    const segments = this.system.segments.map((entry) => ({
+      ...entry,
+      members: entry.members.map(withInvitation),
+    }))
+
+    return {
+      ...this.system,
+      units,
+      segments,
+      pending: this.system.pending.map(withInvitation),
+      // Branching on the *stored* mode, never on the rules currently in force.
+      // A GM who switches rulesets mid-campaign must not make every old card
+      // re-render through a layout its data was never captured for.
+      isLadder: this.system.mode === "ladder",
+      isCurrentRound,
     }
   }
 
@@ -134,6 +201,11 @@ export default class BAGSChatMessage extends ChatMessage {
     if (this.type === "levelup")
       messageData.levelup = await this.#prepareLevelUpDetails()
 
+    if (this.type === "round")
+      messageData.round = await this.#prepareRoundDetails()
+
+    if (this.type === "combat-end") messageData.combatEnd = this.system
+
     // Render message data specifically for ROLL type messages
     if (this.isRoll) await this.#renderRollContent(messageData)
 
@@ -157,7 +229,36 @@ export default class BAGSChatMessage extends ChatMessage {
       this.#attachActionTooltips(html, messageData)
     }
 
+    if (this.type === "round") this.#attachRoundControls(html)
+
     return html
+  }
+
+  /**
+   * Wire the card's invitation to declare.
+   *
+   * The button opens the same dialog the tracker does, so there is one place
+   * that knows how a declaration is made.
+   * @param {HTMLElement} html - The rendered message element
+   * @returns {void}
+   */
+  #attachRoundControls(html) {
+    html.querySelectorAll("[data-declare-combatant]").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault()
+
+        const combat = game.combats.get(this.system.combatId)
+        const combatant = combat?.combatants.get(
+          button.dataset.declareCombatant,
+        )
+        if (!combatant) return
+
+        const { default: BAGSDeclarationDialog } = await import(
+          "../combat/sidebar/declaration.mjs"
+        )
+        new BAGSDeclarationDialog({ combatant }).render({ force: true })
+      })
+    })
   }
 
   /**

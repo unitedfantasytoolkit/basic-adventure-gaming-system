@@ -1,0 +1,174 @@
+{{!--
+  One combatant's row, shared by the tracker's two layouts.
+
+  The markup deliberately reuses core's `.combatant` classes so that Foundry's
+  own tracker styling, hover states and context menu binding keep working.
+--}}
+<li class="combatant {{ css }} {{#if @root.isFlat}}bags-flat-row{{/if}}"
+    data-combatant-id="{{ id }}" data-action="activateCombatant"
+    data-side="{{ side }}"
+    {{#if @root.isFlat}}{{#if color}}style="--bags-unit-accent: {{ color }};"{{/if}}{{/if}}>
+
+    <img class="token-image" src="{{ img }}" alt="{{ name }}" loading="lazy">
+
+    <div class="token-name">
+        <strong class="name">{{ name }}</strong>
+
+        {{!--
+          On a flat list there is no block above the row to say which side this
+          combatant fights for, so the row says it -- and the badge doubles as
+          the roll control, because a grouped combatant on a flat list has no
+          unit row to click and would otherwise have no way to roll at all.
+        --}}
+        {{#if @root.isFlat}}
+        {{#if unitName}}
+        {{#if canRollUnit}}
+        <button type="button" class="bags-unit-badge bags-unit-badge--rollable"
+                data-action="rollUnit" data-unit-id="{{ unitId }}"
+                data-tooltip="{{ localize "BAGS.Combat.Groups.RollUnit" }}">
+            {{ unitName }}
+        </button>
+        {{else}}
+        <span class="bags-unit-badge">{{ unitName }}</span>
+        {{/if}}
+        {{/if}}
+        {{/if}}
+
+        {{#if surprise}}
+        <span class="bags-surprise-tag" data-tooltip="{{ localize "BAGS.Combat.Surprise.Tag" }}">
+            <i class="fa-solid fa-bolt" inert></i>
+            {{#if surprise.segments}}<span>+{{ surprise.segments }}</span>{{/if}}
+        </span>
+        {{/if}}
+
+        {{#if spillover}}
+        <span class="bags-carry-tag"
+              data-tooltip="{{ localize "BAGS.Combat.Spillover.Spills" round=spillover.round segment=spillover.segment }}">
+            <i class="fa-solid fa-hourglass-half" inert></i>
+            <span>{{ spillover.round }}:{{ spillover.segment }}</span>
+        </span>
+        {{/if}}
+        {{#if carried}}
+        <span class="bags-carry-tag"
+              data-tooltip="{{ localize "BAGS.Combat.Spillover.Carried" segment=carried.segment }}">
+            <i class="fa-solid fa-hourglass-end" inert></i>
+        </span>
+        {{/if}}
+
+        {{#if declaration}}
+        <span class="bags-declaration-tag {{#if declaration.inherited}}bags-declaration-tag--inherited{{/if}}"
+              data-tooltip="{{ declaration.label }}">
+            <i class="{{ declaration.icon }}" inert></i>
+            <span>{{ declaration.label }}</span>
+        </span>
+        {{/if}}
+
+        {{!--
+          How much of this round's movement is spent. Movement is a round's
+          allowance in every game BAGS models, so this fills as the round goes
+          and empties when the next one opens -- which is also why core's
+          per-turn clearing is declined.
+        --}}
+        {{#if movement}}
+        <div class="bags-movement {{#if movement.over}}bags-movement--over{{else if movement.exhausted}}bags-movement--spent{{/if}}"
+             role="meter" aria-valuemin="0" aria-valuemax="{{ movement.max }}"
+             aria-valuenow="{{ movement.used }}"
+             data-tooltip="{{ localize "BAGS.Combat.Movement.Tooltip" used=movement.used max=movement.max remaining=movement.remaining }}">
+            <div class="bags-movement__track">
+                <div class="bags-movement__fill" style="inline-size: {{ movement.percent }}%"></div>
+            </div>
+            <span class="bags-movement__label">{{ movement.remaining }}</span>
+        </div>
+        {{/if}}
+
+        {{!--
+          A combatant acting more than once in a round. Only the first segment
+          orders them in the tracker, so the rest would otherwise be invisible
+          here -- the round card's ladder is where they are drawn in full.
+        --}}
+        {{#if extraSegments}}
+        <span class="bags-extra-segments"
+              data-tooltip="{{ localize "BAGS.Combat.Round.ExtraAttacks" }}">
+            <i class="fa-solid fa-repeat" inert></i>
+            {{#each extraSegments}}<span>{{ this }}</span>{{/each}}
+        </span>
+        {{/if}}
+
+        <div class="combatant-controls">
+            {{#if @root.user.isGM}}
+            <button type="button" class="inline-control combatant-control icon fa-solid fa-eye-slash {{#if hidden}}active{{/if}}"
+                    data-action="toggleHidden" data-tooltip
+                    aria-label="{{ localize (ifThen hidden "COMBATANT.Show" "COMBATANT.Hide") }}"></button>
+            <button type="button" class="inline-control combatant-control icon fa-solid fa-skull {{#if isDefeated}}active{{/if}}"
+                    data-action="toggleDefeated" data-tooltip
+                    aria-label="{{ localize (ifThen isDefeated "COMBATANT.UnmarkDefeated" "COMBATANT.MarkDefeated") }}"></button>
+            {{/if}}
+            {{#if canPing}}
+            <button type="button" class="inline-control combatant-control icon fa-solid fa-bullseye-arrow"
+                    data-action="pingCombatant" data-tooltip
+                    aria-label="{{ localize "COMBATANT.Ping" }}"></button>
+            {{/if}}
+            {{#unless @root.user.isGM}}
+            <button type="button" class="inline-control combatant-control icon fa-solid fa-arrows-to-eye"
+                    data-action="panToCombatant" data-tooltip
+                    aria-label="{{ localize "COMBATANT.PanTo" }}"></button>
+            {{/unless}}
+            {{#if canDeclare}}
+            <button type="button" class="inline-control combatant-control icon fa-solid fa-comment {{#if declaration}}active{{/if}}"
+                    data-action="declareAction" data-tooltip
+                    aria-label="{{ localize "BAGS.Combat.Declarations.Declare" }}"></button>
+            {{/if}}
+            {{!--
+              Shifting a rolled initiative, for tables where it can be bought or
+              spent. Offered to whoever could have rolled the unit in the first
+              place, and only once there is a roll to shift.
+            --}}
+            {{#if canAdjustInitiative}}
+            <button type="button" class="inline-control combatant-control icon fa-solid fa-plus-minus"
+                    data-action="adjustInitiative" data-tooltip
+                    aria-label="{{ localize "BAGS.Combat.Initiative.Adjust" }}"></button>
+            {{/if}}
+            <div class="token-effects" data-tooltip-html="{{ effects.tooltip }}">
+                {{#each effects.icons}}
+                <img class="token-effect" src="{{ img }}" alt="{{ name }}">
+                {{/each}}
+            </div>
+        </div>
+    </div>
+
+    {{#if resource includeZero=true}}
+    <div class="token-resource">
+        <span class="resource">{{ resource }}</span>
+    </div>
+    {{/if}}
+
+    {{!--
+      The initiative control only appears on rows that rolled for themselves. A
+      grouped combatant's score belongs to its unit, and a player cannot write to
+      a group anyway, so offering the die here would be the most likely misclick
+      in the whole feature.
+
+      On a ladder, a row that has rolled shows no score: the stop it hangs from
+      already carries the segment, and the space goes to the tracked resource,
+      the more useful number to have at a glance mid-fight. A row that has not
+      rolled keeps its die, because when everyone rolls alone it is the only way
+      a player has to roll for their own character.
+    --}}
+    {{#if showInitiativeControl}}
+    <div class="token-initiative">
+        {{#if initiative includeZero=true}}
+        {{#if @root.hasDecimals}}
+        <span>{{ initiative }}</span>
+        {{else}}
+        <input type="text" class="initiative-input" inputmode="numeric" pattern="^[+=\-]?\d*"
+               value="{{ initiative }}" aria-label="{{ localize "COMBATANT.FIELDS.initiative.label" }}"
+               {{#unless @root.user.isGM}}readonly{{/unless}}>
+        {{/if}}
+        {{else if isOwner}}
+        <button type="button" class="combatant-control roll" data-action="rollInitiative" data-tooltip
+                aria-label="{{ localize "COMBAT.InitiativeRoll" }}"
+                style="--initiative-icon: url('{{ @root.initiativeIcon.icon }}'); --initiative-icon-hover: url('{{ @root.initiativeIcon.hover }}');"></button>
+        {{/if}}
+    </div>
+    {{/if}}
+</li>

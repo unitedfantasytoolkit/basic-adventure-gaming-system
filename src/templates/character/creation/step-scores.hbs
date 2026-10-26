@@ -1,0 +1,77 @@
+{{#> sheetTab}}
+  <header class="tab__header">
+    <h2>{{localize "BAGS.CharacterCreation.Steps.scores.Label"}}</h2>
+    <p class="hint">{{localize "BAGS.CharacterCreation.Steps.scores.Hint"}}</p>
+  </header>
+
+  <div class="scrollable">
+    {{#if abilities.length}}
+      <ul class="ability-score-list">
+        {{#each abilities as |ability|}}
+          <li class="ability-score" data-ability="{{ability.key}}">
+            <label
+              class="ability-score__label"
+              for="creation-score-{{ability.key}}"
+              data-tooltip="{{localize ability.hint}}"
+            >{{localize ability.label}}</label>
+
+            <div class="ability-score__fields">
+              {{!--
+                The input doubles as the readout. Showing the score separately
+                as well just prints the same number twice.
+              --}}
+              <input
+                type="number"
+                id="creation-score-{{ability.key}}"
+                name="abilityScores.{{ability.key}}"
+                class="ability-score__input"
+                value="{{ability.value}}"
+                placeholder="&mdash;"
+                min="1"
+                max="20"
+                aria-label="{{localize ability.label}}"
+              />
+
+              <button
+                type="button"
+                class="ability-score__reroll"
+                data-action="reroll-ability-score"
+                data-tooltip="{{localize "BAGS.CharacterCreation.Scores.Reroll"}}"
+                aria-label="{{localize "BAGS.CharacterCreation.Scores.Reroll"}}"
+              >
+                <i class="fa-solid fa-dice-d6"></i>
+              </button>
+            </div>
+
+            {{!--
+              Already-localized sentences, phrased by the active rules module.
+              See `modifierDisplay` in the ability score data.
+            --}}
+            {{#if ability.modifiers.length}}
+              <ul class="ability-score__modifiers">
+                {{#each ability.modifiers as |modifier|}}
+                  <li>{{modifier}}</li>
+                {{/each}}
+              </ul>
+            {{/if}}
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p class="notification warning">{{localize
+          "BAGS.CharacterCreation.Scores.NoAbilityScoreSystem"
+        }}</p>
+    {{/if}}
+  </div>
+
+  <footer class="tab__footer">
+    <button type="button" data-action="roll-ability-scores">
+      <i class="fa-solid fa-dice-d20"></i>
+      {{#if hasRolled}}
+        {{localize "BAGS.CharacterCreation.Scores.RerollAll"}}
+      {{else}}
+        {{localize "BAGS.CharacterCreation.Scores.RollAll"}}
+      {{/if}}
+    </button>
+  </footer>
+{{/sheetTab}}

@@ -1,0 +1,86 @@
+{{!--
+  Who rolls with whom. One card per group, plus a holding area for combatants
+  that roll for themselves.
+
+  Everything sits inside a single wrapper because an ApplicationV2 template part
+  must render exactly one root element.
+--}}
+<div class="bags-group-manager__wrap">
+<section class="bags-group-manager__body">
+
+    {{#each groups}}
+    <section class="bags-group-card" data-group-id="{{ id }}"
+             style="--bags-group-accent: {{ color }};">
+        <header class="bags-group-card__header">
+            <input type="color" class="bags-group-card__color" value="{{ color }}"
+                   data-change="color"
+                   data-tooltip="{{ localize "BAGS.Combat.Fields.Color.Label" }}"
+                   aria-label="{{ localize "BAGS.Combat.Fields.Color.Label" }}">
+
+            {{#if hasOwnColor}}
+            <button type="button" class="inline-control icon fa-solid fa-rotate-left bags-group-card__reset-color"
+                    data-action="resetColor" data-tooltip
+                    aria-label="{{ localize "BAGS.Combat.Groups.ResetColor" }}"></button>
+            {{/if}}
+
+            <input type="text" class="bags-group-card__name" value="{{ name }}"
+                   data-change="rename"
+                   aria-label="{{ localize "BAGS.Combat.Groups.Name" }}">
+
+            <select class="bags-group-card__side" data-change="side"
+                    aria-label="{{ localize "BAGS.Combat.Fields.Side.Label" }}">
+                {{#each @root.sideChoices}}
+                <option value="{{ value }}" {{#if (eq value ../side)}}selected{{/if}}>{{ label }}</option>
+                {{/each}}
+            </select>
+
+            {{#if initiative includeZero=true}}
+            <span class="bags-group-card__initiative"
+                  data-tooltip="{{ localize "BAGS.Combat.Groups.RolledInitiative" }}">{{ initiative }}</span>
+            {{/if}}
+
+            <button type="button" class="inline-control icon fa-solid fa-link-slash"
+                    data-action="ungroup" data-tooltip
+                    aria-label="{{ localize "BAGS.Combat.Groups.Empty" }}"></button>
+            <button type="button" class="inline-control icon fa-solid fa-trash"
+                    data-action="deleteGroup" data-tooltip
+                    aria-label="{{ localize "BAGS.Combat.Groups.Delete" }}"></button>
+        </header>
+
+        {{#if members.length}}
+        <ol class="bags-group-card__members plain">
+            {{#each members}}
+            {{> bagsGroupManagerRow }}
+            {{/each}}
+        </ol>
+        {{else}}
+        <p class="bags-group-card__empty">{{ localize "BAGS.Combat.Groups.NoMembers" }}</p>
+        {{/if}}
+    </section>
+    {{/each}}
+
+    <section class="bags-group-card bags-group-card--loose">
+        <header class="bags-group-card__header">
+            <span class="bags-group-card__name">{{ localize "BAGS.Combat.Groups.Ungrouped" }}</span>
+        </header>
+
+        {{#if ungrouped.length}}
+        <ol class="bags-group-card__members plain">
+            {{#each ungrouped}}
+            {{> bagsGroupManagerRow }}
+            {{/each}}
+        </ol>
+        {{else}}
+        <p class="bags-group-card__empty">{{ localize "BAGS.Combat.Groups.NoneLoose" }}</p>
+        {{/if}}
+    </section>
+
+</section>
+
+<footer class="bags-group-manager__footer">
+    <button type="button" data-action="createGroup">
+        <i class="fa-solid fa-plus" inert></i>
+        <span>{{ localize "BAGS.Combat.Groups.Create" }}</span>
+    </button>
+</footer>
+</div>

@@ -1,0 +1,182 @@
+{{!--
+  The turn order, in one of two layouts.
+
+  **Blocks** -- one per rolling unit. A "unit" is whatever rolled: a group, or a
+  combatant that rolled for itself. When nothing is grouped this collapses to the
+  plain per-combatant list Foundry draws by default, so a world running individual
+  initiative sees no unit chrome at all.
+
+  **Flat** -- one row per combatant, each badged with the unit it rolled with.
+  Used when a ruleset gives members of one unit different offsets: their scores
+  are then unequal, so they are not contiguous in the turn order, and there are no
+  blocks left to draw. A caster's spell landing after their allies' swords is the
+  rule working, not a sorting fault.
+--}}
+<ol class="combat-tracker plain bags-tracker
+           {{#if showUnits}}bags-tracker--grouped{{/if}}
+           {{#if isFlat}}bags-tracker--flat{{/if}}">
+
+    {{!--
+      Who was caught off guard as the fight began. Offered to the referee before
+      the fight and while the first round waits; shown to everyone for as long
+      as it matters, which is the first round.
+    --}}
+    {{#if surprise}}
+    <li class="bags-surprise">
+        <i class="fa-solid fa-bolt bags-surprise__icon" inert></i>
+        <span class="bags-surprise__text">{{ surprise.summary }}</span>
+        {{#if surprise.canRoll}}
+        <button type="button" class="bags-surprise__roll" data-action="rollSurprise">
+            <i class="fa-solid fa-dice" inert></i>
+            {{ localize (ifThen surprise.rolled "BAGS.Combat.Surprise.Reroll" "BAGS.Combat.Surprise.Roll") }}
+        </button>
+        {{#if surprise.rolled}}
+        <button type="button" class="inline-control icon fa-solid fa-xmark" data-action="clearSurprise"
+                data-tooltip aria-label="{{ localize "BAGS.Combat.Surprise.Clear" }}"></button>
+        {{/if}}
+        {{/if}}
+    </li>
+    {{/if}}
+
+    {{!--
+      Between rounds nobody has the turn, so without this the list would look
+      stalled. It says what the round is waiting for, and gives the referee a
+      way to stop waiting: beginning rolls for anyone who has not rolled.
+    --}}
+    {{#if betweenRounds}}
+    <li class="bags-between-rounds">
+        <i class="fa-solid fa-hourglass-half bags-between-rounds__icon" inert></i>
+        <div class="bags-between-rounds__text">
+            <strong>{{ localize "BAGS.Combat.Round.BetweenTitle" round=betweenRounds.round }}</strong>
+            <span>{{ betweenRounds.status }}</span>
+            {{#if betweenRounds.morale.length}}
+            <ul class="bags-between-rounds__morale plain">
+                {{#each betweenRounds.morale}}
+                <li><strong>{{ name }}</strong> — {{ reason }}</li>
+                {{/each}}
+            </ul>
+            <div class="bags-between-rounds__actions">
+                <button type="button" data-action="rollMorale">
+                    <i class="fa-solid fa-person-running" inert></i>
+                    {{ localize "BAGS.Combat.Morale.Roll" }}
+                </button>
+                <button type="button" data-action="skipMorale">
+                    {{ localize "BAGS.Combat.Morale.Skip" }}
+                </button>
+            </div>
+            {{/if}}
+        </div>
+        {{#if betweenRounds.canBegin}}
+        <button type="button" class="bags-between-rounds__begin" data-action="beginRound">
+            <i class="fa-solid fa-play" inert></i>
+            {{ localize "BAGS.Combat.Round.Begin" }}
+        </button>
+        {{/if}}
+    </li>
+    {{/if}}
+
+    {{#if isFlat}}
+    {{!--
+      A ladder, drawn the same way the round's chat card draws one. Everyone on
+      a stop acts at the same moment -- which is what a tie means in all five
+      rulesets, and what a flat list cannot say -- and the rail tells a player
+      who has never met segments that this is a timeline rather than a queue.
+    --}}
+    <li class="bags-tracker__ladder-wrap">
+        {{!-- Only with stops to hang on it; an empty one draws a stray rail. --}}
+        {{#if ladder.length}}
+        <ol class="bags-ladder plain">
+            {{#each ladder}}
+            <li class="bags-ladder__segment {{#if active}}bags-ladder__segment--active{{/if}}">
+                <span class="bags-ladder__stop" aria-hidden="true">{{ segment }}</span>
+                <span class="bags-ladder__label">
+                    {{ localize "BAGS.Combat.Round.Segment" number=segment }}
+                </span>
+
+                <ol class="bags-ladder__members plain">
+                    {{#each members}}
+                    {{> combatTrackerRow }}
+                    {{/each}}
+                </ol>
+            </li>
+            {{/each}}
+        </ol>
+        {{/if}}
+
+        {{#if pending.length}}
+        <section class="bags-ladder-pending">
+            <h2 class="bags-ladder-pending__title">
+                {{ localize "BAGS.Combat.Round.Pending" }}
+            </h2>
+            <ol class="bags-ladder__members plain">
+                {{#each pending}}
+                {{> combatTrackerRow }}
+                {{/each}}
+            </ol>
+        </section>
+        {{/if}}
+    </li>
+
+    {{else}}
+    {{#each units}}
+    <li class="bags-unit {{#if active}}bags-unit--active{{/if}} {{#if isGroup}}bags-unit--group{{/if}}"
+        data-unit-id="{{ id }}" data-side="{{ side }}"
+        {{#if color}}style="--bags-unit-accent: {{ color }};"{{/if}}>
+
+        {{#if @root.showUnits}}
+        <div class="bags-unit__header">
+            {{!--
+              A real element rather than a colour change. Each side's header is
+              already tinted with its own colour, so "acting" cannot be a
+              saturation difference -- there is no comparing 42% of green against
+              22% of red. A marker either present or absent is readable at any
+              hue, and reads the same for anyone who cannot separate the two.
+            --}}
+            {{#if active}}
+            <i class="fa-solid fa-caret-right bags-unit__turn"
+               data-tooltip="{{ localize "BAGS.Combat.Groups.ActingNow" }}"></i>
+            {{/if}}
+
+            <span class="bags-unit__name">{{ name }}</span>
+
+            {{#if sideLabel}}
+            <span class="bags-unit__side">{{ sideLabel }}</span>
+            {{/if}}
+
+            <span class="bags-unit__count">{{ members.length }}</span>
+
+            <div class="bags-unit__initiative">
+                {{#if hasInitiative}}
+                <span class="bags-unit__score">{{ initiative }}</span>
+                {{!--
+                  Here rather than on each member's row: the group has one roll,
+                  and a control repeated down every row reads as though each
+                  member could be moved on their own.
+                --}}
+                {{#if canAdjust}}
+                <button type="button" class="inline-control icon fa-solid fa-plus-minus bags-unit__adjust"
+                        data-action="adjustInitiative" data-tooltip
+                        aria-label="{{ localize "BAGS.Combat.Initiative.Adjust" }}"></button>
+                {{/if}}
+                {{else if canRoll}}
+                <button type="button" class="inline-control icon fa-solid fa-dice-d6 bags-unit__roll"
+                        data-action="rollUnit" data-tooltip
+                        aria-label="{{ localize "BAGS.Combat.Groups.RollUnit" }}"></button>
+                {{/if}}
+            </div>
+        </div>
+        {{/if}}
+
+        <ol class="bags-unit__members plain">
+            {{#each members}}
+            {{!-- Where the unit's turn moves on to its next step. --}}
+            {{#if phaseHeading}}
+            <li class="bags-unit__phase">{{ phaseHeading }}</li>
+            {{/if}}
+            {{> combatTrackerRow }}
+            {{/each}}
+        </ol>
+    </li>
+    {{/each}}
+    {{/if}}
+</ol>

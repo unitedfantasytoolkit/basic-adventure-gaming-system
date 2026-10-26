@@ -15,6 +15,32 @@
     </div>
 
     {{formGroup systemFields.countsAsTreasure value=document.system.countsAsTreasure localize=true}}
+
+    {{!--
+      Initiative properties, each shown only to tables whose rules read it.
+
+      They belong to different families and are never read together: `isSlow` is
+      the Basic/Expert games' coarse rule about losing ties, while speed factor
+      and rate of fire are the Advanced games' segment counts. Offering all three
+      to everyone would ask a referee to fill in numbers nothing will look at --
+      and imply that filling them in did something.
+
+      The stored values survive being hidden. A world that switches rulesets
+      finds its weapons still carry whatever was authored for the other game.
+    --}}
+    {{#if initiativeFields.any}}
+    <div class="standard-form__field-group">
+      {{#if initiativeFields.isSlow}}
+      {{formGroup systemFields.isSlow value=document.system.isSlow localize=true}}
+      {{/if}}
+      {{#if initiativeFields.speedFactor}}
+      {{formGroup systemFields.speedFactor value=document.system.speedFactor localize=true}}
+      {{/if}}
+      {{#if initiativeFields.rateOfFire}}
+      {{formGroup systemFields.rateOfFire value=document.system.rateOfFire localize=true}}
+      {{/if}}
+    </div>
+    {{/if}}
   </div>
 </div>
 {{/sheetTab}}

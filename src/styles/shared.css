@@ -77,9 +77,11 @@
         min-width: calc(3ch + 1rem);
       }
 
-      .flexrow {
-        align-items: space-between;
-      }
+      /* .flexrow { */
+
+      /* align-items: space-between; */
+
+      /* } */
     }
 
     :is(tbody th, thead) {
@@ -278,7 +280,7 @@
       font-variant: normal;
       line-height: inherit;
       text-rendering: auto;
-      font-family: var(--fa-style-family, "Font Awesome 6 Pro");
+      font-family: "Font Awesome 7 Pro", monospace;
       font-weight: var(--fa-style, 300);
       transition: color 115ms ease-in-out;
     }

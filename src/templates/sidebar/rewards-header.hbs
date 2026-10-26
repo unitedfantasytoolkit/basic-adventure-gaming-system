@@ -1,0 +1,32 @@
+{{!--
+  Same three-part layout as the Party tab, with the destructive action kept off on
+  its own at the right.
+--}}
+<header class="rewards-header">
+  <div class="rewards-controls">
+
+    <div class="control-buttons left flexrow">
+      <button
+        type="button"
+        class="inline-control icon fa-solid fa-plus"
+        data-action="addReward"
+        data-tooltip
+        aria-label="{{localize 'BAGS.Rewards.Editor.Title'}}"
+      ></button>
+    </div>
+
+    <strong class="rewards-title">{{title}}</strong>
+
+    <div class="control-buttons right flexrow">
+      <button
+        type="button"
+        class="inline-control icon fa-solid fa-trash"
+        data-action="clearLedger"
+        {{#unless hasEntries}}disabled{{/unless}}
+        data-tooltip
+        aria-label="{{localize 'BAGS.Rewards.Clear.Title'}}"
+      ></button>
+    </div>
+
+  </div>
+</header>

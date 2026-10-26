@@ -23,7 +23,7 @@ export default class SavingThrowRoll extends Roll {
     this.target = options.target ?? null
     // Default is to roll ABOVE for saves in most OSR games
     this.rollBelow = options.rollBelow ?? false
-    this.rollMode = options.rollMode ?? game.settings.get("core", "rollMode")
+    this.rollMode = options.rollMode ?? game.settings.get("core", "messageMode")
     this.saveType = options.saveType ?? ""
 
     // Validate that we have a target value
@@ -51,17 +51,15 @@ export default class SavingThrowRoll extends Roll {
   /** @override */
   async _prepareChatRenderContext(options = {}) {
     const context = await super._prepareChatRenderContext(options)
-    const isPrivate =
-      this.rollMode === CONST.DICE_ROLL_MODES.PRIVATE ||
-      this.rollMode === CONST.DICE_ROLL_MODES.BLIND
+    // A card the players can't see shouldn't give the target number away.
+    const isPrivate = this.rollMode === "gm" || this.rollMode === "blind"
 
     const savingThrowSettings =
       CONFIG.BAGS.SystemRegistry.getSelectedOfCategory(
         CONFIG.BAGS.SystemRegistry.categories.SAVING_THROWS,
       )
     const saveLabel =
-      savingThrowSettings?.savingThrows?.[this.saveType]?.label ||
-      this.saveType
+      savingThrowSettings?.savingThrows?.[this.saveType]?.label || this.saveType
 
     // Get actor name from roll data if available
     const actorName = this.data?.name || null
@@ -80,12 +78,12 @@ export default class SavingThrowRoll extends Roll {
 
   async toMessage(messageData = {}, { rollMode, create = true } = {}) {
     if (rollMode === "roll") rollMode = undefined
-    rollMode ||= game.settings.get("core", "rollMode")
+    rollMode ||= game.settings.get("core", "messageMode")
 
     // Perform the roll, if it has not yet been rolled
     if (!this._evaluated)
       await this.evaluate({
-        allowInteractive: rollMode !== CONST.DICE_ROLL_MODES.BLIND,
+        allowInteractive: rollMode !== "blind",
       })
 
     // Prepare chat data

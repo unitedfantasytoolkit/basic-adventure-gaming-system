@@ -1,0 +1,27 @@
+{{!--
+  The result of a surprise roll: one line per side, with what that side's die
+  showed and what it costs them.
+
+  Posted as an ordinary message so it follows the roller's message mode, and so
+  that the dice behind it are attached for anyone who wants to check them.
+--}}
+<div class="bags-surprise-card">
+  <h3 class="bags-surprise-card__title">
+    <i class="fa-solid fa-bolt" inert></i>
+    {{ localize "BAGS.Combat.Surprise.Title" }}
+  </h3>
+
+  <ul class="bags-surprise-card__sides plain">
+    {{#each sides}}
+    <li class="bags-surprise-card__side {{#if surprised}}bags-surprise-card__side--surprised{{/if}}">
+      <span class="bags-surprise-card__label">{{ label }}</span>
+      <span class="bags-surprise-card__total">{{ total }}</span>
+      <span class="bags-surprise-card__outcome">{{ outcome }}</span>
+    </li>
+    {{/each}}
+  </ul>
+
+  {{#if nobody}}
+  <p class="bags-surprise-card__note">{{ localize "BAGS.Combat.Surprise.Nobody" }}</p>
+  {{/if}}
+</div>

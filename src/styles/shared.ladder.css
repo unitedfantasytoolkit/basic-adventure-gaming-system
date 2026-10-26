@@ -1,0 +1,109 @@
+/**
+ * The segment ladder.
+ *
+ * A round in the Advanced games is ten segments, and combatants act on the one
+ * their roll and their declared action put them on. Sides interleave -- a
+ * caster's spell landing after the orcs have swung is the rule working, not a
+ * sorting fault -- so there are no per-side blocks to draw, and the round is
+ * instead listed in the order it happens.
+ *
+ * Shared by the round's chat card and by the combat tracker. Two surfaces, one
+ * definition, because the tracker's job is to make "who acts, and with whom"
+ * legible and the card's is the same claim about a round already past. Drawing
+ * them differently would make the tracker a second thing to learn.
+ *
+ * The rail and the numbered stops on it are doing real work. A stop is a moment,
+ * so everyone gathered under one acted simultaneously -- which is what all five
+ * rulesets say a tie means, and what a flat list of rows cannot express. It also
+ * tells a player who has never met segments that this is a timeline rather than
+ * a queue.
+ *
+ * Nothing here marks a shared stop as special. Sharing one *is* the ordinary
+ * case, and picking those out -- with a label or a ring -- would imply by
+ * contrast that a stop with one combatant under it meant something different.
+ * The grouping already says everything there is to say.
+ */
+
+.bags-ladder {
+  --bags-ladder-rail: color-mix(
+    in srgb,
+    var(--border-color, #b78846) 45%,
+    transparent
+  );
+  --bags-ladder-stop-size: 1.25rem;
+  --bags-ladder-indent: 1.5rem;
+
+  border-inline-start: 1px solid var(--bags-ladder-rail);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0 0 0 var(--bags-ladder-indent);
+}
+
+.bags-ladder__segment {
+  list-style: none;
+  position: relative;
+}
+
+/* Sat *on* the rail rather than beside it, so a column of numbers reads as a
+   timeline instead of as a second column of text. */
+.bags-ladder__stop {
+  align-items: center;
+  background: var(--color-bg, #1b1610);
+  border: 1px solid
+    color-mix(in srgb, var(--border-color, #b78846) 60%, transparent);
+  border-radius: 50%;
+  block-size: var(--bags-ladder-stop-size);
+  color: var(--text-color-primary, #e7d1b1);
+  display: flex;
+  font-size: var(--font-size-11, 0.6875rem);
+  inline-size: var(--bags-ladder-stop-size);
+  inset-block-start: 0;
+  justify-content: center;
+  position: absolute;
+
+  /* Centred on the rail: back out by the indent, then by half the stop, then by
+     the rail's own width. */
+  inset-inline-start: calc(
+    (var(--bags-ladder-indent) + var(--bags-ladder-stop-size) / 2 + 1px) * -1
+  );
+}
+
+.bags-ladder__members {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  margin: 0;
+  padding: 0;
+}
+
+/* The number is decorative once it is a stop on a rail; this is what a screen
+   reader announces in its place. */
+.bags-ladder__label {
+  block-size: 1px;
+  clip-path: inset(50%);
+  inline-size: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+}
+
+/* Combatants with no segment yet -- nothing has decided when they act, because
+   they have not said what they are doing. Kept off the rail rather than given a
+   made-up stop. */
+.bags-ladder-pending {
+  border-block-start: 1px solid
+    color-mix(in srgb, var(--border-color, #b78846) 30%, transparent);
+  margin-block-start: 0.625rem;
+  padding-block-start: 0.5rem;
+}
+
+.bags-ladder-pending__title {
+  border: none;
+  font-size: var(--font-size-11, 0.6875rem);
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.25rem;
+  opacity: 0.6;
+}

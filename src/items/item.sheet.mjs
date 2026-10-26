@@ -38,7 +38,7 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
           ...obj,
           [key]: new App({
             document: this.document,
-            parent: this,
+            parentApp: this,
           }),
         }
       },
@@ -647,7 +647,9 @@ export default class BAGSBaseItemSheet extends HandlebarsApplicationMixin(
    */
   static async _onPerformAction(event) {
     const { actionId } = event.target.closest("[data-action-id]").dataset
-    const action = this.document.system.actionList.find((a) => a.id === actionId)
+    const action = this.document.system.actionList.find(
+      (a) => a.id === actionId,
+    )
     await this.document.resolveAction(action)
   }
 

@@ -13,11 +13,6 @@ import BAGSApplication from "../applications/application.mjs"
 export default class ActionEffectEditor extends BAGSApplication {
   _activeAction
 
-  constructor(options = {}) {
-    super(options)
-    // this.parent = options.parent
-  }
-
   // === App config ============================================================
 
   static DEFAULT_OPTIONS = {
@@ -119,17 +114,20 @@ export default class ActionEffectEditor extends BAGSApplication {
       case "effect":
         context.effect = this.#effect
 
-        context.changeModes = Object.entries(CONST.ACTIVE_EFFECT_MODES).reduce(
-          (modes, [key, value]) => {
-            // eslint-disable-next-line no-param-reassign
-            modes[value] = game.i18n.localize(`EFFECT.MODE_${key}`)
-            return modes
-          },
-          {},
+        // Taken from the ActiveEffect class rather than from CONST, because
+        // these two lists include whatever change types and phases the world's
+        // modules have registered on top of Foundry's own.
+        context.changeTypes = Object.fromEntries(
+          Object.entries(foundry.documents.ActiveEffect.CHANGE_TYPES).map(
+            ([type, { label }]) => [type, game.i18n.localize(label)],
+          ),
         )
 
-        context.priorities =
-          foundry.applications.sheets.ActiveEffectConfig.DEFAULT_PRIORITIES
+        context.changePhases = Object.fromEntries(
+          Object.entries(foundry.documents.ActiveEffect.CHANGE_PHASES).map(
+            ([phase, { label }]) => [phase, game.i18n.localize(label)],
+          ),
+        )
 
         context.abilityScoreChoices = ActionEffectEditor.#abilityScoreChoices
         context.savingThrowChoices = ActionEffectEditor.#savingThrowChoices
